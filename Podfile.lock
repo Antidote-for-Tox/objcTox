@@ -1,0 +1,13 @@
+PODS:
+  - libsodium (1.0.1)
+  - toxcore-ios (0.1.0):
+    - libsodium (~> 1.0.1)
+
+DEPENDENCIES:
+  - toxcore-ios (~> 0.1.0)
+
+SPEC CHECKSUMS:
+  libsodium: ac34cc59b942350fb1377380cfb31f05c3d6170e
+  toxcore-ios: 9edc10e2a4a3b7987524e44c26777d85ab808eec
+
+COCOAPODS: 0.35.0
