@@ -1,12 +1,19 @@
 PODS:
+  - CocoaLumberjack (1.9.2):
+    - CocoaLumberjack/Extensions (= 1.9.2)
+  - CocoaLumberjack/Core (1.9.2)
+  - CocoaLumberjack/Extensions (1.9.2):
+    - CocoaLumberjack/Core
   - libsodium (1.0.1)
   - toxcore-ios (0.1.0):
     - libsodium (~> 1.0.1)
 
 DEPENDENCIES:
+  - CocoaLumberjack (~> 1.9.2)
   - toxcore-ios (~> 0.1.0)
 
 SPEC CHECKSUMS:
+  CocoaLumberjack: 205769c032b5fef85b92472046bcc8b7e7c8a817
   libsodium: ac34cc59b942350fb1377380cfb31f05c3d6170e
   toxcore-ios: 9edc10e2a4a3b7987524e44c26777d85ab808eec
 
