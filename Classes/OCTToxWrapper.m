@@ -7,6 +7,10 @@
 //
 
 #import "OCTToxWrapper.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 NSString *const kOCTToxWrapperErrorDomain = @"OCTToxWrapper Error Domain";
 
@@ -33,6 +37,8 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
 
     free(cAddress);
 
+    DDLogVerbose(@"OCTToxWrapper: get address: %@", address);
+
     return address;
 }
 
@@ -41,6 +47,8 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     NSParameterAssert(tox);
     NSParameterAssert(address);
     NSParameterAssert(message);
+
+    DDLogVerbose(@"OCTToxWrapper: add friend with address %@, message %@", address, message);
 
     if (! [self checkFriendRequestMessageLength:message]) {
         message = [self cropFriendRequestMessageToFit:message];
@@ -53,63 +61,67 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     int32_t result = tox_add_friend(tox, cAddress, (const uint8_t *)cMessage, length);
 
     if (result > -1) {
+        DDLogInfo(@"OCTToxWrapper: add friend: success with friend number %d", result);
         return result;
     }
 
-    if (error) {
-        OCTToxWrapperAddFriendError code = OCTToxWrapperAddFriendErrorUnknown;
-        NSString *description = @"Cannot add friend";
-        NSString *failureReason = nil;
+    OCTToxWrapperAddFriendError code = OCTToxWrapperAddFriendErrorUnknown;
+    NSString *description = @"Cannot add friend";
+    NSString *failureReason = nil;
 
-        switch(result) {
-            case TOX_FAERR_TOOLONG:
-                code = OCTToxWrapperAddFriendErrorMessageIsTooLong;
-                failureReason = @"The message is too long";
-                break;
-            case TOX_FAERR_NOMESSAGE:
-                code = OCTToxWrapperAddFriendErrorNoMessage;
-                failureReason = @"No message specified";
-                break;
-            case TOX_FAERR_OWNKEY:
-                code = OCTToxWrapperAddFriendErrorOwnAddress;
-                failureReason = @"Cannot add own address";
-                break;
-            case TOX_FAERR_ALREADYSENT:
-                code = OCTToxWrapperAddFriendErrorAlreadySent;
-                failureReason = @"The request was already sent";
-                break;
-            case TOX_FAERR_UNKNOWN:
-                code = OCTToxWrapperAddFriendErrorUnknown;
-                failureReason = @"Unknown error";
-                break;
-            case TOX_FAERR_BADCHECKSUM:
-                code = OCTToxWrapperAddFriendErrorBadChecksum;
-                failureReason = @"Bad checksum";
-                break;
-            case TOX_FAERR_SETNEWNOSPAM:
-                code = OCTToxWrapperAddFriendErrorSetNewNoSpam;
-                failureReason = @"The no spam value is outdated";
-                break;
-            case TOX_FAERR_NOMEM:
-                code = OCTToxWrapperAddFriendErrorNoMem;
-                failureReason = nil;
-                break;
-            default:
-                break;
-        };
+    switch(result) {
+        case TOX_FAERR_TOOLONG:
+            code = OCTToxWrapperAddFriendErrorMessageIsTooLong;
+            failureReason = @"The message is too long";
+            break;
+        case TOX_FAERR_NOMESSAGE:
+            code = OCTToxWrapperAddFriendErrorNoMessage;
+            failureReason = @"No message specified";
+            break;
+        case TOX_FAERR_OWNKEY:
+            code = OCTToxWrapperAddFriendErrorOwnAddress;
+            failureReason = @"Cannot add own address";
+            break;
+        case TOX_FAERR_ALREADYSENT:
+            code = OCTToxWrapperAddFriendErrorAlreadySent;
+            failureReason = @"The request was already sent";
+            break;
+        case TOX_FAERR_UNKNOWN:
+            code = OCTToxWrapperAddFriendErrorUnknown;
+            failureReason = @"Unknown error";
+            break;
+        case TOX_FAERR_BADCHECKSUM:
+            code = OCTToxWrapperAddFriendErrorBadChecksum;
+            failureReason = @"Bad checksum";
+            break;
+        case TOX_FAERR_SETNEWNOSPAM:
+            code = OCTToxWrapperAddFriendErrorSetNewNoSpam;
+            failureReason = @"The no spam value is outdated";
+            break;
+        case TOX_FAERR_NOMEM:
+            code = OCTToxWrapperAddFriendErrorNoMem;
+            failureReason = nil;
+            break;
+        default:
+            break;
+    };
 
-        NSMutableDictionary *userInfo = [NSMutableDictionary new];
+    NSMutableDictionary *userInfo = [NSMutableDictionary new];
 
-        if (description) {
-            userInfo[NSLocalizedDescriptionKey] = description;
-        }
-
-        if (failureReason) {
-            userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
-        }
-
-        *error = [NSError errorWithDomain:kOCTToxWrapperErrorDomain code:code userInfo:userInfo];
+    if (description) {
+        userInfo[NSLocalizedDescriptionKey] = description;
     }
+
+    if (failureReason) {
+        userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
+    }
+
+    NSError *theError = [NSError errorWithDomain:kOCTToxWrapperErrorDomain code:code userInfo:userInfo];
+    if (error) {
+        *error = theError;
+    }
+
+    DDLogWarn(@"OCTToxWrapper: add friend: failure with error %@", theError);
 
     return -1;
 }

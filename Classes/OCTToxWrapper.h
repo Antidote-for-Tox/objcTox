@@ -73,7 +73,7 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
  * @param message Message that would be send with friend request. Minimum length - 1 byte.
  * @param error Error with OCTToxWrapperAddFriendError code.
  *
- * @return On success returns friends number.
+ * @return On success returns friend number.
  * @return On failure returns -1 and fills `error` parameter.
  *
  * @warning You can check maximum length of message with `+checkFriendRequestMessageLength:` method. If message
