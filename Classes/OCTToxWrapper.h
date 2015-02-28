@@ -13,10 +13,15 @@
 extern NSString *const kOCTToxWrapperErrorDomain;
 
 /**
- * Length of address. Address has following format:
+ * Length of address. Address is hex string, has following format:
  * [public_key (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
  */
 extern const NSUInteger kOCTToxAddressLength;
+
+/**
+ * Length of public key. It is hex string, 32 bytes, 64 characters.
+ */
+extern const NSUInteger kOCTToxPublicKeyLength;
 
 /**
  * Errors for toxAddFriend method
@@ -80,6 +85,17 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
  * will be too big it will be cropped to fit the length.
  */
 + (int32_t)toxAddFriend:(Tox *)tox address:(NSString *)address message:(NSString *)message error:(NSError **)error;
+
+/**
+ * Add a friend without sending friend request.
+ *
+ * @param tox Tox structure to work with.
+ * @param publicKey Public key of a friend to add. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ *
+ * @return On success returns friend number.
+ * @return On failure returns -1.
+ */
++ (int32_t)toxAddFriendWithNoRequest:(Tox *)tox publicKey:(NSString *)publicKey;
 
 #pragma mark -  Helper methods
 

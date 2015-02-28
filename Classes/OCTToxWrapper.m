@@ -15,6 +15,7 @@
 NSString *const kOCTToxWrapperErrorDomain = @"OCTToxWrapper Error Domain";
 
 const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
+const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
 
 @implementation OCTToxWrapper
 
@@ -47,6 +48,7 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     NSParameterAssert(tox);
     NSParameterAssert(address);
     NSParameterAssert(message);
+    NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
     DDLogVerbose(@"OCTToxWrapper: add friend with address %@, message %@", address, message);
 
@@ -59,6 +61,8 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     uint16_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     int32_t result = tox_add_friend(tox, cAddress, (const uint8_t *)cMessage, length);
+
+    free(cAddress);
 
     if (result > -1) {
         DDLogInfo(@"OCTToxWrapper: add friend: success with friend number %d", result);
@@ -126,6 +130,30 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     return -1;
 }
 
++ (int32_t)toxAddFriendWithNoRequest:(Tox *)tox publicKey:(NSString *)publicKey
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(publicKey);
+    NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
+
+    DDLogVerbose(@"OCTToxWrapper: add friend with no request and public key %@", publicKey);
+
+    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+
+    int32_t result = tox_add_friend_norequest(tox, cPublicKey);
+
+    free(cPublicKey);
+
+    if (result < 0) {
+        DDLogWarn(@"OCTToxWrapper: add friend with no request failed with error");
+    }
+    else {
+        DDLogInfo(@"OCTToxWrapper: add friend with no request: success with friend number %d", result);
+    }
+
+    return result;
+}
+
 #pragma mark -  Helper methods
 
 + (BOOL)checkFriendRequestMessageLength:(NSString *)message
@@ -151,6 +179,7 @@ const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
     return [string copy];
 }
 
+// You are responsible for freeing the return value!
 + (uint8_t *)hexStringToBin:(NSString *)string
 {
     // byte is represented by exactly 2 hex digits, so lenth of binary string
