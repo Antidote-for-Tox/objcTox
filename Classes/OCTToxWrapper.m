@@ -410,6 +410,47 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (cIsTyping == 1);
 }
 
++ (NSUInteger)toxCountFriendList:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    return tox_count_friendlist(tox);
+}
+
++ (NSUInteger)toxGetNumberOnlineFriends:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    return tox_get_num_online_friends(tox);
+}
+
++ (NSArray *)toxGetFriendList:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    uint32_t count = tox_count_friendlist(tox);
+
+    if (! count) {
+        return @[];
+    }
+
+    uint32_t listSize = count * sizeof(int32_t);
+    int32_t *cList = malloc(listSize);
+
+    tox_get_friendlist(tox, cList, listSize);
+
+    NSMutableArray *list = [NSMutableArray new];
+
+    for (NSUInteger index = 0; index < count; index++) {
+        int32_t friendId = cList[index];
+        [list addObject:@(friendId)];
+    }
+
+    free(cList);
+
+    return [list copy];
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox

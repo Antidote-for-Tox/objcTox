@@ -303,6 +303,33 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (BOOL)toxGetIsFriendTyping:(const Tox *)tox friendNumber:(int32_t)friendNumber;
 
+/**
+ * Return the number of friends.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Return the number of friends.
+ */
++ (NSUInteger)toxCountFriendList:(const Tox *)tox;
+
+/**
+ * Return the number of friends online.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Return the number of friends online.
+ */
++ (NSUInteger)toxGetNumberOnlineFriends:(const Tox *)tox;
+
+/**
+ * Return an array of valid friend IDs.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Return an array of valid friend IDs. Array contain NSNumbers with IDs.
+ */
++ (NSArray *)toxGetFriendList:(const Tox *)tox;
+
 #pragma mark -  Helper methods
 
 /**
