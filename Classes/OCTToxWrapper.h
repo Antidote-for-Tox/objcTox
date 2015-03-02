@@ -60,6 +60,12 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
     OCTToxWrapperConnectionStatusOnline,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
+    OCTToxWrapperCheckLengthTypeFriendRequest,
+    OCTToxWrapperCheckLengthTypeSendMessage,
+    OCTToxWrapperCheckLengthTypeName,
+};
+
 /**
  * Simple wrapper for all functions from tox.h file.
  */
@@ -88,8 +94,8 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
  * @return On success returns friend number.
  * @return On failure returns -1 and fills `error` parameter.
  *
- * @warning You can check maximum length of message with `+checkFriendRequestMessageLength:` method. If message
- * will be too big it will be cropped to fit the length.
+ * @warning You can check maximum length of message with `+checkLengthOfString:withCheckType:` method with
+ * OCTToxWrapperCheckLengthTypeFriendRequest type. If message will be too big it will be cropped to fit the length.
  */
 + (int32_t)toxAddFriend:(Tox *)tox address:(NSString *)address message:(NSString *)message error:(NSError **)error;
 
@@ -165,8 +171,8 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
  *
  * @return The message id if packet was successfully put into the send queue, 0 if it was not.
  *
- * @warning You can check maximum length of message with `+checkSendMessageLength:` method. If message
- * will be too big it will be cropped to fit the length.
+ * @warning You can check maximum length of message with `+checkLengthOfString:withCheckType:` method with
+ * OCTToxWrapperCheckLengthTypeSendMessage type. If message will be too big it will be cropped to fit the length.
  */
 + (uint32_t)toxSendMessage:(Tox *)tox friendNumber:(int32_t)friendNumber message:(NSString *)message;
 
@@ -179,41 +185,44 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
  *
  * @return The message id if packet was successfully put into the send queue, 0 if it was not.
  *
- * @warning You can check maximum length of message with `+checkSendMessageLength:` method. If Action
- * will be too big it will be cropped to fit the length.
+ * @warning You can check maximum length of message with `+checkLengthOfString:withCheckType:` method with
+ * OCTToxWrapperCheckLengthTypeSendMessage type. If message will be too big it will be cropped to fit the length.
  */
 + (uint32_t)toxSendAction:(Tox *)tox friendNumber:(int32_t)friendNumber action:(NSString *)action;
+
+/**
+ * Set our nickname.
+ *
+ * @param tox Tox structure to work with.
+ * @param name Name to be set. Minimum length of name is 1 byte.
+ *
+ * @return YES on success, NO on failure.
+ *
+ * @warning You can check maximum length of message with `+checkLengthOfString:withCheckType:` method with
+ * OCTToxWrapperCheckLengthTypeName type. If message will be too big it will be cropped to fit the length.
+ */
++ (BOOL)toxSetName:(Tox *)tox name:(NSString *)name;
 
 #pragma mark -  Helper methods
 
 /**
- * Checks length of message for friend request against maximum length.
+ * Checks length of string against maximum length  for specified type.
  *
- * @return YES, if message <= maximum length.
- * @return NO,  if message is too big. You can crop it with method `+cropFriendRequestMessageToFit:`.
+ * @param string String to check.
+ * @param type Type used to check string. Different types have different maximun length.
+ *
+ * @return YES, if string <= maximum length, NO otherwise.
  */
-+ (BOOL)checkFriendRequestMessageLength:(NSString *)message;
++ (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type;
 
 /**
- * Checks length of message to send against maximum length.
+ * Crops string to fit maximum length for specified type.
  *
- * @return YES, if message <= maximum length.
- * @return NO,  if message is too big. You can crop it with method `+cropSendMessageToFit:`.
- */
-+ (BOOL)checkSendMessageLength:(NSString *)message;
-
-/**
- * Crops message for friend request to fit maximum length.
+ * @param string String to crop.
+ * @param type Type used to check string. Different types have different maximun length.
  *
- * @return The new cropped message.
+ * @return The new cropped string.
  */
-+ (NSString *)cropFriendRequestMessageToFit:(NSString *)message;
-
-/**
- * Crops message to send to fit maximum length.
- *
- * @return The new cropped message.
- */
-+ (NSString *)cropSendMessageToFit:(NSString *)message;
++ (NSString *)cropString:(NSString *)string toFitType:(OCTToxWrapperCheckLengthType)type;
 
 @end

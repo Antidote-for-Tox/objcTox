@@ -52,8 +52,8 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
 
     DDLogVerbose(@"OCTToxWrapper: add friend with address %@, message %@", address, message);
 
-    if (! [self checkFriendRequestMessageLength:message]) {
-        message = [self cropFriendRequestMessageToFit:message];
+    if (! [self checkLengthOfString:message withCheckType:OCTToxWrapperCheckLengthTypeFriendRequest]) {
+        message = [self cropString:message toFitType:OCTToxWrapperCheckLengthTypeFriendRequest];
     }
 
     uint8_t *cAddress = [self hexStringToBin:address];
@@ -248,6 +248,19 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return [self toxSendMessageOrAction:tox friendNumber:friendNumber messageOrAction:action isMessage:NO];
 }
 
++ (BOOL)toxSetName:(Tox *)tox name:(NSString *)name
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(name);
+
+    const char *cName = [name cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t length = [name lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    int result = tox_set_name(tox, (const uint8_t *)cName, length);
+
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox
@@ -262,8 +275,8 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
         DDLogVerbose(@"OCTToxWrapper: send action to friendNumber %d, action %@", friendNumber, messageOrAction);
     }
 
-    if (! [self checkFriendRequestMessageLength:messageOrAction]) {
-        messageOrAction = [self cropFriendRequestMessageToFit:messageOrAction];
+    if (! [self checkLengthOfString:messageOrAction withCheckType:OCTToxWrapperCheckLengthTypeSendMessage]) {
+        messageOrAction = [self cropString:messageOrAction toFitType:OCTToxWrapperCheckLengthTypeSendMessage];
     }
 
     const char *cMessage = [messageOrAction cStringUsingEncoding:NSUTF8StringEncoding];
@@ -281,24 +294,14 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return result;
 }
 
-+ (BOOL)checkFriendRequestMessageLength:(NSString *)message
++ (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type
 {
-    return [self checkMessage:message withMaxBytesLength:TOX_MAX_FRIENDREQUEST_LENGTH];
+    return [self checkString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
 }
 
-+ (BOOL)checkSendMessageLength:(NSString *)message
++ (NSString *)cropString:(NSString *)string toFitType:(OCTToxWrapperCheckLengthType)type
 {
-    return [self checkMessage:message withMaxBytesLength:TOX_MAX_MESSAGE_LENGTH];
-}
-
-+ (NSString *)cropFriendRequestMessageToFit:(NSString *)message
-{
-    return [self cropMessage:message withMaxBytesLength:TOX_MAX_FRIENDREQUEST_LENGTH];
-}
-
-+ (NSString *)cropSendMessageToFit:(NSString *)message
-{
-    return [self cropMessage:message withMaxBytesLength:TOX_MAX_MESSAGE_LENGTH];
+    return [self cropString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
 }
 
 #pragma mark -  Private
@@ -335,22 +338,34 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return ret;
 }
 
-+ (BOOL)checkMessage:(NSString *)message withMaxBytesLength:(NSUInteger)maxLength
++ (NSUInteger)maxLengthForCheckLengthType:(OCTToxWrapperCheckLengthType)type
 {
-    NSUInteger length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    switch(type) {
+        case OCTToxWrapperCheckLengthTypeFriendRequest:
+            return TOX_MAX_FRIENDREQUEST_LENGTH;
+        case OCTToxWrapperCheckLengthTypeSendMessage:
+            return TOX_MAX_MESSAGE_LENGTH;
+        case OCTToxWrapperCheckLengthTypeName:
+            return TOX_MAX_NAME_LENGTH;
+    }
+}
+
++ (BOOL)checkString:(NSString *)string withMaxBytesLength:(NSUInteger)maxLength
+{
+    NSUInteger length = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     return length <= maxLength;
 }
 
-+ (NSString *)cropMessage:(NSString *)message withMaxBytesLength:(NSUInteger)maxLength
++ (NSString *)cropString:(NSString *)string withMaxBytesLength:(NSUInteger)maxLength
 {
-    NSUInteger length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    NSUInteger length = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     if (length <= maxLength) {
-        return message;
+        return string;
     }
 
-    return [self substringFromString:message toByteLength:maxLength usingEncoding:NSUTF8StringEncoding];
+    return [self substringFromString:string toByteLength:maxLength usingEncoding:NSUTF8StringEncoding];
 }
 
 + (NSString *)substringFromString:(NSString *)string
