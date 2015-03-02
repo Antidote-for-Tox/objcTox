@@ -23,6 +23,12 @@ extern const NSUInteger kOCTToxAddressLength;
  */
 extern const NSUInteger kOCTToxPublicKeyLength;
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperProxyType) {
+    OCTToxWrapperProxyTypeNone,
+    OCTToxWrapperProxyTypeSocks5,
+    OCTToxWrapperProxyTypeHTTP,
+};
+
 /**
  * Errors for toxAddFriend method
  */
@@ -84,6 +90,33 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
 @interface OCTToxWrapper : NSObject
 
 #pragma mark -  Tox methods
+
+/**
+ * Run this funciton at startup. Initializes a tox structure.
+ *
+ * @param IPv6Enabled Indicates if IPv6 should be used.
+ * @param UDPEnabled Indicates if UDP should be used.
+ *
+ * @return Returns allocated instance of tox on success, NULL on failure.
+ */
++ (Tox *)toxNewWithIPv6Enabled:(BOOL)IPv6Enabled UDPEnabled:(BOOL)UDPEnabled;
+
+/**
+ * Run this funciton at startup. Initializes a tox structure.
+ *
+ * @param IPv6Enabled Indicates if IPv6 should be used.
+ * @param UDPEnabled Indicates if UDP should be used.
+ * @param proxyType Proxy type to be used.
+ * @param proxyAddress Ip or domain to be used as proxy.
+ * @param proxyPort Proxy port in host byte order.
+ *
+ * @return Returns allocated instance of tox on success, NULL on failure.
+ */
++ (Tox *)toxNewWithIPv6Enabled:(BOOL)IPv6Enabled
+                    UDPEnabled:(BOOL)UDPEnabled
+                     proxyType:(OCTToxWrapperProxyType)proxyType
+                  proxyAddress:(NSString *)proxyAddress
+                     proxyPort:(uint16_t)proxyPort;
 
 /**
  * Resolves address into an IP address. If successful, sends a "get nodes" request to the given node with ip,

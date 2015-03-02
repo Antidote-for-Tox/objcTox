@@ -21,6 +21,47 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
 
 #pragma mark -  Tox methods
 
++ (Tox *)toxNewWithIPv6Enabled:(BOOL)IPv6Enabled UDPEnabled:(BOOL)UDPEnabled;
+{
+    return [self toxNewWithIPv6Enabled:IPv6Enabled
+                            UDPEnabled:UDPEnabled
+                             proxyType:OCTToxWrapperProxyTypeNone
+                          proxyAddress:nil
+                             proxyPort:0];
+}
+
++ (Tox *)toxNewWithIPv6Enabled:(BOOL)IPv6Enabled
+                    UDPEnabled:(BOOL)UDPEnabled
+                     proxyType:(OCTToxWrapperProxyType)proxyType
+                  proxyAddress:(NSString *)proxyAddress
+                     proxyPort:(uint16_t)proxyPort
+{
+    Tox_Options options;
+
+    options.ipv6enabled = IPv6Enabled ? 1 : 0;
+    options.udp_disabled = UDPEnabled ? 0 : 1;
+
+    switch(proxyType) {
+        case OCTToxWrapperProxyTypeNone:
+            options.proxy_type = TOX_PROXY_NONE;
+            break;
+        case OCTToxWrapperProxyTypeSocks5:
+            options.proxy_type = TOX_PROXY_SOCKS5;
+            break;
+        case OCTToxWrapperProxyTypeHTTP:
+            options.proxy_type = TOX_PROXY_HTTP;
+            break;
+    }
+
+    if (proxyAddress) {
+        const char *cAddress = proxyAddress.UTF8String;
+        strcpy(options.proxy_address, cAddress);
+    }
+    options.proxy_port = proxyPort;
+
+    return tox_new(&options);
+}
+
 + (BOOL)toxBootstrapFromAddress:(Tox *)tox
                         address:(NSString *)address
                            port:(uint16_t)port
