@@ -86,6 +86,37 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
 #pragma mark -  Tox methods
 
 /**
+ * Resolves address into an IP address. If successful, sends a "get nodes" request to the given node with ip,
+ * port (in host byte order) and publicKey to setup connections.
+ *
+ * @param tox Tox structure to work with.
+ * @param address Address can be a hostname or an IP address (IPv4 or IPv6).
+ * @param port Port in host byte order.
+ * @param publicKey Public key of the node.
+ *
+ * @return YES if address could be converted info an IP address, NO otherwise.
+ */
++ (BOOL)toxBootstrapFromAddress:(Tox *)tox
+                        address:(NSString *)address
+                           port:(uint16_t)port
+                      publicKey:(NSString *)publicKey;
+
+/**
+ * Like toxBootstrapFromAddress bug for TCP relays only.
+ *
+ * @param tox Tox structure to work with.
+ * @param address Address can be a hostname or an IP address (IPv4 or IPv6).
+ * @param port Port in host byte order.
+ * @param publicKey Public key of the node.
+ *
+ * @return YES if address could be converted info an IP address, NO otherwise.
+ */
++ (BOOL)toxAddTCPRelay:(Tox *)tox
+                  address:(NSString *)address
+                     port:(uint16_t)port
+                publicKey:(NSString *)publicKey;
+
+/**
  * Get an tox address for specified Tox structure.
  *
  * @param tox Tox structure to work with.

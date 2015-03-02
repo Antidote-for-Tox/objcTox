@@ -21,6 +21,44 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
 
 #pragma mark -  Tox methods
 
++ (BOOL)toxBootstrapFromAddress:(Tox *)tox
+                        address:(NSString *)address
+                           port:(uint16_t)port
+                      publicKey:(NSString *)publicKey
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(address);
+    NSParameterAssert(publicKey);
+
+    const char *cAddress = address.UTF8String;
+    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+
+    int result = tox_bootstrap_from_address(tox, cAddress, port, cPublicKey);
+
+    free(cPublicKey);
+
+    return (result == 1);
+}
+
++ (BOOL)toxAddTCPRelay:(Tox *)tox
+                  address:(NSString *)address
+                     port:(uint16_t)port
+                publicKey:(NSString *)publicKey
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(address);
+    NSParameterAssert(publicKey);
+
+    const char *cAddress = address.UTF8String;
+    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+
+    int result = tox_bootstrap_from_address(tox, cAddress, port, cPublicKey);
+
+    free(cPublicKey);
+
+    return (result == 1);
+}
+
 + (NSString *)toxGetAddress:(const Tox *)tox
 {
     NSParameterAssert(tox);
