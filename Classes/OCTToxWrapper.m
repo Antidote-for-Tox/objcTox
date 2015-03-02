@@ -62,6 +62,60 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return tox_new(&options);
 }
 
++ (void)toxKill:(Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    tox_kill(tox);
+}
+
++ (uint32_t)toxDoInterval:(Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    return tox_do_interval(tox);
+}
+
++ (void)toxDo:(Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    return tox_do(tox);
+}
+
++ (NSData *)toxSave:(Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    uint32_t size = tox_size(tox);
+    uint8_t *cData = malloc(size);
+
+    tox_save(tox, cData);
+
+    NSData *data = [NSData dataWithBytes:cData length:size];
+    free(cData);
+
+    return data;
+}
+
++ (OCTToxWrapperLoadStatus)toxLoad:(Tox *)tox fromData:(NSData *)data
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(data);
+
+    int result = tox_load(tox, (uint8_t *)data.bytes, (uint32_t)data.length);
+
+    switch(result) {
+        case 0:
+            return OCTToxWrapperLoadStatusSuccess;
+        case 1:
+            return OCTToxWrapperLoadStatusEncryptedSaveData;
+        case -1:
+        default:
+            return OCTToxWrapperLoadStatusFailure;
+    }
+}
+
 + (BOOL)toxBootstrapFromAddress:(Tox *)tox
                         address:(NSString *)address
                            port:(uint16_t)port

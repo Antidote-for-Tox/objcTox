@@ -29,6 +29,12 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperProxyType) {
     OCTToxWrapperProxyTypeHTTP,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperLoadStatus) {
+    OCTToxWrapperLoadStatusSuccess,
+    OCTToxWrapperLoadStatusFailure,
+    OCTToxWrapperLoadStatusEncryptedSaveData,
+};
+
 /**
  * Errors for toxAddFriend method
  */
@@ -117,6 +123,53 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
                      proxyType:(OCTToxWrapperProxyType)proxyType
                   proxyAddress:(NSString *)proxyAddress
                      proxyPort:(uint16_t)proxyPort;
+
+/**
+ * Run this before closing shop. Free all datastructures.
+ *
+ * @param tox Tox structure to work with.
+ */
++ (void)toxKill:(Tox *)tox;
+
+/**
+ * Return the time in milliseconds before `+toxDo` should be called again for optimal performance.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Return the time in milliseconds before `+toxDo` should be called again for optimal performance.
+ */
++ (uint32_t)toxDoInterval:(Tox *)tox;
+
+/**
+ * The main loop that needs to be run in intervals of `+toxDoInterval` ms.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Return the time in milliseconds before `+toxDo` should be called again for optimal performance.
+ */
++ (void)toxDo:(Tox *)tox;
+
+/**
+ * Saves Tox into NSData.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return NSData with Tox.
+ */
++ (NSData *)toxSave:(Tox *)tox;
+
+/**
+ * Load Tox from NSData.
+ *
+ * @param tox Tox structure load data to.
+ * @param data Data load Tox from.
+ *
+ * @return Return status of load.
+ *
+ * @warning The Tox save format isn't stable yet meaning this function sometimes returns -1 when loading
+ * older saves. This however does not mean nothing was loaded from the save.
+ */
++ (OCTToxWrapperLoadStatus)toxLoad:(Tox *)tox fromData:(NSData *)data;
 
 /**
  * Resolves address into an IP address. If successful, sends a "get nodes" request to the given node with ip,
