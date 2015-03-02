@@ -314,6 +314,29 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (result == 0);
 }
 
++ (BOOL)toxSetUserStatus:(Tox *)tox status:(OCTToxWrapperUserStatus)status
+{
+    NSParameterAssert(tox);
+
+    uint8_t cStatus = TOX_USERSTATUS_NONE;
+
+    switch(status) {
+        case OCTToxWrapperUserStatusNone:
+            cStatus = TOX_USERSTATUS_NONE;
+        case OCTToxWrapperUserStatusAway:
+            cStatus = TOX_USERSTATUS_AWAY;
+        case OCTToxWrapperUserStatusBusy:
+            cStatus = TOX_USERSTATUS_BUSY;
+        case OCTToxWrapperUserStatusInvalid:
+            cStatus = TOX_USERSTATUS_INVALID;
+            break;
+    }
+
+    int result = tox_set_user_status(tox, cStatus);
+
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox

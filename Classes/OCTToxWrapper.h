@@ -67,6 +67,13 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
     OCTToxWrapperCheckLengthTypeStatusMessage,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
+    OCTToxWrapperUserStatusNone,
+    OCTToxWrapperUserStatusAway,
+    OCTToxWrapperUserStatusBusy,
+    OCTToxWrapperUserStatusInvalid,
+};
+
 /**
  * Simple wrapper for all functions from tox.h file.
  */
@@ -235,6 +242,16 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
  * OCTToxWrapperCheckLengthTypeStatusMessage type. If message will be too big it will be cropped to fit the length.
  */
 + (BOOL)toxSetStatusMessage:(Tox *)tox statusMessage:(NSString *)statusMessage;
+
+/**
+ * Set our user status.
+ *
+ * @param tox Tox structure to work with.
+ * @param status Status to be set.
+ *
+ * @return YES on success, NO on failure.
+ */
++ (BOOL)toxSetUserStatus:(Tox *)tox status:(OCTToxWrapperUserStatus)status;
 
 #pragma mark -  Helper methods
 
