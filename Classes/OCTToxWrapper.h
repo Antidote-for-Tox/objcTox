@@ -253,6 +253,25 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (BOOL)toxSetUserStatus:(Tox *)tox status:(OCTToxWrapperUserStatus)status;
 
+/**
+ * Get status message of a friend.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to get status message.
+ *
+ * @return Status message of a friend.
+ */
++ (NSString *)toxGetFriendStatusMessage:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Get our status message.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Our status message.
+ */
++ (NSString *)toxGetSelfStatusMessage:(const Tox *)tox;
+
 #pragma mark -  Helper methods
 
 /**

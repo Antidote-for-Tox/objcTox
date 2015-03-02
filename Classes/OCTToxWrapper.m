@@ -337,6 +337,46 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (result == 0);
 }
 
++ (NSString *)toxGetFriendStatusMessage:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int length = tox_get_status_message_size(tox, friendNumber);
+
+    if (length <= 0) {
+        return nil;
+    }
+
+    uint8_t *cBuffer = malloc(length);
+
+    tox_get_status_message(tox, friendNumber, cBuffer, length);
+
+    NSString *message = [[NSString alloc] initWithBytes:cBuffer length:length encoding:NSUTF8StringEncoding];
+    free(cBuffer);
+
+    return message;
+}
+
++ (NSString *)toxGetSelfStatusMessage:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    int length = tox_get_self_status_message_size(tox);
+
+    if (length <= 0) {
+        return nil;
+    }
+
+    uint8_t *cBuffer = malloc(length);
+
+    tox_get_self_status_message(tox, cBuffer, length);
+
+    NSString *message = [[NSString alloc] initWithBytes:cBuffer length:length encoding:NSUTF8StringEncoding];
+    free(cBuffer);
+
+    return message;
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox
