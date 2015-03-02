@@ -67,6 +67,10 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
     OCTToxWrapperCheckLengthTypeStatusMessage,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperDataLengthType) {
+    OCTToxWrapperDataLengthTypeAvatar,
+};
+
 typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
     OCTToxWrapperUserStatusNone,
     OCTToxWrapperUserStatusAway,
@@ -330,6 +334,31 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (NSArray *)toxGetFriendList:(const Tox *)tox;
 
+/**
+ * Set avatar for current user.
+ * This should be made before connecting, so we will not announce that the user have no avatar
+ * before setting and announcing a new one, forcing the peers to re-download it.
+ *
+ * @param tox Tox structure to work with.
+ * @param data Avatar data. Data should be <= that length `+getMaximumDataLengthForType:` with
+ * OCTToxWrapperDataLengthTypeAvatar type.
+ *
+ * @return YES on success, otherwise NO.
+ *
+ * @warning Data should be <= that length `+maximumDataLengthForType:` with
+ * OCTToxWrapperDataLengthTypeAvatar type.
+ */
++ (BOOL)toxSetAvatar:(Tox *)tox data:(NSData *)data;
+
+/**
+ * Unsets the user avatar.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return YES on success, otherwise NO.
+ */
++ (BOOL)toxUnsetAvatar:(Tox *)tox;
+
 #pragma mark -  Helper methods
 
 /**
@@ -351,5 +380,14 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  * @return The new cropped string.
  */
 + (NSString *)cropString:(NSString *)string toFitType:(OCTToxWrapperCheckLengthType)type;
+
+/**
+ * Maximum length of data for certain type.
+ *
+ * @param type Type of data.
+ *
+ * @return Maximum length of data.
+ */
++ (NSUInteger)maximumDataLengthForType:(OCTToxWrapperDataLengthType)type;
 
 @end

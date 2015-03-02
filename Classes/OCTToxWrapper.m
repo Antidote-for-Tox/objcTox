@@ -451,7 +451,52 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return [list copy];
 }
 
++ (BOOL)toxSetAvatar:(Tox *)tox data:(NSData *)data
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(data);
+
+    if (data.length > [self maximumDataLengthForType:OCTToxWrapperDataLengthTypeAvatar]) {
+        return NO;
+    }
+
+    const uint8_t *bytes = [data bytes];
+
+    int result = tox_set_avatar(tox, TOX_AVATAR_FORMAT_PNG, bytes, (uint32_t)data.length);
+
+    return (result == 0);
+}
+
++ (BOOL)toxUnsetAvatar:(Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    int result = tox_unset_avatar(tox);
+
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
+
++ (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type
+{
+    return [self checkString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
+}
+
++ (NSString *)cropString:(NSString *)string toFitType:(OCTToxWrapperCheckLengthType)type
+{
+    return [self cropString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
+}
+
++ (NSUInteger)maximumDataLengthForType:(OCTToxWrapperDataLengthType)type
+{
+    switch(type) {
+        case OCTToxWrapperDataLengthTypeAvatar:
+            return TOX_AVATAR_MAX_DATA_LENGTH;
+    }
+}
+
+#pragma mark -  Private
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox
                       friendNumber:(int32_t)friendNumber
@@ -483,18 +528,6 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
 
     return result;
 }
-
-+ (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type
-{
-    return [self checkString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
-}
-
-+ (NSString *)cropString:(NSString *)string toFitType:(OCTToxWrapperCheckLengthType)type
-{
-    return [self cropString:string withMaxBytesLength:[self maxLengthForCheckLengthType:type]];
-}
-
-#pragma mark -  Private
 
 + (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
 {
