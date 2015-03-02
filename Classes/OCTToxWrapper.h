@@ -203,6 +203,25 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
  */
 + (BOOL)toxSetName:(Tox *)tox name:(NSString *)name;
 
+/**
+ * Get your nickname.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return Your nickname or nil in case of error.
+ */
++ (NSString *)toxGetSelfName:(const Tox *)tox;
+
+/**
+ * Get name of friendNumber.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to get name.
+ *
+ * @return Name of friend or nil in case of error.
+ */
++ (NSString *)toxGetFriendName:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
 #pragma mark -  Helper methods
 
 /**

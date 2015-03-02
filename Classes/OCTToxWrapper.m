@@ -261,6 +261,42 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (result == 0);
 }
 
++ (NSString *)toxGetSelfName:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    uint8_t *cName = malloc(TOX_MAX_NAME_LENGTH);
+    uint16_t length = tox_get_self_name(tox, cName);
+
+    NSString *name = nil;
+
+    if (length) {
+        name = [[NSString alloc] initWithBytes:cName length:length encoding:NSUTF8StringEncoding];
+
+        free(cName);
+    }
+
+    return name;
+}
+
++ (NSString *)toxGetFriendName:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    uint8_t *cName = malloc(TOX_MAX_NAME_LENGTH);
+    uint16_t length = tox_get_name(tox, friendNumber, cName);
+
+    NSString *name = nil;
+
+    if (length) {
+        name = [[NSString alloc] initWithBytes:cName length:length encoding:NSUTF8StringEncoding];
+
+        free(cName);
+    }
+
+    return name;
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox
