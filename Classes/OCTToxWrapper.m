@@ -154,6 +154,49 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return result;
 }
 
++ (int32_t)toxGetFriendNumber:(const Tox *)tox publicKey:(NSString *)publicKey
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(publicKey);
+    NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
+
+    DDLogVerbose(@"OCTToxWrapper: get friend number with public key %@", publicKey);
+
+    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+
+    int32_t result = tox_get_friend_number(tox, cPublicKey);
+
+    free(cPublicKey);
+
+    if (result < 0) {
+        DDLogWarn(@"OCTToxWrapper: get friend number with public key failed with error: no such friend");
+    }
+    else {
+        DDLogInfo(@"OCTToxWrapper: get friend number with public key success with friend number %d", result);
+    }
+
+    return result;
+}
+
++ (NSString *)toxGetPublicKey:(const Tox *)tox fromFriendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    DDLogVerbose(@"OCTToxWrapper: get public key from friend number %d", friendNumber);
+
+    uint8_t *cPublicKey = malloc(TOX_CLIENT_ID_SIZE);
+    int result = tox_get_client_id(tox, friendNumber, cPublicKey);
+
+    NSString *publicKey = nil;
+
+    if (result == 0) {
+        publicKey = [self binToHexString:cPublicKey length:TOX_CLIENT_ID_SIZE];
+        free(cPublicKey);
+    }
+
+    return publicKey;
+}
+
 #pragma mark -  Helper methods
 
 + (BOOL)checkFriendRequestMessageLength:(NSString *)message

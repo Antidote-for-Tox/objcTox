@@ -97,6 +97,28 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
  */
 + (int32_t)toxAddFriendWithNoRequest:(Tox *)tox publicKey:(NSString *)publicKey;
 
+/**
+ * Get associated friend number from public key.
+ *
+ * @param tox Tox structure to work with.
+ * @param publicKey Public key of a friend. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ *
+ * @return On success returns friend number.
+ * @return If there is no such friend returns -1.
+ */
++ (int32_t)toxGetFriendNumber:(const Tox *)tox publicKey:(NSString *)publicKey;
+
+/**
+ * Get public key from associated friend number.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Associated friend number
+ *
+ * @return Public key of a friend. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ * @return If there is no such friend returns nil.
+ */
++ (NSString *)toxGetPublicKey:(const Tox *)tox fromFriendNumber:(int32_t)friendNumber;
+
 #pragma mark -  Helper methods
 
 /**
