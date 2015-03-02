@@ -64,6 +64,7 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
     OCTToxWrapperCheckLengthTypeFriendRequest,
     OCTToxWrapperCheckLengthTypeSendMessage,
     OCTToxWrapperCheckLengthTypeName,
+    OCTToxWrapperCheckLengthTypeStatusMessage,
 };
 
 /**
@@ -221,6 +222,19 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperCheckLengthType) {
  * @return Name of friend or nil in case of error.
  */
 + (NSString *)toxGetFriendName:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Set our user status message.
+ *
+ * @param tox Tox structure to work with.
+ * @param statusMessage Status message to be set.
+ *
+ * @return YES on success, NO on failure.
+ *
+ * @warning You can check maximum length of message with `+checkLengthOfString:withCheckType:` method with
+ * OCTToxWrapperCheckLengthTypeStatusMessage type. If message will be too big it will be cropped to fit the length.
+ */
++ (BOOL)toxSetStatusMessage:(Tox *)tox statusMessage:(NSString *)statusMessage;
 
 #pragma mark -  Helper methods
 

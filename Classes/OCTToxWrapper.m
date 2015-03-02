@@ -297,6 +297,23 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return name;
 }
 
++ (BOOL)toxSetStatusMessage:(Tox *)tox statusMessage:(NSString *)statusMessage
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(statusMessage);
+
+    if (! [self checkLengthOfString:statusMessage withCheckType:OCTToxWrapperCheckLengthTypeStatusMessage]) {
+        statusMessage = [self cropString:statusMessage toFitType:OCTToxWrapperCheckLengthTypeStatusMessage];
+    }
+
+    const char *cStatusMessage = [statusMessage cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t length = [statusMessage lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    int result = tox_set_status_message(tox, (const uint8_t *)cStatusMessage, length);
+
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox
@@ -383,6 +400,8 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
             return TOX_MAX_MESSAGE_LENGTH;
         case OCTToxWrapperCheckLengthTypeName:
             return TOX_MAX_NAME_LENGTH;
+        case OCTToxWrapperCheckLengthTypeStatusMessage:
+            return TOX_MAX_STATUSMESSAGE_LENGTH;
     }
 }
 
