@@ -59,6 +59,15 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (result == 1);
 }
 
++ (BOOL)toxIsConnected:(const Tox *)tox
+{
+    NSParameterAssert(tox);
+
+    int result = tox_isconnected(tox);
+
+    return (result == 1);
+}
+
 + (NSString *)toxGetAddress:(const Tox *)tox
 {
     NSParameterAssert(tox);

@@ -117,6 +117,15 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
                 publicKey:(NSString *)publicKey;
 
 /**
+ * Checks if we connected to the DHT.
+ *
+ * @param tox Tox structure to work with.
+ *
+ * @return YES if connected, otherwise NO
+ */
++ (BOOL)toxIsConnected:(const Tox *)tox;
+
+/**
  * Get an tox address for specified Tox structure.
  *
  * @param tox Tox structure to work with.
