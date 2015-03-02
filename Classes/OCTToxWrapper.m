@@ -197,6 +197,60 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return publicKey;
 }
 
++ (BOOL)toxDeleteFriend:(Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int result = tox_del_friend(tox, friendNumber);
+
+    return (result == 0);
+}
+
++ (OCTToxWrapperConnectionStatus)toxGetFriendConnectionStatus:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int result = tox_get_friend_connection_status(tox, friendNumber);
+
+    switch(result) {
+        case 1:
+            return OCTToxWrapperConnectionStatusOnline;
+        case 0:
+            return OCTToxWrapperConnectionStatusOffline;
+        case -1:
+        default:
+            return OCTToxWrapperConnectionStatusUnknown;
+    }
+}
+
++ (BOOL)toxFriendExists:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int result = tox_friend_exists(tox, friendNumber);
+
+    return (result == 1);
+}
+
++ (uint32_t)toxSendMessage:(Tox *)tox friendNumber:(int32_t)friendNumber message:(NSString *)message
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(message);
+
+    DDLogVerbose(@"OCTToxWrapper: send message to friendNumber %d, message %@", friendNumber, message);
+
+    if (! [self checkFriendRequestMessageLength:message]) {
+        message = [self cropFriendRequestMessageToFit:message];
+    }
+
+    const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    uint32_t result = tox_send_message(tox, friendNumber, (uint8_t *)cMessage, length);
+
+    return result;
+}
+
 #pragma mark -  Helper methods
 
 + (BOOL)checkFriendRequestMessageLength:(NSString *)message
@@ -204,9 +258,19 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return [self checkMessage:message withMaxBytesLength:TOX_MAX_FRIENDREQUEST_LENGTH];
 }
 
++ (BOOL)checkSendMessageLength:(NSString *)message
+{
+    return [self checkMessage:message withMaxBytesLength:TOX_MAX_MESSAGE_LENGTH];
+}
+
 + (NSString *)cropFriendRequestMessageToFit:(NSString *)message
 {
     return [self cropMessage:message withMaxBytesLength:TOX_MAX_FRIENDREQUEST_LENGTH];
+}
+
++ (NSString *)cropSendMessageToFit:(NSString *)message
+{
+    return [self cropMessage:message withMaxBytesLength:TOX_MAX_MESSAGE_LENGTH];
 }
 
 #pragma mark -  Private

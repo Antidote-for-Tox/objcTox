@@ -53,6 +53,13 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
     OCTToxWrapperAddFriendErrorNoMem,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
+    // The status is unknown (for example if there was a failure while getting it)
+    OCTToxWrapperConnectionStatusUnknown,
+    OCTToxWrapperConnectionStatusOffline,
+    OCTToxWrapperConnectionStatusOnline,
+};
+
 /**
  * Simple wrapper for all functions from tox.h file.
  */
@@ -119,6 +126,50 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
  */
 + (NSString *)toxGetPublicKey:(const Tox *)tox fromFriendNumber:(int32_t)friendNumber;
 
+/**
+ * Remove a friend
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to remove.
+ *
+ * @return YES on success, NO on failure.
+ */
++ (BOOL)toxDeleteFriend:(Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Get friend connection status.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to check status.
+ *
+ * @return Returns connection status or OCTToxWrapperAddFriendErrorUnknown in case of failure.
+ */
++ (OCTToxWrapperConnectionStatus)toxGetFriendConnectionStatus:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Checks if there exists a friend with given friendNumber.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to check.
+ *
+ * @return YES if friend exists, NO otherwise.
+ */
++ (BOOL)toxFriendExists:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Send a text chat message to an online friend.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to send a message.
+ * @param message Message that would be send.
+ *
+ * @return The message id if packet was successfully put into the send queue, 0 if it was not.
+ *
+ * @warning You can check maximum length of message with `+checkSendMessageLength:` method. If message
+ * will be too big it will be cropped to fit the length.
+ */
++ (uint32_t)toxSendMessage:(Tox *)tox friendNumber:(int32_t)friendNumber message:(NSString *)message;
+
 #pragma mark -  Helper methods
 
 /**
@@ -130,10 +181,25 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperAddFriendError) {
 + (BOOL)checkFriendRequestMessageLength:(NSString *)message;
 
 /**
+ * Checks length of message to send against maximum length.
+ *
+ * @return YES, if message <= maximum length.
+ * @return NO,  if message is too big. You can crop it with method `+cropSendMessageToFit:`.
+ */
++ (BOOL)checkSendMessageLength:(NSString *)message;
+
+/**
  * Crops message for friend request to fit maximum length.
  *
  * @return The new cropped message.
  */
 + (NSString *)cropFriendRequestMessageToFit:(NSString *)message;
+
+/**
+ * Crops message to send to fit maximum length.
+ *
+ * @return The new cropped message.
+ */
++ (NSString *)cropSendMessageToFit:(NSString *)message;
 
 @end
