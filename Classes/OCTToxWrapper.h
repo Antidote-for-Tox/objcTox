@@ -371,6 +371,32 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (NSData *)toxHash:(NSData *)data;
 
+#warning Add comment about notification
+/**
+ * Request avatar information from a friend.
+ * Asks a friend to provide their avatar information (hash). The friend may or may not answer this request and,
+ * if answered, the information will be provided through the notification TODO.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to request avatar info.
+ *
+ * @return YES on success, otherwise NO.
+ */
++ (BOOL)toxRequestAvatarInfo:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+#warning Add comment about notification
+/**
+ * Request avatar data from a friend.
+ * Ask a friend to send their avatar data. The friend may or may not answer this request and,
+ * if answered, the data will be provided through the notification TODO.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to request avatar data.
+ *
+ * @return YES on success, otherwise NO.
+ */
++ (BOOL)toxRequestAvatarData:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
 #pragma mark -  Helper methods
 
 /**

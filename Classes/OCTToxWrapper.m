@@ -493,6 +493,24 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return hash;
 }
 
++ (BOOL)toxRequestAvatarInfo:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int result = tox_request_avatar_info(tox, friendNumber);
+
+    return (result == 0);
+}
+
++ (BOOL)toxRequestAvatarData:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    int result = tox_request_avatar_data(tox, friendNumber);
+
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
 
 + (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type
