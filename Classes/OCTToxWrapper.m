@@ -476,6 +476,23 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return (result == 0);
 }
 
++ (NSData *)toxHash:(NSData *)data
+{
+    uint8_t *cHash = malloc(TOX_HASH_LENGTH);
+    const uint8_t *cData = [data bytes];
+
+    int result = tox_hash(cHash, cData, (uint32_t)data.length);
+
+    if (result == -1) {
+        return nil;
+    }
+
+    NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
+    free(cHash);
+
+    return hash;
+}
+
 #pragma mark -  Helper methods
 
 + (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxWrapperCheckLengthType)type

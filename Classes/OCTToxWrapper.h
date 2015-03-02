@@ -359,6 +359,18 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (BOOL)toxUnsetAvatar:(Tox *)tox;
 
+/**
+ * Generates a cryptographic hash of the given data.
+ * This function may be used by clients for any purpose, but is provided primarily for
+ * validating cached avatars. This use is highly recommended to avoid unnecessary avatar
+ * updates.
+ *
+ * @param data Data to be hashed
+ *
+ * @return Hash generated from data.
+ */
++ (NSData *)toxHash:(NSData *)data;
+
 #pragma mark -  Helper methods
 
 /**
