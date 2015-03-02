@@ -170,6 +170,20 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperConnectionStatus) {
  */
 + (uint32_t)toxSendMessage:(Tox *)tox friendNumber:(int32_t)friendNumber message:(NSString *)message;
 
+/**
+ * Send an action to an online friend.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to send a action.
+ * @param action Action that would be send.
+ *
+ * @return The message id if packet was successfully put into the send queue, 0 if it was not.
+ *
+ * @warning You can check maximum length of message with `+checkSendMessageLength:` method. If Action
+ * will be too big it will be cropped to fit the length.
+ */
++ (uint32_t)toxSendAction:(Tox *)tox friendNumber:(int32_t)friendNumber action:(NSString *)action;
+
 #pragma mark -  Helper methods
 
 /**

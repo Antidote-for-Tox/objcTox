@@ -237,21 +237,49 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     NSParameterAssert(tox);
     NSParameterAssert(message);
 
-    DDLogVerbose(@"OCTToxWrapper: send message to friendNumber %d, message %@", friendNumber, message);
+    return [self toxSendMessageOrAction:tox friendNumber:friendNumber messageOrAction:message isMessage:YES];
+}
 
-    if (! [self checkFriendRequestMessageLength:message]) {
-        message = [self cropFriendRequestMessageToFit:message];
-    }
++ (uint32_t)toxSendAction:(Tox *)tox friendNumber:(int32_t)friendNumber action:(NSString *)action
+{
+    NSParameterAssert(tox);
+    NSParameterAssert(action);
 
-    const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-
-    uint32_t result = tox_send_message(tox, friendNumber, (uint8_t *)cMessage, length);
-
-    return result;
+    return [self toxSendMessageOrAction:tox friendNumber:friendNumber messageOrAction:action isMessage:NO];
 }
 
 #pragma mark -  Helper methods
+
++ (uint32_t)toxSendMessageOrAction:(Tox *)tox
+                      friendNumber:(int32_t)friendNumber
+                   messageOrAction:(NSString *)messageOrAction
+                         isMessage:(BOOL)isMessage
+{
+    if (isMessage) {
+        DDLogVerbose(@"OCTToxWrapper: send message to friendNumber %d, message %@", friendNumber, messageOrAction);
+    }
+    else {
+        DDLogVerbose(@"OCTToxWrapper: send action to friendNumber %d, action %@", friendNumber, messageOrAction);
+    }
+
+    if (! [self checkFriendRequestMessageLength:messageOrAction]) {
+        messageOrAction = [self cropFriendRequestMessageToFit:messageOrAction];
+    }
+
+    const char *cMessage = [messageOrAction cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t length = [messageOrAction lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    uint32_t result = 0;
+
+    if (isMessage) {
+        result = tox_send_message(tox, friendNumber, (uint8_t *)cMessage, length);
+    }
+    else {
+        result = tox_send_action(tox, friendNumber, (uint8_t *)cMessage, length);
+    }
+
+    return result;
+}
 
 + (BOOL)checkFriendRequestMessageLength:(NSString *)message
 {
