@@ -377,6 +377,39 @@ const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
     return message;
 }
 
++ (NSDate *)toxGetLastOnline:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    uint64_t timestamp = tox_get_last_online(tox, friendNumber);
+
+    if (! timestamp) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:timestamp];
+}
+
++ (BOOL)toxSetUserIsTyping:(Tox *)tox friendNumber:(int32_t)friendNumber isTyping:(BOOL)isTyping
+{
+    NSParameterAssert(tox);
+
+    uint8_t cIsTyping = isTyping ? 1 : 0;
+
+    int result = tox_set_user_is_typing(tox, friendNumber, cIsTyping);
+
+    return (result == 0);
+}
+
++ (BOOL)toxGetIsFriendTyping:(const Tox *)tox friendNumber:(int32_t)friendNumber
+{
+    NSParameterAssert(tox);
+
+    uint8_t cIsTyping = tox_get_is_typing(tox, friendNumber);
+
+    return (cIsTyping == 1);
+}
+
 #pragma mark -  Helper methods
 
 + (uint32_t)toxSendMessageOrAction:(Tox *)tox

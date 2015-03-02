@@ -272,6 +272,37 @@ typedef NS_ENUM(NSUInteger, OCTToxWrapperUserStatus) {
  */
 + (NSString *)toxGetSelfStatusMessage:(const Tox *)tox;
 
+/**
+ * Get date of last time friendNumber was seen online.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to get last online.
+ *
+ * @return Date of last time friend was seen online.
+ */
++ (NSDate *)toxGetLastOnline:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
+/**
+ * Set our typing status for a friend. You are responsible for turning it on or off.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to set typing status.
+ * @param isTyping Status showing whether user is typing or not.
+ *
+ * @return YES on success, NO on failure.
+ */
++ (BOOL)toxSetUserIsTyping:(Tox *)tox friendNumber:(int32_t)friendNumber isTyping:(BOOL)isTyping;
+
+/**
+ * Get the typing status of a friend.
+ *
+ * @param tox Tox structure to work with.
+ * @param friendNumber Friend number to get typing status.
+ *
+ * @return YES if friend is typing, otherwise NO.
+ */
++ (BOOL)toxGetIsFriendTyping:(const Tox *)tox friendNumber:(int32_t)friendNumber;
+
 #pragma mark -  Helper methods
 
 /**
