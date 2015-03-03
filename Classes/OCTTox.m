@@ -13,6 +13,18 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
+void friendRequestCallback(Tox *cTox, const uint8_t * publicKey, const uint8_t * data, uint16_t length, void *userdata);
+void friendMessageCallback(Tox *cTox, int32_t friendnumber, const uint8_t *message, uint16_t length, void *userdata);
+void friendActionCallback(Tox *cTox, int32_t friendnumber, const uint8_t *action, uint16_t length, void *userdata);
+void nameChangeCallback(Tox *cTox, int32_t friendnumber, const uint8_t *newname, uint16_t length, void *userdata);
+void statusMessageCallback(Tox *cTox, int32_t friendnumber, const uint8_t *newstatus, uint16_t length, void *userdata);
+void userStatusCallback(Tox *cTox, int32_t friendnumber, uint8_t status, void *userdata);
+void typingChangeCallback(Tox *cTox, int32_t friendnumber, uint8_t isTyping, void *userdata);
+void readReceiptCallback(Tox *cTox, int32_t friendnumber, uint32_t receipt, void *userdata);
+void connectionStatusCallback(Tox *cTox, int32_t friendnumber, uint8_t status, void *userdata);
+void avatarInfoCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, void *userdata);
+void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, uint8_t *data, uint32_t datalen, void *userdata);
+
 @interface OCTTox()
 
 @property (assign, nonatomic) Tox *tox;
@@ -40,6 +52,18 @@
     else {
         _tox = tox_new(NULL);
     }
+
+    tox_callback_friend_request    (_tox,  friendRequestCallback,     (__bridge void *)self);
+    tox_callback_friend_message    (_tox,  friendMessageCallback,     (__bridge void *)self);
+    tox_callback_friend_action     (_tox,  friendActionCallback,      (__bridge void *)self);
+    tox_callback_name_change       (_tox,  nameChangeCallback,        (__bridge void *)self);
+    tox_callback_status_message    (_tox,  statusMessageCallback,     (__bridge void *)self);
+    tox_callback_user_status       (_tox,  userStatusCallback,        (__bridge void *)self);
+    tox_callback_typing_change     (_tox,  typingChangeCallback,      (__bridge void *)self);
+    tox_callback_read_receipt      (_tox,  readReceiptCallback,       (__bridge void *)self);
+    tox_callback_connection_status (_tox,  connectionStatusCallback,  (__bridge void *)self);
+    tox_callback_avatar_info       (_tox,  avatarInfoCallback,        (__bridge void *)self);
+    tox_callback_avatar_data       (_tox,  avatarDataCallback,        (__bridge void *)self);
 
     return self;
 }
@@ -457,10 +481,13 @@
     switch(status) {
         case OCTToxUserStatusNone:
             cStatus = TOX_USERSTATUS_NONE;
+            break;
         case OCTToxUserStatusAway:
             cStatus = TOX_USERSTATUS_AWAY;
+            break;
         case OCTToxUserStatusBusy:
             cStatus = TOX_USERSTATUS_BUSY;
+            break;
         case OCTToxUserStatusInvalid:
             cStatus = TOX_USERSTATUS_INVALID;
             break;
@@ -768,3 +795,153 @@
 }
 
 @end
+
+#pragma mark -  Callbacks
+
+void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *cData, uint16_t length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:TOX_CLIENT_ID_SIZE];
+    NSString *message = [[NSString alloc] initWithBytes:cData length:length encoding:NSUTF8StringEncoding];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendRequestWithMessage:publicKey:)]) {
+        [tox.delegate tox:tox friendRequestWithMessage:message publicKey:publicKey];
+    }
+}
+
+void friendMessageCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cMessage, uint16_t length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendMessage:friendNumber:)]) {
+        [tox.delegate tox:tox friendMessage:message friendNumber:friendNumber];
+    }
+}
+
+void friendActionCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cAction, uint16_t length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSString *action = [[NSString alloc] initWithBytes:cAction length:length encoding:NSUTF8StringEncoding];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendAction:friendNumber:)]) {
+        [tox.delegate tox:tox friendAction:action friendNumber:friendNumber];
+    }
+}
+
+void nameChangeCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cName, uint16_t length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSString *name = [NSString stringWithCString:(const char*)cName encoding:NSUTF8StringEncoding];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendNameUpdate:friendNumber:)]) {
+        [tox.delegate tox:tox friendNameUpdate:name friendNumber:friendNumber];
+    }
+}
+
+void statusMessageCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cStatusMessage, uint16_t length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSString *statusMessage = [NSString stringWithCString:(const char*)cStatusMessage encoding:NSUTF8StringEncoding];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendStatusMessageUpdate:friendNumber:)]) {
+        [tox.delegate tox:tox friendStatusMessageUpdate:statusMessage friendNumber:friendNumber];
+    }
+}
+
+void userStatusCallback(Tox *cTox, int32_t friendNumber, uint8_t cStatus, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    OCTToxUserStatus status = OCTToxUserStatusNone;
+
+    switch(cStatus) {
+        case TOX_USERSTATUS_NONE:
+            status = OCTToxUserStatusNone;
+            break;
+        case TOX_USERSTATUS_AWAY:
+            status = OCTToxUserStatusAway;
+            break;
+        case TOX_USERSTATUS_BUSY:
+            status = OCTToxUserStatusBusy;
+            break;
+        case TOX_USERSTATUS_INVALID:
+            status = OCTToxUserStatusInvalid;
+            break;
+    }
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
+        [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
+    }
+}
+
+void typingChangeCallback(Tox *cTox, int32_t friendNumber, uint8_t isTyping, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendIsTypingUpdate:friendNumber:)]) {
+        [tox.delegate tox:tox friendIsTypingUpdate:isTyping friendNumber:friendNumber];
+    }
+}
+
+void readReceiptCallback(Tox *cTox, int32_t friendNumber, uint32_t receipt, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    if ([tox.delegate respondsToSelector:@selector(tox:messageDelivered:friendNumber:)]) {
+        [tox.delegate tox:tox messageDelivered:receipt friendNumber:friendNumber];
+    }
+}
+
+void connectionStatusCallback(Tox *cTox, int32_t friendNumber, uint8_t cStatus, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    OCTToxConnectionStatus status = OCTToxConnectionStatusUnknown;
+
+    if (cStatus == 0) {
+        status = OCTToxConnectionStatusOffline;
+    }
+    else if (cStatus == 1) {
+        status = OCTToxConnectionStatusOnline;
+    }
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
+        [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
+    }
+}
+
+void avatarInfoCallback(Tox *cTox, int32_t friendNumber, uint8_t format, uint8_t *cHash, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendAvatarHashUpdate:friendNumber:)]) {
+        [tox.delegate tox:tox friendAvatarHashUpdate:hash friendNumber:friendNumber];
+    }
+}
+
+void avatarDataCallback(Tox *cTox,
+        int32_t friendNumber,
+        uint8_t format,
+        uint8_t *cHash,
+        uint8_t *cData,
+        uint32_t datalen,
+        void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
+    NSData *data = [NSData dataWithBytes:cData length:datalen];
+
+    if ([tox.delegate respondsToSelector:@selector(tox:friendAvatarUpdate:hash:friendNumber:)]) {
+        [tox.delegate tox:tox friendAvatarUpdate:data hash:hash friendNumber:friendNumber];
+    }
+}
+

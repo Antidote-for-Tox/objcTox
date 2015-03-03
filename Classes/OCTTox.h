@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OCTToxDelegate.h"
 #import "OCTToxOptions.h"
 #import "OCTToxConstants.h"
 
@@ -25,6 +26,8 @@ extern const NSUInteger kOCTToxAddressLength;
 extern const NSUInteger kOCTToxPublicKeyLength;
 
 @interface OCTTox : NSObject
+
+@property (weak, nonatomic) id<OCTToxDelegate> delegate;
 
 /**
  * Indicates if we are connected to the DHT.
@@ -320,12 +323,12 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  * before setting and announcing a new one, forcing the peers to re-download it.
  *
  * @param data Avatar data. Data should be <= that length `-getMaximumDataLengthForType:` with
- * OCTToxDataLengthTypeAvatar type. You can pass nil to remove avatar.
+ * OCTToxDataLengthTypeAvatar type. You can pass nil to remove avatar. Avatar should be PNG representation of image.
  *
  * @return YES on success, otherwise NO.
  *
- * @warning Data should be <= that length `-maximumDataLengthForType:` with
- * OCTToxDataLengthTypeAvatar type.
+ * @warning Data should be <= that length `-maximumDataLengthForType:` with OCTToxDataLengthTypeAvatar type.
+ * @warning Avatar should be PNG representation of image
  */
 - (BOOL)setAvatar:(NSData *)data;
 

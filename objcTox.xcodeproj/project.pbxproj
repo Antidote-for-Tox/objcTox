@@ -44,6 +44,7 @@
 		11EDD4821AA52145003A0823 /* OCTToxConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxConstants.h; sourceTree = "<group>"; };
 		11EDD4831AA52185003A0823 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
 		11EDD4841AA52185003A0823 /* OCTToxOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxOptions.m; sourceTree = "<group>"; };
+		11EDD4861AA65275003A0823 /* OCTToxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxDelegate.h; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +95,7 @@
 			children = (
 				11EDD47F1AA52116003A0823 /* OCTTox.h */,
 				11EDD4801AA52116003A0823 /* OCTTox.m */,
+				11EDD4861AA65275003A0823 /* OCTToxDelegate.h */,
 				11EDD4821AA52145003A0823 /* OCTToxConstants.h */,
 				11EDD4831AA52185003A0823 /* OCTToxOptions.h */,
 				11EDD4841AA52185003A0823 /* OCTToxOptions.m */,
