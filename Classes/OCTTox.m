@@ -45,11 +45,16 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
         return nil;
     }
 
+
     if (options) {
+        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nproxyType %lu\nproxyAddress %@\nproxyPort %d",
+                self, options.IPv6Enabled, options.UDPEnabled, options.proxyType, options.proxyAddress, options.proxyPort);
+
         Tox_Options cOptions = [self cToxOptionsFromOptions:options];
         _tox = tox_new(&cOptions);
     }
     else {
+        DDLogVerbose(@"%@: init without options options", self);
         _tox = tox_new(NULL);
     }
 
@@ -72,6 +77,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 {
     [self stop];
     tox_kill(self.tox);
+
+    DDLogVerbose(@"%@: dealloc called, tox killed", self);
 }
 
 - (OCTToxLoadStatus)loadFromData:(NSData *)data
@@ -80,19 +87,26 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     int result = tox_load(self.tox, (uint8_t *)data.bytes, (uint32_t)data.length);
 
+    DDLogVerbose(@"%@: loading from data of length %lu", self, data.length);
+
     switch(result) {
         case 0:
+            DDLogInfo(@"%@: loaded with success", self);
             return OCTToxLoadStatusSuccess;
         case 1:
+            DDLogWarn(@"%@: cannot load, encrypted save data", self);
             return OCTToxLoadStatusEncryptedSaveData;
         case -1:
         default:
+            DDLogWarn(@"%@: cannot load, bad data", self);
             return OCTToxLoadStatusFailure;
     }
 }
 
 - (NSData *)save
 {
+    DDLogVerbose(@"%@: saving...", self);
+
     uint32_t size = tox_size(self.tox);
     uint8_t *cData = malloc(size);
 
@@ -101,13 +115,18 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     NSData *data = [NSData dataWithBytes:cData length:size];
     free(cData);
 
+    DDLogInfo(@"%@: saved to data with length %lu", self, data.length);
+
     return data;
 }
 
 - (void)start
 {
+    DDLogVerbose(@"%@: start method called", self);
+
     @synchronized(self) {
         if (self.timer) {
+            DDLogWarn(@"%@: already started", self);
             return;
         }
 
@@ -129,18 +148,25 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
         dispatch_resume(self.timer);
     }
+
+    DDLogInfo(@"%@: started", self);
 }
 
 - (void)stop
 {
+    DDLogVerbose(@"%@: stop method called", self);
+
     @synchronized(self) {
         if (! self.timer) {
+            DDLogWarn(@"%@: tox isn't running, nothing to stop", self);
             return;
         }
 
         dispatch_source_cancel(self.timer);
         self.timer = nil;
     }
+
+    DDLogInfo(@"%@: stopped", self);
 }
 
 #pragma mark -  Properties
@@ -167,7 +193,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     free(cAddress);
 
-    DDLogVerbose(@"OCTTox: get address: %@", address);
+    DDLogVerbose(@"%@: get address: %@", self, address);
 
     return address;
 }
@@ -178,6 +204,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 {
     NSParameterAssert(address);
     NSParameterAssert(publicKey);
+
+    DDLogInfo(@"%@: bootstrap with address %@ port %d publicKey %@", self, address, port, publicKey);
 
     const char *cAddress = address.UTF8String;
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
@@ -193,6 +221,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 {
     NSParameterAssert(address);
     NSParameterAssert(publicKey);
+
+    DDLogInfo(@"%@: add TCP relay with address %@ port %d publicKey %@", self, address, port, publicKey);
 
     const char *cAddress = address.UTF8String;
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
@@ -210,7 +240,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     NSParameterAssert(message);
     NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
-    DDLogVerbose(@"OCTTox: add friend with address %@, message %@", address, message);
+    DDLogVerbose(@"%@: add friend with address %@, message %@", self, address, message);
 
     if (! [self checkLengthOfString:message withCheckType:OCTToxCheckLengthTypeFriendRequest]) {
         message = [self cropString:message toFitType:OCTToxCheckLengthTypeFriendRequest];
@@ -225,7 +255,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     free(cAddress);
 
     if (result > -1) {
-        DDLogInfo(@"OCTTox: add friend: success with friend number %d", result);
+        DDLogInfo(@"%@: add friend: success with friend number %d", self, result);
         return result;
     }
 
@@ -285,7 +315,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
         *error = theError;
     }
 
-    DDLogWarn(@"OCTTox: add friend: failure with error %@", theError);
+    DDLogWarn(@"%@: add friend: failure with error %@", self, theError);
 
     return -1;
 }
@@ -295,7 +325,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"OCTTox: add friend with no request and public key %@", publicKey);
+    DDLogVerbose(@"%@: add friend with no request and public key %@", self, publicKey);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -304,10 +334,10 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     free(cPublicKey);
 
     if (result < 0) {
-        DDLogWarn(@"OCTTox: add friend with no request failed with error");
+        DDLogWarn(@"%@: add friend with no request failed with error", self);
     }
     else {
-        DDLogInfo(@"OCTTox: add friend with no request: success with friend number %d", result);
+        DDLogInfo(@"%@: add friend with no request: success with friend number %d", self, result);
     }
 
     return result;
@@ -318,7 +348,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"OCTTox: get friend number with public key %@", publicKey);
+    DDLogVerbose(@"%@: get friend number with public key %@", self, publicKey);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -327,10 +357,10 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     free(cPublicKey);
 
     if (result < 0) {
-        DDLogWarn(@"OCTTox: get friend number with public key failed with error: no such friend");
+        DDLogWarn(@"%@: get friend number with public key failed with error: no such friend", self);
     }
     else {
-        DDLogInfo(@"OCTTox: get friend number with public key success with friend number %d", result);
+        DDLogInfo(@"%@: get friend number with public key success with friend number %d", self, result);
     }
 
     return result;
@@ -338,7 +368,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
 - (NSString *)publicKeyFromFriendNumber:(int32_t)friendNumber
 {
-    DDLogVerbose(@"OCTTox: get public key from friend number %d", friendNumber);
+    DDLogVerbose(@"%@: get public key from friend number %d", self, friendNumber);
 
     uint8_t *cPublicKey = malloc(TOX_CLIENT_ID_SIZE);
     int result = tox_get_client_id(self.tox, friendNumber, cPublicKey);
@@ -350,12 +380,16 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
         free(cPublicKey);
     }
 
+    DDLogInfo(@"%@: public key %@ from friend number %d", self, publicKey, friendNumber);
+
     return publicKey;
 }
 
 - (BOOL)deleteFriendWithFriendNumber:(int32_t)friendNumber
 {
     int result = tox_del_friend(self.tox, friendNumber);
+
+    DDLogVerbose(@"%@: deleting friend with friendNumber %d, result %d", self, friendNumber, (result == 0));
 
     return (result == 0);
 }
@@ -405,6 +439,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     int result = tox_set_name(self.tox, (const uint8_t *)cName, length);
 
+    DDLogInfo(@"%@: set userName to %@, result %d", self, name, (result == 0));
+
     return (result == 0);
 }
 
@@ -453,6 +489,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     int result = tox_set_status_message(self.tox, (const uint8_t *)cStatusMessage, length);
 
+    DDLogInfo(@"%@: set user status message to %@, result %d", self, statusMessage, (result == 0));
+
     return (result == 0);
 }
 
@@ -495,6 +533,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     int result = tox_set_user_status(self.tox, cStatus);
 
+    DDLogInfo(@"%@: set user status to %lu, result %d", self, status, (result == 0));
+
     return (result == 0);
 }
 
@@ -532,6 +572,9 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     uint8_t cIsTyping = isTyping ? 1 : 0;
 
     int result = tox_set_user_is_typing(self.tox, friendNumber, cIsTyping);
+
+    DDLogInfo(@"%@: set user isTyping to %d for friend number %d, result %d",
+            self, isTyping, friendNumber, (result == 0));
 
     return (result == 0);
 }
@@ -575,6 +618,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     free(cList);
 
+    DDLogVerbose(@"%@: friend array %@", self, list);
+
     return [list copy];
 }
 
@@ -590,9 +635,13 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
         const uint8_t *bytes = [data bytes];
 
         result = tox_set_avatar(self.tox, TOX_AVATAR_FORMAT_PNG, bytes, (uint32_t)data.length);
+
+        DDLogInfo(@"%@: set avatar with result %d", self, (result == 0));
     }
     else {
         result = tox_unset_avatar(self.tox);
+
+        DDLogInfo(@"%@: unset avatar with result %d", self, (result == 0));
     }
 
     return (result == 0);
@@ -612,6 +661,8 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
     free(cHash);
 
+    DDLogInfo(@"%@: hash data result %@", self, hash);
+
     return hash;
 }
 
@@ -619,12 +670,16 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 {
     int result = tox_request_avatar_info(self.tox, friendNumber);
 
+    DDLogInfo(@"%@: request avatar hash from friend number %d, result %d", self, friendNumber, result);
+
     return (result == 0);
 }
 
 - (BOOL)requestAvatarDataWithFriendNumber:(int32_t)friendNumber
 {
     int result = tox_request_avatar_data(self.tox, friendNumber);
+
+    DDLogInfo(@"%@: request avatar data from friend number %d, result %d", self, friendNumber, result);
 
     return (result == 0);
 }
@@ -656,10 +711,10 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
                                       isMessage:(BOOL)isMessage
 {
     if (isMessage) {
-        DDLogVerbose(@"OCTTox: send message to friendNumber %d, message %@", friendNumber, messageOrAction);
+        DDLogVerbose(@"%@: send message to friendNumber %d, message %@", self, friendNumber, messageOrAction);
     }
     else {
-        DDLogVerbose(@"OCTTox: send action to friendNumber %d, action %@", friendNumber, messageOrAction);
+        DDLogVerbose(@"%@: send action to friendNumber %d, action %@", self, friendNumber, messageOrAction);
     }
 
     if (! [self checkLengthOfString:messageOrAction withCheckType:OCTToxCheckLengthTypeSendMessage]) {
@@ -673,9 +728,13 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
 
     if (isMessage) {
         result = tox_send_message(self.tox, friendNumber, (uint8_t *)cMessage, length);
+
+        DDLogInfo(@"%@: send message result %d", self, result);
     }
     else {
         result = tox_send_action(self.tox, friendNumber, (uint8_t *)cMessage, length);
+
+        DDLogInfo(@"%@: send action result %d", self, result);
     }
 
     return result;
@@ -805,6 +864,8 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
     NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:TOX_CLIENT_ID_SIZE];
     NSString *message = [[NSString alloc] initWithBytes:cData length:length encoding:NSUTF8StringEncoding];
 
+    DDLogCInfo(@"%@: friendRequestCallback with publicKey %@, message %@", tox, publicKey, message);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendRequestWithMessage:publicKey:)]) {
         [tox.delegate tox:tox friendRequestWithMessage:message publicKey:publicKey];
     }
@@ -815,6 +876,8 @@ void friendMessageCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cMess
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
+
+    DDLogCInfo(@"%@: friendMessageCallback with message %@, friend number %d", tox, message, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendMessage:friendNumber:)]) {
         [tox.delegate tox:tox friendMessage:message friendNumber:friendNumber];
@@ -827,6 +890,8 @@ void friendActionCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cActio
 
     NSString *action = [[NSString alloc] initWithBytes:cAction length:length encoding:NSUTF8StringEncoding];
 
+    DDLogCInfo(@"%@: friendActionCallback with action %@, friend number %d", tox, action, friendNumber);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendAction:friendNumber:)]) {
         [tox.delegate tox:tox friendAction:action friendNumber:friendNumber];
     }
@@ -838,6 +903,8 @@ void nameChangeCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cName, u
 
     NSString *name = [NSString stringWithCString:(const char*)cName encoding:NSUTF8StringEncoding];
 
+    DDLogCInfo(@"%@: nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendNameUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendNameUpdate:name friendNumber:friendNumber];
     }
@@ -848,6 +915,8 @@ void statusMessageCallback(Tox *cTox, int32_t friendNumber, const uint8_t *cStat
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
     NSString *statusMessage = [NSString stringWithCString:(const char*)cStatusMessage encoding:NSUTF8StringEncoding];
+
+    DDLogCInfo(@"%@: statusMessageCallback with status message %@, friend number %d", tox, statusMessage, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendStatusMessageUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendStatusMessageUpdate:statusMessage friendNumber:friendNumber];
@@ -875,6 +944,8 @@ void userStatusCallback(Tox *cTox, int32_t friendNumber, uint8_t cStatus, void *
             break;
     }
 
+    DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, status, friendNumber);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
     }
@@ -884,6 +955,8 @@ void typingChangeCallback(Tox *cTox, int32_t friendNumber, uint8_t isTyping, voi
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
+    DDLogCInfo(@"%@: typingChangeCallback with isTyping %d, friend number %d", tox, isTyping, friendNumber);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendIsTypingUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendIsTypingUpdate:isTyping friendNumber:friendNumber];
     }
@@ -892,6 +965,8 @@ void typingChangeCallback(Tox *cTox, int32_t friendNumber, uint8_t isTyping, voi
 void readReceiptCallback(Tox *cTox, int32_t friendNumber, uint32_t receipt, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
+
+    DDLogCInfo(@"%@: readReceiptCallback with message id %d, friendNumber %d", tox, receipt, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:messageDelivered:friendNumber:)]) {
         [tox.delegate tox:tox messageDelivered:receipt friendNumber:friendNumber];
@@ -911,6 +986,8 @@ void connectionStatusCallback(Tox *cTox, int32_t friendNumber, uint8_t cStatus, 
         status = OCTToxConnectionStatusOnline;
     }
 
+    DDLogCInfo(@"%@: connectionStatusCallback with status %lu, friendNumber %d", tox, status, friendNumber);
+
     if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
         [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
     }
@@ -921,6 +998,8 @@ void avatarInfoCallback(Tox *cTox, int32_t friendNumber, uint8_t format, uint8_t
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
     NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
+
+    DDLogCInfo(@"%@: avatarInfoCallback with hash %@, friendNumber %d", tox, hash, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendAvatarHashUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendAvatarHashUpdate:hash friendNumber:friendNumber];
@@ -939,6 +1018,8 @@ void avatarDataCallback(Tox *cTox,
 
     NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
     NSData *data = [NSData dataWithBytes:cData length:datalen];
+
+    DDLogCInfo(@"%@: avatarDataCallback with hash %@, friendNumber %d", tox, hash, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendAvatarUpdate:hash:friendNumber:)]) {
         [tox.delegate tox:tox friendAvatarUpdate:data hash:hash friendNumber:friendNumber];
