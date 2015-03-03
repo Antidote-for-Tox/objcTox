@@ -615,7 +615,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     return hash;
 }
 
-- (BOOL)requestAvatarInfoWithFriendNumber:(int32_t)friendNumber
+- (BOOL)requestAvatarHashWithFriendNumber:(int32_t)friendNumber
 {
     int result = tox_request_avatar_info(self.tox, friendNumber);
 

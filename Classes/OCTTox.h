@@ -183,7 +183,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  * @param friendNumber Friend number to send a message.
  * @param message Message that would be send.
  *
- * @return The message id if packet was successfully put into the send queue, 0 if it was not.
+ * @return The message id if packet was successfully put into the send queue, 0 if it was not. You can use id later to check if message has been delivered.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
  * OCTToxCheckLengthTypeSendMessage type. If message will be too big it will be cropped to fit the length.
@@ -344,23 +344,21 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  */
 - (NSData *)hashData:(NSData *)data;
 
-#warning Add comment about notification
 /**
  * Request avatar information from a friend.
  * Asks a friend to provide their avatar information (hash). The friend may or may not answer this request and,
- * if answered, the information will be provided through the notification TODO.
+ * if answered, the information will be provided through the delegate method `tox:friendAvatarHashUpdate:friendNumber:`.
  *
  * @param friendNumber Friend number to request avatar info.
  *
  * @return YES on success, otherwise NO.
  */
-- (BOOL)requestAvatarInfoWithFriendNumber:(int32_t)friendNumber;
+- (BOOL)requestAvatarHashWithFriendNumber:(int32_t)friendNumber;
 
-#warning Add comment about notification
 /**
  * Request avatar data from a friend.
  * Ask a friend to send their avatar data. The friend may or may not answer this request and,
- * if answered, the data will be provided through the notification TODO.
+ * if answered, the data will be provided through the delegate method `tox:friendAvatarUpdate:hash:friendNumber:`.
  *
  * @param friendNumber Friend number to request avatar data.
  *
