@@ -70,6 +70,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11AFF79A1AAA6796005423C4 /* ToxWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				11EDD47F1AA52116003A0823 /* OCTTox.h */,
+				11EDD4801AA52116003A0823 /* OCTTox.m */,
+				11EDD4861AA65275003A0823 /* OCTToxDelegate.h */,
+				11EDD4821AA52145003A0823 /* OCTToxConstants.h */,
+				11EDD4831AA52185003A0823 /* OCTToxOptions.h */,
+				11EDD4841AA52185003A0823 /* OCTToxOptions.m */,
+			);
+			path = ToxWrapper;
+			sourceTree = "<group>";
+		};
 		11EDD44C1AA14B3F003A0823 = {
 			isa = PBXGroup;
 			children = (
@@ -93,12 +106,7 @@
 		11EDD4571AA14B3F003A0823 /* objcTox */ = {
 			isa = PBXGroup;
 			children = (
-				11EDD47F1AA52116003A0823 /* OCTTox.h */,
-				11EDD4801AA52116003A0823 /* OCTTox.m */,
-				11EDD4861AA65275003A0823 /* OCTToxDelegate.h */,
-				11EDD4821AA52145003A0823 /* OCTToxConstants.h */,
-				11EDD4831AA52185003A0823 /* OCTToxOptions.h */,
-				11EDD4841AA52185003A0823 /* OCTToxOptions.m */,
+				11AFF79A1AAA6796005423C4 /* ToxWrapper */,
 			);
 			name = objcTox;
 			path = Classes;
