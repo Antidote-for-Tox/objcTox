@@ -13,6 +13,11 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
+NSString *const kOCTToxErrorDomain = @"me.dvor.objcTox.ErrorDomain";
+
+const NSUInteger kOCTToxAddressLength = 2 * TOX_FRIEND_ADDRESS_SIZE;
+const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;
+
 void friendRequestCallback(Tox *cTox, const uint8_t * publicKey, const uint8_t * data, uint16_t length, void *userdata);
 void friendMessageCallback(Tox *cTox, int32_t friendnumber, const uint8_t *message, uint16_t length, void *userdata);
 void friendActionCallback(Tox *cTox, int32_t friendnumber, const uint8_t *action, uint16_t length, void *userdata);

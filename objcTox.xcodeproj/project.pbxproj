@@ -14,6 +14,7 @@
 		11EDD4811AA52116003A0823 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EDD4801AA52116003A0823 /* OCTTox.m */; };
 		11EDD4851AA52185003A0823 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EDD4841AA52185003A0823 /* OCTToxOptions.m */; };
 		C7709841C6DD544C029CB779 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
+		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,8 +55,11 @@
 		11EDD4831AA52185003A0823 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
 		11EDD4841AA52185003A0823 /* OCTToxOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxOptions.m; sourceTree = "<group>"; };
 		11EDD4861AA65275003A0823 /* OCTToxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxDelegate.h; sourceTree = "<group>"; };
+		63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.release.xcconfig"; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,6 +77,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */,
+				D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				A776AFD2CF355249FA2F4487 /* libPods.a */,
+				63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -172,6 +178,8 @@
 			children = (
 				977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */,
 				FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */,
+				D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */,
+				63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -202,9 +210,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 11EDD46C1AA14B3F003A0823 /* Build configuration list for PBXNativeTarget "objcToxTests" */;
 			buildPhases = (
+				10B30DF22A445610E23AEC71 /* Check Pods Manifest.lock */,
 				11EDD45C1AA14B3F003A0823 /* Sources */,
 				11EDD45D1AA14B3F003A0823 /* Frameworks */,
 				11EDD45E1AA14B3F003A0823 /* Resources */,
+				9D98BB31BE70133FFB0D7EFD /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -263,6 +273,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		10B30DF22A445610E23AEC71 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		81D3A563F39E4689521DD477 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -276,6 +301,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9D98BB31BE70133FFB0D7EFD /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DC0CFF9EBD75436989F99831 /* Check Pods Manifest.lock */ = {
@@ -422,6 +462,7 @@
 		};
 		11EDD46D1AA14B3F003A0823 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -439,6 +480,7 @@
 		};
 		11EDD46E1AA14B3F003A0823 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

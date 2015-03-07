@@ -24,6 +24,12 @@
 #define COCOAPODS_VERSION_MINOR_CocoaLumberjack_Extensions 9
 #define COCOAPODS_VERSION_PATCH_CocoaLumberjack_Extensions 2
 
+// OCMock
+#define COCOAPODS_POD_AVAILABLE_OCMock
+#define COCOAPODS_VERSION_MAJOR_OCMock 3
+#define COCOAPODS_VERSION_MINOR_OCMock 1
+#define COCOAPODS_VERSION_PATCH_OCMock 2
+
 // libsodium
 #define COCOAPODS_POD_AVAILABLE_libsodium
 #define COCOAPODS_VERSION_MAJOR_libsodium 1
