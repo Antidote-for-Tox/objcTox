@@ -366,6 +366,18 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  */
 - (BOOL)requestAvatarDataWithFriendNumber:(int32_t)friendNumber;
 
+/**
+ * Send an unrequested avatar information to a friend. Sends our avatar format and hash to a friend; he/she
+ * can use this information to validate an avatar from the cache and may (or not) reply with an avatar
+ * data request.
+ * Notice: it is NOT necessary to send these notification after changing the avatar or connecting. The library already does this.
+ *
+ * @param friendNumber Friend number to send avatar info
+ *
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)sendAvatarInfoToFriendNumber:(int32_t)friendNumber;
+
 #pragma mark -  Helper methods
 
 /**
