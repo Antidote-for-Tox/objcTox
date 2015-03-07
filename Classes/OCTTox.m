@@ -684,6 +684,14 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     return (result == 0);
 }
 
+- (BOOL)sendAvatarInfoToFriendNumber:(int32_t)friendNumber
+{
+    int result = tox_send_avatar_info(self.tox, friendNumber);
+
+    DDLogInfo(@"%@: send avatar info sent to friend number %d, result %d", self, friendNumber, result);
+    return (result == 0);
+}
+
 #pragma mark -  Helper methods
 
 - (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxCheckLengthType)type
