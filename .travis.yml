@@ -1,0 +1,6 @@
+language: objective-c
+before_script:
+    - brew update
+    - brew unlink xctool
+    - brew install xctool
+script: xctool -workspace objcTox.xcworkspace -scheme objcTox -sdk iphonesimulator build
