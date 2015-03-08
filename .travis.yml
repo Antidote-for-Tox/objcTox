@@ -4,3 +4,4 @@ before_script:
     - brew unlink xctool
     - brew install xctool
 script: xctool -workspace objcTox.xcworkspace -scheme objcTox -sdk iphonesimulator build
+script: xctool -workspace objcTox.xcworkspace -scheme objcTox -sdk iphonesimulator test
