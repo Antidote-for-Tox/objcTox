@@ -6,11 +6,13 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import <objc/runtime.h>
+
 #import "OCTManager.h"
 #import "OCTTox.h"
 #import "OCTSubmanagerAvatars.h"
 
-@interface OCTManager()
+@interface OCTManager() <OCTToxDelegate>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
@@ -20,6 +22,8 @@
 @end
 
 @implementation OCTManager
+
+#pragma mark -  Lifecycle
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
 {
@@ -34,8 +38,35 @@
 
     _configuration = [configuration copy];
     _tox = [[OCTTox alloc] initWithOptions:configuration.options];
+    _tox.delegate = self;
+
+    _avatars = [[OCTSubmanagerAvatars alloc] initWithTox:_tox];
 
     return self;
+}
+
+#pragma mark -  Private
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    struct objc_method_description description = protocol_getMethodDescription(@protocol(OCTToxDelegate), aSelector, YES, YES);
+
+    if (description.name == NULL) {
+        // We forward methods only from OCTToxDelegate protocol.
+        return nil;
+    }
+
+    NSArray *submanagers = @[
+        self.avatars,
+    ];
+
+    for (id delegate in submanagers) {
+        if ([delegate respondsToSelector:aSelector]) {
+            return delegate;
+        }
+    }
+
+    return nil;
 }
 
 @end

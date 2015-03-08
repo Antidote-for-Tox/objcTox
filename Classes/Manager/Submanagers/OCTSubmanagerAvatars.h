@@ -9,7 +9,10 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTManagerAvatarsProtocol.h"
+#import "OCTToxDelegate.h"
 
-@interface OCTSubmanagerAvatars : NSObject <OCTManagerAvatarsProtocol>
+@interface OCTSubmanagerAvatars : NSObject <OCTManagerAvatarsProtocol, OCTToxDelegate>
+
+- (instancetype)initWithTox:(OCTTox *)tox;
 
 @end
