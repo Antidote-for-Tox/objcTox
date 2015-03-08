@@ -12,6 +12,14 @@
 
 @interface OCTManager : NSObject
 
+/**
+ * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
+ * change it you have to recreate OCTManager.
+ *
+ * @param configuration Configuration to be used.
+ *
+ * @return Initialized OCTManager.
+ */
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration;
 
 @end
