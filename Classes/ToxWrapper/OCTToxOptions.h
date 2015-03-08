@@ -10,7 +10,7 @@
 
 #import "OCTToxConstants.h"
 
-@interface OCTToxOptions : NSObject
+@interface OCTToxOptions : NSObject <NSCopying>
 
 @property (assign, nonatomic) BOOL IPv6Enabled;
 @property (assign, nonatomic) BOOL UDPEnabled;

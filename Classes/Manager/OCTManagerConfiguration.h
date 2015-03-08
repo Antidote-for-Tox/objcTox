@@ -14,7 +14,7 @@
 /**
  * Configuration for OCTManager.
  */
-@interface OCTManagerConfiguration : NSObject
+@interface OCTManagerConfiguration : NSObject <NSCopying>
 
 /**
  * Settings storage to be used.

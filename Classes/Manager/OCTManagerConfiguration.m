@@ -13,6 +13,8 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
 
 @implementation OCTManagerConfiguration
 
+#pragma mark -  Class methods
+
 + (instancetype)defaultConfiguration
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration new];
@@ -26,6 +28,18 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
     configuration.options.proxyType = OCTToxProxyTypeNone;
     configuration.options.proxyAddress = nil;
     configuration.options.proxyPort = 0;
+
+    return configuration;
+}
+
+#pragma mark -  NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    OCTManagerConfiguration *configuration = [[[self class] allocWithZone:zone] init];
+
+    configuration.settingsStorage = self.settingsStorage;
+    configuration.options = [self.options copy];
 
     return configuration;
 }

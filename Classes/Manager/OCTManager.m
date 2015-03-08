@@ -11,8 +11,8 @@
 
 @interface OCTManager()
 
-@property (strong, nonatomic) OCTTox *tox;
-@property (strong, nonatomic) OCTManagerConfiguration *configuration;
+@property (strong, nonatomic, readonly) OCTTox *tox;
+@property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
 @end
 
@@ -29,7 +29,7 @@
         return nil;
     }
 
-    _configuration = configuration;
+    _configuration = [configuration copy];
     _tox = [[OCTTox alloc] initWithOptions:configuration.options];
 
     return self;
