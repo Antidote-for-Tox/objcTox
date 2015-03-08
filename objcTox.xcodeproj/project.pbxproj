@@ -10,6 +10,7 @@
 		114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */; };
 		114196C61AAC34410079B30A /* OCTManagerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C51AAC34410079B30A /* OCTManagerConfiguration.m */; };
 		114196CB1AAC61C20079B30A /* OCTSubmanagerAvatars.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196CA1AAC61C20079B30A /* OCTSubmanagerAvatars.m */; };
+		114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */; };
 		11AFF79E1AAA689D005423C4 /* OCTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF79D1AAA689D005423C4 /* OCTManager.m */; };
 		11AFF7AB1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF7AA1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
@@ -48,6 +49,7 @@
 		114196C71AAC5F390079B30A /* OCTManagerAvatarsProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerAvatarsProtocol.h; sourceTree = "<group>"; };
 		114196C91AAC61C20079B30A /* OCTSubmanagerAvatars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerAvatars.h; sourceTree = "<group>"; };
 		114196CA1AAC61C20079B30A /* OCTSubmanagerAvatars.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerAvatars.m; sourceTree = "<group>"; };
+		114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerAvatarsTests.m; sourceTree = "<group>"; };
 		11AFF79C1AAA689D005423C4 /* OCTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManager.h; sourceTree = "<group>"; };
 		11AFF79D1AAA689D005423C4 /* OCTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManager.m; sourceTree = "<group>"; };
 		11AFF7A81AAA6A87005423C4 /* OCTSettingsStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageProtocol.h; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 			children = (
 				11EDD4651AA14B3F003A0823 /* Supporting Files */,
 				114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */,
+				114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */,
 			);
 			path = objcToxTests;
 			sourceTree = "<group>";
@@ -373,6 +376,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */,
 				114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
