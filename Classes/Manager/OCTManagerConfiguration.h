@@ -40,6 +40,12 @@
  * This is default configuration for manager. Parameters are follows
  *
  * - settings are stored in NSDictionary in NSUserDefaults for "me.dvor.objcTox.settings" key;
+ *
+ * - downloaded files are stored at "{app document directory}/me.dvor.objcTox/downloads"
+ * - uploaded files are stored at "{app document directory}/me.dvor.objcTox/uploads"
+ * - temporary files are stored at NSTemporaryDirectory()
+ * - avatars are stored at "{app document directory}/me.dvor.objcTox/avatars"
+ *
  * - IPv6 support enabled
  * - UDP support enabled
  * - No proxy is used.

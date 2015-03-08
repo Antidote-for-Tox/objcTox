@@ -8,6 +8,7 @@
 
 #import "OCTManagerConfiguration.h"
 #import "OCTDefaultSettingsStorage.h"
+#import "OCTDefaultFileStorage.h"
 
 static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTox.settings";
 
@@ -22,7 +23,11 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
     configuration.settingsStorage = [[OCTDefaultSettingsStorage alloc]
         initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
 
-    // TODO add default file storage
+    NSString *baseDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    baseDirectory = [baseDirectory stringByAppendingPathComponent:@"me.dvor.objcTox"];
+
+    configuration.fileStorage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:baseDirectory
+                                                                  temporaryDirectory:NSTemporaryDirectory()];
 
     configuration.options = [OCTToxOptions new];
     configuration.options.IPv6Enabled = YES;
