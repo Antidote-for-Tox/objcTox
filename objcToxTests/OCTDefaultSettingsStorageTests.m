@@ -8,33 +8,85 @@
 
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
+
+#import "OCTDefaultSettingsStorage.h"
+
+static NSString *const kDictionaryKey = @"kDictionaryKey";
 
 @interface OCTDefaultSettingsStorageTests : XCTestCase
+
+@property (strong, nonatomic) OCTDefaultSettingsStorage *storage;
 
 @end
 
 @implementation OCTDefaultSettingsStorageTests
 
-- (void)setUp {
+- (void)setUp
+{
+    self.storage = [[OCTDefaultSettingsStorage alloc] initWithUserDefaultsKey:kDictionaryKey];
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+- (void)tearDown
+{
+    self.storage = nil;
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+- (void)testInit
+{
+    XCTAssertNotNil(self.storage, @"Storage should be not nil");
+    XCTAssertEqualObjects(self.storage.userDefaultsKey, kDictionaryKey, @"userDefaultsKey should be set to key specified in init");
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+- (void)testSetObjectForKey
+{
+    NSString *object = @"object";
+    NSString *forKey = @"forKey";
+
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock standardUserDefaults]).andReturn(userDefaultsMock);
+
+    id objectArg = [OCMArg checkWithBlock:^BOOL (id value) {
+        if (! [value isKindOfClass:[NSDictionary class]]) {
+            return NO;
+        }
+
+        NSDictionary *dict = value;
+
+        if (dict.count != 1) {
+            return NO;
+        }
+
+        if (! [dict[forKey] isEqualToString:object]) {
+            return NO;
+        }
+
+        return YES;
     }];
+
+    OCMExpect([userDefaultsMock setObject:objectArg forKey:kDictionaryKey]);
+    OCMExpect([userDefaultsMock synchronize]);
+
+    [self.storage setObject:object forKey:forKey];
+
+    OCMVerifyAll(userDefaultsMock);
+}
+
+- (void)testObjectForKey
+{
+    NSString *object = @"object";
+    NSString *forKey = @"forKey";
+    NSDictionary *dict = @{ forKey : object };
+
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock standardUserDefaults]).andReturn(userDefaultsMock);
+    OCMStub([userDefaultsMock objectForKey:kDictionaryKey]).andReturn(dict);
+
+    id result = [self.storage objectForKey:forKey];
+
+    XCTAssertEqualObjects(result, object);
 }
 
 @end

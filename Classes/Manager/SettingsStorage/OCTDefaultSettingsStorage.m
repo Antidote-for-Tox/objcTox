@@ -8,24 +8,62 @@
 
 #import "OCTDefaultSettingsStorage.h"
 
+@interface OCTDefaultSettingsStorage()
+
+@property (strong, nonatomic, readwrite) NSString *userDefaultsKey;
+
+@end
+
 @implementation OCTDefaultSettingsStorage
 
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithUserDefaultsKey:(NSString *)userDefaultsKey
 {
-    return nil;
+    self = [super init];
+
+    if (! self) {
+        return nil;
+    }
+
+    self.userDefaultsKey = userDefaultsKey;
+
+    return self;
 }
 
 #pragma mark -  OCTSettingsStorageProtocol
 
 - (void)setObject:(id)object forKey:(NSString *)key
 {
+    NSParameterAssert(object);
+    NSParameterAssert(key);
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    NSDictionary *dict = [defaults objectForKey:self.userDefaultsKey];
+    NSMutableDictionary *mutableDict;
+
+    if (dict) {
+        mutableDict = [NSMutableDictionary dictionaryWithDictionary:dict];
+    }
+    else {
+        mutableDict = [NSMutableDictionary new];
+    }
+
+    mutableDict[key] = object;
+
+    [defaults setObject:[mutableDict copy] forKey:self.userDefaultsKey];
+    [defaults synchronize];
 }
 
 - (id)objectForKey:(NSString *)key
 {
-    return nil;
+    NSParameterAssert(key);
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *dict = [defaults objectForKey:self.userDefaultsKey];
+
+    return dict[key];
 }
 
 @end
