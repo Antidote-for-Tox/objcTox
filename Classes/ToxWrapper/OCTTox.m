@@ -59,7 +59,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
         _tox = tox_new(&cOptions);
     }
     else {
-        DDLogVerbose(@"%@: init without options options", self);
+        DDLogVerbose(@"%@: init without options", self);
         _tox = tox_new(NULL);
     }
 

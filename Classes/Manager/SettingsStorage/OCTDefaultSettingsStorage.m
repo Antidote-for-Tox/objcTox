@@ -26,7 +26,7 @@
         return nil;
     }
 
-    self.userDefaultsKey = userDefaultsKey;
+    _userDefaultsKey = userDefaultsKey;
 
     return self;
 }
