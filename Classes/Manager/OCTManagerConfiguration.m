@@ -22,6 +22,8 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
     configuration.settingsStorage = [[OCTDefaultSettingsStorage alloc]
         initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
 
+    // TODO add default file storage
+
     configuration.options = [OCTToxOptions new];
     configuration.options.IPv6Enabled = YES;
     configuration.options.UDPEnabled = YES;

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTSettingsStorageProtocol.h"
+#import "OCTFileStorageProtocol.h"
 #import "OCTToxOptions.h"
 
 /**
@@ -22,6 +23,13 @@
  * By default OCTDefaultSettingsStorage will be used.
  */
 @property (strong, nonatomic) id<OCTSettingsStorageProtocol> settingsStorage;
+
+/**
+ * File storage to be used.
+ *
+ * By default OCTDefaultFileStorage will be used.
+ */
+@property (strong, nonatomic) id<OCTFileStorageProtocol> fileStorage;
 
 /**
  * Options for tox to use.

@@ -10,10 +10,12 @@
 
 @class OCTTox;
 @protocol OCTSettingsStorageProtocol;
+@protocol OCTFileStorageProtocol;
 
 @protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;
+- (id<OCTFileStorageProtocol>)managerGetFileStorage;
 
 @end

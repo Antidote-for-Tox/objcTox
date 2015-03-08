@@ -27,16 +27,16 @@
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
 {
-    NSParameterAssert(configuration.settingsStorage);
-    NSParameterAssert(configuration.options);
-
     self = [super init];
 
     if (! self) {
         return nil;
     }
 
+    [self validateConfiguration:configuration];
+
     _configuration = [configuration copy];
+
     _tox = [[OCTTox alloc] initWithOptions:configuration.options];
     _tox.delegate = self;
 
@@ -59,7 +59,25 @@
     return self.configuration.settingsStorage;
 }
 
+- (id<OCTFileStorageProtocol>)managerGetFileStorage
+{
+    return self.configuration.fileStorage;
+}
+
 #pragma mark -  Private
+
+- (void)validateConfiguration:(OCTManagerConfiguration *)configuration
+{
+    NSParameterAssert(configuration.settingsStorage);
+
+    NSParameterAssert(configuration.fileStorage);
+    NSParameterAssert(configuration.fileStorage.pathForDownloadedFilesDirectory);
+    NSParameterAssert(configuration.fileStorage.pathForUploadedFilesDirectory);
+    NSParameterAssert(configuration.fileStorage.pathForTemporaryFilesDirectory);
+    NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
+
+    NSParameterAssert(configuration.options);
+}
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
