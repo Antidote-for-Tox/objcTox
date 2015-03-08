@@ -8,11 +8,14 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTSubmanagerAvatars.h"
 
 @interface OCTManager()
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
+
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 
 @end
 

@@ -9,8 +9,14 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTManagerConfiguration.h"
+#import "OCTManagerAvatarsProtocol.h"
 
 @interface OCTManager : NSObject
+
+/**
+ * Submanager with all user avatar methods.
+ */
+@property (strong, nonatomic, readonly) id<OCTManagerAvatarsProtocol> avatars;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
