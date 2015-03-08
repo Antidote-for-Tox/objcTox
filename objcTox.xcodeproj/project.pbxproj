@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */; };
+		114196C61AAC34410079B30A /* OCTManagerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C51AAC34410079B30A /* OCTManagerConfiguration.m */; };
 		11AFF79E1AAA689D005423C4 /* OCTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF79D1AAA689D005423C4 /* OCTManager.m */; };
 		11AFF7AB1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF7AA1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
@@ -41,6 +42,8 @@
 
 /* Begin PBXFileReference section */
 		114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultSettingsStorageTests.m; sourceTree = "<group>"; };
+		114196C41AAC34410079B30A /* OCTManagerConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerConfiguration.h; sourceTree = "<group>"; };
+		114196C51AAC34410079B30A /* OCTManagerConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerConfiguration.m; sourceTree = "<group>"; };
 		11AFF79C1AAA689D005423C4 /* OCTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManager.h; sourceTree = "<group>"; };
 		11AFF79D1AAA689D005423C4 /* OCTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManager.m; sourceTree = "<group>"; };
 		11AFF7A81AAA6A87005423C4 /* OCTSettingsStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageProtocol.h; sourceTree = "<group>"; };
@@ -103,6 +106,8 @@
 				11AFF79F1AAA6922005423C4 /* SettingsStorage */,
 				11AFF79C1AAA689D005423C4 /* OCTManager.h */,
 				11AFF79D1AAA689D005423C4 /* OCTManager.m */,
+				114196C41AAC34410079B30A /* OCTManagerConfiguration.h */,
+				114196C51AAC34410079B30A /* OCTManagerConfiguration.m */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -344,6 +349,7 @@
 				11EDD4811AA52116003A0823 /* OCTTox.m in Sources */,
 				11EDD4851AA52185003A0823 /* OCTToxOptions.m in Sources */,
 				11AFF7AB1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m in Sources */,
+				114196C61AAC34410079B30A /* OCTManagerConfiguration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

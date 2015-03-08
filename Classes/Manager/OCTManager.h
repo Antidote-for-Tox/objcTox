@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OCTManagerConfiguration.h"
+
 @interface OCTManager : NSObject
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration;
 
 @end
