@@ -10,26 +10,9 @@
 
 @interface OCTSubmanagerAvatars()
 
-@property (weak, nonatomic, readonly) OCTTox *tox;
-
 @end
 
 @implementation OCTSubmanagerAvatars
-
-#pragma mark -  Lifecycle
-
-- (instancetype)initWithTox:(OCTTox *)tox
-{
-    self = [super init];
-
-    if (! self) {
-        return nil;
-    }
-
-    _tox = tox;
-
-    return self;
-}
 
 #pragma mark -  OCTManagerAvatarsProtocol
 

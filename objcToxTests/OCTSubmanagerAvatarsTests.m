@@ -37,13 +37,4 @@
     [super tearDown];
 }
 
-- (void)testInit
-{
-    id fakeTox = [OCMArg any];
-
-    OCTSubmanagerAvatars *avatars = [[OCTSubmanagerAvatars alloc] initWithTox:fakeTox];
-
-    XCTAssertEqualObjects(avatars.tox, fakeTox);
-}
-
 @end

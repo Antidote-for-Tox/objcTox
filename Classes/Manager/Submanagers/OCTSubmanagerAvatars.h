@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OCTSubmanagerDataSource.h"
 #import "OCTManagerAvatarsProtocol.h"
 #import "OCTToxDelegate.h"
 
 @interface OCTSubmanagerAvatars : NSObject <OCTManagerAvatarsProtocol, OCTToxDelegate>
 
-- (instancetype)initWithTox:(OCTTox *)tox;
+@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 @end

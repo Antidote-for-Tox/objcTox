@@ -12,7 +12,7 @@
 #import "OCTTox.h"
 #import "OCTSubmanagerAvatars.h"
 
-@interface OCTManager() <OCTToxDelegate>
+@interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
@@ -40,9 +40,23 @@
     _tox = [[OCTTox alloc] initWithOptions:configuration.options];
     _tox.delegate = self;
 
-    _avatars = [[OCTSubmanagerAvatars alloc] initWithTox:_tox];
+    OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
+    avatars.dataSource = self;
+    _avatars = avatars;
 
     return self;
+}
+
+#pragma mark -  OCTSubmanagerDataSource
+
+- (OCTTox *)managerGetTox
+{
+    return self.tox;
+}
+
+- (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage
+{
+    return self.configuration.settingsStorage;
 }
 
 #pragma mark -  Private
