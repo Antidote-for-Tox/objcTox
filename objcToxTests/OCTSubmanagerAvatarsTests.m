@@ -11,15 +11,13 @@
 #import <OCMock/OCMock.h>
 
 #import "OCTSubmanagerAvatars.h"
+#import "OCTFileStorageProtocol.h"
 
-@interface OCTSubmanagerAvatars(Tests)
-
-@property OCTTox *tox;
-
-@end
-
+static NSString *const filePath = @"path/For/Avatars/Directory/user_avatar";
 
 @interface OCTSubmanagerAvatarsTests : XCTestCase
+
+@property (strong, nonatomic) OCTSubmanagerAvatars *subManagerAvatar;
 
 @end
 
@@ -27,6 +25,13 @@
 
 - (void)setUp
 {
+    self.subManagerAvatar = [[OCTSubmanagerAvatars alloc] init];
+    self.subManagerAvatar.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
+
+    id fileStorageMock = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
+    OCMStub([fileStorageMock pathForAvatarsDirectory]).andReturn(filePath);
+    OCMStub([self.subManagerAvatar.dataSource managerGetFileStorage]).andReturn(fileStorageMock);
+
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
@@ -34,7 +39,23 @@
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    self.subManagerAvatar = nil;
     [super tearDown];
+}
+
+- (void)testSetAvatar
+{
+    id mockFileManager = OCMClassMock([NSFileManager class]);
+    OCMStub([mockFileManager defaultManager]).andReturn(mockFileManager);
+    OCMStub([mockFileManager fileExistsAtPath:[OCMArg isNotNil]]).andReturn(YES);
+
+    [self.subManagerAvatar setAvatar:nil];
+    OCMVerify([mockFileManager removeItemAtPath:[OCMArg isNotNil] error:nil]);
+}
+
+- (void)testHasAvatar
+{
+    XCTAssertFalse([self.subManagerAvatar hasAvatar]);
 }
 
 @end
