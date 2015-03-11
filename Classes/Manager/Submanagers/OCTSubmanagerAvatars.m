@@ -10,7 +10,7 @@
 #import "OCTFileStorageProtocol.h"
 #import "OCTTox.h"
 
-static NSString *const userAvatarFileName = @"user_avatar";
+static NSString *const kuserAvatarFileName = @"user_avatar";
 
 @interface OCTSubmanagerAvatars()
 
@@ -23,11 +23,12 @@ static NSString *const userAvatarFileName = @"user_avatar";
 - (void)setAvatar:(UIImage *)avatar
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
-    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:userAvatarFileName];
+    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    if ([fileManager fileExistsAtPath:path])
+    if ([fileManager fileExistsAtPath:path]) {
         [fileManager removeItemAtPath:path error:nil];
+    }
 
     OCTTox *tox = [self.dataSource managerGetTox];
     NSData *data = nil;
@@ -47,7 +48,7 @@ static NSString *const userAvatarFileName = @"user_avatar";
 - (UIImage *)avatar
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
-    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:userAvatarFileName];
+    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if ([fileManager fileExistsAtPath:path]) {
@@ -61,7 +62,7 @@ static NSString *const userAvatarFileName = @"user_avatar";
 - (BOOL)hasAvatar
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
-    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:userAvatarFileName];
+    NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     return ([fileManager fileExistsAtPath:path]);
