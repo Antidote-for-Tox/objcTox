@@ -9,3 +9,8 @@ Under development, nothing to see here yet.
 ## Author
 
 Dmytro Vorobiov, d@dvor.me
+
+## License
+
+objcTox is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+
