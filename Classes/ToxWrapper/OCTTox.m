@@ -29,6 +29,7 @@ void readReceiptCallback(Tox *cTox, int32_t friendnumber, uint32_t receipt, void
 void connectionStatusCallback(Tox *cTox, int32_t friendnumber, uint8_t status, void *userdata);
 void avatarInfoCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, void *userdata);
 void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, uint8_t *data, uint32_t datalen, void *userdata);
+void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber, uint64_t filesize, const uint8_t *filename, uint16_t filename_length, void *userdata);
 
 @interface OCTTox()
 
@@ -74,6 +75,7 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     tox_callback_connection_status (_tox,  connectionStatusCallback,  (__bridge void *)self);
     tox_callback_avatar_info       (_tox,  avatarInfoCallback,        (__bridge void *)self);
     tox_callback_avatar_data       (_tox,  avatarDataCallback,        (__bridge void *)self);
+    tox_callback_file_send_request (_tox,  fileSendRequestCallback,   (__bridge void *)self);
 
     return self;
 }
@@ -697,6 +699,20 @@ void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t
     return (result == 0);
 }
 
+- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName
+{
+    const char *cfileName = [fileName cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t filename_length = [fileName lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    
+    uint64_t fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fileName error:nil] fileSize];
+    
+    int result = tox_new_file_sender(self.tox, friendNumber, fileSize, (const uint8_t *)cfileName, filename_length);
+    
+    DDLogInfo(@"%@: send a file send request to friend number %d, result %d", self, friendNumber, result);
+    
+    return result;
+}
+
 #pragma mark -  Helper methods
 
 - (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxCheckLengthType)type
@@ -1036,6 +1052,21 @@ void avatarDataCallback(Tox *cTox,
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendAvatarUpdate:hash:friendNumber:)]) {
         [tox.delegate tox:tox friendAvatarUpdate:data hash:hash friendNumber:friendNumber];
+    }
+}
+
+void fileSendRequestCallback(Tox *cTox, int32_t friendNumber, uint8_t filenumber, uint64_t filesize, const uint8_t *filename, uint16_t filename_length, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+    
+    NSString *fileName = [[NSString alloc] initWithBytes:filename
+                                                  length:filename_length
+                                                encoding:NSUTF8StringEncoding];
+
+    DDLogCInfo(@"%@: fileSendRequestCallback with fileName %@, friendNumber %d", tox, fileName, friendNumber);
+    
+    if ([tox.delegate respondsToSelector:@selector(tox:fileSendRequestWithFileName:friendNumber:)]) {
+        [tox.delegate tox:tox fileSendRequestWithFileName:fileName friendNumber:friendNumber];
     }
 }
 

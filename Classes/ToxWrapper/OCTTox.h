@@ -378,6 +378,16 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  */
 - (BOOL)sendAvatarInfoToFriendNumber:(int32_t)friendNumber;
 
+/**
+ * Send a file send request.
+ *
+ * @param friendNumber Friend number to send file
+ * @param fileName Name of file to be sent
+ *
+ * @return file number on success, -1 on failure
+ */
+- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName;
+
 #pragma mark -  Helper methods
 
 /**
