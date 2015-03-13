@@ -69,7 +69,7 @@ static NSInteger kMaxDataLength = 16384;
 - (void)testSetAvatarWithImage
 {
     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
     OCMExpect([self.fileManager createDirectoryAtPath:[path stringByDeletingLastPathComponent]
                           withIntermediateDirectories:YES
                                            attributes:nil
@@ -104,7 +104,30 @@ static NSInteger kMaxDataLength = 16384;
     OCMVerifyAll(self.tox);
 }
 
-- (void)testPNGData
+- (void)testGetAvatar
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+
+    XCTAssertNil([self.subManagerAvatar avatar]);
+}
+
+- (void)testHasAvatarWhenAvatarPresent
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
+    XCTAssertTrue([self.subManagerAvatar hasAvatar]);
+}
+
+- (void)testHasAvatarWhenNoAvatar
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+    XCTAssertFalse([self.subManagerAvatar hasAvatar]);
+}
+
+- (void)testPNGDataFromImage
 {
     NSData *data = [self.subManagerAvatar pngDataFromImage:[self createFakeImage]];
 
