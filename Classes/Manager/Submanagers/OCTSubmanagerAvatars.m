@@ -44,22 +44,32 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
                withIntermediateDirectories:YES
                                 attributes:nil
                                      error:error];
-        success = [data writeToFile:path atomically:NO];
+
+        if (error) {
+            return success;
+        }
+
+        success = [data writeToFile:path
+                            options:NSDataWritingAtomic
+                              error:error];
     }
     
     [tox setAvatar:data];
     return success;
 }
 
-- (UIImage *)avatar
+- (UIImage *)avatarWithError:(NSError **)error
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
     NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if ([fileManager fileExistsAtPath:path]) {
-        NSData *data = [NSData dataWithContentsOfFile:path];
+        NSData *data = [NSData dataWithContentsOfFile:path
+                                      options:NSDataReadingMappedIfSafe
+                                        error:error];
         UIImage *avatar = [UIImage imageWithData:data];
+
         return avatar;
     }
     return nil;

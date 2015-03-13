@@ -78,8 +78,7 @@ static NSInteger kMaxDataLength = 16384;
 
     UIImage *image = [self createFakeImage];
 
-    NSError *error;
-    [self.subManagerAvatar setAvatar:image error:&error];
+    [self.subManagerAvatar setAvatar:image error:nil];
 
     OCMVerifyAll(self.fileManager);
     OCMVerifyAll(self.tox);
@@ -109,7 +108,7 @@ static NSInteger kMaxDataLength = 16384;
     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
 
-    XCTAssertNil([self.subManagerAvatar avatar]);
+    XCTAssertNil([self.subManagerAvatar avatarWithError:nil]);
 }
 
 - (void)testHasAvatarWhenAvatarPresent
