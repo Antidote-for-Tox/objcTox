@@ -383,10 +383,11 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @param friendNumber Friend number to send file
  * @param fileName Name of file to be sent
+ * @param fileSize Size of file to be sent
  *
  * @return file number on success, -1 on failure
  */
-- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName;
+- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
 
 #pragma mark -  Helper methods
 

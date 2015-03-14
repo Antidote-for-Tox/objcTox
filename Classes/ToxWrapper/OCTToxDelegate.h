@@ -105,11 +105,12 @@
 - (void)tox:(OCTTox *)tox friendAvatarUpdate:(NSData *)avatar hash:(NSData *)hash friendNumber:(int32_t)friendNumber;
 
 /**
- * Set the callback for file send requests.
+ * Set the callback for file to be received from friend
  *
- * @param fileName Name of file for sending
+ * @param fileName Name of file to be received from friend
  * @param friendNumber Friend number of appropriate friend.
+ * @param fileSize Size of file
  */
-- (void)tox:(OCTTox *)tox fileSendRequestWithFileName:(NSString *)fileName friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox fileSendRequestWithFileName:(NSString *)fileName friendNumber:(int32_t)friendNumber fileSize:(uint64_t)fileSize;
 
 @end

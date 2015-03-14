@@ -699,14 +699,12 @@ void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber
     return (result == 0);
 }
 
-- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName
+- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize
 {
-    const char *cfileName = [fileName cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t filename_length = [fileName lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    const char *cFileName = [fileName cStringUsingEncoding:NSUTF8StringEncoding];
+    uint16_t cFileNameLength = [fileName lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     
-    uint64_t fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fileName error:nil] fileSize];
-    
-    int result = tox_new_file_sender(self.tox, friendNumber, fileSize, (const uint8_t *)cfileName, filename_length);
+    int result = tox_new_file_sender(self.tox, friendNumber, fileSize, (const uint8_t *)cFileName, cFileNameLength);
     
     DDLogInfo(@"%@: send a file send request to friend number %d, result %d", self, friendNumber, result);
     
@@ -1055,18 +1053,18 @@ void avatarDataCallback(Tox *cTox,
     }
 }
 
-void fileSendRequestCallback(Tox *cTox, int32_t friendNumber, uint8_t filenumber, uint64_t filesize, const uint8_t *filename, uint16_t filename_length, void *userData)
+void fileSendRequestCallback(Tox *cTox, int32_t friendNumber, uint8_t fileNumber, uint64_t fileSize, const uint8_t *cFileName, uint16_t fileNameLength, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
     
-    NSString *fileName = [[NSString alloc] initWithBytes:filename
-                                                  length:filename_length
+    NSString *fileName = [[NSString alloc] initWithBytes:cFileName
+                                                  length:fileNameLength
                                                 encoding:NSUTF8StringEncoding];
 
     DDLogCInfo(@"%@: fileSendRequestCallback with fileName %@, friendNumber %d", tox, fileName, friendNumber);
     
-    if ([tox.delegate respondsToSelector:@selector(tox:fileSendRequestWithFileName:friendNumber:)]) {
-        [tox.delegate tox:tox fileSendRequestWithFileName:fileName friendNumber:friendNumber];
+    if ([tox.delegate respondsToSelector:@selector(tox:fileSendRequestWithFileName:friendNumber:fileSize:)]) {
+        [tox.delegate tox:tox fileSendRequestWithFileName:fileName friendNumber:friendNumber fileSize:fileSize];
     }
 }
 
