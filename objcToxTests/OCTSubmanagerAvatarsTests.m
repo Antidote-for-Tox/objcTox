@@ -69,16 +69,16 @@ static NSInteger kMaxDataLength = 16384;
 - (void)testSetAvatarWithImage
 {
     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
     OCMExpect([self.fileManager createDirectoryAtPath:[path stringByDeletingLastPathComponent]
                           withIntermediateDirectories:YES
                                            attributes:nil
-                                                error:nil]);
+                                                error:[OCMArg anyObjectRef]]);
     OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNotNil]]);
 
     UIImage *image = [self createFakeImage];
 
-    [self.subManagerAvatar setAvatar:image];
+    [self.subManagerAvatar setAvatar:image error:nil];
 
     OCMVerifyAll(self.fileManager);
     OCMVerifyAll(self.tox);
@@ -95,14 +95,38 @@ static NSInteger kMaxDataLength = 16384;
 
     OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNil]]);
 
-    [self.subManagerAvatar setAvatar:nil];
+    NSError *error;
+    [self.subManagerAvatar setAvatar:nil error:&error];
 
     //Verify key objects were called
     OCMVerifyAll(self.fileManager);
     OCMVerifyAll(self.tox);
 }
 
-- (void)testPNGData
+- (void)testGetAvatar
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+
+    XCTAssertNil([self.subManagerAvatar avatarWithError:nil]);
+}
+
+- (void)testHasAvatarWhenAvatarPresent
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
+    XCTAssertTrue([self.subManagerAvatar hasAvatar]);
+}
+
+- (void)testHasAvatarWhenNoAvatar
+{
+    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+
+    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+    XCTAssertFalse([self.subManagerAvatar hasAvatar]);
+}
+
+- (void)testPNGDataFromImage
 {
     NSData *data = [self.subManagerAvatar pngDataFromImage:[self createFakeImage]];
 

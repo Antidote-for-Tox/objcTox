@@ -20,14 +20,19 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 
 #pragma mark -  OCTManagerAvatarsProtocol
 
-- (void)setAvatar:(UIImage *)avatar
+- (BOOL)setAvatar:(UIImage *)avatar error:(NSError **)error;
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
     NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
+    BOOL success = NO;
+
     if ([fileManager fileExistsAtPath:path]) {
-        [fileManager removeItemAtPath:path error:nil];
+        [fileManager removeItemAtPath:path error:error];
+        if (error) {
+            return success;
+        }
     }
 
     OCTTox *tox = [self.dataSource managerGetTox];
@@ -38,22 +43,33 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
         [fileManager createDirectoryAtPath:[path stringByDeletingLastPathComponent]
                withIntermediateDirectories:YES
                                 attributes:nil
-                                     error:nil];
-        [data writeToFile:path atomically:NO];
+                                     error:error];
+
+        if (error) {
+            return success;
+        }
+
+        success = [data writeToFile:path
+                            options:NSDataWritingAtomic
+                              error:error];
     }
     
     [tox setAvatar:data];
+    return success;
 }
 
-- (UIImage *)avatar
+- (UIImage *)avatarWithError:(NSError **)error
 {
     id <OCTFileStorageProtocol> storage = [self.dataSource managerGetFileStorage];
     NSString *path = [storage.pathForAvatarsDirectory stringByAppendingPathComponent:kuserAvatarFileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if ([fileManager fileExistsAtPath:path]) {
-        NSData *data = [NSData dataWithContentsOfFile:path];
+        NSData *data = [NSData dataWithContentsOfFile:path
+                                      options:NSDataReadingMappedIfSafe
+                                        error:error];
         UIImage *avatar = [UIImage imageWithData:data];
+
         return avatar;
     }
     return nil;
