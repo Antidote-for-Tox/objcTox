@@ -9,9 +9,15 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTManagerConfiguration.h"
+#import "OCTManagerFriendsProtocol.h"
 #import "OCTManagerAvatarsProtocol.h"
 
 @interface OCTManager : NSObject
+
+/**
+ * Submanager with all friends methods.
+ */
+@property (strong, nonatomic, readonly) id<OCTManagerFriendsProtocol> friends;
 
 /**
  * Submanager with all user avatar methods.

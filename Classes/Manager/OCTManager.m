@@ -10,6 +10,7 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTSubmanagerFriends.h"
 #import "OCTSubmanagerAvatars.h"
 
 @interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -17,6 +18,7 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 
 @end
@@ -39,6 +41,10 @@
 
     _tox = [[OCTTox alloc] initWithOptions:configuration.options];
     _tox.delegate = self;
+
+    OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
+    friends.dataSource = self;
+    _friends = friends;
 
     OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
     avatars.dataSource = self;
