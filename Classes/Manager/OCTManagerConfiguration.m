@@ -46,6 +46,7 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
     OCTManagerConfiguration *configuration = [[[self class] allocWithZone:zone] init];
 
     configuration.settingsStorage = self.settingsStorage;
+    configuration.fileStorage = self.fileStorage;
     configuration.options = [self.options copy];
 
     return configuration;
