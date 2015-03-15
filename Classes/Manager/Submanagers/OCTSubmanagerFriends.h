@@ -10,8 +10,9 @@
 
 #import "OCTManagerFriendsProtocol.h"
 #import "OCTSubmanagerDataSource.h"
+#import "OCTToxDelegate.h"
 
-@interface OCTSubmanagerFriends : NSObject <OCTManagerFriendsProtocol>
+@interface OCTSubmanagerFriends : NSObject <OCTManagerFriendsProtocol, OCTToxDelegate>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 

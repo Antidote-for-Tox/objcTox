@@ -8,30 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTFriend.h"
-#import "OCTManagerConstants.h"
+#import "OCTFriendsContainerProtocol.h"
 
 @protocol OCTManagerFriendsProtocol <NSObject>
 
 /**
- * The sort to be used for friends.
- *
- * @warning After assigning this property all friends will be resorted, so you'll get different results from methods below.
+ * Container with all friends and friend requests.
  */
-@property (assign, nonatomic) OCTManagerFriendsSort friendsSort;
-
-/**
- * @return Total number of friends.
- */
-- (NSUInteger)friendsCount;
-
-/**
- * Returns friend at specified index.
- *
- * @param index Index to get friend. May be out of bounds, in this case nil will be returned.
- *
- * @return Friend at index. If index is out of bounds nil will be returned.
- */
-- (OCTFriend *)friendAtIndex:(NSUInteger)index;
+@property (strong, nonatomic, readonly) id<OCTFriendsContainerProtocol> container;
 
 @end

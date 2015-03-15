@@ -7,21 +7,26 @@
 //
 
 #import "OCTSubmanagerFriends.h"
+#import "OCTFriendsContainer.h"
+
+@interface OCTSubmanagerFriends()
+
+@end
 
 @implementation OCTSubmanagerFriends
-@synthesize friendsSort;
+@synthesize container = _container;
 
-#pragma mark -  OCTManagerFriendsProtocol
-
-
-- (NSUInteger)friendsCount
+- (instancetype)init
 {
-    return 0;
-}
+    self = [super init];
 
-- (OCTFriend *)friendAtIndex:(NSUInteger)index
-{
-    return nil;
+    if (! self) {
+        return nil;
+    }
+
+    _container = [OCTFriendsContainer new];
+
+    return self;
 }
 
 @end
