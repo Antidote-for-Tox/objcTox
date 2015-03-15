@@ -60,6 +60,8 @@
 		114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorageTests.m; sourceTree = "<group>"; };
 		114196E21AAFAC7A0079B30A /* OCTFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriend.h; sourceTree = "<group>"; };
 		114196E31AAFAC7A0079B30A /* OCTFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriend.m; sourceTree = "<group>"; };
+		1173BDE61AB61FD500E43D75 /* OCTManagerFriendsProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerFriendsProtocol.h; sourceTree = "<group>"; };
+		1173BDE71AB622AD00E43D75 /* OCTManagerConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTManagerConstants.h; sourceTree = "<group>"; };
 		11AFF79C1AAA689D005423C4 /* OCTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManager.h; sourceTree = "<group>"; };
 		11AFF79D1AAA689D005423C4 /* OCTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManager.m; sourceTree = "<group>"; };
 		11AFF7A81AAA6A87005423C4 /* OCTSettingsStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageProtocol.h; sourceTree = "<group>"; };
@@ -157,6 +159,8 @@
 				114196C41AAC34410079B30A /* OCTManagerConfiguration.h */,
 				114196C51AAC34410079B30A /* OCTManagerConfiguration.m */,
 				114196C71AAC5F390079B30A /* OCTManagerAvatarsProtocol.h */,
+				1173BDE61AB61FD500E43D75 /* OCTManagerFriendsProtocol.h */,
+				1173BDE71AB622AD00E43D75 /* OCTManagerConstants.h */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
