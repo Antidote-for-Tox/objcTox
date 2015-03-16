@@ -392,12 +392,12 @@ extern const NSUInteger kOCTToxPublicKeyLength;
 /**
  * TODO : Add info about method
  */
-- (int)fileSendControlWithFriendNumber:(int32_t)friendNumber sendReceive:(uint8_t)sendReceive fileNumber:(uint8_t)fileNumber controlType:(uint8_t)controlType data:(const uint8_t *)data length:(uint16_t)length;
+- (BOOL)fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
 
 /**
  * TODO : Add info about method
  */
-- (int)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(const uint8_t *)data length:(uint16_t)length;
+- (BOOL)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
 
 /**
  * Calculate the recommended/maximum size of the filedata you send
@@ -417,7 +417,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return file number on success, 0 on failure
  */
-- (uint64_t)fileDataRemaininigWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendReceive:(uint8_t)sendReceive;
+- (uint64_t)fileDataRemaininigWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
 
 #pragma mark -  Helper methods
 

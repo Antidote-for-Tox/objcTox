@@ -116,11 +116,11 @@
 /**
  * TODO: Add info about delegate
  */
-- (void)tox:(OCTTox *)tox fileSendControlWithFriendNumber:(int32_t)friendNumber sendReceive:(uint8_t)sendReceive fileNumber:(uint8_t)fileNumber controlType:(uint8_t)controlType data:(const uint8_t *)data length:(uint16_t)length;
+- (void)tox:(OCTTox *)tox fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
 
 /**
  * TODO: Add info about delegate
  */
-- (void)tox:(OCTTox *)tox fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(const uint8_t *)data length:(uint16_t)length;
+- (void)tox:(OCTTox *)tox fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
 
 @end

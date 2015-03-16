@@ -81,3 +81,7 @@ typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
     OCTToxFileControlResumeBroken,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxFileControlType) {
+    OCTToxFileControlTypeSend,
+    OCTToxFileControlTypeReceive,
+};
