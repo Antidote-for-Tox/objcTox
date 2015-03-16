@@ -390,12 +390,27 @@ extern const NSUInteger kOCTToxPublicKeyLength;
 - (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
 
 /**
- * TODO : Add info about method
+ * Send a file control request
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param sendOrReceive is 0 if we want the control packet to target a file we are currently sending, 1 if it targets a file we are
+ * currently receiving.
+ * @param fileNumber Number of file to be sent/received
+ * @param controlType type of file control
+ * @param pointer on data
+ *
+ * @return YES on success, NO on failure
  */
 - (BOOL)fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
 
 /**
- * TODO : Add info about method
+ * Send file data
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param fileNumber Number of file to be sent/received
+ * @param pointer on data
+ *
+ * @return YES on success, NO on failure
  */
 - (BOOL)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
 

@@ -114,12 +114,23 @@
 - (void)tox:(OCTTox *)tox fileSendRequestWithFileName:(NSString *)fileName friendNumber:(int32_t)friendNumber fileSize:(uint64_t)fileSize;
 
 /**
- * TODO: Add info about delegate
+ * Set the callback for accepting or refusig connection while sending or receiving file
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param sendOrReceive is 0 if we want the control packet to target a file we are currently sending, 1 if it targets a file we are
+ * currently receiving.
+ * @param fileNumber Number of file to be sent/received
+ * @param controlType type of file control
+ * @param pointer on data
  */
 - (void)tox:(OCTTox *)tox fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
 
 /**
- * TODO: Add info about delegate
+ * Set the callback for sending file data 
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param fileNumber Number of file to be sent/received
+ * @param pointer on data
  */
 - (void)tox:(OCTTox *)tox fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
 
