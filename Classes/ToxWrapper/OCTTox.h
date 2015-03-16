@@ -389,6 +389,36 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  */
 - (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
 
+/**
+ * TODO : Add info about method
+ */
+- (int)fileSendControlWithFriendNumber:(int32_t)friendNumber sendReceive:(uint8_t)sendReceive fileNumber:(uint8_t)fileNumber controlType:(uint8_t)controlType data:(const uint8_t *)data length:(uint16_t)length;
+
+/**
+ * TODO : Add info about method
+ */
+- (int)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(const uint8_t *)data length:(uint16_t)length;
+
+/**
+ * Calculate the recommended/maximum size of the filedata you send
+ *
+ * @param friendNumber Friend number to send/receive file
+ *
+ * @return recommended/maximum size of the filedata, -1 on failure
+ */
+- (int)fileDataSizeWithFriendNumber:(int32_t)friendNumber;
+
+/**
+ * Get a number of bytes left to be sent or received
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param fileName Name of file to be sent/received
+ * @param sendReceive 0 - for receiving a file, 1 - for sending a file
+ *
+ * @return file number on success, 0 on failure
+ */
+- (uint64_t)fileDataRemaininigWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendReceive:(uint8_t)sendReceive;
+
 #pragma mark -  Helper methods
 
 /**

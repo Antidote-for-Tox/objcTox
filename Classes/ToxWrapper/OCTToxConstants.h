@@ -73,3 +73,11 @@ typedef NS_ENUM(NSUInteger, OCTToxUserStatus) {
     OCTToxUserStatusInvalid,
 };
 
+typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
+    OCTToxFileControlAccept,
+    OCTToxFileControlPause,
+    OCTToxFileControlKill,
+    OCTToxFileControlFinished,
+    OCTToxFileControlResumeBroken,
+};
+

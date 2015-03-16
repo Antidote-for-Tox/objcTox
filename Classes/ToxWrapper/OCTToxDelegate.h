@@ -113,4 +113,14 @@
  */
 - (void)tox:(OCTTox *)tox fileSendRequestWithFileName:(NSString *)fileName friendNumber:(int32_t)friendNumber fileSize:(uint64_t)fileSize;
 
+/**
+ * TODO: Add info about delegate
+ */
+- (void)tox:(OCTTox *)tox fileSendControlWithFriendNumber:(int32_t)friendNumber sendReceive:(uint8_t)sendReceive fileNumber:(uint8_t)fileNumber controlType:(uint8_t)controlType data:(const uint8_t *)data length:(uint16_t)length;
+
+/**
+ * TODO: Add info about delegate
+ */
+- (void)tox:(OCTTox *)tox fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(const uint8_t *)data length:(uint16_t)length;
+
 @end
