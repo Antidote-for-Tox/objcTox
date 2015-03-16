@@ -432,7 +432,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return file number on success, 0 on failure
  */
-- (uint64_t)fileDataRemaininigWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
+- (uint64_t)fileDataRemainingWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
 
 #pragma mark -  Helper methods
 

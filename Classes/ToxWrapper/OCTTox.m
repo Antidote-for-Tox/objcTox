@@ -764,7 +764,7 @@ void fileDataCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber, const
     return size;
 }
 
-- (uint64_t)fileDataRemaininigWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
+- (uint64_t)fileDataRemainingWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
 {
     uint8_t cSendOrReceive = [self typeOfFileControl:sendOrReceive];
     
