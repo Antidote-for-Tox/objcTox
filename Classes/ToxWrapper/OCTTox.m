@@ -1178,7 +1178,7 @@ void fileControlCallback(Tox *cTox, int32_t friendNumber, uint8_t cSendOrReceive
     DDLogCInfo(@"%@: fileControlCallback with friendnumber %d filenumber %d sendReceive %d controlType %d", tox,
                   friendNumber, fileNumber, cSendOrReceive, cControlType);
     
-    if ([tox.delegate respondsToSelector:@selector(tox:fileSendControlWithFriendNumber:sendReceive:fileNumber:controlType:data:)]) {
+    if ([tox.delegate respondsToSelector:@selector(tox:fileSendControlWithFriendNumber:sendOrReceive:fileNumber:controlType:data:)]) {
         [tox.delegate tox:tox fileSendControlWithFriendNumber:friendNumber
                                                 sendOrReceive:sendOrReceive
                                                    fileNumber:fileNumber

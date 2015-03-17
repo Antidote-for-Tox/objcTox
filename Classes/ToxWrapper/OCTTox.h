@@ -393,11 +393,11 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  * Send a file control request
  *
  * @param friendNumber Friend number to send/receive file
- * @param sendOrReceive is 0 if we want the control packet to target a file we are currently sending, 1 if it targets a file we are
- * currently receiving.
+ * @param sendOrReceive Type of action on file. It is OCTToxFileControlTypeSend if we want the control packet to target a file we
+ * are currently sending, OCTToxFileControlTypeReceive - if it targets a file we are currently receiving.
  * @param fileNumber Number of file to be sent/received
- * @param controlType type of file control
- * @param pointer on data
+ * @param controlType Type of file control
+ * @param data Pointer on data
  *
  * @return YES on success, NO on failure
  */
@@ -408,7 +408,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @param friendNumber Friend number to send/receive file
  * @param fileNumber Number of file to be sent/received
- * @param pointer on data
+ * @param data Pointer on data
  *
  * @return YES on success, NO on failure
  */
@@ -428,7 +428,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @param friendNumber Friend number to send/receive file
  * @param fileName Name of file to be sent/received
- * @param sendReceive 0 - for receiving a file, 1 - for sending a file
+ * @param sendOrReceive OCTToxFileControlTypeSend - for sending a file, OCTToxFileControlTypeReceive - for receiving a file
  *
  * @return file number on success, 0 on failure
  */
