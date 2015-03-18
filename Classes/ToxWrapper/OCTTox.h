@@ -389,6 +389,51 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  */
 - (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
 
+/**
+ * Send a file control request
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param sendOrReceive Type of action on file. It is OCTToxFileControlTypeSend if we want the control packet to target a file we
+ * are currently sending, OCTToxFileControlTypeReceive - if it targets a file we are currently receiving.
+ * @param fileNumber Number of file to be sent/received
+ * @param controlType Type of file control
+ * @param data Pointer on data
+ *
+ * @return YES on success, NO on failure
+ */
+- (BOOL)fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
+
+/**
+ * Send file data
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param fileNumber Number of file to be sent/received
+ * @param data Pointer on data
+ *
+ * @return YES on success, NO on failure
+ */
+- (BOOL)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
+
+/**
+ * Calculate the recommended/maximum size of the filedata you send
+ *
+ * @param friendNumber Friend number to send/receive file
+ *
+ * @return recommended/maximum size of the filedata, -1 on failure
+ */
+- (int)fileDataSizeWithFriendNumber:(int32_t)friendNumber;
+
+/**
+ * Get a number of bytes left to be sent or received
+ *
+ * @param friendNumber Friend number to send/receive file
+ * @param fileName Name of file to be sent/received
+ * @param sendOrReceive OCTToxFileControlTypeSend - for sending a file, OCTToxFileControlTypeReceive - for receiving a file
+ *
+ * @return file number on success, 0 on failure
+ */
+- (uint64_t)fileDataRemainingWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
+
 #pragma mark -  Helper methods
 
 /**

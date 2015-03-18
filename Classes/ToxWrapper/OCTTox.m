@@ -30,6 +30,8 @@ void connectionStatusCallback(Tox *cTox, int32_t friendnumber, uint8_t status, v
 void avatarInfoCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, void *userdata);
 void avatarDataCallback(Tox *cTox, int32_t friendnumber, uint8_t format, uint8_t *hash, uint8_t *data, uint32_t datalen, void *userdata);
 void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber, uint64_t filesize, const uint8_t *filename, uint16_t filename_length, void *userdata);
+void fileControlCallback(Tox *tox, int32_t friendnumber, uint8_t receive_send, uint8_t filenumber, uint8_t control_type, const uint8_t *data, uint16_t length, void *userdata);
+void fileDataCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber, const uint8_t *data, uint16_t length, void *userdata);
 
 @interface OCTTox()
 
@@ -76,7 +78,9 @@ void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber
     tox_callback_avatar_info       (_tox,  avatarInfoCallback,        (__bridge void *)self);
     tox_callback_avatar_data       (_tox,  avatarDataCallback,        (__bridge void *)self);
     tox_callback_file_send_request (_tox,  fileSendRequestCallback,   (__bridge void *)self);
-
+    tox_callback_file_control      (_tox,  fileControlCallback,       (__bridge void *)self);
+    tox_callback_file_data         (_tox,  fileDataCallback,          (__bridge void *)self);
+    
     return self;
 }
 
@@ -711,6 +715,64 @@ void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber
     return result;
 }
 
+- (BOOL)fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
+{
+    uint8_t cSendOrReceive = [self typeOfFileControl:sendOrReceive];
+    const uint8_t *cData = (const uint8_t *)[data bytes];
+    uint16_t cLength = (uint16_t)[data length];
+    uint8_t cControlType = TOX_FILECONTROL_ACCEPT;
+    
+    switch (controlType) {
+        case OCTToxFileControlAccept:
+            cControlType = TOX_FILECONTROL_ACCEPT;
+            break;
+        case OCTToxFileControlFinished:
+            cControlType = TOX_FILECONTROL_FINISHED;
+            break;
+        case OCTToxFileControlKill:
+            cControlType = TOX_FILECONTROL_KILL;
+            break;
+        case OCTToxFileControlPause:
+            cControlType = TOX_FILECONTROL_PAUSE;
+            break;
+        case OCTToxFileControlResumeBroken:
+            cControlType = TOX_FILECONTROL_RESUME_BROKEN;
+            break;
+        default:
+            break;
+    }
+    
+    int result = tox_file_send_control(self.tox, friendNumber, cSendOrReceive, fileNumber, cControlType, cData, cLength);
+    
+    return (result == 0);
+}
+
+- (BOOL)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
+{
+    const uint8_t *cData = (const uint8_t *)[data bytes];
+    uint16_t cLength = (uint16_t)[data length];
+    
+    int result = tox_file_send_data(self.tox, friendNumber, fileNumber, cData, cLength);
+    
+    return (result == 0);
+}
+
+- (int)fileDataSizeWithFriendNumber:(int32_t)friendNumber
+{
+    int size = tox_file_data_size(self.tox, friendNumber);
+    
+    return size;
+}
+
+- (uint64_t)fileDataRemainingWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
+{
+    uint8_t cSendOrReceive = [self typeOfFileControl:sendOrReceive];
+    
+    uint64_t dataRemaining = tox_file_data_remaining(self.tox, friendNumber, fileNumber, cSendOrReceive);
+    
+    return dataRemaining;
+}
+
 #pragma mark -  Helper methods
 
 - (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxCheckLengthType)type
@@ -878,6 +940,16 @@ void fileSendRequestCallback(Tox *cTox, int32_t friendnumber, uint8_t filenumber
     }
 
     return string;
+}
+
+- (uint8_t)typeOfFileControl:(OCTToxFileControlType)type
+{
+    switch (type) {
+        case OCTToxFileControlTypeSend:
+            return 0;
+        case OCTToxFileControlTypeReceive:
+            return 1;
+    }
 }
 
 @end
@@ -1065,6 +1137,67 @@ void fileSendRequestCallback(Tox *cTox, int32_t friendNumber, uint8_t fileNumber
     
     if ([tox.delegate respondsToSelector:@selector(tox:fileSendRequestWithFileName:friendNumber:fileSize:)]) {
         [tox.delegate tox:tox fileSendRequestWithFileName:fileName friendNumber:friendNumber fileSize:fileSize];
+    }
+}
+
+
+void fileControlCallback(Tox *cTox, int32_t friendNumber, uint8_t cSendOrReceive, uint8_t fileNumber, uint8_t cControlType, const uint8_t *cData, uint16_t cLength, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+    NSData *data = [[NSData alloc] initWithBytes:cData length:cLength];
+    OCTToxFileControl controlType = OCTToxFileControlAccept;
+    OCTToxFileControlType sendOrReceive = OCTToxFileControlTypeSend;
+    
+    if (cSendOrReceive == 0) {
+        sendOrReceive = OCTToxFileControlTypeSend;
+    }
+    else if (cSendOrReceive == 1) {
+        sendOrReceive= OCTToxFileControlTypeReceive;
+    }
+    
+    switch (cControlType) {
+        case TOX_FILECONTROL_ACCEPT:
+            controlType = OCTToxFileControlAccept;
+            break;
+        case TOX_FILECONTROL_FINISHED:
+            controlType = OCTToxFileControlFinished;
+            break;
+        case TOX_FILECONTROL_KILL:
+            controlType = OCTToxFileControlKill;
+            break;
+        case TOX_FILECONTROL_PAUSE:
+            controlType = OCTToxFileControlPause;
+            break;
+        case TOX_FILECONTROL_RESUME_BROKEN:
+            controlType = OCTToxFileControlResumeBroken;
+            break;
+        default:
+            break;
+    }
+    
+    DDLogCInfo(@"%@: fileControlCallback with friendnumber %d filenumber %d sendReceive %d controlType %d", tox,
+                  friendNumber, fileNumber, cSendOrReceive, cControlType);
+    
+    if ([tox.delegate respondsToSelector:@selector(tox:fileSendControlWithFriendNumber:sendOrReceive:fileNumber:controlType:data:)]) {
+        [tox.delegate tox:tox fileSendControlWithFriendNumber:friendNumber
+                                                sendOrReceive:sendOrReceive
+                                                   fileNumber:fileNumber
+                                                  controlType:controlType
+                                                         data:data];
+    }
+}
+
+void fileDataCallback(Tox *cTox, int32_t friendNumber, uint8_t fileNumber, const uint8_t *cData, uint16_t cLength, void *userData)
+{
+    OCTTox *tox = (__bridge OCTTox *)(userData);
+    NSData *data = [[NSData alloc] initWithBytes:cData length:cLength];
+    
+    DDLogCInfo(@"%@: fileDataCallback with friendnumber %d filenumber %d", tox, friendNumber, fileNumber);
+    
+    if ([tox.delegate respondsToSelector:@selector(tox:fileSendDataWithFriendNumber:fileNumber:data:)]) {
+        [tox.delegate tox:tox fileSendDataWithFriendNumber:friendNumber
+                                                fileNumber:fileNumber
+                                                      data:data];
     }
 }
 
