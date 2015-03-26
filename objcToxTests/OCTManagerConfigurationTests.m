@@ -42,7 +42,7 @@
     configuration.options.IPv6Enabled = YES;
     configuration.options.UDPEnabled = YES;
     configuration.options.proxyType = OCTToxProxyTypeHTTP;
-    configuration.options.proxyAddress = @"proxy.address";
+    configuration.options.proxyHost = @"proxy.address";
     configuration.options.proxyPort = 999;
 
     OCTManagerConfiguration *c2 = [configuration copy];
@@ -53,7 +53,7 @@
     XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);
     XCTAssertEqual(configuration.options.UDPEnabled, c2.options.UDPEnabled);
     XCTAssertEqual(configuration.options.proxyType, c2.options.proxyType);
-    XCTAssertEqualObjects(configuration.options.proxyAddress, c2.options.proxyAddress);
+    XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
     XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
 }
 

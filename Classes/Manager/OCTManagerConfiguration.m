@@ -32,8 +32,10 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
     configuration.options = [OCTToxOptions new];
     configuration.options.IPv6Enabled = YES;
     configuration.options.UDPEnabled = YES;
+    configuration.options.startPort = 0;
+    configuration.options.endPort = 0;
     configuration.options.proxyType = OCTToxProxyTypeNone;
-    configuration.options.proxyAddress = nil;
+    configuration.options.proxyHost = nil;
     configuration.options.proxyPort = 0;
 
     return configuration;

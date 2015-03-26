@@ -39,7 +39,7 @@
 
     _configuration = [configuration copy];
 
-    _tox = [[OCTTox alloc] initWithOptions:configuration.options];
+    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:nil error:nil];
     _tox.delegate = self;
 
     OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];

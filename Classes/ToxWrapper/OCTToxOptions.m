@@ -17,8 +17,11 @@
     options.IPv6Enabled = self.IPv6Enabled;
     options.UDPEnabled = self.UDPEnabled;
 
+    options.startPort = self.startPort;
+    options.endPort = self.endPort;
+
     options.proxyType = self.proxyType;
-    options.proxyAddress = [self.proxyAddress copy];
+    options.proxyHost = [self.proxyHost copy];
     options.proxyPort = self.proxyPort;
 
     return options;

@@ -16,6 +16,13 @@
 @optional
 
 /**
+ * User connection status changed.
+ *
+ * @param connectionStatus New connection status of the user.
+ */
+- (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)connectionStatus;
+
+/**
  * Received friend request from a new friend.
  *
  * @param message Message sent with request>
@@ -29,7 +36,7 @@
  * @param message Received message.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(int32_t)friendNumber;
 
 /**
  * Action received from a friend.

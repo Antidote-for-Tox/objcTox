@@ -12,19 +12,6 @@
 #import "OCTToxOptions.h"
 #import "OCTToxConstants.h"
 
-extern NSString *const kOCTToxErrorDomain;
-
-/**
- * Length of address. Address is hex string, has following format:
- * [public_key (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
- */
-extern const NSUInteger kOCTToxAddressLength;
-
-/**
- * Length of public key. It is hex string, 32 bytes, 64 characters.
- */
-extern const NSUInteger kOCTToxPublicKeyLength;
-
 @interface OCTTox : NSObject
 
 @property (weak, nonatomic) id<OCTToxDelegate> delegate;
@@ -32,38 +19,64 @@ extern const NSUInteger kOCTToxPublicKeyLength;
 /**
  * Indicates if we are connected to the DHT.
  */
-@property (assign, nonatomic, readonly) BOOL isConnected;
+@property (assign, nonatomic, readonly) OCTToxConnectionStatus connectionStatus;
 
 /**
- * Our address
+ * Our address.
  *
  * Address for Tox as a hex string. Address is kOCTToxAddressLength length and has following format:
  * [public_key (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
  */
 @property (strong, nonatomic, readonly) NSString *userAddress;
 
+/**
+ * Client's user status.
+ */
+@property (assign, nonatomic) OCTToxUserStatus userStatus;
+
+#pragma mark -  Class methods
+
+/**
+ * Return toxcore version in format X.Y.Z, where
+ * X - The major version number. Incremented when the API or ABI changes in an incompatible way.
+ * Y - The minor version number. Incremented when functionality is added without breaking the API or ABI.
+ * Set to 0 when the major version number is incremented.
+ * Z - The patch or revision number. Incremented when bugfixes are applied without changing any functionality or API or ABI.
+ */
++ (NSString *)version;
+
+/**
+ * The major version number of toxcore. Incremented when the API or ABI changes in an incompatible way.
+ */
++ (NSUInteger)versionMajor;
+
+/**
+ * The minor version number of toxcore. Incremented when functionality is added without breaking the API or ABI.
+ * Set to 0 when the major version number is incremented.
+ */
++ (NSUInteger)versionMinor;
+
+/**
+ * The patch or revision number of toxcore. Incremented when bugfixes are applied without changing any functionality or API or ABI.
+ */
++ (NSUInteger)versionPath;
+
 #pragma mark -  Lifecycle
 
 /**
- * Creates new Tox object with configuration options.
+ * Creates new Tox object with configuration options and loads saved data.
  *
- * @param options Configuration options
+ * @param options Configuration options.
+ * @param data Data load Tox from previously stored by `-save` method. Pass nil if there is no saved data.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorInitCode for all error codes.
  *
- * @return New instance of Tox.
+ * @return New instance of Tox or nil if fatal error occured during loading.
+ *
+ * @warning If loading failed or succeeded only partially, the new or partially loaded instance is returned and
+ * an error is set.
  */
-- (instancetype)initWithOptions:(OCTToxOptions *)options;
-
-/**
- * Load saved Tox from NSData.
- *
- * @param data Data load Tox from.
- *
- * @return Return status of load.
- *
- * @warning The Tox save format isn't stable yet meaning this function sometimes returns -1 when loading
- * older saves. This however does not mean nothing was loaded from the save.
- */
-- (OCTToxLoadStatus)loadFromData:(NSData *)data;
+- (instancetype)initWithOptions:(OCTToxOptions *)options savedData:(NSData *)data error:(NSError **)error;
 
 /**
  * Saves Tox into NSData.
@@ -87,86 +100,115 @@ extern const NSUInteger kOCTToxPublicKeyLength;
 #pragma mark -  Methods
 
 /**
- * Resolves address into an IP address. If successful, sends a "get nodes" request to the given node with ip,
- * port (in host byte order) and publicKey to setup connections.
+ * Sends a "get nodes" request to the given bootstrap node with IP, port, and
+ * public key to setup connections.
  *
- * @param address Address can be a hostname or an IP address (IPv4 or IPv6).
- * @param port Port in host byte order.
- * @param publicKey Public key of the node.
+ * This function will attempt to connect to the node using UDP and TCP at the
+ * same time.
  *
- * @return YES if address could be converted info an IP address, NO otherwise.
+ * Tox will use the node as a TCP relay in case OCTToxOptions.UDPEnabled was
+ * YES, and also to connect to friends that are in TCP-only mode. Tox will
+ * also use the TCP connection when NAT hole punching is slow, and later switch
+ * to UDP if hole punching succeeds.
+ *
+ * @param host The hostname or an IP address (IPv4 or IPv6) of the node.
+ * @param port The port on the host on which the bootstrap Tox instance is listening.
+ * @param publicKey Public key of the node (of kOCTToxPublicKeyLength length).
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorBootstrapCode for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
-- (BOOL)bootstrapFromAddress:(NSString *)address port:(uint16_t)port publicKey:(NSString *)publicKey;
+- (BOOL)bootstrapFromHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
- * Like `bootstrapFromAddress` but for TCP relays only.
+ * Adds additional host:port pair as TCP relay.
  *
- * @param address Address can be a hostname or an IP address (IPv4 or IPv6).
- * @param port Port in host byte order.
- * @param publicKey Public key of the node.
+ * This function can be used to initiate TCP connections to different ports on
+ * the same bootstrap node, or to add TCP relays without using them as
+ * bootstrap nodes.
  *
- * @return YES if address could be converted info an IP address, NO otherwise.
+ * @param host The hostname or IP address (IPv4 or IPv6) of the TCP relay.
+ * @param port The port on the host on which the TCP relay is listening.
+ * @param publicKey Public key of the node (of kOCTToxPublicKeyLength length).
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorBootstrapCode for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
-- (BOOL)addTCPRelayWithAddress:(NSString *)address port:(uint16_t)port publicKey:(NSString *)publicKey;
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Add a friend.
  *
  * @param address Address of a friend to add. Must be exactry kOCTToxAddressLength length.
  * @param message Message that would be send with friend request. Minimum length - 1 byte.
- * @param error Error with OCTToxAddFriendError code.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendAdd for all error codes.
  *
- * @return On success returns friend number. On failure returns -1 and fills `error` parameter.
+ * @return On success returns friend number. On failure returns UINT32_MAX and fills `error` parameter.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
- * OCTToxCheckLengthTypeFriendRequest type. If message will be too big it will be cropped to fit the length.
+ * OCTToxCheckLengthTypeFriendRequest type.
  */
-- (int32_t)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
+- (uint32_t)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
 
 /**
  * Add a friend without sending friend request.
  *
- * @param publicKey Public key of a friend to add. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ * This function is used to add a friend in response to a friend request. If the
+ * client receives a friend request, it can be reasonably sure that the other
+ * client added this client as a friend, eliminating the need for a friend
+ * request.
  *
- * @return On success returns friend number. On failure returns -1.
+ * This function is also useful in a situation where both instances are
+ * controlled by the same entity, so that this entity can perform the mutual
+ * friend adding. In this case, there is no need for a friend request, either.
+ *
+ * @param publicKey Public key of a friend to add. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendAdd for all error codes.
+ *
+ * @return On success returns friend number. On failure returns UINT32_MAX.
  */
-- (int32_t)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey;
+- (uint32_t)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
- * Get associated friend number from public key.
+ * Remove a friend from the friend list.
+ *
+ * This does not notify the friend of their deletion. After calling this
+ * function, this client will appear offline to the friend and no communication
+ * can occur between the two.
+ *
+ * @param friendNumber Friend number to remove.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendDelete for all error codes.
+ *
+ * @return YES on success, NO on failure.
+ */
+- (BOOL)deleteFriendWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+
+/**
+ * Return the friend number associated with that Public Key.
  *
  * @param publicKey Public key of a friend. Public key is hex string, must be exactry kOCTToxPublicKeyLength length.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendByPublicKey for all error codes.
  *
- * @return On success returns friend number. If there is no such friend returns -1.
+ * @return The friend number on success, UINT32_MAX on failure.
  */
-- (int32_t)friendNumberWithPublicKey:(NSString *)publicKey;
+- (uint32_t)friendNumberWithPublicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Get public key from associated friend number.
  *
  * @param friendNumber Associated friend number
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendGetPublicKey for all error codes.
  *
  * @return Public key of a friend. Public key is hex string, must be exactry kOCTToxPublicKeyLength length. If there is no such friend returns nil.
  */
-- (NSString *)publicKeyFromFriendNumber:(int32_t)friendNumber;
-
-/**
- * Remove a friend
- *
- * @param friendNumber Friend number to remove.
- *
- * @return YES on success, NO on failure.
- */
-- (BOOL)deleteFriendWithFriendNumber:(int32_t)friendNumber;
-
-/**
- * Get friend connection status.
- *
- * @param friendNumber Friend number to check status.
- *
- * @return Returns connection status or OCTToxAddFriendErrorUnknown in case of failure.
- */
-- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(int32_t)friendNumber;
+- (NSString *)publicKeyFromFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Checks if there exists a friend with given friendNumber.
@@ -175,45 +217,63 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES if friend exists, NO otherwise.
  */
-- (BOOL)friendExistsWithFriendNumber:(int32_t)friendNumber;
+- (BOOL)friendExistsWithFriendNumber:(uint32_t)friendNumber;
+
+/**
+ * Return the friend's user status (away/busy/...). If the friend number is
+ * invalid, the return value is unspecified.
+ *
+ * @param friendNumber Friend number to check status.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendQuery for all error codes.
+ *
+ * @return Returns friend status.
+ */
+- (OCTToxUserStatus)friendStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+
+/**
+ * Check whether a friend is currently connected to this client.
+ *
+ * @param friendNumber Friend number to check status.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendQuery for all error codes.
+ *
+ * @return Returns friend connection status.
+ */
+- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Send a text chat message to an online friend.
  *
  * @param friendNumber Friend number to send a message.
+ * @param type Type of the message.
  * @param message Message that would be send.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendSendMessage for all error codes.
  *
  * @return The message id if packet was successfully put into the send queue, 0 if it was not. You can use id later to check if message has been delivered.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
- * OCTToxCheckLengthTypeSendMessage type. If message will be too big it will be cropped to fit the length.
+ * OCTToxCheckLengthTypeSendMessage type.
  */
-- (uint32_t)sendMessageWithFriendNumber:(int32_t)friendNumber message:(NSString *)message;
+- (uint32_t)sendMessageWithFriendNumber:(uint32_t)friendNumber
+                                   type:(OCTToxMessageType)type
+                                message:(NSString *)message
+                                  error:(NSError **)error;
 
 /**
- * Send an action to an online friend.
- *
- * @param friendNumber Friend number to send a action.
- * @param action Action that would be send.
- *
- * @return The message id if packet was successfully put into the send queue, 0 if it was not.
- *
- * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
- * OCTToxCheckLengthTypeSendMessage type. If message will be too big it will be cropped to fit the length.
- */
-- (uint32_t)friendNumber:(int32_t)friendNumber action:(NSString *)action;
-
-/**
- * Set our nickname.
+ * Set the nickname for the Tox client.
  *
  * @param name Name to be set. Minimum length of name is 1 byte.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorSetInfoCode for all error codes.
  *
  * @return YES on success, NO on failure.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
- * OCTToxCheckLengthTypeName type. If message will be too big it will be cropped to fit the length.
+ * OCTToxCheckLengthTypeName type.
  */
-- (BOOL)setUserName:(NSString *)name;
+- (BOOL)setNickname:(NSString *)name error:(NSError **)error;
 
 /**
  * Get your nickname.
@@ -226,22 +286,26 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  * Get name of friendNumber.
  *
  * @param friendNumber Friend number to get name.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendQuery for all error codes.
  *
  * @return Name of friend or nil in case of error.
  */
-- (NSString *)friendNameWithFriendNumber:(int32_t)friendNumber;
+- (NSString *)friendNameWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Set our status message.
  *
  * @param statusMessage Status message to be set.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorSetInfoCode for all error codes.
  *
  * @return YES on success, NO on failure.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
- * OCTToxCheckLengthTypeStatusMessage type. If message will be too big it will be cropped to fit the length.
+ * OCTToxCheckLengthTypeStatusMessage type.
  */
-- (BOOL)setUserStatusMessage:(NSString *)statusMessage;
+- (BOOL)setUserStatusMessage:(NSString *)statusMessage error:(NSError **)error;
 
 /**
  * Get our status message.
@@ -251,22 +315,15 @@ extern const NSUInteger kOCTToxPublicKeyLength;
 - (NSString *)userStatusMessage;
 
 /**
- * Set our status.
- *
- * @param status Status to be set.
- *
- * @return YES on success, NO on failure.
- */
-- (BOOL)setUserStatus:(OCTToxUserStatus)status;
-
-/**
  * Get status message of a friend.
  *
  * @param friendNumber Friend number to get status message.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendQuery for all error codes.
  *
  * @return Status message of a friend.
  */
-- (NSString *)friendStatusMessageWithFriendNumber:(int32_t)friendNumber;
+- (NSString *)friendStatusMessageWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Get date of last time friendNumber was seen online.
@@ -275,26 +332,30 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return Date of last time friend was seen online.
  */
-- (NSDate *)lastOnlineWithFriendNumber:(int32_t)friendNumber;
+- (NSDate *)lastOnlineWithFriendNumber:(uint32_t)friendNumber;
 
 /**
  * Set our typing status for a friend. You are responsible for turning it on or off.
  *
  * @param isTyping Status showing whether user is typing or not.
  * @param friendNumber Friend number to set typing status.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorSetTyping for all error codes.
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(int32_t)friendNumber;
+- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Get the typing status of a friend.
  *
  * @param friendNumber Friend number to get typing status.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendQuery for all error codes.
  *
  * @return YES if friend is typing, otherwise NO.
  */
-- (BOOL)isFriendTypingWithFriendNumber:(int32_t)friendNumber;
+- (BOOL)isFriendTypingWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
  * Return the number of friends.
@@ -353,7 +414,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES on success, otherwise NO.
  */
-- (BOOL)requestAvatarHashWithFriendNumber:(int32_t)friendNumber;
+- (BOOL)requestAvatarHashWithFriendNumber:(uint32_t)friendNumber;
 
 /**
  * Request avatar data from a friend.
@@ -364,7 +425,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES on success, otherwise NO.
  */
-- (BOOL)requestAvatarDataWithFriendNumber:(int32_t)friendNumber;
+- (BOOL)requestAvatarDataWithFriendNumber:(uint32_t)friendNumber;
 
 /**
  * Send an unrequested avatar information to a friend. Sends our avatar format and hash to a friend; he/she
@@ -376,7 +437,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES on success, otherwise NO.
  */
-- (BOOL)sendAvatarInfoToFriendNumber:(int32_t)friendNumber;
+- (BOOL)sendAvatarInfoToFriendNumber:(uint32_t)friendNumber;
 
 /**
  * Send a file send request.
@@ -387,7 +448,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return file number on success, -1 on failure
  */
-- (int)fileSendRequestWithFriendNumber:(int32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
+- (int)fileSendRequestWithFriendNumber:(uint32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
 
 /**
  * Send a file control request
@@ -401,7 +462,11 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES on success, NO on failure
  */
-- (BOOL)fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
+- (BOOL)fileSendControlWithFriendNumber:(uint32_t)friendNumber
+                          sendOrReceive:(OCTToxFileControlType)sendOrReceive
+                             fileNumber:(uint8_t)fileNumber
+                            controlType:(OCTToxFileControl)controlType
+                                   data:(NSData *)data;
 
 /**
  * Send file data
@@ -412,7 +477,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return YES on success, NO on failure
  */
-- (BOOL)fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
+- (BOOL)fileSendDataWithFriendNumber:(uint32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
 
 /**
  * Calculate the recommended/maximum size of the filedata you send
@@ -421,7 +486,7 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return recommended/maximum size of the filedata, -1 on failure
  */
-- (int)fileDataSizeWithFriendNumber:(int32_t)friendNumber;
+- (int)fileDataSizeWithFriendNumber:(uint32_t)friendNumber;
 
 /**
  * Get a number of bytes left to be sent or received
@@ -432,7 +497,9 @@ extern const NSUInteger kOCTToxPublicKeyLength;
  *
  * @return file number on success, 0 on failure
  */
-- (uint64_t)fileDataRemainingWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive;
+- (uint64_t)fileDataRemainingWithFriendNumber:(uint32_t)friendNumber
+                                   fileNumber:(uint8_t)fileNumber
+                                sendOrReceive:(OCTToxFileControlType)sendOrReceive;
 
 #pragma mark -  Helper methods
 

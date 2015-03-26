@@ -30,15 +30,27 @@
 #define COCOAPODS_VERSION_MINOR_OCMock 1
 #define COCOAPODS_VERSION_PATCH_OCMock 2
 
+// libopus
+#define COCOAPODS_POD_AVAILABLE_libopus
+#define COCOAPODS_VERSION_MAJOR_libopus 1
+#define COCOAPODS_VERSION_MINOR_libopus 1
+#define COCOAPODS_VERSION_PATCH_libopus 0
+
+// libopus/float
+#define COCOAPODS_POD_AVAILABLE_libopus_float
+#define COCOAPODS_VERSION_MAJOR_libopus_float 1
+#define COCOAPODS_VERSION_MINOR_libopus_float 1
+#define COCOAPODS_VERSION_PATCH_libopus_float 0
+
 // libsodium
 #define COCOAPODS_POD_AVAILABLE_libsodium
 #define COCOAPODS_VERSION_MAJOR_libsodium 1
 #define COCOAPODS_VERSION_MINOR_libsodium 0
-#define COCOAPODS_VERSION_PATCH_libsodium 1
+#define COCOAPODS_VERSION_PATCH_libsodium 2
 
 // toxcore-ios
 #define COCOAPODS_POD_AVAILABLE_toxcore_ios
 #define COCOAPODS_VERSION_MAJOR_toxcore_ios 0
 #define COCOAPODS_VERSION_MINOR_toxcore_ios 1
-#define COCOAPODS_VERSION_PATCH_toxcore_ios 0
+#define COCOAPODS_VERSION_PATCH_toxcore_ios 2
 
