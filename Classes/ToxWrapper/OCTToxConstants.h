@@ -12,7 +12,7 @@ extern NSString *const kOCTToxErrorDomain;
 
 /**
  * Length of address. Address is hex string, has following format:
- * [public_key (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
+ * [publicKey (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
  */
 extern const NSUInteger kOCTToxAddressLength;
 
@@ -20,12 +20,17 @@ extern const NSUInteger kOCTToxAddressLength;
  * Length of public key. It is hex string, 32 bytes, 64 characters.
  */
 extern const NSUInteger kOCTToxPublicKeyLength;
+/**
+ * Length of secret key. It is hex string, 32 bytes, 64 characters.
+ */
+extern const NSUInteger kOCTToxSecretKeyLength;
 
 extern const NSUInteger kOCTToxMaxNameLength;
 extern const NSUInteger kOCTToxMaxStatusMessageLength;
 extern const NSUInteger kOCTToxMaxFriendRequestLength;
 extern const NSUInteger kOCTToxMaxMessageLength;
 extern const NSUInteger kOCTToxMaxCustomPacketSize;
+extern const NSUInteger kOCTToxMaxFileNameLength;
 
 extern const NSUInteger kOCTToxHashLength;
 extern const NSUInteger kOCTToxFileIdLength;
@@ -58,17 +63,6 @@ typedef NS_ENUM(NSUInteger, OCTToxConnectionStatus) {
     OCTToxConnectionStatusUDP,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxCheckLengthType) {
-    OCTToxCheckLengthTypeFriendRequest,
-    OCTToxCheckLengthTypeSendMessage,
-    OCTToxCheckLengthTypeName,
-    OCTToxCheckLengthTypeStatusMessage,
-};
-
-typedef NS_ENUM(NSUInteger, OCTToxDataLengthType) {
-    OCTToxDataLengthTypeAvatar,
-};
-
 typedef NS_ENUM(NSUInteger, OCTToxUserStatus) {
     /**
      * User is online and available.
@@ -98,18 +92,64 @@ typedef NS_ENUM(NSUInteger, OCTToxMessageType) {
     OCTToxMessageTypeAction,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
-    OCTToxFileControlAccept,
-    OCTToxFileControlPause,
-    OCTToxFileControlKill,
-    OCTToxFileControlFinished,
-    OCTToxFileControlResumeBroken,
+typedef NS_ENUM(NSUInteger, OCTToxFileKind) {
+    /**
+     * Arbitrary file data. Clients can choose to handle it based on the file name
+     * or magic or any other way they choose.
+     */
+    OCTToxFileKindData,
+
+    /**
+     * Avatar filename. This consists of toxHash(image).
+     * Avatar data. This consists of the image data.
+     *
+     * Avatars can be sent at any time the client wishes. Generally, a client will
+     * send the avatar to a friend when that friend comes online, and to all
+     * friends when the avatar changed. A client can save some traffic by
+     * remembering which friend received the updated avatar already and only send
+     * it if the friend has an out of date avatar.
+     *
+     * Clients who receive avatar send requests can reject it (by sending
+     * OCTToxFileControl before any other controls), or accept it (by
+     * sending OCTToxFileControlResume). The fileId of length kOCTToxHashLength bytes
+     * (same length as kOCTToxFileIdLength) will contain the hash. A client can compare
+     * this hash with a saved hash and send OCTToxFileControlCancel to terminate the avatar
+     * transfer if it matches.
+     *
+     * When fileSize is set to 0 in the transfer request it means that the client has no
+     * avatar.
+     */
+    OCTToxFileKindAvatar,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxFileControlType) {
-    OCTToxFileControlTypeSend,
-    OCTToxFileControlTypeReceive,
+typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
+    /**
+     * Sent by the receiving side to accept a file send request. Also sent after a
+     * OCTToxFileControlPause command to continue sending or receiving.
+     */
+    OCTToxFileControlResume,
+
+    /**
+     * Sent by clients to pause the file transfer. The initial state of a file
+     * transfer is always paused on the receiving side and running on the sending
+     * side. If both the sending and receiving side pause the transfer, then both
+     * need to send OCTToxFileControlResume for the transfer to resume.
+     */
+    OCTToxFileControlPause,
+
+    /**
+     * Sent by the receiving side to reject a file send request before any other
+     * commands are sent. Also sent by either side to terminate a file transfer.
+     */
+    OCTToxFileControlCancel,
 };
+
+
+/*******************************************************************************
+ *
+ * Error Codes
+ *
+ ******************************************************************************/
 
 /**
  * Error codes for init method.
@@ -318,5 +358,169 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendSendMessage) {
      * Attempted to send a zero-length message.
      */
     OCTToxErrorFriendSendMessageEmpty,
+};
+
+/**
+ * Error codes for sending file control.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFileControl) {
+    /**
+     * The friendNumber passed did not designate a valid friend.
+     */
+    OCTToxErrorFileControlFriendNotFound,
+
+    /**
+     * This client is currently not connected to the friend.
+     */
+    OCTToxErrorFileControlFriendNotConnected,
+
+    /**
+     * No file transfer with the given file number was found for the given friend.
+     */
+    OCTToxErrorFileControlNotFound,
+
+    /**
+     * A OCTToxFileControlResume control was sent, but the file transfer is running normally.
+     */
+    OCTToxErrorFileControlNotPaused,
+
+    /**
+     * A OCTToxFileControlResume control was sent, but the file transfer was paused by the other
+     * party. Only the party that paused the transfer can resume it.
+     */
+    OCTToxErrorFileControlDenied,
+
+    /**
+     * A OCTToxFileControlPause control was sent, but the file transfer was already paused.
+     */
+    OCTToxErrorFileControlAlreadyPaused,
+
+    /**
+     * Packet queue is full.
+     */
+    OCTToxErrorFileControlSendq,
+};
+
+/**
+ * Error codes for file seek method.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFileSeek) {
+    /**
+     * The friendNumber passed did not designate a valid friend.
+     */
+    OCTToxErrorFileSeekFriendNotFound,
+
+    /**
+     * This client is currently not connected to the friend.
+     */
+    OCTToxErrorFileSeekFriendNotConnected,
+
+    /**
+     * No file transfer with the given file number was found for the given friend.
+     */
+    OCTToxErrorFileSeekNotFound,
+
+    /**
+     * File was not in a state where it could be seeked.
+     */
+    OCTToxErrorFileSeekDenied,
+
+    /**
+     * Seek position was invalid
+     */
+    OCTToxErrorFileSeekInvalidPosition,
+
+    /**
+     * Packet queue is full.
+     */
+    OCTToxErrorFileSeekSendq,
+};
+
+/**
+ * Error codes for fileGetFileId method.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFileGet) {
+    /**
+     * The friendNumber passed did not designate a valid friend.
+     */
+    OCTToxErrorFileGetFriendNotFound,
+
+    /**
+     * No file transfer with the given file number was found for the given friend.
+     */
+    OCTToxErrorFileGetNotFound,
+};
+
+/**
+ * Error codes for fileSend method.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFileSend) {
+    OCTToxErrorFileSendUnknown,
+
+    /**
+     * The friendNumber passed did not designate a valid friend.
+     */
+    OCTToxErrorFileSendFriendNotFound,
+
+    /**
+     * This client is currently not connected to the friend.
+     */
+    OCTToxErrorFileSendFriendNotConnected,
+
+    /**
+     * Filename length exceeded kOCTToxMaxFileNameLength bytes.
+     */
+    OCTToxErrorFileSendNameTooLong,
+
+    /**
+     * Too many ongoing transfers. The maximum number of concurrent file transfers
+     * is 256 per friend per direction (sending and receiving).
+     */
+    OCTToxErrorFileSendTooMany,
+};
+
+/**
+ * Error codes for fileSendChunk method.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFileSendChunk) {
+    OCTToxErrorFileSendChunkUnknown,
+
+    /**
+     * The friendNumber passed did not designate a valid friend.
+     */
+    OCTToxErrorFileSendChunkFriendNotFound,
+
+    /**
+     * This client is currently not connected to the friend.
+     */
+    OCTToxErrorFileSendChunkFriendNotConnected,
+
+    /**
+     * No file transfer with the given file number was found for the given friend.
+     */
+    OCTToxErrorFileSendChunkNotFound,
+
+    /**
+     * File transfer was found but isn't in a transferring state: (paused, done,
+     * broken, etc...) (happens only when not called from the request chunk callback).
+     */
+    OCTToxErrorFileSendChunkNotTransferring,
+
+    /**
+     * Attempted to send more or less data than requested. The requested data size is
+     * adjusted according to maximum transmission unit and the expected end of
+     * the file. Trying to send less or more than requested will return this error.
+     */
+    OCTToxErrorFileSendChunkInvalidLength,
+
+    /**
+     * Packet queue is full.
+     */
+    OCTToxErrorFileSendChunkSendq,
+
+    /**
+     * Position parameter was wrong.
+     */
+    OCTToxErrorFileSendChunkWrongPosition
 };
 

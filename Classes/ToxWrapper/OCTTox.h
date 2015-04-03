@@ -25,9 +25,24 @@
  * Our address.
  *
  * Address for Tox as a hex string. Address is kOCTToxAddressLength length and has following format:
- * [public_key (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
+ * [publicKey (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
  */
 @property (strong, nonatomic, readonly) NSString *userAddress;
+
+/**
+ * Our Tox Public Key (long term public key) of kOCTToxPublicKeyLength.
+ */
+@property (strong, nonatomic, readonly) NSString *publicKey;
+
+/**
+ * Our secret key of kOCTToxSecretKeyLength.
+ */
+@property (strong, nonatomic, readonly) NSString *secretKey;
+
+/**
+ * Client's nospam part of the address. Any 32 bit unsigned integer.
+ */
+@property (assign, nonatomic) uint32_t nospam;
 
 /**
  * Client's user status.
@@ -86,7 +101,7 @@
 - (NSData *)save;
 
 /**
- * Starts the main loop of the Tox.
+ * Starts the main loop of the Tox on it's own unique queue.
  *
  * @warning Tox won't do anything without calling this method.
  */
@@ -326,15 +341,6 @@
 - (NSString *)friendStatusMessageWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
 
 /**
- * Get date of last time friendNumber was seen online.
- *
- * @param friendNumber Friend number to get last online.
- *
- * @return Date of last time friend was seen online.
- */
-- (NSDate *)lastOnlineWithFriendNumber:(uint32_t)friendNumber;
-
-/**
  * Set our typing status for a friend. You are responsible for turning it on or off.
  *
  * @param isTyping Status showing whether user is typing or not.
@@ -365,33 +371,11 @@
 - (NSUInteger)friendsCount;
 
 /**
- * Return the number of friends online.
- *
- * @return Return the number of friends online.
- */
-- (NSUInteger)friendsOnlineCount;
-
-/**
  * Return an array of valid friend IDs.
  *
  * @return Return an array of valid friend IDs. Array contain NSNumbers with IDs.
  */
 - (NSArray *)friendsArray;
-
-/**
- * Set avatar for current user.
- * This should be made before connecting, so we will not announce that the user have no avatar
- * before setting and announcing a new one, forcing the peers to re-download it.
- *
- * @param data Avatar data. Data should be <= that length `-getMaximumDataLengthForType:` with
- * OCTToxDataLengthTypeAvatar type. You can pass nil to remove avatar. Avatar should be PNG representation of image.
- *
- * @return YES on success, otherwise NO.
- *
- * @warning Data should be <= that length `-maximumDataLengthForType:` with OCTToxDataLengthTypeAvatar type.
- * @warning Avatar should be PNG representation of image
- */
-- (BOOL)setAvatar:(NSData *)data;
 
 /**
  * Generates a cryptographic hash of the given data.
@@ -406,130 +390,141 @@
 - (NSData *)hashData:(NSData *)data;
 
 /**
- * Request avatar information from a friend.
- * Asks a friend to provide their avatar information (hash). The friend may or may not answer this request and,
- * if answered, the information will be provided through the delegate method `tox:friendAvatarHashUpdate:friendNumber:`.
+ * Sends a file control command to a friend for a given file transfer.
  *
- * @param friendNumber Friend number to request avatar info.
+ * @param fileNumber The friend-specific identifier for the file transfer.
+ * @param friendNumber The friend number of the friend the file is being transferred to or received from.
+ * @param control The control command to send.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFileControl for all error codes.
  *
- * @return YES on success, otherwise NO.
+ * @return YES on success, NO on failure.
  */
-- (BOOL)requestAvatarHashWithFriendNumber:(uint32_t)friendNumber;
+- (BOOL)fileSendControlForFileNumber:(uint32_t)fileNumber
+                        friendNumber:(uint32_t)friendNumber
+                             control:(OCTToxFileControl)control
+                               error:(NSError **)error;
 
 /**
- * Request avatar data from a friend.
- * Ask a friend to send their avatar data. The friend may or may not answer this request and,
- * if answered, the data will be provided through the delegate method `tox:friendAvatarUpdate:hash:friendNumber:`.
+ * Sends a file seek control command to a friend for a given file transfer.
  *
- * @param friendNumber Friend number to request avatar data.
+ * This function can only be called to resume a file transfer right before
+ * OCTToxFileControlResume is sent.
  *
- * @return YES on success, otherwise NO.
+ * @param fileNumber The friend-specific identifier for the file transfer.
+ * @param friendNumber The friend number of the friend the file is being transferred to or received from.
+ * @param position The position that the file should be seeked to.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFileSeek for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
-- (BOOL)requestAvatarDataWithFriendNumber:(uint32_t)friendNumber;
+- (BOOL)fileSeekForFileNumber:(uint32_t)fileNumber
+                 friendNumber:(uint32_t)friendNumber
+                     position:(uint64_t)position
+                        error:(NSError **)error;
 
 /**
- * Send an unrequested avatar information to a friend. Sends our avatar format and hash to a friend; he/she
- * can use this information to validate an avatar from the cache and may (or not) reply with an avatar
- * data request.
- * Notice: it is NOT necessary to send these notification after changing the avatar or connecting. The library already does this.
+ * Get the file id associated to the file transfer.
  *
- * @param friendNumber Friend number to send avatar info
+ * @param fileNumber The friend-specific identifier for the file transfer.
+ * @param friendNumber The friend number of the friend the file is being transferred to or received from.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFileGet for all error codes.
  *
- * @return YES on success, otherwise NO.
+ * @return File id on success, nil on failure.
  */
-- (BOOL)sendAvatarInfoToFriendNumber:(uint32_t)friendNumber;
+- (NSData *)fileGetFileIdForFileNumber:(uint32_t)fileNumber
+                          friendNumber:(uint32_t)friendNumber
+                                 error:(NSError **)error;
 
 /**
- * Send a file send request.
+ * Send a file transmission request.
  *
- * @param friendNumber Friend number to send file
- * @param fileName Name of file to be sent
- * @param fileSize Size of file to be sent
+ * Maximum filename length is kOCTToxMaxFileNameLength bytes. The filename should generally just be
+ * a file name, not a path with directory names.
  *
- * @return file number on success, -1 on failure
+ * If a non-zero file size is provided, this can be used by both sides to
+ * determine the sending progress. File size can be set to zero for streaming
+ * data of unknown size.
+ *
+ * File transmission occurs in chunks, which are requested through the
+ * `fileChunkRequest` callback.
+ *
+ * When a friend goes offline, all file transfers associated with the friend are
+ * purged from core.
+ *
+ * If the file contents change during a transfer, the behaviour is unspecified
+ * in general. What will actually happen depends on the mode in which the file
+ * was modified and how the client determines the file size.
+ *
+ * - If the file size was increased
+ *   - and sending mode was streaming (fileSize = UINT64_MAX), the behaviour will be as
+ *     expected.
+ *   - and sending mode was file (fileSize != UINT64_MAX), the fileChunkRequest
+ *     callback will receive length = 0 when Core thinks the file transfer has
+ *     finished. If the client remembers the file size as it was when sending
+ *     the request, it will terminate the transfer normally. If the client
+ *     re-reads the size, it will think the friend cancelled the transfer.
+ * - If the file size was decreased
+ *   - and sending mode was streaming, the behaviour is as expected.
+ *   - and sending mode was file, the callback will return 0 at the new
+ *     (earlier) end-of-file, signalling to the friend that the transfer was
+ *     cancelled.
+ * - If the file contents were modified
+ *   - at a position before the current read, the two files (local and remote)
+ *     will differ after the transfer terminates.
+ *   - at a position after the current read, the file transfer will succeed as
+ *     expected.
+ *   - In either case, both sides will regard the transfer as complete and
+ *     successful.
+ *
+ * @param friendNumber The friend number of the friend the file send request should be sent to.
+ * @param kind The meaning of the file to be sent.
+ * @param fileSize Size in bytes of the file the client wants to send, UINT64_MAX if unknown or streaming.
+ * @param fileId A file identifier of length kOCTToxFileIdLength that can be used to
+ *   uniquely identify file transfers across core restarts. If nil, a random one will
+ *   be generated by core. It can then be obtained by using `fileGetFileId`.
+ * @param fileName Name of the file. Does not need to be the actual name. This
+ *   name will be sent along with the file send request.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFileSend for all error codes.
+ *
+ * @return A file number used as an identifier in subsequent callbacks. This
+ *   number is per friend. File numbers are reused after a transfer terminates.
+ *   on failure, this function returns UINT32_MAX.
  */
-- (int)fileSendRequestWithFriendNumber:(uint32_t)friendNumber fileName:(NSString *)fileName fileSize:(uint64_t)fileSize;
+- (uint32_t)fileSendWithFriendNumber:(uint32_t)friendNumber
+                                kind:(OCTToxFileKind)kind
+                            fileSize:(uint64_t)fileSize
+                              fileId:(NSString *)fileId
+                            fileName:(NSString *)fileName
+                               error:(NSError **)error;
 
 /**
- * Send a file control request
+ * Send a chunk of file data to a friend.
  *
- * @param friendNumber Friend number to send/receive file
- * @param sendOrReceive Type of action on file. It is OCTToxFileControlTypeSend if we want the control packet to target a file we
- * are currently sending, OCTToxFileControlTypeReceive - if it targets a file we are currently receiving.
- * @param fileNumber Number of file to be sent/received
- * @param controlType Type of file control
- * @param data Pointer on data
+ * This method is called in response to the `fileChunkRequest` callback. The
+ * length of data should be equal to the one received though the callback.
+ * If it is zero, the transfer is assumed complete. For files with known size,
+ * Core will know that the transfer is complete after the last byte has been
+ * received, so it is not necessary (though not harmful) to send a zero-length
+ * chunk to terminate. For streams, core will know that the transfer is finished
+ * if a chunk with length less than the length requested in the callback is sent.
  *
- * @return YES on success, NO on failure
+ * @param friendNumber The friend number of the receiving friend for this file.
+ * @param fileNumber The file transfer identifier returned by fileSend.
+ * @param position The file or stream position from which to continue reading.
+ * @param data Data of chunk to send. May be nil, then transfer is assumed complete.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFileSendChunk for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
-- (BOOL)fileSendControlWithFriendNumber:(uint32_t)friendNumber
-                          sendOrReceive:(OCTToxFileControlType)sendOrReceive
-                             fileNumber:(uint8_t)fileNumber
-                            controlType:(OCTToxFileControl)controlType
-                                   data:(NSData *)data;
-
-/**
- * Send file data
- *
- * @param friendNumber Friend number to send/receive file
- * @param fileNumber Number of file to be sent/received
- * @param data Pointer on data
- *
- * @return YES on success, NO on failure
- */
-- (BOOL)fileSendDataWithFriendNumber:(uint32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
-
-/**
- * Calculate the recommended/maximum size of the filedata you send
- *
- * @param friendNumber Friend number to send/receive file
- *
- * @return recommended/maximum size of the filedata, -1 on failure
- */
-- (int)fileDataSizeWithFriendNumber:(uint32_t)friendNumber;
-
-/**
- * Get a number of bytes left to be sent or received
- *
- * @param friendNumber Friend number to send/receive file
- * @param fileName Name of file to be sent/received
- * @param sendOrReceive OCTToxFileControlTypeSend - for sending a file, OCTToxFileControlTypeReceive - for receiving a file
- *
- * @return file number on success, 0 on failure
- */
-- (uint64_t)fileDataRemainingWithFriendNumber:(uint32_t)friendNumber
-                                   fileNumber:(uint8_t)fileNumber
-                                sendOrReceive:(OCTToxFileControlType)sendOrReceive;
-
-#pragma mark -  Helper methods
-
-/**
- * Checks length of string against maximum length  for specified type.
- *
- * @param string String to check.
- * @param type Type used to check string. Different types have different maximun length.
- *
- * @return YES, if string <= maximum length, NO otherwise.
- */
-- (BOOL)checkLengthOfString:(NSString *)string withCheckType:(OCTToxCheckLengthType)type;
-
-/**
- * Crops string to fit maximum length for specified type.
- *
- * @param string String to crop.
- * @param type Type used to check string. Different types have different maximun length.
- *
- * @return The new cropped string.
- */
-- (NSString *)cropString:(NSString *)string toFitType:(OCTToxCheckLengthType)type;
-
-/**
- * Maximum length of data for certain type.
- *
- * @param type Type of data.
- *
- * @return Maximum length of data.
- */
-- (NSUInteger)maximumDataLengthForType:(OCTToxDataLengthType)type;
+- (BOOL)fileSendChunkForFileNumber:(uint32_t)fileNumber
+                      friendNumber:(uint32_t)friendNumber
+                          position:(uint64_t)position
+                              data:(NSData *)data
+                             error:(NSError **)error;
 
 @end

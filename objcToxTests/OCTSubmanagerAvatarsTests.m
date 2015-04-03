@@ -34,122 +34,121 @@ static NSInteger kMaxDataLength = 16384;
 
 @implementation OCTSubmanagerAvatarsTests
 
-- (void)setUp
-{
-    self.subManagerAvatar = [[OCTSubmanagerAvatars alloc] init];
+// - (void)setUp
+// {
+//     self.subManagerAvatar = [[OCTSubmanagerAvatars alloc] init];
 
-    //mock datasource
-    self.subManagerAvatar.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
+//     //mock datasource
+//     self.subManagerAvatar.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
 
-    //mock file storage
-    id fileStorageMock = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
-    OCMStub([fileStorageMock pathForAvatarsDirectory]).andReturn(kFilePath);
-    OCMStub([self.subManagerAvatar.dataSource managerGetFileStorage]).andReturn(fileStorageMock);
+//     //mock file storage
+//     id fileStorageMock = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
+//     OCMStub([fileStorageMock pathForAvatarsDirectory]).andReturn(kFilePath);
+//     OCMStub([self.subManagerAvatar.dataSource managerGetFileStorage]).andReturn(fileStorageMock);
 
-    //mock NSFileManager
-    self.fileManager = OCMClassMock([NSFileManager class]);
-    OCMStub([self.fileManager defaultManager]).andReturn(self.fileManager);
+//     //mock NSFileManager
+//     self.fileManager = OCMClassMock([NSFileManager class]);
+//     OCMStub([self.fileManager defaultManager]).andReturn(self.fileManager);
 
-    //mock Tox
-    self.tox = OCMClassMock([OCTTox class]);
-    OCMStub([self.subManagerAvatar.dataSource managerGetTox]).andReturn(self.tox);
-    OCMStub([self.tox maximumDataLengthForType:OCTToxDataLengthTypeAvatar]).andReturn(kMaxDataLength);
+//     //mock Tox
+//     self.tox = OCMClassMock([OCTTox class]);
+//     OCMStub([self.subManagerAvatar.dataSource managerGetTox]).andReturn(self.tox);
+//     OCMStub([self.tox maximumDataLengthForType:OCTToxDataLengthTypeAvatar]).andReturn(kMaxDataLength);
 
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
+//     [super setUp];
+//     // Put setup code here. This method is called before the invocation of each test method in the class.
+// }
 
-- (void)tearDown
-{
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    self.subManagerAvatar = nil;
-    [super tearDown];
-}
+// - (void)tearDown
+// {
+//     // Put teardown code here. This method is called after the invocation of each test method in the class.
+//     self.subManagerAvatar = nil;
+//     [super tearDown];
+// }
 
-- (void)testSetAvatarWithImage
-{
-    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
-    OCMExpect([self.fileManager createDirectoryAtPath:[path stringByDeletingLastPathComponent]
-                          withIntermediateDirectories:YES
-                                           attributes:nil
-                                                error:[OCMArg anyObjectRef]]);
-    OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNotNil]]);
+// - (void)testSetAvatarWithImage
+// {
+//     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+//     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+//     OCMExpect([self.fileManager createDirectoryAtPath:[path stringByDeletingLastPathComponent]
+//                           withIntermediateDirectories:YES
+//                                            attributes:nil
+//                                                 error:[OCMArg anyObjectRef]]);
+//     OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNotNil]]);
 
-    UIImage *image = [self createFakeImage];
+//     UIImage *image = [self createFakeImage];
 
-    [self.subManagerAvatar setAvatar:image error:nil];
+//     [self.subManagerAvatar setAvatar:image error:nil];
 
-    OCMVerifyAll(self.fileManager);
-    OCMVerifyAll(self.tox);
-}
+//     OCMVerifyAll(self.fileManager);
+//     OCMVerifyAll(self.tox);
+// }
 
-- (void)testSetAvatarWithNil
-{
-    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+// - (void)testSetAvatarWithNil
+// {
+//     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+//     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
 
-    //fileManager should not remove anything if file does not exist
-    [[self.fileManager reject] removeItemAtPath:[OCMArg any]
-                                          error:[OCMArg anyObjectRef]];
+//     //fileManager should not remove anything if file does not exist
+//     [[self.fileManager reject] removeItemAtPath:[OCMArg any]
+//                                           error:[OCMArg anyObjectRef]];
 
-    OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNil]]);
+//     OCMExpect([(OCTTox *)self.tox setAvatar:[OCMArg isNil]]);
 
-    NSError *error;
-    [self.subManagerAvatar setAvatar:nil error:&error];
+//     NSError *error;
+//     [self.subManagerAvatar setAvatar:nil error:&error];
 
-    //Verify key objects were called
-    OCMVerifyAll(self.fileManager);
-    OCMVerifyAll(self.tox);
-}
+//     //Verify key objects were called
+//     OCMVerifyAll(self.fileManager);
+//     OCMVerifyAll(self.tox);
+// }
 
-- (void)testGetAvatar
-{
-    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+// - (void)testGetAvatar
+// {
+//     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+//     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
 
-    XCTAssertNil([self.subManagerAvatar avatarWithError:nil]);
-}
+//     XCTAssertNil([self.subManagerAvatar avatarWithError:nil]);
+// }
 
-- (void)testHasAvatarWhenAvatarPresent
-{
-    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
-    XCTAssertTrue([self.subManagerAvatar hasAvatar]);
-}
+// - (void)testHasAvatarWhenAvatarPresent
+// {
+//     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+//     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(YES);
+//     XCTAssertTrue([self.subManagerAvatar hasAvatar]);
+// }
 
-- (void)testHasAvatarWhenNoAvatar
-{
-    NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
+// - (void)testHasAvatarWhenNoAvatar
+// {
+//     NSString *path = [kFilePath stringByAppendingPathComponent:kuserAvatarFileName];
 
-    OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
-    XCTAssertFalse([self.subManagerAvatar hasAvatar]);
-}
+//     OCMStub([self.fileManager fileExistsAtPath:path]).andReturn(NO);
+//     XCTAssertFalse([self.subManagerAvatar hasAvatar]);
+// }
 
-- (void)testPNGDataFromImage
-{
-    NSData *data = [self.subManagerAvatar pngDataFromImage:[self createFakeImage]];
+// - (void)testPNGDataFromImage
+// {
+//     NSData *data = [self.subManagerAvatar pngDataFromImage:[self createFakeImage]];
 
-    NSUInteger dataLength = [data length];
-    XCTAssertNotNil(data);
-    XCTAssertLessThan(dataLength, kMaxDataLength);
-}
+//     NSUInteger dataLength = [data length];
+//     XCTAssertNotNil(data);
+//     XCTAssertLessThan(dataLength, kMaxDataLength);
+// }
 
-- (UIImage *)createFakeImage
-{
-    UIColor *color = [UIColor blackColor];
-    CGRect rect = CGRectMake(0, 0, 300, 300);
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
+// - (UIImage *)createFakeImage
+// {
+//     UIColor *color = [UIColor blackColor];
+//     CGRect rect = CGRectMake(0, 0, 300, 300);
+//     UIGraphicsBeginImageContext(rect.size);
+//     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    CGContextSetFillColorWithColor(context, [color CGColor]);
-    CGContextFillRect(context, rect);
+//     CGContextSetFillColorWithColor(context, [color CGColor]);
+//     CGContextFillRect(context, rect);
 
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+//     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//     UIGraphicsEndImageContext();
 
-    return image;
-}
-
+//     return image;
+// }
 
 @end

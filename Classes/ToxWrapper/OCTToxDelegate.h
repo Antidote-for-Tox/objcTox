@@ -34,17 +34,10 @@
  * Message received from a friend.
  *
  * @param message Received message.
+ * @param type Type of the message.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(int32_t)friendNumber;
-
-/**
- * Action received from a friend.
- *
- * @param action Received action.
- * @param friendNumber Friend number of appropriate friend.
- */
-- (void)tox:(OCTTox *)tox friendAction:(NSString *)action friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(uint32_t)friendNumber;
 
 /**
  * Friend's name was updated.
@@ -52,7 +45,7 @@
  * @param name Updated name.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(uint32_t)friendNumber;
 
 /**
  * Friend's status message was updated.
@@ -60,7 +53,7 @@
  * @param statusMessage Updated status message.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(uint32_t)friendNumber;
 
 /**
  * Friend's status was updated.
@@ -68,7 +61,7 @@
  * @param status Updated status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(uint32_t)friendNumber;
 
 /**
  * Friend's isTyping was updated
@@ -76,7 +69,7 @@
  * @param isTyping Updated typing status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(uint32_t)friendNumber;
 
 /**
  * Message that was previously sent by us has been delivered to a friend.
@@ -84,7 +77,7 @@
  * @param messageId Id of message. You could get in in sendMessage method.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox messageDelivered:(uint32_t)messageId friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox messageDelivered:(uint32_t)messageId friendNumber:(uint32_t)friendNumber;
 
 /**
  * Friend's connection status changed.
@@ -92,53 +85,88 @@
  * @param status Updated status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(uint32_t)friendNumber;
 
 /**
- * Friend's avatar hash was updated.
+ * This event is triggered when a file control command is received from a friend.
  *
- * @param hash Updated hash.
- * @param friendNumber Friend number of appropriate friend.
+ * When receiving OCTToxFileControlCancel, the client should release the
+ * resources associated with the file number and consider the transfer failed.
+ *
+ * @param control The control command to send.
+ * @param friendNumber The friend number of the friend the file is being transferred to or received from.
+ * @param fileNumber The friend-specific identifier for the file transfer.
  */
-- (void)tox:(OCTTox *)tox friendAvatarHashUpdate:(NSData *)hash friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
+                                friendNumber:(uint32_t)friendNumber
+                                  fileNumber:(uint32_t)fileNumber;
 
 /**
- * Friend's avatar was updated.
+ * If the length parameter is 0, the file transfer is finished, and the client's
+ * resources associated with the file number should be released. After a call
+ * with zero length, the file number can be reused for future file transfers.
  *
- * @param avatar Updated avatar. Can be used to create UIImage from it.
- * @param hash Updated hash.
- * @param friendNumber Friend number of appropriate friend.
+ * If the requested position is not equal to the client's idea of the current
+ * file or stream position, it will need to seek. In case of read-once streams,
+ * the client should keep the last read chunk so that a seek back can be
+ * supported. A seek-back only ever needs to read from the last requested chunk.
+ * This happens when a chunk was requested, but the send failed. A seek-back
+ * request can occur an arbitrary number of times for any given chunk.
+ *
+ * In response to receiving this callback, the client should call the method
+ * `fileSendChunk` with the requested chunk. If the number of bytes sent
+ * through that method is zero, the file transfer is assumed complete. A
+ * client must send the full length of data requested with this callback.
+ *
+ * @param friendNumber The friend number of the receiving friend for this file.
+ * @param fileNumber The file transfer identifier returned by fileSend.
+ * @param position The file or stream position from which to continue reading.
+ * @param length The number of bytes requested for the current chunk.
  */
-- (void)tox:(OCTTox *)tox friendAvatarUpdate:(NSData *)avatar hash:(NSData *)hash friendNumber:(int32_t)friendNumber;
+- (void)tox:(OCTTox *)tox fileChunkRequestForFileNumber:(uint32_t)fileNumber
+                                           friendNumber:(uint32_t)friendNumber
+                                               position:(uint64_t)position
+                                                 length:(size_t)length;
 
 /**
- * Set the callback for file to be received from friend
+ * The client should acquire resources to be associated with the file transfer.
+ * Incoming file transfers start in the PAUSED state. After this callback
+ * returns, a transfer can be rejected by sending a OCTToxFileControlCancel
+ * control command before any other control commands. It can be accepted by
+ * sending OCTToxFileControlResume.
  *
- * @param fileName Name of file to be received from friend
- * @param friendNumber Friend number of appropriate friend.
- * @param fileSize Size of file
+ * @param fileNumber The friend-specific file number the data received is associated with.
+ * @param friendNumber The friend number of the friend who is sending the file transfer request.
+ * @param kind The meaning of the file to be sent.
+ * @param fileSize Size in bytes of the file about to be received from the client, UINT64_MAX if unknown or streaming.
+ * @param fileName The name of the file.
  */
-- (void)tox:(OCTTox *)tox fileSendRequestWithFileName:(NSString *)fileName friendNumber:(int32_t)friendNumber fileSize:(uint64_t)fileSize;
+- (void)tox:(OCTTox *)tox fileReceiveForFileNumber:(uint32_t)fileNumber
+                                      friendNumber:(uint32_t)friendNumber
+                                              kind:(OCTToxFileKind)kind
+                                          fileSize:(uint64_t)fileSize
+                                          fileName:(NSString *)fileName;
 
 /**
- * Set the callback for accepting or refusig connection while sending or receiving file
+ * This method is first called when a file transfer request is received, and
+ * subsequently when a chunk of file data for an accepted request was received.
  *
- * @param friendNumber Friend number to send/receive file
- * @param sendOrReceive is OCTToxFileControlTypeSend if we want the control packet to target a file we are currently sending,
- * OCTToxFileControlReceive if it targets a file we are currently receiving.
- * @param fileNumber Number of file to be sent/received
- * @param controlType Type of file control
- * @param data Pointer on data
- */
-- (void)tox:(OCTTox *)tox fileSendControlWithFriendNumber:(int32_t)friendNumber sendOrReceive:(OCTToxFileControlType)sendOrReceive fileNumber:(uint8_t)fileNumber controlType:(OCTToxFileControl)controlType data:(NSData *)data;
-
-/**
- * Set the callback for sending file data 
+ * When chunk is nil, the transfer is finished and the client should release the
+ * resources it acquired for the transfer. After a call with chunk = nil, the
+ * file number can be reused for new file transfers.
  *
- * @param friendNumber Friend number to send/receive file
- * @param fileNumber Number of file to be sent/received
- * @param data Pointer on data
+ * If position is equal to fileSize (received in the fileReceive callback)
+ * when the transfer finishes, the file was received completely. Otherwise, if
+ * fileSize was UINT64_MAX, streaming ended successfully when chunk is nil.
+ *
+ * @param chunk A data containing the received chunk.
+ * @param fileNumber The friend-specific file number the data received is associated with.
+ * @param friendNumber The friend number of the friend who is sending the file.
+ * @param position The file position of the first byte in data.
  */
-- (void)tox:(OCTTox *)tox fileSendDataWithFriendNumber:(int32_t)friendNumber fileNumber:(uint8_t)fileNumber data:(NSData *)data;
+- (void)tox:(OCTTox *)tox fileReceiveChunk:(NSData *)chunk
+                                fileNumber:(uint32_t)fileNumber
+                              friendNumber:(uint32_t)friendNumber
+                                  position:(uint64_t)position;
 
 @end
