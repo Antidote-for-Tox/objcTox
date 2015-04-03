@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+typedef uint32_t OCTToxNoSpam;
+typedef uint16_t OCTToxPort;
+typedef uint32_t OCTToxFriendNumber;
+typedef uint32_t OCTToxMessageId;
+typedef uint32_t OCTToxFileNumber;
+typedef uint64_t OCTToxFileSize;
+
+extern const OCTToxFriendNumber kOCTToxFriendNumberFailure;
+extern const OCTToxFileNumber kOCTToxFileNumberFailure;
+extern const OCTToxFileSize kOCTToxFileSizeUnknown;
+
 extern NSString *const kOCTToxErrorDomain;
 
 /**

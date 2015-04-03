@@ -236,14 +236,19 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return secretKey;
 }
 
-- (void)setNospam:(uint32_t)nospam
+- (void)setNospam:(OCTToxNoSpam)nospam
 {
     tox_self_set_nospam(self.tox, nospam);
 }
 
+- (OCTToxNoSpam)nospam
+{
+    return tox_self_get_nospam(self.tox);
+}
+
 - (void)setUserStatus:(OCTToxUserStatus)status
 {
-    uint8_t cStatus = TOX_USER_STATUS_NONE;
+    TOX_USER_STATUS cStatus = TOX_USER_STATUS_NONE;
 
     switch(status) {
         case OCTToxUserStatusNone:
@@ -269,7 +274,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 #pragma mark -  Methods
 
-- (BOOL)bootstrapFromHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
 {
     NSParameterAssert(host);
     NSParameterAssert(publicKey);
@@ -290,7 +295,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
 {
     NSParameterAssert(host);
     NSParameterAssert(publicKey);
@@ -311,7 +316,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (uint32_t)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error
+- (OCTToxFriendNumber)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error
 {
     NSParameterAssert(address);
     NSParameterAssert(message);
@@ -321,11 +326,11 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     uint8_t *cAddress = [self hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    size_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     TOX_ERR_FRIEND_ADD cError;
 
-    uint32_t result = tox_friend_add(self.tox, cAddress, (const uint8_t *)cMessage, length, &cError);
+    OCTToxFriendNumber result = tox_friend_add(self.tox, cAddress, (const uint8_t *)cMessage, length, &cError);
 
     free(cAddress);
 
@@ -334,7 +339,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return result;
 }
 
-- (uint32_t)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey error:(NSError **)error
+- (OCTToxFriendNumber)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey error:(NSError **)error
 {
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
@@ -345,7 +350,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     TOX_ERR_FRIEND_ADD cError;
 
-    uint32_t result = tox_friend_add_norequest(self.tox, cPublicKey, &cError);
+    OCTToxFriendNumber result = tox_friend_add_norequest(self.tox, cPublicKey, &cError);
 
     free(cPublicKey);
 
@@ -354,7 +359,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return result;
 }
 
-- (BOOL)deleteFriendWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (BOOL)deleteFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_DELETE cError;
 
@@ -367,7 +372,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (uint32_t)friendNumberWithPublicKey:(NSString *)publicKey error:(NSError **)error
+- (OCTToxFriendNumber)friendNumberWithPublicKey:(NSString *)publicKey error:(NSError **)error
 {
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
@@ -378,7 +383,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     TOX_ERR_FRIEND_BY_PUBLIC_KEY cError;
 
-    uint32_t result = tox_friend_by_public_key(self.tox, cPublicKey, &cError);
+    OCTToxFriendNumber result = tox_friend_by_public_key(self.tox, cPublicKey, &cError);
 
     free(cPublicKey);
 
@@ -387,7 +392,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return result;
 }
 
-- (NSString *)publicKeyFromFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (NSString *)publicKeyFromFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     DDLogVerbose(@"%@: get public key from friend number %d", self, friendNumber);
 
@@ -411,14 +416,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return publicKey;
 }
 
-- (BOOL)friendExistsWithFriendNumber:(uint32_t)friendNumber
+- (BOOL)friendExistsWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
     bool result = tox_friend_exists(self.tox, friendNumber);
 
     return (BOOL)result;
 }
 
-- (OCTToxUserStatus)friendStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (OCTToxUserStatus)friendStatusWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
 
@@ -429,7 +434,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return [self userStatusFromCUserStatus:cStatus];
 }
 
-- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
 
@@ -440,15 +445,15 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return [self userConnectionStatusFromCUserStatus:cStatus];
 }
 
-- (uint32_t)sendMessageWithFriendNumber:(uint32_t)friendNumber
-                                   type:(OCTToxMessageType)type
-                                message:(NSString *)message
-                                  error:(NSError **)error
+- (OCTToxMessageId)sendMessageWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                                          type:(OCTToxMessageType)type
+                                       message:(NSString *)message
+                                         error:(NSError **)error
 {
     NSParameterAssert(message);
 
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    size_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     TOX_MESSAGE_TYPE cType;
     switch(type) {
@@ -462,7 +467,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     TOX_ERR_FRIEND_SEND_MESSAGE cError;
 
-    uint32_t result = tox_friend_send_message(self.tox, friendNumber, cType, (const uint8_t *)cMessage, length, &cError);
+    OCTToxMessageId result = tox_friend_send_message(self.tox, friendNumber, cType, (const uint8_t *)cMessage, length, &cError);
 
     [self fillError:error withCErrorFriendSendMessage:cError];
 
@@ -474,7 +479,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSParameterAssert(name);
 
     const char *cName = [name cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t length = [name lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    size_t length = [name lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     TOX_ERR_SET_INFO cError;
 
@@ -505,7 +510,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return name;
 }
 
-- (NSString *)friendNameWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (NSString *)friendNameWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
     size_t size = tox_friend_get_name_size(self.tox, friendNumber, &cError);
@@ -537,7 +542,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSParameterAssert(statusMessage);
 
     const char *cStatusMessage = [statusMessage cStringUsingEncoding:NSUTF8StringEncoding];
-    uint16_t length = [statusMessage lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    size_t length = [statusMessage lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     TOX_ERR_SET_INFO cError;
 
@@ -568,7 +573,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return message;
 }
 
-- (NSString *)friendStatusMessageWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (NSString *)friendStatusMessageWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
 
@@ -596,7 +601,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return message;
 }
 
-- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_SET_TYPING cError;
 
@@ -609,7 +614,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (BOOL)isFriendTypingWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error
+- (BOOL)isFriendTypingWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
 
@@ -671,8 +676,8 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return hash;
 }
 
-- (BOOL)fileSendControlForFileNumber:(uint32_t)fileNumber
-                        friendNumber:(uint32_t)friendNumber
+- (BOOL)fileSendControlForFileNumber:(OCTToxFileNumber)fileNumber
+                        friendNumber:(OCTToxFriendNumber)friendNumber
                              control:(OCTToxFileControl)control
                                error:(NSError **)error
 {
@@ -699,9 +704,9 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (BOOL)fileSeekForFileNumber:(uint32_t)fileNumber
-                 friendNumber:(uint32_t)friendNumber
-                     position:(uint64_t)position
+- (BOOL)fileSeekForFileNumber:(OCTToxFileNumber)fileNumber
+                 friendNumber:(OCTToxFriendNumber)friendNumber
+                     position:(OCTToxFileSize)position
                         error:(NSError **)error
 {
     TOX_ERR_FILE_SEEK cError;
@@ -713,8 +718,8 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
-- (NSData *)fileGetFileIdForFileNumber:(uint32_t)fileNumber
-                          friendNumber:(uint32_t)friendNumber
+- (NSData *)fileGetFileIdForFileNumber:(OCTToxFileNumber)fileNumber
+                          friendNumber:(OCTToxFriendNumber)friendNumber
                                  error:(NSError **)error
 {
     uint8_t *cFileId = malloc(kOCTToxFileIdLength);
@@ -734,12 +739,12 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return fileId;
 }
 
-- (uint32_t)fileSendWithFriendNumber:(uint32_t)friendNumber
-                                kind:(OCTToxFileKind)kind
-                            fileSize:(uint64_t)fileSize
-                              fileId:(NSString *)fileId
-                            fileName:(NSString *)fileName
-                               error:(NSError **)error
+- (OCTToxFileNumber)fileSendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                                        kind:(OCTToxFileKind)kind
+                                    fileSize:(OCTToxFileSize)fileSize
+                                      fileId:(NSString *)fileId
+                                    fileName:(NSString *)fileName
+                                       error:(NSError **)error
 {
     TOX_ERR_FILE_SEND cError;
     enum TOX_FILE_KIND cKind;
@@ -763,16 +768,16 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
         cFileName = (const uint8_t *)[fileName cStringUsingEncoding:NSUTF8StringEncoding];
     }
 
-    uint32_t result = tox_file_send(self.tox, friendNumber, cKind, fileSize, cFileId, cFileName, fileName.length, &cError);
+    OCTToxFileNumber result = tox_file_send(self.tox, friendNumber, cKind, fileSize, cFileId, cFileName, fileName.length, &cError);
 
     [self fillError:error withCErrorFileSend:cError];
 
     return result;
 }
 
-- (BOOL)fileSendChunkForFileNumber:(uint32_t)fileNumber
-                      friendNumber:(uint32_t)friendNumber
-                          position:(uint64_t)position
+- (BOOL)fileSendChunkForFileNumber:(OCTToxFileNumber)fileNumber
+                      friendNumber:(OCTToxFriendNumber)friendNumber
+                          position:(OCTToxFileSize)position
                               data:(NSData *)data
                              error:(NSError **)error
 {
@@ -1468,7 +1473,7 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
     }
 }
 
-void friendNameCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cName, size_t length, void *userData)
+void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cName, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1481,7 +1486,7 @@ void friendNameCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cName, 
     }
 }
 
-void friendStatusMessageCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cMessage, size_t length, void *userData)
+void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cMessage, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1494,7 +1499,7 @@ void friendStatusMessageCallback(Tox *cTox, uint32_t friendNumber, const uint8_t
     }
 }
 
-void friendStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_USER_STATUS cStatus, void *userData)
+void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_STATUS cStatus, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1507,7 +1512,7 @@ void friendStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_USER_STATUS cSta
     }
 }
 
-void friendConnectionStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_CONNECTION cStatus, void *userData)
+void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_CONNECTION cStatus, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1520,7 +1525,7 @@ void friendConnectionStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_CONNEC
     }
 }
 
-void friendTypingCallback(Tox *cTox, uint32_t friendNumber, bool isTyping, void *userData)
+void friendTypingCallback(Tox *cTox, OCTToxFriendNumber friendNumber, bool isTyping, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1531,7 +1536,7 @@ void friendTypingCallback(Tox *cTox, uint32_t friendNumber, bool isTyping, void 
     }
 }
 
-void friendReadReceiptCallback(Tox *cTox, uint32_t friendNumber, uint32_t messageId, void *userData)
+void friendReadReceiptCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxMessageId messageId, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1558,7 +1563,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 
 void friendMessageCallback(
         Tox *cTox,
-        uint32_t friendNumber,
+        OCTToxFriendNumber friendNumber,
         TOX_MESSAGE_TYPE cType,
         const uint8_t *cMessage,
         size_t length,
@@ -1576,7 +1581,7 @@ void friendMessageCallback(
     }
 }
 
-void fileReceiveControlCallback(Tox *cTox, uint32_t friendNumber, uint32_t fileNumber, TOX_FILE_CONTROL cControl, void *userData)
+void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, TOX_FILE_CONTROL cControl, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1590,7 +1595,7 @@ void fileReceiveControlCallback(Tox *cTox, uint32_t friendNumber, uint32_t fileN
     }
 }
 
-void fileChunkRequestCallback(Tox *cTox, uint32_t friendNumber, uint32_t fileNumber, uint64_t position, size_t length, void *userData)
+void fileChunkRequestCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, OCTToxFileSize position, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1604,17 +1609,17 @@ void fileChunkRequestCallback(Tox *cTox, uint32_t friendNumber, uint32_t fileNum
 
 void fileReceiveCallback(
         Tox *cTox,
-        uint32_t friendNumber,
-        uint32_t fileNumber,
-        uint32_t cKind,
-        uint64_t fileSize,
+        OCTToxFriendNumber friendNumber,
+        OCTToxFileNumber fileNumber,
+        enum TOX_FILE_KIND cKind,
+        OCTToxFileSize fileSize,
         const uint8_t *cFileName,
         size_t fileNameLength,
         void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    OCTToxFileKind kind = OCTToxFileKindData;
+    OCTToxFileKind kind;
 
     switch(cKind) {
         case TOX_FILE_KIND_DATA:
@@ -1638,9 +1643,9 @@ void fileReceiveCallback(
 
 void fileReceiveChunkCallback(
         Tox *cTox,
-        uint32_t friendNumber,
-        uint32_t fileNumber,
-        uint64_t position,
+        OCTToxFriendNumber friendNumber,
+        OCTToxFileNumber fileNumber,
+        OCTToxFileSize position,
         const uint8_t *cData,
         size_t length,
         void *userData)

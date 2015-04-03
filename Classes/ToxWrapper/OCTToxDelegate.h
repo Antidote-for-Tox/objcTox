@@ -37,7 +37,7 @@
  * @param type Type of the message.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Friend's name was updated.
@@ -45,7 +45,7 @@
  * @param name Updated name.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Friend's status message was updated.
@@ -53,7 +53,7 @@
  * @param statusMessage Updated status message.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Friend's status was updated.
@@ -61,7 +61,7 @@
  * @param status Updated status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Friend's isTyping was updated
@@ -69,7 +69,7 @@
  * @param isTyping Updated typing status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Message that was previously sent by us has been delivered to a friend.
@@ -77,7 +77,7 @@
  * @param messageId Id of message. You could get in in sendMessage method.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox messageDelivered:(uint32_t)messageId friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox messageDelivered:(OCTToxMessageId)messageId friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Friend's connection status changed.
@@ -85,7 +85,7 @@
  * @param status Updated status.
  * @param friendNumber Friend number of appropriate friend.
  */
-- (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(uint32_t)friendNumber;
+- (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * This event is triggered when a file control command is received from a friend.
@@ -98,8 +98,8 @@
  * @param fileNumber The friend-specific identifier for the file transfer.
  */
 - (void)tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
-                                friendNumber:(uint32_t)friendNumber
-                                  fileNumber:(uint32_t)fileNumber;
+                                friendNumber:(OCTToxFriendNumber)friendNumber
+                                  fileNumber:(OCTToxFileNumber)fileNumber;
 
 /**
  * If the length parameter is 0, the file transfer is finished, and the client's
@@ -123,9 +123,9 @@
  * @param position The file or stream position from which to continue reading.
  * @param length The number of bytes requested for the current chunk.
  */
-- (void)tox:(OCTTox *)tox fileChunkRequestForFileNumber:(uint32_t)fileNumber
-                                           friendNumber:(uint32_t)friendNumber
-                                               position:(uint64_t)position
+- (void)tox:(OCTTox *)tox fileChunkRequestForFileNumber:(OCTToxFileNumber)fileNumber
+                                           friendNumber:(OCTToxFriendNumber)friendNumber
+                                               position:(OCTToxFileSize)position
                                                  length:(size_t)length;
 
 /**
@@ -138,13 +138,13 @@
  * @param fileNumber The friend-specific file number the data received is associated with.
  * @param friendNumber The friend number of the friend who is sending the file transfer request.
  * @param kind The meaning of the file to be sent.
- * @param fileSize Size in bytes of the file about to be received from the client, UINT64_MAX if unknown or streaming.
+ * @param fileSize Size in bytes of the file about to be received from the client, kOCTToxFileSizeUnknown if unknown or streaming.
  * @param fileName The name of the file.
  */
-- (void)tox:(OCTTox *)tox fileReceiveForFileNumber:(uint32_t)fileNumber
-                                      friendNumber:(uint32_t)friendNumber
+- (void)tox:(OCTTox *)tox fileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
+                                      friendNumber:(OCTToxFriendNumber)friendNumber
                                               kind:(OCTToxFileKind)kind
-                                          fileSize:(uint64_t)fileSize
+                                          fileSize:(OCTToxFileSize)fileSize
                                           fileName:(NSString *)fileName;
 
 /**
@@ -157,7 +157,7 @@
  *
  * If position is equal to fileSize (received in the fileReceive callback)
  * when the transfer finishes, the file was received completely. Otherwise, if
- * fileSize was UINT64_MAX, streaming ended successfully when chunk is nil.
+ * fileSize was kOCTToxFileSizeUnknown, streaming ended successfully when chunk is nil.
  *
  * @param chunk A data containing the received chunk.
  * @param fileNumber The friend-specific file number the data received is associated with.
@@ -165,8 +165,8 @@
  * @param position The file position of the first byte in data.
  */
 - (void)tox:(OCTTox *)tox fileReceiveChunk:(NSData *)chunk
-                                fileNumber:(uint32_t)fileNumber
-                              friendNumber:(uint32_t)friendNumber
-                                  position:(uint64_t)position;
+                                fileNumber:(OCTToxFileNumber)fileNumber
+                              friendNumber:(OCTToxFriendNumber)friendNumber
+                                  position:(OCTToxFileSize)position;
 
 @end

@@ -42,7 +42,7 @@
 /**
  * Client's nospam part of the address. Any 32 bit unsigned integer.
  */
-@property (assign, nonatomic) uint32_t nospam;
+@property (assign, nonatomic) OCTToxNoSpam nospam;
 
 /**
  * Client's user status.
@@ -134,7 +134,7 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)bootstrapFromHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error;
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Adds additional host:port pair as TCP relay.
@@ -151,7 +151,7 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(uint16_t)port publicKey:(NSString *)publicKey error:(NSError **)error;
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Add a friend.
@@ -161,12 +161,12 @@
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxErrorFriendAdd for all error codes.
  *
- * @return On success returns friend number. On failure returns UINT32_MAX and fills `error` parameter.
+ * @return On success returns friend number. On failure returns kOCTToxFriendNumberFailure and fills `error` parameter.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
  * OCTToxCheckLengthTypeFriendRequest type.
  */
-- (uint32_t)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
+- (OCTToxFriendNumber)addFriendWithAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
 
 /**
  * Add a friend without sending friend request.
@@ -184,9 +184,9 @@
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxErrorFriendAdd for all error codes.
  *
- * @return On success returns friend number. On failure returns UINT32_MAX.
+ * @return On success returns friend number. On failure returns kOCTToxFriendNumberFailure.
  */
-- (uint32_t)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey error:(NSError **)error;
+- (OCTToxFriendNumber)addFriendWithNoRequestWithPublicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Remove a friend from the friend list.
@@ -201,7 +201,7 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)deleteFriendWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (BOOL)deleteFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Return the friend number associated with that Public Key.
@@ -210,9 +210,9 @@
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxErrorFriendByPublicKey for all error codes.
  *
- * @return The friend number on success, UINT32_MAX on failure.
+ * @return The friend number on success, kOCTToxFriendNumberFailure on failure.
  */
-- (uint32_t)friendNumberWithPublicKey:(NSString *)publicKey error:(NSError **)error;
+- (OCTToxFriendNumber)friendNumberWithPublicKey:(NSString *)publicKey error:(NSError **)error;
 
 /**
  * Get public key from associated friend number.
@@ -223,7 +223,7 @@
  *
  * @return Public key of a friend. Public key is hex string, must be exactry kOCTToxPublicKeyLength length. If there is no such friend returns nil.
  */
-- (NSString *)publicKeyFromFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (NSString *)publicKeyFromFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Checks if there exists a friend with given friendNumber.
@@ -232,7 +232,7 @@
  *
  * @return YES if friend exists, NO otherwise.
  */
-- (BOOL)friendExistsWithFriendNumber:(uint32_t)friendNumber;
+- (BOOL)friendExistsWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
  * Return the friend's user status (away/busy/...). If the friend number is
@@ -244,7 +244,7 @@
  *
  * @return Returns friend status.
  */
-- (OCTToxUserStatus)friendStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (OCTToxUserStatus)friendStatusWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Check whether a friend is currently connected to this client.
@@ -255,7 +255,7 @@
  *
  * @return Returns friend connection status.
  */
-- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (OCTToxConnectionStatus)friendConnectionStatusWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Send a text chat message to an online friend.
@@ -271,10 +271,10 @@
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
  * OCTToxCheckLengthTypeSendMessage type.
  */
-- (uint32_t)sendMessageWithFriendNumber:(uint32_t)friendNumber
-                                   type:(OCTToxMessageType)type
-                                message:(NSString *)message
-                                  error:(NSError **)error;
+- (OCTToxMessageId)sendMessageWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                                          type:(OCTToxMessageType)type
+                                       message:(NSString *)message
+                                         error:(NSError **)error;
 
 /**
  * Set the nickname for the Tox client.
@@ -306,7 +306,7 @@
  *
  * @return Name of friend or nil in case of error.
  */
-- (NSString *)friendNameWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (NSString *)friendNameWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Set our status message.
@@ -338,7 +338,7 @@
  *
  * @return Status message of a friend.
  */
-- (NSString *)friendStatusMessageWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (NSString *)friendStatusMessageWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Set our typing status for a friend. You are responsible for turning it on or off.
@@ -350,7 +350,7 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (BOOL)setUserIsTyping:(BOOL)isTyping forFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Get the typing status of a friend.
@@ -361,7 +361,7 @@
  *
  * @return YES if friend is typing, otherwise NO.
  */
-- (BOOL)isFriendTypingWithFriendNumber:(uint32_t)friendNumber error:(NSError **)error;
+- (BOOL)isFriendTypingWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 /**
  * Return the number of friends.
@@ -400,8 +400,8 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)fileSendControlForFileNumber:(uint32_t)fileNumber
-                        friendNumber:(uint32_t)friendNumber
+- (BOOL)fileSendControlForFileNumber:(OCTToxFileNumber)fileNumber
+                        friendNumber:(OCTToxFriendNumber)friendNumber
                              control:(OCTToxFileControl)control
                                error:(NSError **)error;
 
@@ -419,9 +419,9 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)fileSeekForFileNumber:(uint32_t)fileNumber
-                 friendNumber:(uint32_t)friendNumber
-                     position:(uint64_t)position
+- (BOOL)fileSeekForFileNumber:(OCTToxFileNumber)fileNumber
+                 friendNumber:(OCTToxFriendNumber)friendNumber
+                     position:(OCTToxFileSize)position
                         error:(NSError **)error;
 
 /**
@@ -434,8 +434,8 @@
  *
  * @return File id on success, nil on failure.
  */
-- (NSData *)fileGetFileIdForFileNumber:(uint32_t)fileNumber
-                          friendNumber:(uint32_t)friendNumber
+- (NSData *)fileGetFileIdForFileNumber:(OCTToxFileNumber)fileNumber
+                          friendNumber:(OCTToxFriendNumber)friendNumber
                                  error:(NSError **)error;
 
 /**
@@ -459,9 +459,9 @@
  * was modified and how the client determines the file size.
  *
  * - If the file size was increased
- *   - and sending mode was streaming (fileSize = UINT64_MAX), the behaviour will be as
+ *   - and sending mode was streaming (fileSize = kOCTToxFileSizeUnknown), the behaviour will be as
  *     expected.
- *   - and sending mode was file (fileSize != UINT64_MAX), the fileChunkRequest
+ *   - and sending mode was file (fileSize != kOCTToxFileSizeUnknown), the fileChunkRequest
  *     callback will receive length = 0 when Core thinks the file transfer has
  *     finished. If the client remembers the file size as it was when sending
  *     the request, it will terminate the transfer normally. If the client
@@ -481,7 +481,7 @@
  *
  * @param friendNumber The friend number of the friend the file send request should be sent to.
  * @param kind The meaning of the file to be sent.
- * @param fileSize Size in bytes of the file the client wants to send, UINT64_MAX if unknown or streaming.
+ * @param fileSize Size in bytes of the file the client wants to send, kOCTToxFileSizeUnknown if unknown or streaming.
  * @param fileId A file identifier of length kOCTToxFileIdLength that can be used to
  *   uniquely identify file transfers across core restarts. If nil, a random one will
  *   be generated by core. It can then be obtained by using `fileGetFileId`.
@@ -492,14 +492,14 @@
  *
  * @return A file number used as an identifier in subsequent callbacks. This
  *   number is per friend. File numbers are reused after a transfer terminates.
- *   on failure, this function returns UINT32_MAX.
+ *   on failure, this function returns kOCTToxFileNumberFailure.
  */
-- (uint32_t)fileSendWithFriendNumber:(uint32_t)friendNumber
-                                kind:(OCTToxFileKind)kind
-                            fileSize:(uint64_t)fileSize
-                              fileId:(NSString *)fileId
-                            fileName:(NSString *)fileName
-                               error:(NSError **)error;
+- (OCTToxFileNumber)fileSendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                                        kind:(OCTToxFileKind)kind
+                                    fileSize:(OCTToxFileSize)fileSize
+                                      fileId:(NSString *)fileId
+                                    fileName:(NSString *)fileName
+                                       error:(NSError **)error;
 
 /**
  * Send a chunk of file data to a friend.
@@ -521,9 +521,9 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)fileSendChunkForFileNumber:(uint32_t)fileNumber
-                      friendNumber:(uint32_t)friendNumber
-                          position:(uint64_t)position
+- (BOOL)fileSendChunkForFileNumber:(OCTToxFileNumber)fileNumber
+                      friendNumber:(OCTToxFriendNumber)friendNumber
+                          position:(OCTToxFileSize)position
                               data:(NSData *)data
                              error:(NSError **)error;
 

@@ -540,6 +540,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -550,6 +551,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

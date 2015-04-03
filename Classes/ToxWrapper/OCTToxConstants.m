@@ -9,6 +9,10 @@
 #import "OCTToxConstants.h"
 #import "tox.h"
 
+const OCTToxFriendNumber kOCTToxFriendNumberFailure = UINT32_MAX;
+const OCTToxFileNumber kOCTToxFileNumberFailure = UINT32_MAX;
+const OCTToxFileSize kOCTToxFileSizeUnknown = UINT64_MAX;
+
 NSString *const kOCTToxErrorDomain = @"me.dvor.objcTox.ErrorDomain";
 
 const NSUInteger kOCTToxAddressLength = 2 * TOX_ADDRESS_SIZE;
