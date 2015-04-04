@@ -71,6 +71,19 @@
     XCTAssertNotNil(self.tox);
 }
 
+- (void)testSavingAndLoading
+{
+    NSData *data = [self.tox save];
+    XCTAssertNotNil(data);
+
+    OCTTox *tox = [[OCTTox alloc] initWithOptions:[OCTToxOptions new] savedData:data error:nil];
+    XCTAssertNotNil(tox);
+
+    NSData *data2 = [tox save];
+
+    XCTAssertTrue(data.length == data2.length);
+}
+
 #pragma mark -  Private methods
 
 - (void)testUserStatusFromCUserStatus
