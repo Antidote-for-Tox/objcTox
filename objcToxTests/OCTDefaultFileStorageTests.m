@@ -34,10 +34,20 @@
     OCTDefaultFileStorage *storage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:@"/base"
                                                                        temporaryDirectory:@"/temp"];
 
+    XCTAssertEqualObjects(storage.pathForToxSaveFile, @"/base/save.tox");
     XCTAssertEqualObjects(storage.pathForDownloadedFilesDirectory, @"/base/downloads");
     XCTAssertEqualObjects(storage.pathForUploadedFilesDirectory, @"/base/uploads");
     XCTAssertEqualObjects(storage.pathForTemporaryFilesDirectory, @"/temp");
     XCTAssertEqualObjects(storage.pathForAvatarsDirectory, @"/base/avatars");
+}
+
+- (void)testCustomToxSaveFileName
+{
+    OCTDefaultFileStorage *storage = [[OCTDefaultFileStorage alloc] initWithToxSaveFileName:@"filename"
+                                                                              baseDirectory:@"/base"
+                                                                         temporaryDirectory:@"/temp"];
+
+    XCTAssertEqualObjects(storage.pathForToxSaveFile, @"/base/filename.tox");
 }
 
 @end

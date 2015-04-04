@@ -13,6 +13,16 @@
 @required
 
 /**
+ * Returns path where tox save data will be stored. Save file should have ".tox" extension.
+ * See Tox STS for more information: https://github.com/Tox/Tox-STS
+ *
+ * @return Full path to the file for loading/saving tox data.
+ *
+ * @warning Path should be file path. The file can be rewritten at any time while OCTManager is alive.
+ */
+@property (readonly) NSString *pathForToxSaveFile;
+
+/**
  * Returns path where all downloaded files will be stored.
  *
  * @return Full path to the directory with downloaded files.

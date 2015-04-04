@@ -10,6 +10,7 @@
 
 @interface OCTDefaultFileStorage()
 
+@property (copy, nonatomic) NSString *saveFileName;
 @property (copy, nonatomic) NSString *baseDirectory;
 @property (copy, nonatomic) NSString *temporaryDirectory;
 
@@ -21,12 +22,24 @@
 
 - (instancetype)initWithBaseDirectory:(NSString *)baseDirectory temporaryDirectory:(NSString *)temporaryDirectory
 {
+    return [self initWithToxSaveFileName:nil baseDirectory:baseDirectory temporaryDirectory:temporaryDirectory];
+}
+
+- (instancetype)initWithToxSaveFileName:(NSString *)saveFileName
+                          baseDirectory:(NSString *)baseDirectory
+                     temporaryDirectory:(NSString *)temporaryDirectory
+{
     self = [super init];
 
     if (! self) {
         return nil;
     }
 
+    if (! saveFileName) {
+        saveFileName = @"save";
+    }
+
+    self.saveFileName = [saveFileName stringByAppendingString:@".tox"];
     self.baseDirectory = baseDirectory;
     self.temporaryDirectory = temporaryDirectory;
 
@@ -34,6 +47,11 @@
 }
 
 #pragma mark -  OCTFileStorageProtocol
+
+- (NSString *)pathForToxSaveFile
+{
+    return [self.baseDirectory stringByAppendingPathComponent:self.saveFileName];
+}
 
 - (NSString *)pathForDownloadedFilesDirectory
 {
