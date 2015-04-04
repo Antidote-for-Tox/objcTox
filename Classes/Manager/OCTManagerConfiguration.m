@@ -11,6 +11,7 @@
 #import "OCTDefaultFileStorage.h"
 
 static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTox.settings";
+static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
 
 @implementation OCTManagerConfiguration
 
@@ -24,7 +25,7 @@ static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTo
         initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
 
     NSString *baseDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-    baseDirectory = [baseDirectory stringByAppendingPathComponent:@"me.dvor.objcTox"];
+    baseDirectory = [baseDirectory stringByAppendingPathComponent:kDefaultBaseDirectory];
 
     configuration.fileStorage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:baseDirectory
                                                                   temporaryDirectory:NSTemporaryDirectory()];
