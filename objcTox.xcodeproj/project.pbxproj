@@ -20,6 +20,7 @@
 		1173BDF01AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1173BDEF1AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m */; };
 		1173BDF41AB633E300E43D75 /* OCTFriendsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1173BDF31AB633E300E43D75 /* OCTFriendsContainer.m */; };
 		1173BE251AC4A01700E43D75 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1173BE241AC4A01700E43D75 /* OCTToxConstants.m */; };
+		118EA3B21ACFB13300249E01 /* OCTToxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 118EA3B11ACFB13300249E01 /* OCTToxTests.m */; };
 		11AFF79E1AAA689D005423C4 /* OCTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF79D1AAA689D005423C4 /* OCTManager.m */; };
 		11AFF7AB1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 11AFF7AA1AAA6A91005423C4 /* OCTDefaultSettingsStorage.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
@@ -77,6 +78,7 @@
 		1173BDF31AB633E300E43D75 /* OCTFriendsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendsContainer.m; sourceTree = "<group>"; };
 		1173BDF51AB633F200E43D75 /* OCTFriendsContainerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendsContainerProtocol.h; sourceTree = "<group>"; };
 		1173BE241AC4A01700E43D75 /* OCTToxConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxConstants.m; sourceTree = "<group>"; };
+		118EA3B11ACFB13300249E01 /* OCTToxTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxTests.m; sourceTree = "<group>"; };
 		11AFF79C1AAA689D005423C4 /* OCTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManager.h; sourceTree = "<group>"; };
 		11AFF79D1AAA689D005423C4 /* OCTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManager.m; sourceTree = "<group>"; };
 		11AFF7A81AAA6A87005423C4 /* OCTSettingsStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageProtocol.h; sourceTree = "<group>"; };
@@ -231,11 +233,12 @@
 			children = (
 				114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */,
 				114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */,
-				114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */,
-				11EDD4651AA14B3F003A0823 /* Supporting Files */,
-				1173BDEB1AB62D9B00E43D75 /* OCTManagerTests.m */,
 				1173BDED1AB62FD100E43D75 /* OCTManagerConfigurationTests.m */,
+				1173BDEB1AB62D9B00E43D75 /* OCTManagerTests.m */,
+				114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */,
 				1173BDEF1AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m */,
+				118EA3B11ACFB13300249E01 /* OCTToxTests.m */,
+				11EDD4651AA14B3F003A0823 /* Supporting Files */,
 			);
 			path = objcToxTests;
 			sourceTree = "<group>";
@@ -446,6 +449,7 @@
 				1173BDF01AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m in Sources */,
 				114196D71AAC87CC0079B30A /* OCTDefaultFileStorageTests.m in Sources */,
 				114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */,
+				118EA3B21ACFB13300249E01 /* OCTToxTests.m in Sources */,
 				1173BDEE1AB62FD100E43D75 /* OCTManagerConfigurationTests.m in Sources */,
 				114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */,
 			);

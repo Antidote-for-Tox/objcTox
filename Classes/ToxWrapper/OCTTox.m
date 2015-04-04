@@ -1144,6 +1144,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
         case TOX_ERR_FRIEND_SEND_MESSAGE_NULL:
             code = OCTToxErrorFriendSendMessageUnknown;
             failureReason = @"Unknown error occured";
+            break;
         case TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND:
             code = OCTToxErrorFriendSendMessageFriendNotFound;
             failureReason = @"Friend not found";
