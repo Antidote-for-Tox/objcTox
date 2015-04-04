@@ -1417,8 +1417,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     cOptions.end_port = options.endPort;
 
     if (options.proxyHost) {
-        const char *cHost = options.proxyHost.UTF8String;
-        strcpy((char *)cOptions.proxy_host, cHost);
+        cOptions.proxy_host = options.proxyHost.UTF8String;
     }
     cOptions.proxy_port = options.proxyPort;
 
