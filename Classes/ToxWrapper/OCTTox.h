@@ -235,6 +235,17 @@
 - (BOOL)friendExistsWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
+ * Return a date of the last time the friend associated with a given friend number was seen online.
+ *
+ * @param friendNumber The friend number you want to query.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendGetLastOnline for all error codes.
+ *
+ * @return Date of the last time friend was seen online.
+ */
+- (NSDate *)friendGetLastOnlineWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
+
+/**
  * Return the friend's user status (away/busy/...). If the friend number is
  * invalid, the return value is unspecified.
  *

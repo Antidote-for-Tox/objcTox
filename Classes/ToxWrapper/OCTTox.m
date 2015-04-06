@@ -423,6 +423,21 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return (BOOL)result;
 }
 
+- (NSDate *)friendGetLastOnlineWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOX_ERR_FRIEND_GET_LAST_ONLINE cError;
+
+    uint64_t timestamp = tox_friend_get_last_online(self.tox, friendNumber, &cError);
+
+    [self fillError:error withCErrorFriendGetLastOnline:cError];
+
+    if (timestamp == UINT64_MAX) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:timestamp];
+}
+
 - (OCTToxUserStatus)friendStatusWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOX_ERR_FRIEND_QUERY cError;
@@ -1070,6 +1085,29 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
         case TOX_ERR_SET_INFO_TOO_LONG:
             code = OCTToxErrorSetInfoCodeTooLong;
             failureReason = @"Specified string is too long";
+            break;
+    };
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError
+{
+    if (! error || cError == TOX_ERR_FRIEND_GET_LAST_ONLINE_OK) {
+        return;
+    }
+
+    OCTToxErrorFriendGetLastOnline code;
+    NSString *description = @"Cannot get last online of a friend";
+    NSString *failureReason = nil;
+
+    switch(cError) {
+        case TOX_ERR_FRIEND_GET_LAST_ONLINE_OK:
+            NSAssert(NO, @"We shouldn't be here");
+            return;
+        case TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND:
+            code = OCTToxErrorFriendGetLastOnlineFriendNotFound;
+            failureReason = @"Friend not found";
             break;
     };
 

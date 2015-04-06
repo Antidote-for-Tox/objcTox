@@ -318,7 +318,17 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetPublicKey) {
 };
 
 /**
- * Error codes for friend state query functions.
+ * Error codes for last online methods.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetLastOnline) {
+    /**
+     * No friend with the given number exists on the friend list.
+     */
+    OCTToxErrorFriendGetLastOnlineFriendNotFound,
+};
+
+/**
+ * Error codes for friend state query methods.
  */
 typedef NS_ENUM(NSUInteger, OCTToxErrorFriendQuery) {
     OCTToxErrorFriendQueryUnknown,

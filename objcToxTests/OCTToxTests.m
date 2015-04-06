@@ -25,6 +25,7 @@
 - (void)fillError:(NSError **)error withCErrorFriendByPublicKey:(TOX_ERR_FRIEND_BY_PUBLIC_KEY)cError;
 - (void)fillError:(NSError **)error withCErrorFriendGetPublicKey:(TOX_ERR_FRIEND_GET_PUBLIC_KEY)cError;
 - (void)fillError:(NSError **)error withCErrorSetInfo:(TOX_ERR_SET_INFO)cError;
+- (void)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError;
 - (void)fillError:(NSError **)error withCErrorFriendQuery:(TOX_ERR_FRIEND_QUERY)cError;
 - (void)fillError:(NSError **)error withCErrorSetTyping:(TOX_ERR_SET_TYPING)cError;
 - (void)fillError:(NSError **)error withCErrorFriendSendMessage:(TOX_ERR_FRIEND_SEND_MESSAGE)cError;
@@ -311,6 +312,21 @@
     [self.tox fillError:&error withCErrorSetInfo:TOX_ERR_SET_INFO_TOO_LONG];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxErrorSetInfoCodeTooLong);
+}
+
+- (void)testFillErrorFriendGetLastOnline
+{
+    // test nil error
+    [self.tox fillError:nil withCErrorFriendGetLastOnline:TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND];
+
+    NSError *error;
+    [self.tox fillError:&error withCErrorFriendGetLastOnline:TOX_ERR_FRIEND_GET_LAST_ONLINE_OK];
+    XCTAssertNil(error);
+
+    error = nil;
+    [self.tox fillError:&error withCErrorFriendGetLastOnline:TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxErrorFriendGetLastOnlineFriendNotFound);
 }
 
 - (void)testFillErrorFriendQuery
