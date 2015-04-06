@@ -412,7 +412,7 @@
  * OCTToxFileControlResume is sent.
  *
  * @param fileNumber The friend-specific identifier for the file transfer.
- * @param friendNumber The friend number of the friend the file is being transferred to or received from.
+ * @param friendNumber The friend number of the friend the file is being received from.
  * @param position The position that the file should be seeked to.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxErrorFileSeek for all error codes.

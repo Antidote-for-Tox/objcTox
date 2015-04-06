@@ -854,7 +854,6 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             NSAssert(NO, @"We shouldn't be here");
             return;
         case TOX_ERR_NEW_NULL:
-        case TOX_ERR_NEW_LOAD_DECRYPTION_FAILED:
             code = OCTToxErrorInitCodeUnknown;
             failureReason = @"Unknown error occured";
             break;

@@ -706,9 +706,9 @@ uint8_t m_get_self_userstatus(const Messenger *m)
 uint64_t m_get_last_online(const Messenger *m, int32_t friendnumber)
 {
     if (friend_not_valid(m, friendnumber))
-        return -1;
+        return UINT64_MAX;
 
-    return m->friendlist[friendnumber].ping_lastrecv;
+    return m->friendlist[friendnumber].last_seen_time;
 }
 
 int m_set_usertyping(Messenger *m, int32_t friendnumber, uint8_t is_typing)
@@ -1198,16 +1198,24 @@ int file_control(const Messenger *m, int32_t friendnumber, uint32_t filenumber, 
     if (control > FILECONTROL_KILL)
         return -4;
 
-    if (control == FILECONTROL_PAUSE && (ft->paused & FILE_PAUSE_US))
+    if (control == FILECONTROL_PAUSE && ((ft->paused & FILE_PAUSE_US) || ft->status != FILESTATUS_TRANSFERRING))
         return -5;
 
-    if (control == FILECONTROL_ACCEPT && ft->status == FILESTATUS_TRANSFERRING) {
-        if (!(ft->paused & FILE_PAUSE_US)) {
-            if (ft->paused & FILE_PAUSE_OTHER) {
-                return -6;
-            } else {
-                return -7;
+    if (control == FILECONTROL_ACCEPT) {
+        if (ft->status == FILESTATUS_TRANSFERRING) {
+            if (!(ft->paused & FILE_PAUSE_US)) {
+                if (ft->paused & FILE_PAUSE_OTHER) {
+                    return -6;
+                } else {
+                    return -7;
+                }
             }
+        } else {
+            if (ft->status != FILESTATUS_NOT_ACCEPTED)
+                return -7;
+
+            if (!send_receive)
+                return -6;
         }
     }
 
@@ -1464,6 +1472,11 @@ static void do_reqchunk_filecb(Messenger *m, int32_t friendnumber)
         }
 
         while (ft->status == FILESTATUS_TRANSFERRING && (ft->paused == FILE_PAUSE_NOT)) {
+            if (max_speed_reached(m->net_crypto, friend_connection_crypt_connection_id(m->fr_c,
+                                  m->friendlist[friendnumber].friendcon_id))) {
+                free_slots = 0;
+            }
+
             if (free_slots == 0)
                 break;
 
@@ -1492,10 +1505,6 @@ static void do_reqchunk_filecb(Messenger *m, int32_t friendnumber)
 
             --free_slots;
 
-            if (max_speed_reached(m->net_crypto, friend_connection_crypt_connection_id(m->fr_c,
-                                  m->friendlist[friendnumber].friendcon_id))) {
-                free_slots = 0;
-            }
         }
 
         if (num == 0)
@@ -1549,15 +1558,23 @@ static int handle_filecontrol(Messenger *m, int32_t friendnumber, uint8_t receiv
     }
 
     if (control_type == FILECONTROL_ACCEPT) {
-        ft->status = FILESTATUS_TRANSFERRING;
-
-        if (ft->paused & FILE_PAUSE_OTHER) {
-            ft->paused ^=  FILE_PAUSE_OTHER;
+        if (receive_send && ft->status == FILESTATUS_NOT_ACCEPTED) {
+            ft->status = FILESTATUS_TRANSFERRING;
+        } else {
+            if (ft->paused & FILE_PAUSE_OTHER) {
+                ft->paused ^= FILE_PAUSE_OTHER;
+            } else {
+                return -1;
+            }
         }
 
         if (m->file_filecontrol)
             (*m->file_filecontrol)(m, friendnumber, real_filenumber, control_type, m->file_filecontrol_userdata);
     } else if (control_type == FILECONTROL_PAUSE) {
+        if ((ft->paused & FILE_PAUSE_OTHER) || ft->status != FILESTATUS_TRANSFERRING) {
+            return -1;
+        }
+
         ft->paused |= FILE_PAUSE_OTHER;
 
         if (m->file_filecontrol)
@@ -1889,7 +1906,6 @@ static void check_friend_request_timed_out(Messenger *m, uint32_t i, uint64_t t)
 
 static int handle_status(void *object, int i, uint8_t status)
 {
-    uint64_t temp_time = unix_time();
     Messenger *m = object;
 
     if (status) { /* Went online. */
@@ -1898,7 +1914,6 @@ static int handle_status(void *object, int i, uint8_t status)
         m->friendlist[i].userstatus_sent = 0;
         m->friendlist[i].statusmessage_sent = 0;
         m->friendlist[i].user_istyping_sent = 0;
-        m->friendlist[i].ping_lastrecv = temp_time;
     } else { /* Went offline. */
         if (m->friendlist[i].status == FRIEND_ONLINE) {
             set_friend_status(m, i, FRIEND_CONFIRMED);
@@ -2003,8 +2018,6 @@ static int handle_packet(void *object, int i, uint8_t *temp, uint16_t len)
 
         case PACKET_ID_MESSAGE:
         case PACKET_ID_ACTION: {
-            const uint8_t *message_id = data;
-
             if (data_length == 0)
                 break;
 
@@ -2245,6 +2258,8 @@ void do_friends(Messenger *m)
             check_friend_tcp_udp(m, i);
             do_receipts(m, i);
             do_reqchunk_filecb(m, i);
+
+            m->friendlist[i].last_seen_time = (uint64_t) time(NULL);
         }
     }
 }
@@ -2385,7 +2400,6 @@ void do_messenger(Messenger *m)
             LOGGER_TRACE("Friend num in DHT %u != friend num in msger %u\n", m->dht->num_friends, m->numfriends);
         }
 
-        uint32_t ping_lastrecv;
         Friend *msgfptr;
         DHT_Friend *dhtfptr;
 
@@ -2398,14 +2412,9 @@ void do_messenger(Messenger *m)
             dhtfptr = &m->dht->friends_list[friend];
 
             if (msgfptr) {
-                ping_lastrecv = lastdump - msgfptr->ping_lastrecv;
-
-                if (ping_lastrecv > 999)
-                    ping_lastrecv = 999;
-
-                LOGGER_TRACE("F[%2u:%2u] <%s> [%03u] %s",
+                LOGGER_TRACE("F[%2u:%2u] <%s> %s",
                              dht2m[friend], friend, msgfptr->name,
-                             ping_lastrecv, ID2String(msgfptr->real_pk));
+                             ID2String(msgfptr->real_pk));
             } else {
                 LOGGER_TRACE("F[--:%2u] %s", friend, ID2String(dhtfptr->client_id));
             }
@@ -2461,7 +2470,7 @@ struct SAVED_FRIEND {
     uint16_t statusmessage_length;
     uint8_t userstatus;
     uint32_t friendrequest_nospam;
-    uint64_t ping_lastrecv;
+    uint64_t last_seen_time;
 };
 
 static uint32_t saved_friendslist_size(const Messenger *m)
@@ -2497,10 +2506,10 @@ static uint32_t friends_list_save(const Messenger *m, uint8_t *data)
                 temp.statusmessage_length = htons(m->friendlist[i].statusmessage_length);
                 temp.userstatus = m->friendlist[i].userstatus;
 
-                uint8_t lastonline[sizeof(uint64_t)];
-                memcpy(lastonline, &m->friendlist[i].ping_lastrecv, sizeof(uint64_t));
-                host_to_net(lastonline, sizeof(uint64_t));
-                memcpy(&temp.ping_lastrecv, lastonline, sizeof(uint64_t));
+                uint8_t last_seen_time[sizeof(uint64_t)];
+                memcpy(last_seen_time, &m->friendlist[i].last_seen_time, sizeof(uint64_t));
+                host_to_net(last_seen_time, sizeof(uint64_t));
+                memcpy(&temp.last_seen_time, last_seen_time, sizeof(uint64_t));
             }
 
             memcpy(data + num * sizeof(struct SAVED_FRIEND), &temp, sizeof(struct SAVED_FRIEND));
@@ -2533,10 +2542,10 @@ static int friends_list_load(Messenger *m, const uint8_t *data, uint32_t length)
             setfriendname(m, fnum, temp.name, ntohs(temp.name_length));
             set_friend_statusmessage(m, fnum, temp.statusmessage, ntohs(temp.statusmessage_length));
             set_friend_userstatus(m, fnum, temp.userstatus);
-            uint8_t lastonline[sizeof(uint64_t)];
-            memcpy(lastonline, &temp.ping_lastrecv, sizeof(uint64_t));
-            net_to_host(lastonline, sizeof(uint64_t));
-            memcpy(&m->friendlist[fnum].ping_lastrecv, lastonline, sizeof(uint64_t));
+            uint8_t last_seen_time[sizeof(uint64_t)];
+            memcpy(last_seen_time, &temp.last_seen_time, sizeof(uint64_t));
+            net_to_host(last_seen_time, sizeof(uint64_t));
+            memcpy(&m->friendlist[fnum].last_seen_time, last_seen_time, sizeof(uint64_t));
         } else if (temp.status != 0) {
             /* TODO: This is not a good way to do this. */
             uint8_t address[FRIEND_ADDRESS_SIZE];

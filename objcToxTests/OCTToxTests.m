@@ -163,11 +163,6 @@
     XCTAssertTrue(error.code == OCTToxErrorInitCodeEncrypted);
 
     error = nil;
-    [self.tox fillError:&error withCErrorInit:TOX_ERR_NEW_LOAD_DECRYPTION_FAILED];
-    XCTAssertNotNil(error);
-    XCTAssertTrue(error.code == OCTToxErrorInitCodeUnknown);
-
-    error = nil;
     [self.tox fillError:&error withCErrorInit:TOX_ERR_NEW_LOAD_BAD_FORMAT];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxErrorInitCodeLoadBadFormat);

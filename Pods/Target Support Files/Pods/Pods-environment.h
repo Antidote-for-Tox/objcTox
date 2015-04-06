@@ -46,5 +46,5 @@
 #define COCOAPODS_POD_AVAILABLE_toxcore_ios
 #define COCOAPODS_VERSION_MAJOR_toxcore_ios 0
 #define COCOAPODS_VERSION_MINOR_toxcore_ios 1
-#define COCOAPODS_VERSION_PATCH_toxcore_ios 2
+#define COCOAPODS_VERSION_PATCH_toxcore_ios 3
 
