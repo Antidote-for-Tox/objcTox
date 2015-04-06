@@ -39,7 +39,14 @@
 
     _configuration = [configuration copy];
 
-    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:nil error:nil];
+    NSData *savedData = nil;
+    NSString *savedDataPath = configuration.fileStorage.pathForToxSaveFile;
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:savedDataPath]) {
+        savedData = [NSData dataWithContentsOfFile:savedDataPath];
+    }
+
+    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
     _tox.delegate = self;
 
     OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
