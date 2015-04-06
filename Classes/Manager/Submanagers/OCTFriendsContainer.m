@@ -30,7 +30,7 @@
 
 }
 
-- (void)updateFriendWithId:(int32_t)id updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock
+- (void)updateFriendWithId:(OCTToxFriendNumber)friendNumber updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock
 {
 
 }

@@ -16,10 +16,10 @@
 @interface OCTFriend : NSObject
 
 /**
- * Friend id that is unique for Tox.
+ * Friend number that is unique for Tox.
  * In case if friend will be deleted, old id may be reused on new friend creation.
  */
-@property (assign, nonatomic, readonly) int32_t id;
+@property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
 
 /**
  * Public key of a friend, is kOCTToxPublicKeyLength length.

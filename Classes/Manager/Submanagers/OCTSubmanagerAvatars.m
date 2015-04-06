@@ -122,12 +122,12 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 
 // #pragma mark -  OCTToxDelegate
 
-// - (void)tox:(OCTTox *)tox friendAvatarHashUpdate:(NSData *)hash friendNumber:(int32_t)friendNumber
+// - (void)tox:(OCTTox *)tox friendAvatarHashUpdate:(NSData *)hash friendNumber:(OCTToxFriendNumber)friendNumber
 // {
 //     // TODO
 // }
 
-// - (void)tox:(OCTTox *)tox friendAvatarUpdate:(NSData *)avatar hash:(NSData *)hash friendNumber:(int32_t)friendNumber
+// - (void)tox:(OCTTox *)tox friendAvatarUpdate:(NSData *)avatar hash:(NSData *)hash friendNumber:(OCTToxFriendNumber)friendNumber
 // {
 //     // TODO
 // }
