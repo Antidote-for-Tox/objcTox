@@ -16,4 +16,6 @@
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
+- (void)configure;
+
 @end

@@ -9,7 +9,9 @@
 #import "OCTSubmanagerFriends.h"
 #import "OCTFriendsContainer.h"
 
-@interface OCTSubmanagerFriends()
+@interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource>
+
+@property (strong, nonatomic) OCTFriendsContainer *container;
 
 @end
 
@@ -24,9 +26,24 @@
         return nil;
     }
 
-    _container = [OCTFriendsContainer new];
+    _container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
+    _container.dataSource = self;
 
     return self;
+}
+
+#pragma mark -  Public
+
+- (void)configure
+{
+    [self.container configure];
+}
+
+#pragma mark -  OCTFriendsContainerDataSource
+
+- (id<OCTSettingsStorageProtocol>)friendsContainerGetSettingsStorage
+{
+    return [self.dataSource managerGetSettingsStorage];
 }
 
 @end

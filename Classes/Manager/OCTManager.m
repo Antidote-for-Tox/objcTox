@@ -51,6 +51,7 @@
 
     OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
     friends.dataSource = self;
+    [friends configure];
     _friends = friends;
 
     OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
