@@ -24,7 +24,8 @@
 - (void)configure;
 
 - (void)addFriend:(OCTFriend *)friend;
-- (void)updateFriendWithId:(OCTToxFriendNumber)friendNumber updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock;
+- (void)updateFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                         updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock;
 - (void)removeFriend:(OCTFriend *)friend;
 
 @end

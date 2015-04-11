@@ -128,7 +128,8 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     }
 }
 
-- (void)updateFriendWithId:(OCTToxFriendNumber)friendNumber updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock
+- (void)updateFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+                         updateBlock:(void (^)(OCTFriend *friendToUpdate))updateBlock
 {
     NSParameterAssert(updateBlock);
 
@@ -140,7 +141,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
         NSUInteger index = NSNotFound;
         __block OCTFriend *friend = nil;
 
-        [self.friends indexOfObjectPassingTest:^BOOL (OCTFriend *f, NSUInteger idx, BOOL *stop) {
+        index = [self.friends indexOfObjectPassingTest:^BOOL (OCTFriend *f, NSUInteger idx, BOOL *stop) {
             if (f.friendNumber == friendNumber) {
                 friend = f;
                 return YES;
