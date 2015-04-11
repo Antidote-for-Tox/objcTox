@@ -1,4 +1,4 @@
-[![Build Status](http://img.shields.io/travis/dvor/objcTox/master.svg?style=flat)](https://travis-ci.org/dvor/objcTox)
+[![Build Status](http://img.shields.io/travis/dvor/objcTox/master.svg?style=flat)](https://travis-ci.org/dvor/objcTox) [![Coverage Status](https://coveralls.io/repos/dvor/objcTox/badge.svg)](https://coveralls.io/r/dvor/objcTox)
 
 # objcTox
 
