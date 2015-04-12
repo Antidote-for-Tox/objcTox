@@ -74,6 +74,49 @@ static NSString *const kDictionaryKey = @"kDictionaryKey";
     OCMVerifyAll(userDefaultsMock);
 }
 
+- (void)testSetObjectForKey2
+{
+    NSString *object = @"object";
+    NSString *forKey = @"forKey";
+
+    NSString *object2 = @"object2";
+    NSString *forKey2 = @"forKey2";
+
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock standardUserDefaults]).andReturn(userDefaultsMock);
+
+    id objectArg = [OCMArg checkWithBlock:^BOOL (id value) {
+        if (! [value isKindOfClass:[NSDictionary class]]) {
+            return NO;
+        }
+
+        NSDictionary *dict = value;
+
+        if (dict.count != 2) {
+            return NO;
+        }
+
+        if (! [dict[forKey] isEqualToString:object]) {
+            return NO;
+        }
+
+        if (! [dict[forKey2] isEqualToString:object2]) {
+            return NO;
+        }
+
+        return YES;
+    }];
+
+    NSDictionary *dict = @{ forKey2 : object2 };
+    OCMStub([userDefaultsMock objectForKey:kDictionaryKey]).andReturn(dict);
+    OCMExpect([userDefaultsMock setObject:objectArg forKey:kDictionaryKey]);
+    OCMExpect([userDefaultsMock synchronize]);
+
+    [self.storage setObject:object forKey:forKey];
+
+    OCMVerifyAll(userDefaultsMock);
+}
+
 - (void)testObjectForKey
 {
     NSString *object = @"object";
