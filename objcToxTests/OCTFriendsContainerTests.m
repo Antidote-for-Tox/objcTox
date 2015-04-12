@@ -47,6 +47,98 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
 #pragma mark -  Test public methods
 
+- (void)testSetFriendsSort
+{
+    id friendNoneNoneB = OCMClassMock([OCTFriend class]);
+    OCMStub([friendNoneNoneB status]).andReturn(OCTToxUserStatusNone);
+    OCMStub([friendNoneNoneB connectionStatus]).andReturn(OCTToxConnectionStatusNone);
+    OCMStub([friendNoneNoneB name]).andReturn(@"B");
+    [self.container addFriend:friendNoneNoneB];
+
+    id friendNoneNoneD = OCMClassMock([OCTFriend class]);
+    OCMStub([friendNoneNoneD status]).andReturn(OCTToxUserStatusNone);
+    OCMStub([friendNoneNoneD connectionStatus]).andReturn(OCTToxConnectionStatusNone);
+    OCMStub([friendNoneNoneD name]).andReturn(@"D");
+    [self.container addFriend:friendNoneNoneD];
+
+    id friendNoneTcpI = OCMClassMock([OCTFriend class]);
+    OCMStub([friendNoneTcpI status]).andReturn(OCTToxUserStatusNone);
+    OCMStub([friendNoneTcpI connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    OCMStub([friendNoneTcpI name]).andReturn(@"I");
+    [self.container addFriend:friendNoneTcpI];
+
+    id friendAwayTcpF = OCMClassMock([OCTFriend class]);
+    OCMStub([friendAwayTcpF status]).andReturn(OCTToxUserStatusAway);
+    OCMStub([friendAwayTcpF connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    OCMStub([friendAwayTcpF name]).andReturn(@"F");
+    [self.container addFriend:friendAwayTcpF];
+
+    id friendAwayTcpH = OCMClassMock([OCTFriend class]);
+    OCMStub([friendAwayTcpH status]).andReturn(OCTToxUserStatusAway);
+    OCMStub([friendAwayTcpH connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    OCMStub([friendAwayTcpH name]).andReturn(@"H");
+    [self.container addFriend:friendAwayTcpH];
+
+    id friendBusyTcpG = OCMClassMock([OCTFriend class]);
+    OCMStub([friendBusyTcpG status]).andReturn(OCTToxUserStatusBusy);
+    OCMStub([friendBusyTcpG connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    OCMStub([friendBusyTcpG name]).andReturn(@"G");
+    [self.container addFriend:friendBusyTcpG];
+
+    id friendBusyTcpE = OCMClassMock([OCTFriend class]);
+    OCMStub([friendBusyTcpE status]).andReturn(OCTToxUserStatusBusy);
+    OCMStub([friendBusyTcpE connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    OCMStub([friendBusyTcpE name]).andReturn(@"E");
+    [self.container addFriend:friendBusyTcpE];
+
+    id friendBusyUdpC = OCMClassMock([OCTFriend class]);
+    OCMStub([friendBusyUdpC status]).andReturn(OCTToxUserStatusBusy);
+    OCMStub([friendBusyUdpC connectionStatus]).andReturn(OCTToxConnectionStatusUDP);
+    OCMStub([friendBusyUdpC name]).andReturn(@"C");
+    [self.container addFriend:friendBusyUdpC];
+
+    id friendBusyUdpA = OCMClassMock([OCTFriend class]);
+    OCMStub([friendBusyUdpA status]).andReturn(OCTToxUserStatusBusy);
+    OCMStub([friendBusyUdpA connectionStatus]).andReturn(OCTToxConnectionStatusUDP);
+    OCMStub([friendBusyUdpA name]).andReturn(@"A");
+    [self.container addFriend:friendBusyUdpA];
+
+    self.container.friendsSort = OCTManagerFriendsSortByName;
+
+    XCTAssertEqual([self.container friendAtIndex:0], friendBusyUdpA);
+    XCTAssertEqual([self.container friendAtIndex:1], friendNoneNoneB);
+    XCTAssertEqual([self.container friendAtIndex:2], friendBusyUdpC);
+    XCTAssertEqual([self.container friendAtIndex:3], friendNoneNoneD);
+    XCTAssertEqual([self.container friendAtIndex:4], friendBusyTcpE);
+    XCTAssertEqual([self.container friendAtIndex:5], friendAwayTcpF);
+    XCTAssertEqual([self.container friendAtIndex:6], friendBusyTcpG);
+    XCTAssertEqual([self.container friendAtIndex:7], friendAwayTcpH);
+    XCTAssertEqual([self.container friendAtIndex:8], friendNoneTcpI);
+
+    self.container.friendsSort = OCTManagerFriendsSortByStatus;
+
+    OCTFriend *friend;
+
+    friend = [self.container friendAtIndex:0];
+    XCTAssertEqual(friend, friendNoneTcpI, @"Expected I, received %@", friend.name);
+    friend = [self.container friendAtIndex:1];
+    XCTAssertEqual(friend, friendAwayTcpF, @"Expected F, received %@", friend.name);
+    friend = [self.container friendAtIndex:2];
+    XCTAssertEqual(friend, friendAwayTcpH, @"Expected H, received %@", friend.name);
+    friend = [self.container friendAtIndex:3];
+    XCTAssertEqual(friend, friendBusyUdpA, @"Expected A, received %@", friend.name);
+    friend = [self.container friendAtIndex:4];
+    XCTAssertEqual(friend, friendBusyUdpC, @"Expected C, received %@", friend.name);
+    friend = [self.container friendAtIndex:5];
+    XCTAssertEqual(friend, friendBusyTcpE, @"Expected E, received %@", friend.name);
+    friend = [self.container friendAtIndex:6];
+    XCTAssertEqual(friend, friendBusyTcpG, @"Expected G, received %@", friend.name);
+    friend = [self.container friendAtIndex:7];
+    XCTAssertEqual(friend, friendNoneNoneB, @"Expected B, received %@", friend.name);
+    friend = [self.container friendAtIndex:8];
+    XCTAssertEqual(friend, friendNoneNoneD, @"Expected D, received %@", friend.name);
+}
+
 - (void)testFriendsCount
 {
     XCTAssertEqual([self.container friendsCount], 0);
@@ -70,6 +162,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     XCTAssertEqual([self.container friendAtIndex:0], friend0);
     XCTAssertEqual([self.container friendAtIndex:1], friend1);
+    XCTAssertNil([self.container friendAtIndex:2]);
 }
 
 #pragma mark -  Test private methods
@@ -124,6 +217,10 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id theFriend = [self.container.friends lastObject];
     XCTAssertEqual(friend, theFriend);
+
+    XCTAssertThrowsSpecificNamed([self.container addFriend:nil], NSException, NSInternalInconsistencyException);
+    // trying to add save friend twice
+    XCTAssertThrowsSpecificNamed([self.container addFriend:friend], NSException, NSInternalInconsistencyException);
 }
 
 - (void)testUpdateFriend
@@ -142,6 +239,18 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     }];
 
     XCTAssertTrue(blockCalled);
+
+    XCTAssertThrowsSpecificNamed(
+        [self.container updateFriendWithFriendNumber:friendNumber updateBlock:nil],
+        NSException,
+        NSInternalInconsistencyException
+    );
+
+    XCTAssertThrowsSpecificNamed(
+        [self.container updateFriendWithFriendNumber:friendNumber+1 updateBlock:^(OCTFriend *theFriend) {}],
+        NSException,
+        NSInternalInconsistencyException
+    );
 }
 
 - (void)testRemoveFriend
@@ -152,87 +261,10 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     [self.container removeFriend:friend];
 
     XCTAssertTrue(self.container.friends.count == 0);
-}
 
-- (void)testComparatorForCurrentSort
-{
-    id friendNoneNoneA = OCMClassMock([OCTFriend class]);
-    OCMStub([friendNoneNoneA status]).andReturn(OCTToxUserStatusNone);
-    OCMStub([friendNoneNoneA connectionStatus]).andReturn(OCTToxConnectionStatusNone);
-    OCMStub([friendNoneNoneA name]).andReturn(@"a");
-
-    id friendNoneNoneB = OCMClassMock([OCTFriend class]);
-    OCMStub([friendNoneNoneB status]).andReturn(OCTToxUserStatusNone);
-    OCMStub([friendNoneNoneB connectionStatus]).andReturn(OCTToxConnectionStatusNone);
-    OCMStub([friendNoneNoneB name]).andReturn(@"b");
-
-    id friendAwayTcpA = OCMClassMock([OCTFriend class]);
-    OCMStub([friendAwayTcpA status]).andReturn(OCTToxUserStatusAway);
-    OCMStub([friendAwayTcpA connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
-    OCMStub([friendAwayTcpA name]).andReturn(@"a");
-
-    id friendAwayTcpB = OCMClassMock([OCTFriend class]);
-    OCMStub([friendAwayTcpB status]).andReturn(OCTToxUserStatusAway);
-    OCMStub([friendAwayTcpB connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
-    OCMStub([friendAwayTcpB name]).andReturn(@"b");
-
-    id friendBusyTcpA = OCMClassMock([OCTFriend class]);
-    OCMStub([friendBusyTcpA status]).andReturn(OCTToxUserStatusBusy);
-    OCMStub([friendBusyTcpA connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
-    OCMStub([friendBusyTcpA name]).andReturn(@"a");
-
-    id friendBusyTcpB = OCMClassMock([OCTFriend class]);
-    OCMStub([friendBusyTcpB status]).andReturn(OCTToxUserStatusBusy);
-    OCMStub([friendBusyTcpB connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
-    OCMStub([friendBusyTcpB name]).andReturn(@"b");
-
-    id friendBusyUdpA = OCMClassMock([OCTFriend class]);
-    OCMStub([friendBusyUdpA status]).andReturn(OCTToxUserStatusBusy);
-    OCMStub([friendBusyUdpA connectionStatus]).andReturn(OCTToxConnectionStatusUDP);
-    OCMStub([friendBusyUdpA name]).andReturn(@"a");
-
-    id friendBusyUdpB = OCMClassMock([OCTFriend class]);
-    OCMStub([friendBusyUdpB status]).andReturn(OCTToxUserStatusBusy);
-    OCMStub([friendBusyUdpB connectionStatus]).andReturn(OCTToxConnectionStatusUDP);
-    OCMStub([friendBusyUdpB name]).andReturn(@"b");
-
-    self.container.friendsSort = OCTManagerFriendsSortByName;
-    NSComparator comparator = [self.container comparatorForCurrentSort];
-
-    XCTAssertEqual(comparator(friendNoneNoneA, friendNoneNoneA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendNoneNoneB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneB, friendNoneNoneA), NSOrderedDescending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendAwayTcpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendAwayTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendBusyTcpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendAwayTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyTcpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyUdpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyUdpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyUdpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendBusyUdpA, friendBusyUdpB), NSOrderedAscending);
-
-    self.container.friendsSort = OCTManagerFriendsSortByStatus;
-    comparator = [self.container comparatorForCurrentSort];
-
-    XCTAssertEqual(comparator(friendNoneNoneA, friendNoneNoneA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendNoneNoneB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneB, friendNoneNoneA), NSOrderedDescending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendAwayTcpA), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendAwayTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendBusyTcpA), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendNoneNoneA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendAwayTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyTcpA), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendAwayTcpA, friendBusyUdpA), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyTcpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyUdpA), NSOrderedSame);
-    XCTAssertEqual(comparator(friendBusyTcpA, friendBusyUdpB), NSOrderedAscending);
-    XCTAssertEqual(comparator(friendBusyUdpA, friendBusyUdpB), NSOrderedAscending);
+    XCTAssertThrowsSpecificNamed([self.container removeFriend:nil], NSException, NSInternalInconsistencyException);
+    // friend not found
+    XCTAssertThrowsSpecificNamed([self.container removeFriend:friend], NSException, NSInternalInconsistencyException);
 }
 
 @end

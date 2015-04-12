@@ -268,10 +268,10 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
                 }
 
                 if (first.connectionStatus  == OCTToxConnectionStatusNone) {
-                    return NSOrderedAscending;
+                    return NSOrderedDescending;
                 }
                 if (second.connectionStatus  == OCTToxConnectionStatusNone) {
-                    return NSOrderedDescending;
+                    return NSOrderedAscending;
                 }
 
                 if (first.status == second.status) {
