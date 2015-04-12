@@ -95,7 +95,7 @@
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    struct objc_method_description description = protocol_getMethodDescription(@protocol(OCTToxDelegate), aSelector, YES, YES);
+    struct objc_method_description description = protocol_getMethodDescription(@protocol(OCTToxDelegate), aSelector, NO, YES);
 
     if (description.name == NULL) {
         // We forward methods only from OCTToxDelegate protocol.
@@ -104,6 +104,7 @@
 
     NSArray *submanagers = @[
         self.avatars,
+        self.friends,
     ];
 
     for (id delegate in submanagers) {

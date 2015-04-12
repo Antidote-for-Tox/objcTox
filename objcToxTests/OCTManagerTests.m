@@ -12,15 +12,35 @@
 #import "OCTManager.h"
 #import "OCTTox.h"
 #import "OCTSubmanagerDataSource.h"
+#import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerAvatars.h"
 
 @interface OCTManager(Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+
+- (id)forwardingTargetForSelector:(SEL)aSelector;
+
+@end
+
+
+@interface FakeSubmanager : NSObject <OCTToxDelegate>
+@property (weak, nonatomic) id dataSource;
+@end
+@implementation FakeSubmanager
+- (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)status
+{
+
+}
 @end
 
 @interface OCTManagerTests : XCTestCase
+
+@property (strong, nonatomic) OCTManager *manager;
 
 @end
 
@@ -30,36 +50,63 @@
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    self.manager = [[OCTManager alloc] initWithConfiguration:configuration];
 }
 
 - (void)tearDown
 {
+    self.manager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
 
 - (void)testInit
 {
-    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
-
-    XCTAssertNotNil(manager);
-    XCTAssertNotNil(manager.friends);
-    XCTAssertNotNil(manager.avatars);
-    XCTAssertNotNil(manager.tox);
-    XCTAssertNotNil(manager.configuration);
+    XCTAssertNotNil(self.manager);
+    XCTAssertNotNil(self.manager.friends);
+    XCTAssertNotNil(self.manager.avatars);
+    XCTAssertNotNil(self.manager.tox);
+    XCTAssertNotNil(self.manager.configuration);
 }
 
 - (void)testSubmanagerDataSource
 {
-    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    XCTAssertNotNil([self.manager managerGetTox]);
+    XCTAssertNotNil([self.manager managerGetSettingsStorage]);
+    XCTAssertNotNil([self.manager managerGetFileStorage]);
+}
 
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
+- (void)testForwardTargetForSelector
+{
+    id submanager = [FakeSubmanager new];
+    self.manager.avatars = submanager;
 
-    XCTAssertNotNil([manager managerGetTox]);
-    XCTAssertNotNil([manager managerGetSettingsStorage]);
-    XCTAssertNotNil([manager managerGetFileStorage]);
+    // test non protocol selector
+    XCTAssertNil([self.manager forwardingTargetForSelector:@selector(dataSource)]);
+
+    // test for protocol non-implemented selector
+    XCTAssertNil([self.manager forwardingTargetForSelector:@selector(tox:friendRequestWithMessage:publicKey:)]);
+
+    // test for protocol implemented selector
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+}
+
+- (void)testForwardTargetForSelector2
+{
+    id submanager = [FakeSubmanager new];
+    id dummy = [NSObject new];
+
+    self.manager.avatars = submanager;
+    self.manager.friends = dummy;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+
+    self.manager.avatars = dummy;
+    self.manager.friends = submanager;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 }
 
 @end
