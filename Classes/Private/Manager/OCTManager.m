@@ -10,8 +10,8 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerAvatars.h"
+#import "OCTSubmanagerFriends+Private.h"
+#import "OCTSubmanagerAvatars+Private.h"
 
 @interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
 

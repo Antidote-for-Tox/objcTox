@@ -7,6 +7,7 @@
 //
 
 #import "OCTFriendsContainer.h"
+#import "OCTFriendsContainer+Private.h"
 
 NSString *const kOCTFriendsContainerUpdateFriendsNotification = @"kOCTToxFriendsContainerUpdateFriendsNotification";
 
@@ -18,6 +19,8 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
 @interface OCTFriendsContainer()
 
+@property (weak, nonatomic) id<OCTFriendsContainerDataSource> dataSource;
+
 @property (strong, nonatomic) NSMutableArray *friends;
 
 @property (assign, nonatomic) dispatch_once_t configureOnceToken;
@@ -25,7 +28,6 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 @end
 
 @implementation OCTFriendsContainer
-@synthesize friendsSort = _friendsSort;
 
 #pragma mark -  Lifecycle
 

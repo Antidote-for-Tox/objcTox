@@ -1,21 +1,20 @@
 //
-//  OCTFriendsContainer.h
+//  OCTFriendsContainer+Private.h
 //  objcTox
 //
-//  Created by Dmytro Vorobiov on 15.03.15.
+//  Created by Dmytro Vorobiov on 16.04.15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OCTFriendsContainer.h"
 
-#import "OCTFriendsContainerProtocol.h"
 #import "OCTSettingsStorageProtocol.h"
 
 @protocol OCTFriendsContainerDataSource <NSObject>
 - (id<OCTSettingsStorageProtocol>)friendsContainerGetSettingsStorage;
 @end
 
-@interface OCTFriendsContainer : NSObject <OCTFriendsContainerProtocol>
+@interface OCTFriendsContainer (Private)
 
 @property (weak, nonatomic) id<OCTFriendsContainerDataSource> dataSource;
 

@@ -7,16 +7,19 @@
 //
 
 #import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerFriends+Private.h"
 #import "OCTFriendsContainer.h"
+#import "OCTFriendsContainer+Private.h"
 
 @interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource>
+
+@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 @property (strong, nonatomic) OCTFriendsContainer *container;
 
 @end
 
 @implementation OCTSubmanagerFriends
-@synthesize container = _container;
 
 - (instancetype)init
 {

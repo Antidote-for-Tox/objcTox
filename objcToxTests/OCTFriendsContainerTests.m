@@ -10,7 +10,7 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
-#import "OCTFriendsContainer.h"
+#import "OCTFriendsContainer+Private.h"
 #import "OCTFriend.h"
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";

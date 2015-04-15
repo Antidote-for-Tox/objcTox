@@ -1,5 +1,5 @@
 //
-//  OCTFriendsContainerProtocol.h
+//  OCTFriendsContainer.h
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 15.03.15.
@@ -30,7 +30,7 @@ extern NSString *const kOCTFriendsContainerUpdateKeyInsertedSet;
 extern NSString *const kOCTFriendsContainerUpdateKeyRemovedSet;
 extern NSString *const kOCTFriendsContainerUpdateKeyUpdatedSet;
 
-@protocol OCTFriendsContainerProtocol <NSObject>
+@interface OCTFriendsContainer : NSObject
 
 /**
  * The sort to be used for friends. Sort is saved in settings and remains same after relaunch.

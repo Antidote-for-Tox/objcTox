@@ -7,6 +7,7 @@
 //
 
 #import "OCTSubmanagerAvatars.h"
+#import "OCTSubmanagerAvatars+Private.h"
 #import "OCTFileStorageProtocol.h"
 #import "OCTTox.h"
 
@@ -14,11 +15,13 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 
 @interface OCTSubmanagerAvatars()
 
+@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+
 @end
 
 @implementation OCTSubmanagerAvatars
 
-#pragma mark -  OCTManagerAvatarsProtocol
+#pragma mark -  Public
 
 // - (BOOL)setAvatar:(UIImage *)avatar error:(NSError **)error;
 // {

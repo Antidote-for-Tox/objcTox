@@ -9,20 +9,20 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTManagerConfiguration.h"
-#import "OCTManagerFriendsProtocol.h"
-#import "OCTManagerAvatarsProtocol.h"
+#import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerAvatars.h"
 
 @interface OCTManager : NSObject
 
 /**
  * Submanager with all friends methods.
  */
-@property (strong, nonatomic, readonly) id<OCTManagerFriendsProtocol> friends;
+@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
 
 /**
  * Submanager with all user avatar methods.
  */
-@property (strong, nonatomic, readonly) id<OCTManagerAvatarsProtocol> avatars;
+@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to

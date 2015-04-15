@@ -1,5 +1,5 @@
 //
-//  OCTManagerAvatarsProtocol.h
+//  OCTSubmanagerAvatars.h
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 08.03.15.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol OCTManagerAvatarsProtocol <NSObject>
+@interface OCTSubmanagerAvatars : NSObject
 
 /**
  * Sets avatar for current user.
