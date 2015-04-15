@@ -43,7 +43,8 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 + (NSString *)version
 {
-    return [NSString stringWithFormat:@"%lu.%lu.%lu", (unsigned long)[self versionMajor], [self versionMinor], [self versionPath]];
+    return [NSString stringWithFormat:@"%lu.%lu.%lu",
+            (unsigned long)[self versionMajor], (unsigned long)[self versionMinor], (unsigned long)[self versionPath]];
 }
 
 + (NSUInteger)versionMajor
@@ -74,7 +75,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     struct Tox_Options cOptions;
 
     if (options) {
-        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nstartPort %u\nendPort %u\nproxyType %lu\nproxyHost %@\nproxyPort %d",
+        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nstartPort %u\nendPort %u\nproxyType %u\nproxyHost %@\nproxyPort %d",
                 self, options.IPv6Enabled, options.UDPEnabled, options.startPort, options.endPort, options.proxyType, options.proxyHost, options.proxyPort);
 
         cOptions = [self cToxOptionsFromOptions:options];
@@ -85,7 +86,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     }
 
     if (data) {
-        DDLogVerbose(@"%@: loading from data of length %lu", self, data.length);
+        DDLogVerbose(@"%@: loading from data of length %lu", self, (unsigned long)data.length);
     }
 
     TOX_ERR_NEW cError;
@@ -131,7 +132,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSData *data = [NSData dataWithBytes:cData length:size];
     free(cData);
 
-    DDLogInfo(@"%@: saved to data with length %lu", self, data.length);
+    DDLogInfo(@"%@: saved to data with length %lu", self, (unsigned long)data.length);
 
     return data;
 }
@@ -264,7 +265,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     tox_self_set_status(self.tox, cStatus);
 
-    DDLogInfo(@"%@: set user status to %lu", self, status);
+    DDLogInfo(@"%@: set user status to %u", self, status);
 }
 
 - (OCTToxUserStatus)userStatus
@@ -1503,7 +1504,7 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %lu", tox, status);
+    DDLogCInfo(@"%@: connectionStatusCallback with status %u", tox, status);
 
     if ([tox.delegate respondsToSelector:@selector(tox:connectionStatus:)]) {
         [tox.delegate tox:tox connectionStatus:status];
@@ -1542,7 +1543,7 @@ void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_S
 
     OCTToxUserStatus status = [tox userStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, status, friendNumber);
+    DDLogCInfo(@"%@: userStatusCallback with status %u, friend number %d", tox, status, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
@@ -1555,7 +1556,7 @@ void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, 
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %lu, friendNumber %d", tox, status, friendNumber);
+    DDLogCInfo(@"%@: connectionStatusCallback with status %u, friendNumber %d", tox, status, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
         [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
@@ -1624,7 +1625,7 @@ void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTT
 
     OCTToxFileControl control = [tox fileControlFromCFileControl:cControl];
 
-    DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
+    DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %u",
             tox, friendNumber, fileNumber, control);
 
     if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
