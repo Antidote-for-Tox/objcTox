@@ -24,3 +24,33 @@ typedef NS_ENUM(NSUInteger, OCTManagerFriendsSort) {
      */
     OCTManagerFriendsSortByStatus,
 };
+
+typedef NS_ENUM(NSUInteger, OCTMessageFileType) {
+    /**
+     * File is incoming and is waiting confirmation of user to be downloaded.
+     * Please start loading or cancel it with <<placeholder>> method.
+     */
+    OCTMessageFileTypeWaitingConfirmation,
+
+    /**
+     * File is downloading or uploading.
+     */
+    OCTMessageFileTypeLoading,
+
+    /**
+     * Downloading or uploading of file is paused.
+     */
+    OCTMessageFileTypePaused,
+
+    /**
+     * Downloading or uploading of file was canceled.
+     */
+    OCTMessageFileTypeCanceled,
+
+    /**
+     * File is fully loaded.
+     * In case of incoming file now it can be shown to user.
+     */
+    OCTMessageFileTypeReady,
+};
+
