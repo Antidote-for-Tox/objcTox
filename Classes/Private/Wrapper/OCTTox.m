@@ -75,8 +75,8 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     struct Tox_Options cOptions;
 
     if (options) {
-        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nstartPort %u\nendPort %u\nproxyType %u\nproxyHost %@\nproxyPort %d",
-                self, options.IPv6Enabled, options.UDPEnabled, options.startPort, options.endPort, options.proxyType, options.proxyHost, options.proxyPort);
+        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nstartPort %u\nendPort %u\nproxyType %lu\nproxyHost %@\nproxyPort %d",
+                self, options.IPv6Enabled, options.UDPEnabled, options.startPort, options.endPort, (unsigned long)options.proxyType, options.proxyHost, options.proxyPort);
 
         cOptions = [self cToxOptionsFromOptions:options];
     }
@@ -265,7 +265,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     tox_self_set_status(self.tox, cStatus);
 
-    DDLogInfo(@"%@: set user status to %u", self, status);
+    DDLogInfo(@"%@: set user status to %lu", self, (unsigned long)status);
 }
 
 - (OCTToxUserStatus)userStatus
@@ -1504,7 +1504,7 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %u", tox, status);
+    DDLogCInfo(@"%@: connectionStatusCallback with status %lu", tox, (unsigned long)status);
 
     if ([tox.delegate respondsToSelector:@selector(tox:connectionStatus:)]) {
         [tox.delegate tox:tox connectionStatus:status];
@@ -1543,7 +1543,7 @@ void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_S
 
     OCTToxUserStatus status = [tox userStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: userStatusCallback with status %u, friend number %d", tox, status, friendNumber);
+    DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, (unsigned long)status, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
         [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
@@ -1556,7 +1556,7 @@ void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, 
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %u, friendNumber %d", tox, status, friendNumber);
+    DDLogCInfo(@"%@: connectionStatusCallback with status %lu, friendNumber %d", tox, (unsigned long)status, friendNumber);
 
     if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
         [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
@@ -1625,8 +1625,8 @@ void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTT
 
     OCTToxFileControl control = [tox fileControlFromCFileControl:cControl];
 
-    DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %u",
-            tox, friendNumber, fileNumber, control);
+    DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
+            tox, friendNumber, fileNumber, (unsigned long)control);
 
     if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
         [tox.delegate tox:tox fileReceiveControl:control friendNumber:friendNumber fileNumber:fileNumber];
