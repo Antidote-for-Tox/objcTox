@@ -9,11 +9,11 @@
 /**
  * Sort type for FriendsContainer.
  */
-typedef NS_ENUM(NSUInteger, OCTManagerFriendsSort) {
+typedef NS_ENUM(NSUInteger, OCTFriendsSort) {
     /**
      * Sort by friend name. In case if name will be nil, friends will be sorted by publicKey.
      */
-    OCTManagerFriendsSortByName = 0,
+    OCTFriendsSortByName = 0,
 
     /**
      * Sort by status. Within groups friends will be sorted by name.
@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, OCTManagerFriendsSort) {
      * - busy
      * - offline
      */
-    OCTManagerFriendsSortByStatus,
+    OCTFriendsSortByStatus,
 };
 
 typedef NS_ENUM(NSUInteger, OCTMessageFileType) {

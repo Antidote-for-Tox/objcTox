@@ -40,7 +40,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
-    self.container.friendsSort = OCTManagerFriendsSortByName;
+    self.container.friendsSort = OCTFriendsSortByName;
 }
 
 - (void)tearDown
@@ -108,7 +108,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     OCMStub([friendBusyUdpA name]).andReturn(@"A");
     [self.container addFriend:friendBusyUdpA];
 
-    self.container.friendsSort = OCTManagerFriendsSortByName;
+    self.container.friendsSort = OCTFriendsSortByName;
 
     XCTAssertEqual([self.container friendAtIndex:0], friendBusyUdpA);
     XCTAssertEqual([self.container friendAtIndex:1], friendNoneNoneB);
@@ -120,7 +120,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     XCTAssertEqual([self.container friendAtIndex:7], friendAwayTcpH);
     XCTAssertEqual([self.container friendAtIndex:8], friendNoneTcpI);
 
-    self.container.friendsSort = OCTManagerFriendsSortByStatus;
+    self.container.friendsSort = OCTFriendsSortByStatus;
 
     OCTFriend *friend;
 
@@ -199,7 +199,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
                                     object:nil
                                   userInfo:[OCMArg checkWithBlock:checkBlock]]);
 
-    self.container.friendsSort = OCTManagerFriendsSortByStatus;
+    self.container.friendsSort = OCTFriendsSortByStatus;
 
     OCMVerifyAll(center);
 }
@@ -326,7 +326,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 - (void)testConfigure1
 {
     id storage = OCMProtocolMock(@protocol(OCTSettingsStorageProtocol));
-    OCMStub([storage objectForKey:[OCMArg isEqual:kSortStorageKey]]).andReturn(@(OCTManagerFriendsSortByName));
+    OCMStub([storage objectForKey:[OCMArg isEqual:kSortStorageKey]]).andReturn(@(OCTFriendsSortByName));
 
     id dataSource = OCMProtocolMock(@protocol(OCTFriendsContainerDataSource));
     OCMStub([dataSource friendsContainerGetSettingsStorage]).andReturn(storage);
@@ -334,13 +334,13 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     self.container.dataSource = dataSource;
     [self.container configure];
 
-    XCTAssertEqual(self.container.friendsSort, OCTManagerFriendsSortByName);
+    XCTAssertEqual(self.container.friendsSort, OCTFriendsSortByName);
 }
 
 - (void)testConfigure2
 {
     id storage = OCMProtocolMock(@protocol(OCTSettingsStorageProtocol));
-    OCMStub([storage objectForKey:[OCMArg isEqual:kSortStorageKey]]).andReturn(@(OCTManagerFriendsSortByStatus));
+    OCMStub([storage objectForKey:[OCMArg isEqual:kSortStorageKey]]).andReturn(@(OCTFriendsSortByStatus));
 
     id dataSource = OCMProtocolMock(@protocol(OCTFriendsContainerDataSource));
     OCMStub([dataSource friendsContainerGetSettingsStorage]).andReturn(storage);
@@ -348,7 +348,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     self.container.dataSource = dataSource;
     [self.container configure];
 
-    XCTAssertEqual(self.container.friendsSort, OCTManagerFriendsSortByStatus);
+    XCTAssertEqual(self.container.friendsSort, OCTFriendsSortByStatus);
 }
 
 - (void)testAddFriend

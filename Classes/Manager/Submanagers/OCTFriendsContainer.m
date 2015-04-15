@@ -44,12 +44,12 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
 #pragma mark -  OCTFriendsContainerProtocol
 
-- (void)setFriendsSort:(OCTManagerFriendsSort)sort
+- (void)setFriendsSort:(OCTFriendsSort)sort
 {
     [self setFriendsSort:sort sendNotification:YES];
 }
 
-- (void)setFriendsSort:(OCTManagerFriendsSort)sort sendNotification:(BOOL)sendNotification
+- (void)setFriendsSort:(OCTFriendsSort)sort sendNotification:(BOOL)sendNotification
 {
     _friendsSort = sort;
 
@@ -256,10 +256,10 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     };
 
     switch(self.friendsSort) {
-        case OCTManagerFriendsSortByName:
+        case OCTFriendsSortByName:
             return nameComparator;
 
-        case OCTManagerFriendsSortByStatus:
+        case OCTFriendsSortByStatus:
             return ^NSComparisonResult (OCTFriend *first, OCTFriend *second) {
                 if (first.connectionStatus  == OCTToxConnectionStatusNone &&
                     second.connectionStatus == OCTToxConnectionStatusNone)

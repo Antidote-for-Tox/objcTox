@@ -37,7 +37,7 @@ extern NSString *const kOCTFriendsContainerUpdateKeyUpdatedSet;
  *
  * @warning After assigning this property all friends will be resorted, so you'll get different results from methods below.
  */
-@property (assign, nonatomic) OCTManagerFriendsSort friendsSort;
+@property (assign, nonatomic) OCTFriendsSort friendsSort;
 
 /**
  * @return Total number of friends.
