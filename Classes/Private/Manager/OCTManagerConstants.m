@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "OCTManagerConstants.h"
 
+NSString *const kOCTFriendsContainerUpdateNotification = @"kOCTFriendsContainerUpdateNotification";
+
 NSString *const kOCTContainerUpdateKeyInsertedSet = @"kOCTContainerUpdateKeyInsertedSet";
 NSString *const kOCTContainerUpdateKeyRemovedSet = @"kOCTContainerUpdateKeyRemovedSet";
 NSString *const kOCTContainerUpdateKeyUpdatedSet = @"kOCTContainerUpdateKeyUpdatedSet";

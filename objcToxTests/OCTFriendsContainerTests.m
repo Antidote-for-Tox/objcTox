@@ -11,6 +11,7 @@
 #import <XCTest/XCTest.h>
 
 #import "OCTFriendsContainer+Private.h"
+#import "OCTBasicContainer.h"
 #import "OCTFriend.h"
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
@@ -50,7 +51,20 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     [super tearDown];
 }
 
-#pragma mark -  Test public methods
+- (void)testInit
+{
+    NSArray *friends = @[ OCMClassMock([OCTFriend class]) ];
+
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMExpect([bs initWithObjects:friends updateNotificationName:kOCTFriendsContainerUpdateNotification]);
+
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:friends];
+
+    XCTAssertNotNil(container);
+    OCMVerifyAll(bs);
+    [bs stopMocking];
+}
 
 - (void)testSetFriendsSort
 {
@@ -146,181 +160,30 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
 - (void)testFriendsCount
 {
-    XCTAssertEqual([self.container friendsCount], 0);
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([bs count]).andReturn(5);
 
-    [self.container addFriend:OCMClassMock([OCTFriend class])];
-    [self.container addFriend:OCMClassMock([OCTFriend class])];
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
 
-    XCTAssertEqual([self.container friendsCount], 2);
+    XCTAssertEqual([container friendsCount], 5);
+
+    [bs stopMocking];
 }
 
 - (void)testFriendAtIndex
 {
-    id friend0 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend0 name]).andReturn(@"friend0");
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([bs objectAtIndex:3]).andReturn(@4);
 
-    id friend1 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend1 name]).andReturn(@"friend1");
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
 
-    [self.container addFriend:friend0];
-    [self.container addFriend:friend1];
+    XCTAssertEqual([container friendAtIndex:3], (id)@4);
 
-    XCTAssertEqual([self.container friendAtIndex:0], friend0);
-    XCTAssertEqual([self.container friendAtIndex:1], friend1);
-    XCTAssertNil([self.container friendAtIndex:2]);
-}
-
-- (void)testUpdateFriendsNotificationForFriendSort
-{
-    id friend0 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend0 name]).andReturn(@"friend0");
-
-    id friend1 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend1 name]).andReturn(@"friend1");
-
-    [self.container addFriend:friend0];
-    [self.container addFriend:friend1];
-
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTFriendsContainerUpdateKeyUpdatedSet];
-        XCTAssertEqual(set.count, 2);
-        XCTAssertTrue([set containsIndex:0]);
-        XCTAssertTrue([set containsIndex:1]);
-
-        return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:kOCTFriendsContainerUpdateFriendsNotification
-                                    object:nil
-                                  userInfo:[OCMArg checkWithBlock:checkBlock]]);
-
-    self.container.friendsSort = OCTFriendsSortByStatus;
-
-    OCMVerifyAll(center);
-}
-
-- (void)testUpdateFriendsNotificationForAddFriend
-{
-    id friend0 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend0 name]).andReturn(@"friend0");
-
-    [self.container addFriend:friend0];
-
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTFriendsContainerUpdateKeyInsertedSet];
-        XCTAssertEqual(set.count, 1);
-        XCTAssertTrue([set containsIndex:1]);
-
-        return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:kOCTFriendsContainerUpdateFriendsNotification
-                                    object:nil
-                                  userInfo:[OCMArg checkWithBlock:checkBlock]]);
-
-    id friend1 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend1 name]).andReturn(@"friend1");
-    [self.container addFriend:friend1];
-
-    OCMVerifyAll(center);
-}
-
-- (void)testUpdateFriendsNotificationForRemoveFriend
-{
-    id friend0 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend0 name]).andReturn(@"friend0");
-
-    id friend1 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend1 name]).andReturn(@"friend1");
-
-    [self.container addFriend:friend0];
-    [self.container addFriend:friend1];
-
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTFriendsContainerUpdateKeyRemovedSet];
-        XCTAssertEqual(set.count, 1);
-        XCTAssertTrue([set containsIndex:1]);
-
-        return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:kOCTFriendsContainerUpdateFriendsNotification
-                                    object:nil
-                                  userInfo:[OCMArg checkWithBlock:checkBlock]]);
-
-    [self.container removeFriend:friend1];
-
-    OCMVerifyAll(center);
-}
-
-- (void)testUpdateFriendsNotificationForUpdateFriend
-{
-    OCTFriend *friend0 = [OCTFriend new];
-    friend0.name = @"friend0";
-    friend0.friendNumber = 0;
-
-    id friend1 = OCMClassMock([OCTFriend class]);
-    OCMStub([friend1 name]).andReturn(@"friend1");
-    OCMStub([friend1 friendNumber]).andReturn(1);
-
-    [self.container addFriend:friend0];
-    [self.container addFriend:friend1];
-
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 2);
-
-        NSIndexSet *set = userInfo[kOCTFriendsContainerUpdateKeyRemovedSet];
-        XCTAssertEqual(set.count, 1);
-        XCTAssertTrue([set containsIndex:0]);
-
-        set = userInfo[kOCTFriendsContainerUpdateKeyInsertedSet];
-        XCTAssertEqual(set.count, 1);
-        XCTAssertTrue([set containsIndex:1]);
-
-        return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:kOCTFriendsContainerUpdateFriendsNotification
-                                    object:nil
-                                  userInfo:[OCMArg checkWithBlock:checkBlock]]);
-
-    [self.container updateFriendWithFriendNumber:0 updateBlock:^(OCTFriend *f) {
-        f.name = @"friend2";
-    }];
-
-    OCMVerifyAll(center);
-}
-
-#pragma mark -  Test private methods
-
-- (void)testInitWithFriendsArray
-{
-    id friend = OCMClassMock([OCTFriend class]);
-
-    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-
-    XCTAssertTrue(container.friends.count == 1);
-
-    id theFriend = [container.friends lastObject];
-    XCTAssertEqual(friend, theFriend);
+    [bs stopMocking];
 }
 
 - (void)testConfigure1
@@ -353,62 +216,60 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
 - (void)testAddFriend
 {
-    id friend = OCMClassMock([OCTFriend class]);
+    id friend = @1;
 
-    [self.container addFriend:friend];
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMExpect([bs addObject:friend]);
 
-    XCTAssertTrue(self.container.friends.count == 1);
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
 
-    id theFriend = [self.container.friends lastObject];
-    XCTAssertEqual(friend, theFriend);
+    [container addFriend:friend];
 
-    XCTAssertThrowsSpecificNamed([self.container addFriend:nil], NSException, NSInternalInconsistencyException);
-    // trying to add save friend twice
-    XCTAssertThrowsSpecificNamed([self.container addFriend:friend], NSException, NSInternalInconsistencyException);
+    OCMVerifyAll(bs);
+    [bs stopMocking];
 }
 
 - (void)testUpdateFriend
 {
-    OCTToxFriendNumber friendNumber = 1;
+    id updateBlock = @1;
 
-    id friend = OCMClassMock([OCTFriend class]);
-    OCMStub([friend friendNumber]).andReturn(friendNumber);
+    id checkTestBlock = ^BOOL (BOOL (^block)(OCTFriend *f, NSUInteger idx, BOOL *stop)) {
+        id friendMock = OCMClassMock([OCTFriend class]);
+        OCMStub([friendMock friendNumber]).andReturn(2);
 
-    [self.container addFriend:friend];
+        return block(friendMock, 0, nil);
+    };
 
-    __block BOOL blockCalled = NO;
-    [self.container updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *theFriend) {
-        blockCalled = YES;
-        XCTAssertEqual(friend, theFriend);
-    }];
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMExpect([bs updateObjectPassingTest:[OCMArg checkWithBlock:checkTestBlock] updateBlock:updateBlock]);
 
-    XCTAssertTrue(blockCalled);
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
 
-    XCTAssertThrowsSpecificNamed(
-        [self.container updateFriendWithFriendNumber:friendNumber updateBlock:nil],
-        NSException,
-        NSInternalInconsistencyException
-    );
+    [container updateFriendWithFriendNumber:2 updateBlock:updateBlock];
 
-    XCTAssertThrowsSpecificNamed(
-        [self.container updateFriendWithFriendNumber:friendNumber+1 updateBlock:^(OCTFriend *theFriend) {}],
-        NSException,
-        NSInternalInconsistencyException
-    );
+    OCMVerifyAll(bs);
+    [bs stopMocking];
 }
 
 - (void)testRemoveFriend
 {
-    id friend = OCMClassMock([OCTFriend class]);
+    id friend = @1;
 
-    [self.container addFriend:friend];
-    [self.container removeFriend:friend];
+    id bs = OCMClassMock([OCTBasicContainer class]);
+    OCMStub([bs alloc]).andReturn(bs);
+    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMExpect([bs removeObject:friend]);
 
-    XCTAssertTrue(self.container.friends.count == 0);
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
 
-    XCTAssertThrowsSpecificNamed([self.container removeFriend:nil], NSException, NSInternalInconsistencyException);
-    // friend not found
-    XCTAssertThrowsSpecificNamed([self.container removeFriend:friend], NSException, NSInternalInconsistencyException);
+    [container removeFriend:friend];
+
+    OCMVerifyAll(bs);
+    [bs stopMocking];
 }
 
 @end
