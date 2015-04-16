@@ -10,6 +10,7 @@
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTFriendsContainer.h"
 #import "OCTFriendsContainer+Private.h"
+#import "OCTTox.h"
 
 @interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource>
 
@@ -29,9 +30,6 @@
         return nil;
     }
 
-    _container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
-    _container.dataSource = self;
-
     return self;
 }
 
@@ -39,6 +37,19 @@
 
 - (void)configure
 {
+    OCTTox *tox = [self.dataSource managerGetTox];
+
+    NSMutableArray *array = [NSMutableArray new];
+    for (NSNumber *friendNumber in [tox friendsArray]) {
+        OCTFriend *friend = [self createFriendWithFriendNumber:friendNumber.unsignedIntValue];
+
+        if (friend) {
+            [array addObject:friend];
+        }
+    }
+
+    self.container = [[OCTFriendsContainer alloc] initWithFriendsArray:[array copy]];
+    self.container.dataSource = self;
     [self.container configure];
 }
 
@@ -47,6 +58,13 @@
 - (id<OCTSettingsStorageProtocol>)friendsContainerGetSettingsStorage
 {
     return [self.dataSource managerGetSettingsStorage];
+}
+
+#pragma mark -  Supporting
+
+- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    return nil;
 }
 
 @end
