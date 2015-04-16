@@ -25,7 +25,7 @@
 /**
  * Received friend request from a new friend.
  *
- * @param message Message sent with request>
+ * @param message Message sent with request.
  * @param publicKey New friend public key.
  */
 - (void)tox:(OCTTox *)tox friendRequestWithMessage:(NSString *)message publicKey:(NSString *)publicKey;
