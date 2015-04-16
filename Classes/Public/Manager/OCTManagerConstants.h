@@ -54,3 +54,7 @@ typedef NS_ENUM(NSUInteger, OCTMessageFileType) {
     OCTMessageFileTypeReady,
 };
 
+extern NSString *const kOCTContainerUpdateKeyInsertedSet;
+extern NSString *const kOCTContainerUpdateKeyRemovedSet;
+extern NSString *const kOCTContainerUpdateKeyUpdatedSet;
+

@@ -31,6 +31,8 @@
 		118EA3B41AD3354F00249E01 /* OCTFriendsContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 118EA3B31AD3354F00249E01 /* OCTFriendsContainerTests.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
 		11FA3DE91AE02CF800CF7498 /* OCTFriendRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DE81AE02CF800CF7498 /* OCTFriendRequest.m */; };
+		11FA3DF01AE0356700CF7498 /* OCTBasicContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */; };
+		11FA3DF21AE04D1300CF7498 /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */; };
 		C7709841C6DD544C029CB779 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 /* End PBXBuildFile section */
@@ -107,6 +109,9 @@
 		11EDD4661AA14B3F003A0823 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		11FA3DE51AE02CD200CF7498 /* OCTFriendRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendRequest.h; sourceTree = "<group>"; };
 		11FA3DE81AE02CF800CF7498 /* OCTFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendRequest.m; sourceTree = "<group>"; };
+		11FA3DEE1AE0356700CF7498 /* OCTBasicContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTBasicContainer.h; sourceTree = "<group>"; };
+		11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainer.m; sourceTree = "<group>"; };
+		11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerConstants.m; sourceTree = "<group>"; };
 		63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.release.xcconfig"; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -149,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				115B9DFF1ADF1708000C38C2 /* OCTManager.m */,
+				11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */,
 				115B9DF61ADF1708000C38C2 /* Configuration */,
 				115B9DFA1ADF1708000C38C2 /* Objects */,
 				115B9E001ADF1708000C38C2 /* Submanagers */,
@@ -174,6 +180,8 @@
 				115B9DFC1ADF1708000C38C2 /* OCTMessageAbstract.m */,
 				115B9DFD1ADF1708000C38C2 /* OCTMessageFile.m */,
 				115B9DFE1ADF1708000C38C2 /* OCTMessageText.m */,
+				11FA3DEE1AE0356700CF7498 /* OCTBasicContainer.h */,
+				11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -515,6 +523,8 @@
 				115B9E2D1ADF1708000C38C2 /* OCTToxConstants.m in Sources */,
 				115B9E231ADF1708000C38C2 /* OCTManagerConfiguration.m in Sources */,
 				11FA3DE91AE02CF800CF7498 /* OCTFriendRequest.m in Sources */,
+				11FA3DF21AE04D1300CF7498 /* OCTManagerConstants.m in Sources */,
+				11FA3DF01AE0356700CF7498 /* OCTBasicContainer.m in Sources */,
 				115B9E2A1ADF1708000C38C2 /* OCTSubmanagerAvatars.m in Sources */,
 				115B9E2C1ADF1708000C38C2 /* OCTTox.m in Sources */,
 				115B9E271ADF1708000C38C2 /* OCTMessageText.m in Sources */,
