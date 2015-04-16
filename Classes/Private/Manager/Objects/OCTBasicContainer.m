@@ -98,12 +98,18 @@
             return;
         }
 
-        index = [self.array indexOfObject:object
-                            inSortedRange:NSMakeRange(0, self.array.count)
-                                  options:NSBinarySearchingInsertionIndex
-                          usingComparator:self.comparator];
+        if (self.comparator) {
+            index = [self.array indexOfObject:object
+                                inSortedRange:NSMakeRange(0, self.array.count)
+                                      options:NSBinarySearchingInsertionIndex
+                              usingComparator:self.comparator];
 
-        [self.array insertObject:object atIndex:index];
+            [self.array insertObject:object atIndex:index];
+        }
+        else {
+            index = self.array.count;
+            [self.array addObject:object];
+        }
 
         [self sendUpdateNotificationWithInsertedSet:[NSIndexSet indexSetWithIndex:index]
                                          removedSet:nil
@@ -147,8 +153,6 @@
 
     @synchronized(self.array) {
         NSUInteger index = NSNotFound;
-        __block id object = nil;
-
         index = [self.array indexOfObjectPassingTest:testBlock];
 
         if (index == NSNotFound) {
@@ -156,14 +160,22 @@
             return;
         }
 
+        id object = self.array[index];
         updateBlock(object);
 
         [self.array removeObjectAtIndex:index];
 
-        NSUInteger newIndex = [self.array indexOfObject:object
-                                          inSortedRange:NSMakeRange(0, self.array.count)
-                                                options:NSBinarySearchingInsertionIndex
-                                        usingComparator:self.comparator];
+        NSUInteger newIndex;
+
+        if (self.comparator) {
+            newIndex = [self.array indexOfObject:object
+                                   inSortedRange:NSMakeRange(0, self.array.count)
+                                         options:NSBinarySearchingInsertionIndex
+                                 usingComparator:self.comparator];
+        }
+        else {
+            newIndex = self.array.count;
+        }
 
         [self.array insertObject:object atIndex:index];
 
