@@ -34,6 +34,7 @@
 		11FA3DF01AE0356700CF7498 /* OCTBasicContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */; };
 		11FA3DF21AE04D1300CF7498 /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */; };
 		11FA3DF41AE04DBE00CF7498 /* OCTBasicContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */; };
+		11FA3DF91AE1937000CF7498 /* OCTFriendRequestContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF81AE1937000CF7498 /* OCTFriendRequestContainer.m */; };
 		C7709841C6DD544C029CB779 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 /* End PBXBuildFile section */
@@ -114,6 +115,8 @@
 		11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainer.m; sourceTree = "<group>"; };
 		11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerConstants.m; sourceTree = "<group>"; };
 		11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainerTests.m; sourceTree = "<group>"; };
+		11FA3DF51AE1935100CF7498 /* OCTFriendRequestContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendRequestContainer.h; sourceTree = "<group>"; };
+		11FA3DF81AE1937000CF7498 /* OCTFriendRequestContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendRequestContainer.m; sourceTree = "<group>"; };
 		63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.release.xcconfig"; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -192,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				115B9E011ADF1708000C38C2 /* OCTFriendsContainer.m */,
+				11FA3DF81AE1937000CF7498 /* OCTFriendRequestContainer.m */,
 				115B9E021ADF1708000C38C2 /* OCTSubmanagerAvatars.m */,
 				115B9E031ADF1708000C38C2 /* OCTSubmanagerDataSource.h */,
 				115B9E041ADF1708000C38C2 /* OCTSubmanagerFriends.m */,
@@ -261,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				115B9E191ADF1708000C38C2 /* OCTFriendsContainer.h */,
+				11FA3DF51AE1935100CF7498 /* OCTFriendRequestContainer.h */,
 				115B9E1A1ADF1708000C38C2 /* OCTSubmanagerAvatars.h */,
 				115B9E1B1ADF1708000C38C2 /* OCTSubmanagerFriends.h */,
 			);
@@ -519,6 +524,7 @@
 			files = (
 				115B9E281ADF1708000C38C2 /* OCTManager.m in Sources */,
 				115B9E241ADF1708000C38C2 /* OCTFriend.m in Sources */,
+				11FA3DF91AE1937000CF7498 /* OCTFriendRequestContainer.m in Sources */,
 				115B9E211ADF1708000C38C2 /* OCTDefaultFileStorage.m in Sources */,
 				115B9E291ADF1708000C38C2 /* OCTFriendsContainer.m in Sources */,
 				115B9E221ADF1708000C38C2 /* OCTDefaultSettingsStorage.m in Sources */,
