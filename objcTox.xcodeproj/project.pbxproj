@@ -117,6 +117,7 @@
 		11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainerTests.m; sourceTree = "<group>"; };
 		11FA3DF51AE1935100CF7498 /* OCTFriendRequestContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendRequestContainer.h; sourceTree = "<group>"; };
 		11FA3DF81AE1937000CF7498 /* OCTFriendRequestContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendRequestContainer.m; sourceTree = "<group>"; };
+		11FA3DFA1AE1960B00CF7498 /* OCTFriendRequestContainer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTFriendRequestContainer+Private.h"; sourceTree = "<group>"; };
 		63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.release.xcconfig"; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -194,14 +195,15 @@
 		115B9E001ADF1708000C38C2 /* Submanagers */ = {
 			isa = PBXGroup;
 			children = (
-				115B9E011ADF1708000C38C2 /* OCTFriendsContainer.m */,
 				11FA3DF81AE1937000CF7498 /* OCTFriendRequestContainer.m */,
+				11FA3DFA1AE1960B00CF7498 /* OCTFriendRequestContainer+Private.h */,
+				115B9E011ADF1708000C38C2 /* OCTFriendsContainer.m */,
+				115B9E381ADF17AB000C38C2 /* OCTFriendsContainer+Private.h */,
 				115B9E021ADF1708000C38C2 /* OCTSubmanagerAvatars.m */,
+				115B9E321ADF1780000C38C2 /* OCTSubmanagerAvatars+Private.h */,
 				115B9E031ADF1708000C38C2 /* OCTSubmanagerDataSource.h */,
 				115B9E041ADF1708000C38C2 /* OCTSubmanagerFriends.m */,
-				115B9E321ADF1780000C38C2 /* OCTSubmanagerAvatars+Private.h */,
 				115B9E351ADF1796000C38C2 /* OCTSubmanagerFriends+Private.h */,
-				115B9E381ADF17AB000C38C2 /* OCTFriendsContainer+Private.h */,
 			);
 			path = Submanagers;
 			sourceTree = "<group>";

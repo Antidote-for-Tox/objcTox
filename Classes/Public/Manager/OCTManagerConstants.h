@@ -69,6 +69,18 @@ typedef NS_ENUM(NSUInteger, OCTMessageFileType) {
  */
 extern NSString *const kOCTFriendsContainerUpdateNotification;
 
+/**
+ * NSNotification posted on addingr/removing friend request.
+ * Always is posted on main thread.
+ *
+ * The notification object is nil. The userInfo dictionary contains dictionary with following keys:
+ * kOCTContainerUpdateKeyInsertedSet - NSIndexSet with indexes of friends that were inserted;
+ * kOCTContainerUpdateKeyRemovedSet  - NSIndexSet with indexes of friends that were removed;
+ * kOCTContainerUpdateKeyUpdatedSet  - NSIndexSet with indexes of friends that were updated.
+ * Note that on update there may be another friend than before.
+ */
+extern NSString *const kOCTFriendRequestContainerUpdateNotification;
+
 extern NSString *const kOCTContainerUpdateKeyInsertedSet;
 extern NSString *const kOCTContainerUpdateKeyRemovedSet;
 extern NSString *const kOCTContainerUpdateKeyUpdatedSet;

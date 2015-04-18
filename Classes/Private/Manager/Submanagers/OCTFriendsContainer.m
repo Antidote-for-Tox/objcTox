@@ -40,7 +40,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     return self;
 }
 
-#pragma mark -  OCTFriendsContainerProtocol
+#pragma mark -  Public
 
 - (void)setFriendsSort:(OCTFriendsSort)sort
 {
@@ -58,7 +58,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     return [self.container objectAtIndex:index];
 }
 
-#pragma mark -  Public
+#pragma mark -  Private category
 
 - (void)configure
 {
