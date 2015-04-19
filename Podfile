@@ -8,6 +8,7 @@ pod 'Realm', '~> 0.91.3'
 
 target :objcToxTests do
     pod 'OCMock', '~> 3.1.2'
+    pod 'Realm/Headers', '~> 0.91.3'
 end
 
 post_install do |installer|

@@ -81,7 +81,7 @@
     NSParameterAssert(friendRequest.publicKey);
 
     dispatch_sync(self.queue, ^{
-        OCTDBFriendRequest *db = [OCTDBFriendRequest objectForPrimaryKey:friendRequest.publicKey];
+        OCTDBFriendRequest *db = [OCTDBFriendRequest objectInRealm:self.realm forPrimaryKey:friendRequest.publicKey];
 
         if (! db) {
             return;
