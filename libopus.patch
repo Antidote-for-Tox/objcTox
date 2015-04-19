@@ -1,0 +1,1915 @@
+From 24c3676db9e1f411f71f39c17b862e1b1b3f2138 Mon Sep 17 00:00:00 2001
+From: Dmytro Vorobiov <d@dvor.me>
+Date: Sun, 19 Apr 2015 11:04:49 +0200
+Subject: [PATCH] Patching libopus
+
+---
+ Pods/libopus/celt/bands.c                             | 2 +-
+ Pods/libopus/celt/celt.c                              | 2 +-
+ Pods/libopus/celt/celt_decoder.c                      | 2 +-
+ Pods/libopus/celt/celt_encoder.c                      | 2 +-
+ Pods/libopus/celt/celt_lpc.c                          | 2 +-
+ Pods/libopus/celt/cwrs.c                              | 2 +-
+ Pods/libopus/celt/entcode.c                           | 2 +-
+ Pods/libopus/celt/entdec.c                            | 2 +-
+ Pods/libopus/celt/entenc.c                            | 2 +-
+ Pods/libopus/celt/kiss_fft.c                          | 2 +-
+ Pods/libopus/celt/laplace.c                           | 2 +-
+ Pods/libopus/celt/mathops.c                           | 2 +-
+ Pods/libopus/celt/mdct.c                              | 2 +-
+ Pods/libopus/celt/modes.c                             | 2 +-
+ Pods/libopus/celt/opus_custom_demo.c                  | 2 +-
+ Pods/libopus/celt/pitch.c                             | 2 +-
+ Pods/libopus/celt/quant_bands.c                       | 2 +-
+ Pods/libopus/celt/rate.c                              | 2 +-
+ Pods/libopus/celt/vq.c                                | 2 +-
+ Pods/libopus/silk/A2NLSF.c                            | 2 +-
+ Pods/libopus/silk/CNG.c                               | 2 +-
+ Pods/libopus/silk/HP_variable_cutoff.c                | 2 +-
+ Pods/libopus/silk/LPC_analysis_filter.c               | 2 +-
+ Pods/libopus/silk/LPC_inv_pred_gain.c                 | 2 +-
+ Pods/libopus/silk/LP_variable_cutoff.c                | 2 +-
+ Pods/libopus/silk/NLSF2A.c                            | 2 +-
+ Pods/libopus/silk/NLSF_VQ.c                           | 2 +-
+ Pods/libopus/silk/NLSF_VQ_weights_laroia.c            | 2 +-
+ Pods/libopus/silk/NLSF_decode.c                       | 2 +-
+ Pods/libopus/silk/NLSF_del_dec_quant.c                | 2 +-
+ Pods/libopus/silk/NLSF_encode.c                       | 2 +-
+ Pods/libopus/silk/NLSF_stabilize.c                    | 2 +-
+ Pods/libopus/silk/NLSF_unpack.c                       | 2 +-
+ Pods/libopus/silk/NSQ.c                               | 2 +-
+ Pods/libopus/silk/NSQ_del_dec.c                       | 2 +-
+ Pods/libopus/silk/PLC.c                               | 2 +-
+ Pods/libopus/silk/VAD.c                               | 2 +-
+ Pods/libopus/silk/VQ_WMat_EC.c                        | 2 +-
+ Pods/libopus/silk/ana_filt_bank_1.c                   | 2 +-
+ Pods/libopus/silk/biquad_alt.c                        | 2 +-
+ Pods/libopus/silk/bwexpander.c                        | 2 +-
+ Pods/libopus/silk/bwexpander_32.c                     | 2 +-
+ Pods/libopus/silk/check_control_input.c               | 2 +-
+ Pods/libopus/silk/code_signs.c                        | 2 +-
+ Pods/libopus/silk/control_SNR.c                       | 2 +-
+ Pods/libopus/silk/control_audio_bandwidth.c           | 2 +-
+ Pods/libopus/silk/control_codec.c                     | 2 +-
+ Pods/libopus/silk/debug.c                             | 2 +-
+ Pods/libopus/silk/dec_API.c                           | 2 +-
+ Pods/libopus/silk/decode_core.c                       | 2 +-
+ Pods/libopus/silk/decode_frame.c                      | 2 +-
+ Pods/libopus/silk/decode_indices.c                    | 2 +-
+ Pods/libopus/silk/decode_parameters.c                 | 2 +-
+ Pods/libopus/silk/decode_pitch.c                      | 2 +-
+ Pods/libopus/silk/decode_pulses.c                     | 2 +-
+ Pods/libopus/silk/decoder_set_fs.c                    | 2 +-
+ Pods/libopus/silk/enc_API.c                           | 2 +-
+ Pods/libopus/silk/encode_indices.c                    | 2 +-
+ Pods/libopus/silk/encode_pulses.c                     | 2 +-
+ Pods/libopus/silk/float/LPC_analysis_filter_FLP.c     | 2 +-
+ Pods/libopus/silk/float/LPC_inv_pred_gain_FLP.c       | 2 +-
+ Pods/libopus/silk/float/LTP_analysis_filter_FLP.c     | 2 +-
+ Pods/libopus/silk/float/LTP_scale_ctrl_FLP.c          | 2 +-
+ Pods/libopus/silk/float/apply_sine_window_FLP.c       | 2 +-
+ Pods/libopus/silk/float/autocorrelation_FLP.c         | 2 +-
+ Pods/libopus/silk/float/burg_modified_FLP.c           | 2 +-
+ Pods/libopus/silk/float/bwexpander_FLP.c              | 2 +-
+ Pods/libopus/silk/float/corrMatrix_FLP.c              | 2 +-
+ Pods/libopus/silk/float/encode_frame_FLP.c            | 2 +-
+ Pods/libopus/silk/float/energy_FLP.c                  | 2 +-
+ Pods/libopus/silk/float/find_LPC_FLP.c                | 2 +-
+ Pods/libopus/silk/float/find_LTP_FLP.c                | 2 +-
+ Pods/libopus/silk/float/find_pitch_lags_FLP.c         | 2 +-
+ Pods/libopus/silk/float/find_pred_coefs_FLP.c         | 2 +-
+ Pods/libopus/silk/float/inner_product_FLP.c           | 2 +-
+ Pods/libopus/silk/float/k2a_FLP.c                     | 2 +-
+ Pods/libopus/silk/float/levinsondurbin_FLP.c          | 2 +-
+ Pods/libopus/silk/float/noise_shape_analysis_FLP.c    | 2 +-
+ Pods/libopus/silk/float/pitch_analysis_core_FLP.c     | 2 +-
+ Pods/libopus/silk/float/prefilter_FLP.c               | 2 +-
+ Pods/libopus/silk/float/process_gains_FLP.c           | 2 +-
+ Pods/libopus/silk/float/regularize_correlations_FLP.c | 2 +-
+ Pods/libopus/silk/float/residual_energy_FLP.c         | 2 +-
+ Pods/libopus/silk/float/scale_copy_vector_FLP.c       | 2 +-
+ Pods/libopus/silk/float/scale_vector_FLP.c            | 2 +-
+ Pods/libopus/silk/float/schur_FLP.c                   | 2 +-
+ Pods/libopus/silk/float/solve_LS_FLP.c                | 2 +-
+ Pods/libopus/silk/float/sort_FLP.c                    | 2 +-
+ Pods/libopus/silk/float/warped_autocorrelation_FLP.c  | 2 +-
+ Pods/libopus/silk/float/wrappers_FLP.c                | 2 +-
+ Pods/libopus/silk/gain_quant.c                        | 2 +-
+ Pods/libopus/silk/init_decoder.c                      | 2 +-
+ Pods/libopus/silk/init_encoder.c                      | 2 +-
+ Pods/libopus/silk/inner_prod_aligned.c                | 2 +-
+ Pods/libopus/silk/interpolate.c                       | 2 +-
+ Pods/libopus/silk/lin2log.c                           | 2 +-
+ Pods/libopus/silk/log2lin.c                           | 2 +-
+ Pods/libopus/silk/macros.h                            | 2 +-
+ Pods/libopus/silk/pitch_est_tables.c                  | 2 +-
+ Pods/libopus/silk/process_NLSFs.c                     | 2 +-
+ Pods/libopus/silk/quant_LTP_gains.c                   | 2 +-
+ Pods/libopus/silk/resampler.c                         | 2 +-
+ Pods/libopus/silk/resampler_down2.c                   | 2 +-
+ Pods/libopus/silk/resampler_down2_3.c                 | 2 +-
+ Pods/libopus/silk/resampler_private_AR2.c             | 2 +-
+ Pods/libopus/silk/resampler_private_IIR_FIR.c         | 2 +-
+ Pods/libopus/silk/resampler_private_down_FIR.c        | 2 +-
+ Pods/libopus/silk/resampler_private_up2_HQ.c          | 2 +-
+ Pods/libopus/silk/resampler_rom.c                     | 2 +-
+ Pods/libopus/silk/shell_coder.c                       | 2 +-
+ Pods/libopus/silk/sigm_Q15.c                          | 2 +-
+ Pods/libopus/silk/sort.c                              | 2 +-
+ Pods/libopus/silk/stereo_LR_to_MS.c                   | 2 +-
+ Pods/libopus/silk/stereo_MS_to_LR.c                   | 2 +-
+ Pods/libopus/silk/stereo_decode_pred.c                | 2 +-
+ Pods/libopus/silk/stereo_encode_pred.c                | 2 +-
+ Pods/libopus/silk/stereo_find_predictor.c             | 2 +-
+ Pods/libopus/silk/stereo_quant_pred.c                 | 2 +-
+ Pods/libopus/silk/sum_sqr_shift.c                     | 2 +-
+ Pods/libopus/silk/table_LSF_cos.c                     | 2 +-
+ Pods/libopus/silk/tables_LTP.c                        | 2 +-
+ Pods/libopus/silk/tables_NLSF_CB_NB_MB.c              | 2 +-
+ Pods/libopus/silk/tables_NLSF_CB_WB.c                 | 2 +-
+ Pods/libopus/silk/tables_gain.c                       | 2 +-
+ Pods/libopus/silk/tables_other.c                      | 2 +-
+ Pods/libopus/silk/tables_pitch_lag.c                  | 2 +-
+ Pods/libopus/silk/tables_pulses_per_block.c           | 2 +-
+ Pods/libopus/src/analysis.c                           | 2 +-
+ Pods/libopus/src/mlp.c                                | 2 +-
+ Pods/libopus/src/opus.c                               | 2 +-
+ Pods/libopus/src/opus_decoder.c                       | 2 +-
+ Pods/libopus/src/opus_encoder.c                       | 2 +-
+ Pods/libopus/src/opus_multistream.c                   | 2 +-
+ Pods/libopus/src/opus_multistream_decoder.c           | 2 +-
+ Pods/libopus/src/opus_multistream_encoder.c           | 2 +-
+ Pods/libopus/src/repacketizer.c                       | 2 +-
+ 136 files changed, 136 insertions(+), 136 deletions(-)
+
+diff --git a/Pods/libopus/celt/bands.c b/Pods/libopus/celt/bands.c
+index cce56e2..5ef1680 100644
+--- a/Pods/libopus/celt/bands.c
++++ b/Pods/libopus/celt/bands.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <math.h>
+diff --git a/Pods/libopus/celt/celt.c b/Pods/libopus/celt/celt.c
+index 3e0ce6e..1a3990b 100644
+--- a/Pods/libopus/celt/celt.c
++++ b/Pods/libopus/celt/celt.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #define CELT_C
+diff --git a/Pods/libopus/celt/celt_decoder.c b/Pods/libopus/celt/celt_decoder.c
+index 830398e..f545aac 100644
+--- a/Pods/libopus/celt/celt_decoder.c
++++ b/Pods/libopus/celt/celt_decoder.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #define CELT_DECODER_C
+diff --git a/Pods/libopus/celt/celt_encoder.c b/Pods/libopus/celt/celt_encoder.c
+index ffff077..aeea47a 100644
+--- a/Pods/libopus/celt/celt_encoder.c
++++ b/Pods/libopus/celt/celt_encoder.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #define CELT_ENCODER_C
+diff --git a/Pods/libopus/celt/celt_lpc.c b/Pods/libopus/celt/celt_lpc.c
+index fa29d62..9c46df5 100644
+--- a/Pods/libopus/celt/celt_lpc.c
++++ b/Pods/libopus/celt/celt_lpc.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "celt_lpc.h"
+diff --git a/Pods/libopus/celt/cwrs.c b/Pods/libopus/celt/cwrs.c
+index ad980cc..ded2425 100644
+--- a/Pods/libopus/celt/cwrs.c
++++ b/Pods/libopus/celt/cwrs.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "os_support.h"
+diff --git a/Pods/libopus/celt/entcode.c b/Pods/libopus/celt/entcode.c
+index fa5d7c7..121ac30 100644
+--- a/Pods/libopus/celt/entcode.c
++++ b/Pods/libopus/celt/entcode.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "entcode.h"
+diff --git a/Pods/libopus/celt/entdec.c b/Pods/libopus/celt/entdec.c
+index 3c26468..90f41d1 100644
+--- a/Pods/libopus/celt/entdec.c
++++ b/Pods/libopus/celt/entdec.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <stddef.h>
+diff --git a/Pods/libopus/celt/entenc.c b/Pods/libopus/celt/entenc.c
+index a7e34ec..47cd264 100644
+--- a/Pods/libopus/celt/entenc.c
++++ b/Pods/libopus/celt/entenc.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #if defined(HAVE_CONFIG_H)
+-# include "config.h"
++# include "./config.h"
+ #endif
+ #include "os_support.h"
+ #include "arch.h"
+diff --git a/Pods/libopus/celt/kiss_fft.c b/Pods/libopus/celt/kiss_fft.c
+index ad706c7..c38a05f 100644
+--- a/Pods/libopus/celt/kiss_fft.c
++++ b/Pods/libopus/celt/kiss_fft.c
+@@ -31,7 +31,7 @@
+ 
+ #ifndef SKIP_CONFIG_H
+ #  ifdef HAVE_CONFIG_H
+-#    include "config.h"
++#    include "./config.h"
+ #  endif
+ #endif
+ 
+diff --git a/Pods/libopus/celt/laplace.c b/Pods/libopus/celt/laplace.c
+index a7bca87..78fd289 100644
+--- a/Pods/libopus/celt/laplace.c
++++ b/Pods/libopus/celt/laplace.c
+@@ -27,7 +27,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "laplace.h"
+diff --git a/Pods/libopus/celt/mathops.c b/Pods/libopus/celt/mathops.c
+index 3f8c5dc..9988deb 100644
+--- a/Pods/libopus/celt/mathops.c
++++ b/Pods/libopus/celt/mathops.c
+@@ -32,7 +32,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "mathops.h"
+diff --git a/Pods/libopus/celt/mdct.c b/Pods/libopus/celt/mdct.c
+index 90a214a..bf99d89 100644
+--- a/Pods/libopus/celt/mdct.c
++++ b/Pods/libopus/celt/mdct.c
+@@ -41,7 +41,7 @@
+ 
+ #ifndef SKIP_CONFIG_H
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #endif
+ 
+diff --git a/Pods/libopus/celt/modes.c b/Pods/libopus/celt/modes.c
+index 42e68e1..acae833 100644
+--- a/Pods/libopus/celt/modes.c
++++ b/Pods/libopus/celt/modes.c
+@@ -28,7 +28,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "celt.h"
+diff --git a/Pods/libopus/celt/opus_custom_demo.c b/Pods/libopus/celt/opus_custom_demo.c
+index ae41c0d..011eeed 100644
+--- a/Pods/libopus/celt/opus_custom_demo.c
++++ b/Pods/libopus/celt/opus_custom_demo.c
+@@ -27,7 +27,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_custom.h"
+diff --git a/Pods/libopus/celt/pitch.c b/Pods/libopus/celt/pitch.c
+index d2b3054..69bb2a1 100644
+--- a/Pods/libopus/celt/pitch.c
++++ b/Pods/libopus/celt/pitch.c
+@@ -32,7 +32,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "pitch.h"
+diff --git a/Pods/libopus/celt/quant_bands.c b/Pods/libopus/celt/quant_bands.c
+index ac6952c..9589d9e 100644
+--- a/Pods/libopus/celt/quant_bands.c
++++ b/Pods/libopus/celt/quant_bands.c
+@@ -27,7 +27,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "quant_bands.h"
+diff --git a/Pods/libopus/celt/rate.c b/Pods/libopus/celt/rate.c
+index e13d839..2df268d 100644
+--- a/Pods/libopus/celt/rate.c
++++ b/Pods/libopus/celt/rate.c
+@@ -27,7 +27,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <math.h>
+diff --git a/Pods/libopus/celt/vq.c b/Pods/libopus/celt/vq.c
+index 98a0f36..bb39fcd 100644
+--- a/Pods/libopus/celt/vq.c
++++ b/Pods/libopus/celt/vq.c
+@@ -27,7 +27,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "mathops.h"
+diff --git a/Pods/libopus/silk/A2NLSF.c b/Pods/libopus/silk/A2NLSF.c
+index 74b1b95..55a10aa 100644
+--- a/Pods/libopus/silk/A2NLSF.c
++++ b/Pods/libopus/silk/A2NLSF.c
+@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ /* functions are accurate inverses of each other                */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/CNG.c b/Pods/libopus/silk/CNG.c
+index 8481d95..c16b527 100644
+--- a/Pods/libopus/silk/CNG.c
++++ b/Pods/libopus/silk/CNG.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/HP_variable_cutoff.c b/Pods/libopus/silk/HP_variable_cutoff.c
+index bbe10f0..73beba4 100644
+--- a/Pods/libopus/silk/HP_variable_cutoff.c
++++ b/Pods/libopus/silk/HP_variable_cutoff.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #ifdef FIXED_POINT
+ #include "main_FIX.h"
+diff --git a/Pods/libopus/silk/LPC_analysis_filter.c b/Pods/libopus/silk/LPC_analysis_filter.c
+index 9d1f16c..2c60d34 100644
+--- a/Pods/libopus/silk/LPC_analysis_filter.c
++++ b/Pods/libopus/silk/LPC_analysis_filter.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/LPC_inv_pred_gain.c b/Pods/libopus/silk/LPC_inv_pred_gain.c
+index 4af89aa..67b273d 100644
+--- a/Pods/libopus/silk/LPC_inv_pred_gain.c
++++ b/Pods/libopus/silk/LPC_inv_pred_gain.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/LP_variable_cutoff.c b/Pods/libopus/silk/LP_variable_cutoff.c
+index f639e1f..02d505e 100644
+--- a/Pods/libopus/silk/LP_variable_cutoff.c
++++ b/Pods/libopus/silk/LP_variable_cutoff.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /*
+diff --git a/Pods/libopus/silk/NLSF2A.c b/Pods/libopus/silk/NLSF2A.c
+index b1c559e..97c0d36 100644
+--- a/Pods/libopus/silk/NLSF2A.c
++++ b/Pods/libopus/silk/NLSF2A.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* conversion between prediction filter coefficients and LSFs   */
+diff --git a/Pods/libopus/silk/NLSF_VQ.c b/Pods/libopus/silk/NLSF_VQ.c
+index 69b6e22..678052c 100644
+--- a/Pods/libopus/silk/NLSF_VQ.c
++++ b/Pods/libopus/silk/NLSF_VQ.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NLSF_VQ_weights_laroia.c b/Pods/libopus/silk/NLSF_VQ_weights_laroia.c
+index 04894c5..f848078 100644
+--- a/Pods/libopus/silk/NLSF_VQ_weights_laroia.c
++++ b/Pods/libopus/silk/NLSF_VQ_weights_laroia.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "define.h"
+diff --git a/Pods/libopus/silk/NLSF_decode.c b/Pods/libopus/silk/NLSF_decode.c
+index 9f71506..79de124 100644
+--- a/Pods/libopus/silk/NLSF_decode.c
++++ b/Pods/libopus/silk/NLSF_decode.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NLSF_del_dec_quant.c b/Pods/libopus/silk/NLSF_del_dec_quant.c
+index 504dbbd..438e0e6 100644
+--- a/Pods/libopus/silk/NLSF_del_dec_quant.c
++++ b/Pods/libopus/silk/NLSF_del_dec_quant.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NLSF_encode.c b/Pods/libopus/silk/NLSF_encode.c
+index 03a036f..fc1949e 100644
+--- a/Pods/libopus/silk/NLSF_encode.c
++++ b/Pods/libopus/silk/NLSF_encode.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NLSF_stabilize.c b/Pods/libopus/silk/NLSF_stabilize.c
+index 1fa1ea3..ab7f0cd 100644
+--- a/Pods/libopus/silk/NLSF_stabilize.c
++++ b/Pods/libopus/silk/NLSF_stabilize.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* NLSF stabilizer:                                         */
+diff --git a/Pods/libopus/silk/NLSF_unpack.c b/Pods/libopus/silk/NLSF_unpack.c
+index 17bd23f..03bd78c 100644
+--- a/Pods/libopus/silk/NLSF_unpack.c
++++ b/Pods/libopus/silk/NLSF_unpack.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NSQ.c b/Pods/libopus/silk/NSQ.c
+index cf5b3fd..32c47a8 100644
+--- a/Pods/libopus/silk/NSQ.c
++++ b/Pods/libopus/silk/NSQ.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/NSQ_del_dec.c b/Pods/libopus/silk/NSQ_del_dec.c
+index 522be40..d4ec6c6 100644
+--- a/Pods/libopus/silk/NSQ_del_dec.c
++++ b/Pods/libopus/silk/NSQ_del_dec.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/PLC.c b/Pods/libopus/silk/PLC.c
+index 01f4001..f438ee7 100644
+--- a/Pods/libopus/silk/PLC.c
++++ b/Pods/libopus/silk/PLC.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/VAD.c b/Pods/libopus/silk/VAD.c
+index a809098..8df2962 100644
+--- a/Pods/libopus/silk/VAD.c
++++ b/Pods/libopus/silk/VAD.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/VQ_WMat_EC.c b/Pods/libopus/silk/VQ_WMat_EC.c
+index 13d5d34..6851b9e 100644
+--- a/Pods/libopus/silk/VQ_WMat_EC.c
++++ b/Pods/libopus/silk/VQ_WMat_EC.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/ana_filt_bank_1.c b/Pods/libopus/silk/ana_filt_bank_1.c
+index 24cfb03..e768a4e 100644
+--- a/Pods/libopus/silk/ana_filt_bank_1.c
++++ b/Pods/libopus/silk/ana_filt_bank_1.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/biquad_alt.c b/Pods/libopus/silk/biquad_alt.c
+index d55f5ee..2b79ccd 100644
+--- a/Pods/libopus/silk/biquad_alt.c
++++ b/Pods/libopus/silk/biquad_alt.c
+@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
+  *                                                                      */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/bwexpander.c b/Pods/libopus/silk/bwexpander.c
+index 2eb4456..af4c0f0 100644
+--- a/Pods/libopus/silk/bwexpander.c
++++ b/Pods/libopus/silk/bwexpander.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/bwexpander_32.c b/Pods/libopus/silk/bwexpander_32.c
+index d0010f7..d627d8f 100644
+--- a/Pods/libopus/silk/bwexpander_32.c
++++ b/Pods/libopus/silk/bwexpander_32.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/check_control_input.c b/Pods/libopus/silk/check_control_input.c
+index b5de9ce..c07b8f7 100644
+--- a/Pods/libopus/silk/check_control_input.c
++++ b/Pods/libopus/silk/check_control_input.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/code_signs.c b/Pods/libopus/silk/code_signs.c
+index 0419ea2..48790df 100644
+--- a/Pods/libopus/silk/code_signs.c
++++ b/Pods/libopus/silk/code_signs.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/control_SNR.c b/Pods/libopus/silk/control_SNR.c
+index f04e69f..b16ab34 100644
+--- a/Pods/libopus/silk/control_SNR.c
++++ b/Pods/libopus/silk/control_SNR.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/control_audio_bandwidth.c b/Pods/libopus/silk/control_audio_bandwidth.c
+index 4f9bc5c..4c8c4a4 100644
+--- a/Pods/libopus/silk/control_audio_bandwidth.c
++++ b/Pods/libopus/silk/control_audio_bandwidth.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/control_codec.c b/Pods/libopus/silk/control_codec.c
+index 1f674bd..7da686d 100644
+--- a/Pods/libopus/silk/control_codec.c
++++ b/Pods/libopus/silk/control_codec.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #ifdef FIXED_POINT
+ #include "main_FIX.h"
+diff --git a/Pods/libopus/silk/debug.c b/Pods/libopus/silk/debug.c
+index 9253faf..51e5c82 100644
+--- a/Pods/libopus/silk/debug.c
++++ b/Pods/libopus/silk/debug.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "debug.h"
+diff --git a/Pods/libopus/silk/dec_API.c b/Pods/libopus/silk/dec_API.c
+index 4cbcf71..eab7032 100644
+--- a/Pods/libopus/silk/dec_API.c
++++ b/Pods/libopus/silk/dec_API.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #include "API.h"
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decode_core.c b/Pods/libopus/silk/decode_core.c
+index a820bf1..544f868 100644
+--- a/Pods/libopus/silk/decode_core.c
++++ b/Pods/libopus/silk/decode_core.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decode_frame.c b/Pods/libopus/silk/decode_frame.c
+index abc00a3..8eed659 100644
+--- a/Pods/libopus/silk/decode_frame.c
++++ b/Pods/libopus/silk/decode_frame.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decode_indices.c b/Pods/libopus/silk/decode_indices.c
+index 7afe5c2..541313c 100644
+--- a/Pods/libopus/silk/decode_indices.c
++++ b/Pods/libopus/silk/decode_indices.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decode_parameters.c b/Pods/libopus/silk/decode_parameters.c
+index e345b1d..52d2a90 100644
+--- a/Pods/libopus/silk/decode_parameters.c
++++ b/Pods/libopus/silk/decode_parameters.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decode_pitch.c b/Pods/libopus/silk/decode_pitch.c
+index fedbc6a..e2cc57e 100644
+--- a/Pods/libopus/silk/decode_pitch.c
++++ b/Pods/libopus/silk/decode_pitch.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /***********************************************************
+diff --git a/Pods/libopus/silk/decode_pulses.c b/Pods/libopus/silk/decode_pulses.c
+index e8a87c2..15dc675 100644
+--- a/Pods/libopus/silk/decode_pulses.c
++++ b/Pods/libopus/silk/decode_pulses.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/decoder_set_fs.c b/Pods/libopus/silk/decoder_set_fs.c
+index eef0fd2..e3d5ab4 100644
+--- a/Pods/libopus/silk/decoder_set_fs.c
++++ b/Pods/libopus/silk/decoder_set_fs.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/enc_API.c b/Pods/libopus/silk/enc_API.c
+index 43739ef..80a74fd 100644
+--- a/Pods/libopus/silk/enc_API.c
++++ b/Pods/libopus/silk/enc_API.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #include "define.h"
+ #include "API.h"
+diff --git a/Pods/libopus/silk/encode_indices.c b/Pods/libopus/silk/encode_indices.c
+index 666c8c0..109d505 100644
+--- a/Pods/libopus/silk/encode_indices.c
++++ b/Pods/libopus/silk/encode_indices.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/encode_pulses.c b/Pods/libopus/silk/encode_pulses.c
+index a450143..bfee19e 100644
+--- a/Pods/libopus/silk/encode_pulses.c
++++ b/Pods/libopus/silk/encode_pulses.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/float/LPC_analysis_filter_FLP.c b/Pods/libopus/silk/float/LPC_analysis_filter_FLP.c
+index cae89a0..d19229d 100644
+--- a/Pods/libopus/silk/float/LPC_analysis_filter_FLP.c
++++ b/Pods/libopus/silk/float/LPC_analysis_filter_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <stdlib.h>
+diff --git a/Pods/libopus/silk/float/LPC_inv_pred_gain_FLP.c b/Pods/libopus/silk/float/LPC_inv_pred_gain_FLP.c
+index 25178ba..9aa07fa 100644
+--- a/Pods/libopus/silk/float/LPC_inv_pred_gain_FLP.c
++++ b/Pods/libopus/silk/float/LPC_inv_pred_gain_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/float/LTP_analysis_filter_FLP.c b/Pods/libopus/silk/float/LTP_analysis_filter_FLP.c
+index 849b7c1..3c529a5 100644
+--- a/Pods/libopus/silk/float/LTP_analysis_filter_FLP.c
++++ b/Pods/libopus/silk/float/LTP_analysis_filter_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/LTP_scale_ctrl_FLP.c b/Pods/libopus/silk/float/LTP_scale_ctrl_FLP.c
+index 8dbe29d..d7b44e4 100644
+--- a/Pods/libopus/silk/float/LTP_scale_ctrl_FLP.c
++++ b/Pods/libopus/silk/float/LTP_scale_ctrl_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/apply_sine_window_FLP.c b/Pods/libopus/silk/float/apply_sine_window_FLP.c
+index 6aae57c..006ba70 100644
+--- a/Pods/libopus/silk/float/apply_sine_window_FLP.c
++++ b/Pods/libopus/silk/float/apply_sine_window_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/autocorrelation_FLP.c b/Pods/libopus/silk/float/autocorrelation_FLP.c
+index 8b8a9e6..d100279 100644
+--- a/Pods/libopus/silk/float/autocorrelation_FLP.c
++++ b/Pods/libopus/silk/float/autocorrelation_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "typedef.h"
+diff --git a/Pods/libopus/silk/float/burg_modified_FLP.c b/Pods/libopus/silk/float/burg_modified_FLP.c
+index ea5dc25..d6e3f37 100644
+--- a/Pods/libopus/silk/float/burg_modified_FLP.c
++++ b/Pods/libopus/silk/float/burg_modified_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/bwexpander_FLP.c b/Pods/libopus/silk/float/bwexpander_FLP.c
+index d55a4d7..8032594 100644
+--- a/Pods/libopus/silk/float/bwexpander_FLP.c
++++ b/Pods/libopus/silk/float/bwexpander_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/corrMatrix_FLP.c b/Pods/libopus/silk/float/corrMatrix_FLP.c
+index eae6a1c..a46d732 100644
+--- a/Pods/libopus/silk/float/corrMatrix_FLP.c
++++ b/Pods/libopus/silk/float/corrMatrix_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /**********************************************************************
+diff --git a/Pods/libopus/silk/float/encode_frame_FLP.c b/Pods/libopus/silk/float/encode_frame_FLP.c
+index d54e268..b8ff8cd 100644
+--- a/Pods/libopus/silk/float/encode_frame_FLP.c
++++ b/Pods/libopus/silk/float/encode_frame_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/energy_FLP.c b/Pods/libopus/silk/float/energy_FLP.c
+index 24b8179..cabbae1 100644
+--- a/Pods/libopus/silk/float/energy_FLP.c
++++ b/Pods/libopus/silk/float/energy_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/find_LPC_FLP.c b/Pods/libopus/silk/float/find_LPC_FLP.c
+index 61c1ad9..7539ee5 100644
+--- a/Pods/libopus/silk/float/find_LPC_FLP.c
++++ b/Pods/libopus/silk/float/find_LPC_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "define.h"
+diff --git a/Pods/libopus/silk/float/find_LTP_FLP.c b/Pods/libopus/silk/float/find_LTP_FLP.c
+index 7229996..486f051 100644
+--- a/Pods/libopus/silk/float/find_LTP_FLP.c
++++ b/Pods/libopus/silk/float/find_LTP_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/find_pitch_lags_FLP.c b/Pods/libopus/silk/float/find_pitch_lags_FLP.c
+index f3b22d2..8611747 100644
+--- a/Pods/libopus/silk/float/find_pitch_lags_FLP.c
++++ b/Pods/libopus/silk/float/find_pitch_lags_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <stdlib.h>
+diff --git a/Pods/libopus/silk/float/find_pred_coefs_FLP.c b/Pods/libopus/silk/float/find_pred_coefs_FLP.c
+index ea2c6c4..faa7b91 100644
+--- a/Pods/libopus/silk/float/find_pred_coefs_FLP.c
++++ b/Pods/libopus/silk/float/find_pred_coefs_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/inner_product_FLP.c b/Pods/libopus/silk/float/inner_product_FLP.c
+index 029c012..a95e57e 100644
+--- a/Pods/libopus/silk/float/inner_product_FLP.c
++++ b/Pods/libopus/silk/float/inner_product_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/k2a_FLP.c b/Pods/libopus/silk/float/k2a_FLP.c
+index 12af4e7..4da7037 100644
+--- a/Pods/libopus/silk/float/k2a_FLP.c
++++ b/Pods/libopus/silk/float/k2a_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/levinsondurbin_FLP.c b/Pods/libopus/silk/float/levinsondurbin_FLP.c
+index f0ba606..c1532f1 100644
+--- a/Pods/libopus/silk/float/levinsondurbin_FLP.c
++++ b/Pods/libopus/silk/float/levinsondurbin_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/noise_shape_analysis_FLP.c b/Pods/libopus/silk/float/noise_shape_analysis_FLP.c
+index 65f6ea5..fc61076 100644
+--- a/Pods/libopus/silk/float/noise_shape_analysis_FLP.c
++++ b/Pods/libopus/silk/float/noise_shape_analysis_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/pitch_analysis_core_FLP.c b/Pods/libopus/silk/float/pitch_analysis_core_FLP.c
+index e58f041..e7dd5d4 100644
+--- a/Pods/libopus/silk/float/pitch_analysis_core_FLP.c
++++ b/Pods/libopus/silk/float/pitch_analysis_core_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /*****************************************************************************
+diff --git a/Pods/libopus/silk/float/prefilter_FLP.c b/Pods/libopus/silk/float/prefilter_FLP.c
+index 8bc32fb..427f86b 100644
+--- a/Pods/libopus/silk/float/prefilter_FLP.c
++++ b/Pods/libopus/silk/float/prefilter_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/process_gains_FLP.c b/Pods/libopus/silk/float/process_gains_FLP.c
+index c0da0da..f13ba12 100644
+--- a/Pods/libopus/silk/float/process_gains_FLP.c
++++ b/Pods/libopus/silk/float/process_gains_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/regularize_correlations_FLP.c b/Pods/libopus/silk/float/regularize_correlations_FLP.c
+index df46126..1623924 100644
+--- a/Pods/libopus/silk/float/regularize_correlations_FLP.c
++++ b/Pods/libopus/silk/float/regularize_correlations_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/residual_energy_FLP.c b/Pods/libopus/silk/float/residual_energy_FLP.c
+index b2e03a8..16816f9 100644
+--- a/Pods/libopus/silk/float/residual_energy_FLP.c
++++ b/Pods/libopus/silk/float/residual_energy_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/scale_copy_vector_FLP.c b/Pods/libopus/silk/float/scale_copy_vector_FLP.c
+index 20db32b..1b8ddbe 100644
+--- a/Pods/libopus/silk/float/scale_copy_vector_FLP.c
++++ b/Pods/libopus/silk/float/scale_copy_vector_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/scale_vector_FLP.c b/Pods/libopus/silk/float/scale_vector_FLP.c
+index 108fdcb..852aba1 100644
+--- a/Pods/libopus/silk/float/scale_vector_FLP.c
++++ b/Pods/libopus/silk/float/scale_vector_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/schur_FLP.c b/Pods/libopus/silk/float/schur_FLP.c
+index ee436f8..e358905 100644
+--- a/Pods/libopus/silk/float/schur_FLP.c
++++ b/Pods/libopus/silk/float/schur_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FLP.h"
+diff --git a/Pods/libopus/silk/float/solve_LS_FLP.c b/Pods/libopus/silk/float/solve_LS_FLP.c
+index 7c90d66..94a6b7f 100644
+--- a/Pods/libopus/silk/float/solve_LS_FLP.c
++++ b/Pods/libopus/silk/float/solve_LS_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/sort_FLP.c b/Pods/libopus/silk/float/sort_FLP.c
+index f08d759..2abc538 100644
+--- a/Pods/libopus/silk/float/sort_FLP.c
++++ b/Pods/libopus/silk/float/sort_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* Insertion sort (fast for already almost sorted arrays):  */
+diff --git a/Pods/libopus/silk/float/warped_autocorrelation_FLP.c b/Pods/libopus/silk/float/warped_autocorrelation_FLP.c
+index 542414f..9bd80f8 100644
+--- a/Pods/libopus/silk/float/warped_autocorrelation_FLP.c
++++ b/Pods/libopus/silk/float/warped_autocorrelation_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/float/wrappers_FLP.c b/Pods/libopus/silk/float/wrappers_FLP.c
+index 350599b..3ac360b 100644
+--- a/Pods/libopus/silk/float/wrappers_FLP.c
++++ b/Pods/libopus/silk/float/wrappers_FLP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main_FLP.h"
+diff --git a/Pods/libopus/silk/gain_quant.c b/Pods/libopus/silk/gain_quant.c
+index 64ccd06..943362a 100644
+--- a/Pods/libopus/silk/gain_quant.c
++++ b/Pods/libopus/silk/gain_quant.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/init_decoder.c b/Pods/libopus/silk/init_decoder.c
+index f887c67..e38ac06 100644
+--- a/Pods/libopus/silk/init_decoder.c
++++ b/Pods/libopus/silk/init_decoder.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/init_encoder.c b/Pods/libopus/silk/init_encoder.c
+index 65995c3..c0e8c50 100644
+--- a/Pods/libopus/silk/init_encoder.c
++++ b/Pods/libopus/silk/init_encoder.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ #ifdef FIXED_POINT
+ #include "main_FIX.h"
+diff --git a/Pods/libopus/silk/inner_prod_aligned.c b/Pods/libopus/silk/inner_prod_aligned.c
+index 257ae9e..7476167 100644
+--- a/Pods/libopus/silk/inner_prod_aligned.c
++++ b/Pods/libopus/silk/inner_prod_aligned.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/interpolate.c b/Pods/libopus/silk/interpolate.c
+index 1bd8ca4..cc39de9 100644
+--- a/Pods/libopus/silk/interpolate.c
++++ b/Pods/libopus/silk/interpolate.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/lin2log.c b/Pods/libopus/silk/lin2log.c
+index d4fe515..06000f0 100644
+--- a/Pods/libopus/silk/lin2log.c
++++ b/Pods/libopus/silk/lin2log.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/log2lin.c b/Pods/libopus/silk/log2lin.c
+index a692e00..b14700f 100644
+--- a/Pods/libopus/silk/log2lin.c
++++ b/Pods/libopus/silk/log2lin.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/macros.h b/Pods/libopus/silk/macros.h
+index a84e5a5..0b7c4fb 100644
+--- a/Pods/libopus/silk/macros.h
++++ b/Pods/libopus/silk/macros.h
+@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ #define SILK_MACROS_H
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_types.h"
+diff --git a/Pods/libopus/silk/pitch_est_tables.c b/Pods/libopus/silk/pitch_est_tables.c
+index 81a8bac..728dee6 100644
+--- a/Pods/libopus/silk/pitch_est_tables.c
++++ b/Pods/libopus/silk/pitch_est_tables.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "typedef.h"
+diff --git a/Pods/libopus/silk/process_NLSFs.c b/Pods/libopus/silk/process_NLSFs.c
+index c27cf03..751040d 100644
+--- a/Pods/libopus/silk/process_NLSFs.c
++++ b/Pods/libopus/silk/process_NLSFs.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/quant_LTP_gains.c b/Pods/libopus/silk/quant_LTP_gains.c
+index fd0870d..122457b 100644
+--- a/Pods/libopus/silk/quant_LTP_gains.c
++++ b/Pods/libopus/silk/quant_LTP_gains.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/resampler.c b/Pods/libopus/silk/resampler.c
+index 374fbb3..3494f71 100644
+--- a/Pods/libopus/silk/resampler.c
++++ b/Pods/libopus/silk/resampler.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /*
+diff --git a/Pods/libopus/silk/resampler_down2.c b/Pods/libopus/silk/resampler_down2.c
+index cec3634..8ee0aab 100644
+--- a/Pods/libopus/silk/resampler_down2.c
++++ b/Pods/libopus/silk/resampler_down2.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_down2_3.c b/Pods/libopus/silk/resampler_down2_3.c
+index 4342614..983595c 100644
+--- a/Pods/libopus/silk/resampler_down2_3.c
++++ b/Pods/libopus/silk/resampler_down2_3.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_private_AR2.c b/Pods/libopus/silk/resampler_private_AR2.c
+index 5fff237..74b60b9 100644
+--- a/Pods/libopus/silk/resampler_private_AR2.c
++++ b/Pods/libopus/silk/resampler_private_AR2.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_private_IIR_FIR.c b/Pods/libopus/silk/resampler_private_IIR_FIR.c
+index 6b2b3a2..acd6c6a 100644
+--- a/Pods/libopus/silk/resampler_private_IIR_FIR.c
++++ b/Pods/libopus/silk/resampler_private_IIR_FIR.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_private_down_FIR.c b/Pods/libopus/silk/resampler_private_down_FIR.c
+index 783e42b..b7c6c05 100644
+--- a/Pods/libopus/silk/resampler_private_down_FIR.c
++++ b/Pods/libopus/silk/resampler_private_down_FIR.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_private_up2_HQ.c b/Pods/libopus/silk/resampler_private_up2_HQ.c
+index c7ec8de..e201f2c 100644
+--- a/Pods/libopus/silk/resampler_private_up2_HQ.c
++++ b/Pods/libopus/silk/resampler_private_up2_HQ.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/resampler_rom.c b/Pods/libopus/silk/resampler_rom.c
+index 2d50270..d7462c8 100644
+--- a/Pods/libopus/silk/resampler_rom.c
++++ b/Pods/libopus/silk/resampler_rom.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* Filter coefficients for IIR/FIR polyphase resampling     *
+diff --git a/Pods/libopus/silk/shell_coder.c b/Pods/libopus/silk/shell_coder.c
+index 796f57d..678b9f8 100644
+--- a/Pods/libopus/silk/shell_coder.c
++++ b/Pods/libopus/silk/shell_coder.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/sigm_Q15.c b/Pods/libopus/silk/sigm_Q15.c
+index 3c507d2..18df68a 100644
+--- a/Pods/libopus/silk/sigm_Q15.c
++++ b/Pods/libopus/silk/sigm_Q15.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* Approximate sigmoid function */
+diff --git a/Pods/libopus/silk/sort.c b/Pods/libopus/silk/sort.c
+index 8670dbd..3649f08 100644
+--- a/Pods/libopus/silk/sort.c
++++ b/Pods/libopus/silk/sort.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ /* Insertion sort (fast for already almost sorted arrays):   */
+diff --git a/Pods/libopus/silk/stereo_LR_to_MS.c b/Pods/libopus/silk/stereo_LR_to_MS.c
+index 42906e6..48cce53 100644
+--- a/Pods/libopus/silk/stereo_LR_to_MS.c
++++ b/Pods/libopus/silk/stereo_LR_to_MS.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/stereo_MS_to_LR.c b/Pods/libopus/silk/stereo_MS_to_LR.c
+index 62521a4..883dcf1 100644
+--- a/Pods/libopus/silk/stereo_MS_to_LR.c
++++ b/Pods/libopus/silk/stereo_MS_to_LR.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/stereo_decode_pred.c b/Pods/libopus/silk/stereo_decode_pred.c
+index 56ba392..8e6c8c4 100644
+--- a/Pods/libopus/silk/stereo_decode_pred.c
++++ b/Pods/libopus/silk/stereo_decode_pred.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/stereo_encode_pred.c b/Pods/libopus/silk/stereo_encode_pred.c
+index e6dd195..770978e 100644
+--- a/Pods/libopus/silk/stereo_encode_pred.c
++++ b/Pods/libopus/silk/stereo_encode_pred.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/stereo_find_predictor.c b/Pods/libopus/silk/stereo_find_predictor.c
+index e30e90b..39c9e33 100644
+--- a/Pods/libopus/silk/stereo_find_predictor.c
++++ b/Pods/libopus/silk/stereo_find_predictor.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/stereo_quant_pred.c b/Pods/libopus/silk/stereo_quant_pred.c
+index d4ced6c..2d474d6 100644
+--- a/Pods/libopus/silk/stereo_quant_pred.c
++++ b/Pods/libopus/silk/stereo_quant_pred.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "main.h"
+diff --git a/Pods/libopus/silk/sum_sqr_shift.c b/Pods/libopus/silk/sum_sqr_shift.c
+index 12514c9..a2787ac 100644
+--- a/Pods/libopus/silk/sum_sqr_shift.c
++++ b/Pods/libopus/silk/sum_sqr_shift.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "SigProc_FIX.h"
+diff --git a/Pods/libopus/silk/table_LSF_cos.c b/Pods/libopus/silk/table_LSF_cos.c
+index ec9dc63..ea3eec8 100644
+--- a/Pods/libopus/silk/table_LSF_cos.c
++++ b/Pods/libopus/silk/table_LSF_cos.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_LTP.c b/Pods/libopus/silk/tables_LTP.c
+index 0e6a025..1d9c283 100644
+--- a/Pods/libopus/silk/tables_LTP.c
++++ b/Pods/libopus/silk/tables_LTP.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_NLSF_CB_NB_MB.c b/Pods/libopus/silk/tables_NLSF_CB_NB_MB.c
+index 8c59d20..976de8d 100644
+--- a/Pods/libopus/silk/tables_NLSF_CB_NB_MB.c
++++ b/Pods/libopus/silk/tables_NLSF_CB_NB_MB.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_NLSF_CB_WB.c b/Pods/libopus/silk/tables_NLSF_CB_WB.c
+index 50af87e..cd33ba3 100644
+--- a/Pods/libopus/silk/tables_NLSF_CB_WB.c
++++ b/Pods/libopus/silk/tables_NLSF_CB_WB.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_gain.c b/Pods/libopus/silk/tables_gain.c
+index 37e41d8..ab3be84 100644
+--- a/Pods/libopus/silk/tables_gain.c
++++ b/Pods/libopus/silk/tables_gain.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_other.c b/Pods/libopus/silk/tables_other.c
+index 398686b..471c578 100644
+--- a/Pods/libopus/silk/tables_other.c
++++ b/Pods/libopus/silk/tables_other.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "structs.h"
+diff --git a/Pods/libopus/silk/tables_pitch_lag.c b/Pods/libopus/silk/tables_pitch_lag.c
+index e80cc59..6364029 100644
+--- a/Pods/libopus/silk/tables_pitch_lag.c
++++ b/Pods/libopus/silk/tables_pitch_lag.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/silk/tables_pulses_per_block.c b/Pods/libopus/silk/tables_pulses_per_block.c
+index c7c01c8..c4d3e86 100644
+--- a/Pods/libopus/silk/tables_pulses_per_block.c
++++ b/Pods/libopus/silk/tables_pulses_per_block.c
+@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ ***********************************************************************/
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "tables.h"
+diff --git a/Pods/libopus/src/analysis.c b/Pods/libopus/src/analysis.c
+index 778a62a..8808be6 100644
+--- a/Pods/libopus/src/analysis.c
++++ b/Pods/libopus/src/analysis.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "kiss_fft.h"
+diff --git a/Pods/libopus/src/mlp.c b/Pods/libopus/src/mlp.c
+index 4638602..5478f63 100644
+--- a/Pods/libopus/src/mlp.c
++++ b/Pods/libopus/src/mlp.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_types.h"
+diff --git a/Pods/libopus/src/opus.c b/Pods/libopus/src/opus.c
+index 30890b9..29d8904 100644
+--- a/Pods/libopus/src/opus.c
++++ b/Pods/libopus/src/opus.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus.h"
+diff --git a/Pods/libopus/src/opus_decoder.c b/Pods/libopus/src/opus_decoder.c
+index 919ba52..ca9ec3c 100644
+--- a/Pods/libopus/src/opus_decoder.c
++++ b/Pods/libopus/src/opus_decoder.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-# include "config.h"
++# include "./config.h"
+ #endif
+ 
+ #ifndef OPUS_BUILD
+diff --git a/Pods/libopus/src/opus_encoder.c b/Pods/libopus/src/opus_encoder.c
+index fbd3de6..fa03234 100644
+--- a/Pods/libopus/src/opus_encoder.c
++++ b/Pods/libopus/src/opus_encoder.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include <stdarg.h>
+diff --git a/Pods/libopus/src/opus_multistream.c b/Pods/libopus/src/opus_multistream.c
+index 09c3639..1d91820 100644
+--- a/Pods/libopus/src/opus_multistream.c
++++ b/Pods/libopus/src/opus_multistream.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_multistream.h"
+diff --git a/Pods/libopus/src/opus_multistream_decoder.c b/Pods/libopus/src/opus_multistream_decoder.c
+index a05fa1e..fdafdbb 100644
+--- a/Pods/libopus/src/opus_multistream_decoder.c
++++ b/Pods/libopus/src/opus_multistream_decoder.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_multistream.h"
+diff --git a/Pods/libopus/src/opus_multistream_encoder.c b/Pods/libopus/src/opus_multistream_encoder.c
+index 49e2791..eb7e632 100644
+--- a/Pods/libopus/src/opus_multistream_encoder.c
++++ b/Pods/libopus/src/opus_multistream_encoder.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus_multistream.h"
+diff --git a/Pods/libopus/src/repacketizer.c b/Pods/libopus/src/repacketizer.c
+index a62675c..ec0cd28 100644
+--- a/Pods/libopus/src/repacketizer.c
++++ b/Pods/libopus/src/repacketizer.c
+@@ -26,7 +26,7 @@
+ */
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include "./config.h"
+ #endif
+ 
+ #include "opus.h"
+-- 
+2.0.1
+
