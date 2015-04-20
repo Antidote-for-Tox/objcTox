@@ -43,6 +43,11 @@
 
 #pragma mark -  Public
 
+- (NSString *)path
+{
+    return self.realm.path;
+}
+
 - (NSArray *)friendRequests
 {
     __block NSArray *friendRequests = nil;

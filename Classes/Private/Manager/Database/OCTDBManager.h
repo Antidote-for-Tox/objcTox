@@ -14,6 +14,8 @@
 
 - (instancetype)initWithDatabasePath:(NSString *)path;
 
+- (NSString *)path;
+
 - (NSArray *)friendRequests;
 - (void)addFriendRequest:(OCTFriendRequest *)friendRequest;
 - (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;

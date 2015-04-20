@@ -27,6 +27,11 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     NSString *baseDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     baseDirectory = [baseDirectory stringByAppendingPathComponent:kDefaultBaseDirectory];
 
+    [[NSFileManager defaultManager] createDirectoryAtPath:baseDirectory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
+
     configuration.fileStorage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:baseDirectory
                                                                   temporaryDirectory:NSTemporaryDirectory()];
 

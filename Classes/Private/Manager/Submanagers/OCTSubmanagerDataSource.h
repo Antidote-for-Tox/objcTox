@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @class OCTTox;
+@class OCTDBManager;
 @protocol OCTSettingsStorageProtocol;
 @protocol OCTFileStorageProtocol;
 
 @protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
+- (OCTDBManager *)managerGetDBManager;
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;
 - (id<OCTFileStorageProtocol>)managerGetFileStorage;
 

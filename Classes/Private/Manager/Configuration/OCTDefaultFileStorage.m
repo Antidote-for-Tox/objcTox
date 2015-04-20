@@ -53,6 +53,11 @@
     return [self.baseDirectory stringByAppendingPathComponent:self.saveFileName];
 }
 
+- (NSString *)pathForDatabase
+{
+    return [self.baseDirectory stringByAppendingPathComponent:@"database"];
+}
+
 - (NSString *)pathForDownloadedFilesDirectory
 {
     return [self.baseDirectory stringByAppendingPathComponent:@"downloads"];

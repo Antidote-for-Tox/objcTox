@@ -14,6 +14,7 @@
 #import "OCTSubmanagerDataSource.h"
 #import "OCTSubmanagerFriends.h"
 #import "OCTSubmanagerAvatars.h"
+#import "OCTDBManager.h"
 
 @interface OCTManager(Tests) <OCTSubmanagerDataSource>
 
@@ -22,6 +23,8 @@
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+
+@property (strong, nonatomic) OCTDBManager *dbManager;
 
 - (id)forwardingTargetForSelector:(SEL)aSelector;
 
@@ -69,13 +72,16 @@
     XCTAssertNotNil(self.manager.avatars);
     XCTAssertNotNil(self.manager.tox);
     XCTAssertNotNil(self.manager.configuration);
+    XCTAssertNotNil(self.manager.dbManager);
+    XCTAssertEqualObjects(self.manager.dbManager.path, self.manager.configuration.fileStorage.pathForDatabase);
 }
 
 - (void)testSubmanagerDataSource
 {
-    XCTAssertNotNil([self.manager managerGetTox]);
-    XCTAssertNotNil([self.manager managerGetSettingsStorage]);
-    XCTAssertNotNil([self.manager managerGetFileStorage]);
+    XCTAssertEqual([self.manager managerGetTox], self.manager.tox);
+    XCTAssertEqual([self.manager managerGetDBManager], self.manager.dbManager);
+    XCTAssertEqual([self.manager managerGetSettingsStorage], self.manager.configuration.settingsStorage);
+    XCTAssertEqual([self.manager managerGetFileStorage], self.manager.configuration.fileStorage);
 }
 
 - (void)testForwardTargetForSelector

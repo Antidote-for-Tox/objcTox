@@ -23,6 +23,16 @@
 @property (readonly) NSString *pathForToxSaveFile;
 
 /**
+ * Returns file path for database to be stored in. Must be path to a file, not directory.
+ * In database will be stored chats, messages and related stuff.
+ *
+ * @return Full path to the file for the database.
+ *
+ * @warning Path should be file path. The file can be rewritten at any time while OCTManager is alive.
+ */
+@property (readonly) NSString *pathForDatabase;
+
+/**
  * Returns path where all downloaded files will be stored.
  *
  * @return Full path to the directory with downloaded files.

@@ -12,6 +12,7 @@
 #import "OCTTox.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
+#import "OCTDBManager.h"
 
 @interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
 
@@ -20,6 +21,8 @@
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+
+@property (strong, nonatomic) OCTDBManager *dbManager;
 
 @end
 
@@ -49,6 +52,8 @@
     _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
     _tox.delegate = self;
 
+    _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
+
     OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
     friends.dataSource = self;
     [friends configure];
@@ -66,6 +71,11 @@
 - (OCTTox *)managerGetTox
 {
     return self.tox;
+}
+
+- (OCTDBManager *)managerGetDBManager
+{
+    return self.dbManager;
 }
 
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage
