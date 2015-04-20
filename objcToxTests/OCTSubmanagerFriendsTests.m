@@ -64,11 +64,11 @@
 
     OCTSubmanagerFriends *submanager = [OCTSubmanagerFriends new];
 
-    id container = OCMClassMock([OCTFriendsContainer class]);
-    OCMStub([container alloc]).andReturn(container);
-    OCMExpect([container setDataSource:(id)submanager]);
-    OCMExpect([container configure]);
-    OCMExpect([container initWithFriendsArray:[OCMArg checkWithBlock:^BOOL (NSArray *array) {
+    id friendsContainer = OCMClassMock([OCTFriendsContainer class]);
+    OCMStub([friendsContainer alloc]).andReturn(friendsContainer);
+    OCMExpect([friendsContainer setDataSource:(id)submanager]);
+    OCMExpect([friendsContainer configure]);
+    OCMExpect([friendsContainer initWithFriendsArray:[OCMArg checkWithBlock:^BOOL (NSArray *array) {
         XCTAssertEqual(array.count, 4);
         XCTAssertEqual(array[0], friendsArray[0]);
         XCTAssertEqual(array[1], friendsArray[1]);
@@ -76,7 +76,7 @@
         XCTAssertEqual(array[3], friendsArray[3]);
 
         return YES;
-    }]]).andReturn(container);
+    }]]).andReturn(friendsContainer);
 
     submanager.dataSource = dataSource;
     submanager = OCMPartialMock(submanager);
@@ -87,8 +87,8 @@
 
     [submanager configure];
 
-    XCTAssertEqual(container, submanager.container);
-    OCMVerifyAll(container);
+    XCTAssertEqual(friendsContainer, submanager.friendsContainer);
+    OCMVerifyAll(friendsContainer);
 }
 
 @end

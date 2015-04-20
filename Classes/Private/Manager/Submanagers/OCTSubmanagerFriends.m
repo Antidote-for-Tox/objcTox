@@ -16,7 +16,8 @@
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
-@property (strong, nonatomic) OCTFriendsContainer *container;
+@property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
+@property (strong, nonatomic, readwrite) OCTFriendRequestContainer *friendRequestContainer;
 
 @end
 
@@ -48,9 +49,9 @@
         }
     }
 
-    self.container = [[OCTFriendsContainer alloc] initWithFriendsArray:[array copy]];
-    self.container.dataSource = self;
-    [self.container configure];
+    self.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:[array copy]];
+    self.friendsContainer.dataSource = self;
+    [self.friendsContainer configure];
 }
 
 #pragma mark -  OCTFriendsContainerDataSource

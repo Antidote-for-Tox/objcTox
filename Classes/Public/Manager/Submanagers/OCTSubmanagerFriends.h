@@ -9,12 +9,18 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTFriendsContainer.h"
+#import "OCTFriendRequestContainer.h"
 
 @interface OCTSubmanagerFriends : NSObject
 
 /**
- * Container with all friends and friend requests.
+ * Container with all friends.
  */
-@property (strong, nonatomic, readonly) OCTFriendsContainer *container;
+@property (strong, nonatomic, readonly) OCTFriendsContainer *friendsContainer;
+
+/**
+ * Container with all friend requests.
+ */
+@property (strong, nonatomic, readonly) OCTFriendRequestContainer *friendRequestContainer;
 
 @end
