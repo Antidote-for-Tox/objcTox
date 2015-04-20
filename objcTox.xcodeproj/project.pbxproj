@@ -309,13 +309,6 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
-		11AFF79B1AAA6813005423C4 /* Manager */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Manager;
-			sourceTree = "<group>";
-		};
 		11EDD44C1AA14B3F003A0823 = {
 			isa = PBXGroup;
 			children = (
@@ -341,7 +334,6 @@
 			children = (
 				115B9DF41ADF1708000C38C2 /* Private */,
 				115B9E091ADF1708000C38C2 /* Public */,
-				11AFF79B1AAA6813005423C4 /* Manager */,
 			);
 			name = objcTox;
 			path = Classes;
