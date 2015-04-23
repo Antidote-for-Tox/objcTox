@@ -16,6 +16,7 @@
 @protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
+- (BOOL)managerSaveTox:(NSError **)error;
 - (OCTDBManager *)managerGetDBManager;
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;
 - (id<OCTFileStorageProtocol>)managerGetFileStorage;

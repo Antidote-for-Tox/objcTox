@@ -120,6 +120,7 @@
 		11EDD4551AA14B3F003A0823 /* libobjcTox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libobjcTox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4601AA14B3F003A0823 /* objcToxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcToxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4661AA14B3F003A0823 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		11F69A291AE56679008B77FB /* OCTFriend+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTFriend+Private.h"; sourceTree = "<group>"; };
 		11FA3DE51AE02CD200CF7498 /* OCTFriendRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendRequest.h; sourceTree = "<group>"; };
 		11FA3DE81AE02CF800CF7498 /* OCTFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendRequest.m; sourceTree = "<group>"; };
 		11FA3DEE1AE0356700CF7498 /* OCTBasicContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTBasicContainer.h; sourceTree = "<group>"; };
@@ -195,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				115B9DFB1ADF1708000C38C2 /* OCTFriend.m */,
+				11F69A291AE56679008B77FB /* OCTFriend+Private.h */,
 				11FA3DE81AE02CF800CF7498 /* OCTFriendRequest.m */,
 				115B9DFC1ADF1708000C38C2 /* OCTMessageAbstract.m */,
 				115B9DFD1ADF1708000C38C2 /* OCTMessageFile.m */,

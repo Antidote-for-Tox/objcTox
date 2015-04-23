@@ -73,6 +73,11 @@
     return self.tox;
 }
 
+- (BOOL)managerSaveTox:(NSError **)error
+{
+    return [self saveTox:error];
+}
+
 - (OCTDBManager *)managerGetDBManager
 {
     return self.dbManager;
@@ -124,6 +129,15 @@
     }
 
     return nil;
+}
+
+- (BOOL)saveTox:(NSError **)error
+{
+    NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
+
+    NSData *data = [self.tox save];
+
+    return [data writeToFile:savedDataPath options:0 error:error];
 }
 
 @end

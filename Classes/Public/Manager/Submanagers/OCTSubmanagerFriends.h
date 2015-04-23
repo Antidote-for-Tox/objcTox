@@ -23,4 +23,14 @@
  */
 @property (strong, nonatomic, readonly) OCTFriendRequestContainer *friendRequestContainer;
 
+/**
+ * This adds friend to the list.
+ * address and message are required.
+ */
+- (BOOL)sendFriendRequestToAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
+- (BOOL)approveFriendRequest:(OCTFriendRequest *)friendRequest error:(NSError **)error;
+- (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest;
+
+- (BOOL)removeFriend:(OCTFriend *)friend error:(NSError **)error;
+
 @end
