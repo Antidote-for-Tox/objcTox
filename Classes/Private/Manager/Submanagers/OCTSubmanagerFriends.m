@@ -13,6 +13,7 @@
 #import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
 #import "OCTFriend+Private.h"
+#import "OCTDBManager.h"
 
 @interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource>
 
@@ -119,18 +120,21 @@
 {
     OCTTox *tox = [self.dataSource managerGetTox];
 
-    NSMutableArray *array = [NSMutableArray new];
+    NSMutableArray *friendsArray = [NSMutableArray new];
     for (NSNumber *friendNumber in [tox friendsArray]) {
         OCTFriend *friend = [self createFriendWithFriendNumber:friendNumber.unsignedIntValue];
 
         if (friend) {
-            [array addObject:friend];
+            [friendsArray addObject:friend];
         }
     }
 
-    self.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:[array copy]];
+    self.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:[friendsArray copy]];
     self.friendsContainer.dataSource = self;
     [self.friendsContainer configure];
+
+    NSArray *friendRequestsArray = [[self.dataSource managerGetDBManager] friendRequests];
+    self.friendRequestContainer = [[OCTFriendRequestContainer alloc] initWithFriendRequestsArray:friendRequestsArray];
 }
 
 #pragma mark -  OCTFriendsContainerDataSource
