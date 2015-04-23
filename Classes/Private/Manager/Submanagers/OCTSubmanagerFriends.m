@@ -144,6 +144,52 @@
     return [self.dataSource managerGetSettingsStorage];
 }
 
+#pragma mark -  OCTToxDelegate
+
+- (void)tox:(OCTTox *)tox friendRequestWithMessage:(NSString *)message publicKey:(NSString *)publicKey
+{
+    OCTFriendRequest *request = [OCTFriendRequest new];
+    request.message = message;
+    request.publicKey = publicKey;
+
+    [self.friendRequestContainer addRequest:request];
+}
+
+- (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
+        friend.name = name;
+    }];
+}
+
+- (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
+        friend.statusMessage = statusMessage;
+    }];
+}
+
+- (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
+        friend.status = status;
+    }];
+}
+
+- (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
+        friend.isTyping = isTyping;
+    }];
+}
+
+- (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
+        friend.connectionStatus = status;
+    }];
+}
+
 #pragma mark -  Private
 
 - (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber

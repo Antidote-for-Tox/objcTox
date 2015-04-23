@@ -17,6 +17,7 @@
 #import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
 #import "OCTDBManager.h"
+#import "OCTFriend+Private.h"
 
 static NSString *const kPublicKey = @"publicKey";
 static NSString *const kName = @"name";
@@ -132,6 +133,8 @@ static const BOOL kIsTyping = YES;
 
     XCTAssertEqual(friendRequestContainer, self.submanager.friendRequestContainer);
     OCMVerifyAll(friendRequestContainer);
+
+    [friendRequestContainer stopMocking];
 }
 
 #pragma mark -  Public
@@ -323,6 +326,75 @@ static const BOOL kIsTyping = YES;
 
     XCTAssertFalse(result);
     XCTAssertEqual([self.submanager.friendsContainer friendAtIndex:0], friend);
+}
+
+#pragma mark -  OCTToxDelegate
+
+- (void)testFriendRequest
+{
+    self.submanager.friendRequestContainer = [[OCTFriendRequestContainer alloc] initWithFriendRequestsArray:nil];
+    [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];
+
+    XCTAssertEqual([self.submanager.friendRequestContainer requestsCount], 1);
+
+    OCTFriendRequest *request = [self.submanager.friendRequestContainer requestAtIndex:0];
+    XCTAssertEqualObjects(request.message, @"message");
+    XCTAssertEqualObjects(request.publicKey, @"publicKey");
+}
+
+- (void)testToxFriendNameUpdate
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 7;
+
+    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
+    [self.submanager tox:nil friendNameUpdate:@"name" friendNumber:7];
+
+    XCTAssertEqualObjects(friend.name, @"name");
+}
+
+- (void)testToxFriendStatusMessageUpdate
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 7;
+
+    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
+    [self.submanager tox:nil friendStatusMessageUpdate:@"statusMessage" friendNumber:7];
+
+    XCTAssertEqualObjects(friend.statusMessage, @"statusMessage");
+}
+
+- (void)testToxFriendStatusUpdate
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 7;
+
+    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
+    [self.submanager tox:nil friendStatusUpdate:OCTToxUserStatusBusy friendNumber:7];
+
+    XCTAssertEqual(friend.status, OCTToxUserStatusBusy);
+}
+
+- (void)testToxFriendIsTypingUpdate
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 7;
+
+    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
+    [self.submanager tox:nil friendIsTypingUpdate:YES friendNumber:7];
+
+    XCTAssertEqual(friend.isTyping, YES);
+}
+
+- (void)testToxFriendConnectionStatusUpdate
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 7;
+
+    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
+    [self.submanager tox:nil friendConnectionStatusChanged:OCTToxConnectionStatusUDP friendNumber:7];
+
+    XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusUDP);
 }
 
 #pragma mark -  Private

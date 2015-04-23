@@ -87,6 +87,7 @@
 - (void)testForwardTargetForSelector
 {
     id submanager = [FakeSubmanager new];
+    self.manager.friends = submanager;
     self.manager.avatars = submanager;
 
     // test non protocol selector
