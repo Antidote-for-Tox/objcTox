@@ -11,6 +11,10 @@
 #import "OCTToxConstants.h"
 
 @class OCTTox;
+
+/**
+ * All delegate methods will be called on main thread.
+ */
 @protocol OCTToxDelegate <NSObject>
 
 @optional

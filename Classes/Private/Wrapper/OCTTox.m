@@ -1504,11 +1504,13 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %lu", tox, (unsigned long)status);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: connectionStatusCallback with status %lu", tox, (unsigned long)status);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:connectionStatus:)]) {
-        [tox.delegate tox:tox connectionStatus:status];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:connectionStatus:)]) {
+            [tox.delegate tox:tox connectionStatus:status];
+        }
+    });
 }
 
 void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cName, size_t length, void *userData)
@@ -1517,11 +1519,13 @@ void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_
 
     NSString *name = [NSString stringWithCString:(const char*)cName encoding:NSUTF8StringEncoding];
 
-    DDLogCInfo(@"%@: nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendNameUpdate:friendNumber:)]) {
-        [tox.delegate tox:tox friendNameUpdate:name friendNumber:friendNumber];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:friendNameUpdate:friendNumber:)]) {
+            [tox.delegate tox:tox friendNameUpdate:name friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cMessage, size_t length, void *userData)
@@ -1530,11 +1534,13 @@ void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, con
 
     NSString *message = [NSString stringWithCString:(const char*)cMessage encoding:NSUTF8StringEncoding];
 
-    DDLogCInfo(@"%@: statusMessageCallback with status message %@, friend number %d", tox, message, friendNumber);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: statusMessageCallback with status message %@, friend number %d", tox, message, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendStatusMessageUpdate:friendNumber:)]) {
-        [tox.delegate tox:tox friendStatusMessageUpdate:message friendNumber:friendNumber];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:friendStatusMessageUpdate:friendNumber:)]) {
+            [tox.delegate tox:tox friendStatusMessageUpdate:message friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_STATUS cStatus, void *userData)
@@ -1543,11 +1549,13 @@ void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_S
 
     OCTToxUserStatus status = [tox userStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, (unsigned long)status, friendNumber);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, (unsigned long)status, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
-        [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
+            [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_CONNECTION cStatus, void *userData)
@@ -1558,9 +1566,11 @@ void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, 
 
     DDLogCInfo(@"%@: connectionStatusCallback with status %lu, friendNumber %d", tox, (unsigned long)status, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
-        [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
+            [tox.delegate tox:tox friendConnectionStatusChanged:status friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendTypingCallback(Tox *cTox, OCTToxFriendNumber friendNumber, bool isTyping, void *userData)
@@ -1569,9 +1579,11 @@ void friendTypingCallback(Tox *cTox, OCTToxFriendNumber friendNumber, bool isTyp
 
     DDLogCInfo(@"%@: typingChangeCallback with isTyping %d, friend number %d", tox, isTyping, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendIsTypingUpdate:friendNumber:)]) {
-        [tox.delegate tox:tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:friendNumber];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:friendIsTypingUpdate:friendNumber:)]) {
+            [tox.delegate tox:tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendReadReceiptCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxMessageId messageId, void *userData)
@@ -1580,9 +1592,11 @@ void friendReadReceiptCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTTo
 
     DDLogCInfo(@"%@: readReceiptCallback with message id %d, friendNumber %d", tox, messageId, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:messageDelivered:friendNumber:)]) {
-        [tox.delegate tox:tox messageDelivered:messageId friendNumber:friendNumber];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:messageDelivered:friendNumber:)]) {
+            [tox.delegate tox:tox messageDelivered:messageId friendNumber:friendNumber];
+        }
+    });
 }
 
 void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *cMessage, size_t length, void *userData)
@@ -1592,11 +1606,13 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
     NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:kOCTToxPublicKeyLength];
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
 
-    DDLogCInfo(@"%@: friendRequestCallback with publicKey %@, message %@", tox, publicKey, message);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: friendRequestCallback with publicKey %@, message %@", tox, publicKey, message);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendRequestWithMessage:publicKey:)]) {
-        [tox.delegate tox:tox friendRequestWithMessage:message publicKey:publicKey];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:friendRequestWithMessage:publicKey:)]) {
+            [tox.delegate tox:tox friendRequestWithMessage:message publicKey:publicKey];
+        }
+    });
 }
 
 void friendMessageCallback(
@@ -1612,11 +1628,13 @@ void friendMessageCallback(
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
     OCTToxMessageType type = [tox messageTypeFromCMessageType:cType];
 
-    DDLogCInfo(@"%@: friendMessageCallback with message %@, friend number %d", tox, message, friendNumber);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: friendMessageCallback with message %@, friend number %d", tox, message, friendNumber);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:friendMessage:type:friendNumber:)]) {
-        [tox.delegate tox:tox friendMessage:message type:type friendNumber:friendNumber];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:friendMessage:type:friendNumber:)]) {
+            [tox.delegate tox:tox friendMessage:message type:type friendNumber:friendNumber];
+        }
+    });
 }
 
 void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, TOX_FILE_CONTROL cControl, void *userData)
@@ -1625,24 +1643,28 @@ void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTT
 
     OCTToxFileControl control = [tox fileControlFromCFileControl:cControl];
 
-    DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
-            tox, friendNumber, fileNumber, (unsigned long)control);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
+                tox, friendNumber, fileNumber, (unsigned long)control);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
-        [tox.delegate tox:tox fileReceiveControl:control friendNumber:friendNumber fileNumber:fileNumber];
-    }
+        if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
+            [tox.delegate tox:tox fileReceiveControl:control friendNumber:friendNumber fileNumber:fileNumber];
+        }
+    });
 }
 
 void fileChunkRequestCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, OCTToxFileSize position, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    if ([tox.delegate respondsToSelector:@selector(tox:fileChunkRequestForFileNumber:friendNumber:position:length:)]) {
-        [tox.delegate tox:tox fileChunkRequestForFileNumber:fileNumber
-                                               friendNumber:friendNumber
-                                                   position:position
-                                                     length:length];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:fileChunkRequestForFileNumber:friendNumber:position:length:)]) {
+            [tox.delegate tox:tox fileChunkRequestForFileNumber:fileNumber
+                                                   friendNumber:friendNumber
+                                                       position:position
+                                                         length:length];
+        }
+    });
 }
 
 void fileReceiveCallback(
@@ -1670,13 +1692,15 @@ void fileReceiveCallback(
 
     NSString *fileName = [[NSString alloc] initWithBytes:cFileName length:fileNameLength encoding:NSUTF8StringEncoding];
 
-    if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
-        [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber
-                                          friendNumber:friendNumber
-                                                  kind:kind
-                                              fileSize:fileSize
-                                              fileName:fileName];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
+            [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber
+                                              friendNumber:friendNumber
+                                                      kind:kind
+                                                  fileSize:fileSize
+                                                  fileName:fileName];
+        }
+    });
 }
 
 void fileReceiveChunkCallback(
@@ -1696,8 +1720,10 @@ void fileReceiveChunkCallback(
         chunk = [NSData dataWithBytes:cData length:length];
     }
 
-    if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveChunk:fileNumber:friendNumber:position:)]) {
-        [tox.delegate tox:tox fileReceiveChunk:chunk fileNumber:fileNumber friendNumber:friendNumber position:position];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveChunk:fileNumber:friendNumber:position:)]) {
+            [tox.delegate tox:tox fileReceiveChunk:chunk fileNumber:fileNumber friendNumber:friendNumber position:position];
+        }
+    });
 }
 
