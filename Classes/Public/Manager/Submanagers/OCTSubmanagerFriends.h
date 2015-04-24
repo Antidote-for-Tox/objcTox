@@ -26,11 +26,24 @@
 /**
  * This adds friend to the list.
  * address and message are required.
+ *
+ * TODO write documentation
  */
 - (BOOL)sendFriendRequestToAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
+
+/**
+ * TODO write documentation
+ */
 - (BOOL)approveFriendRequest:(OCTFriendRequest *)friendRequest error:(NSError **)error;
+
+/**
+ * TODO write documentation
+ */
 - (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest;
 
+/**
+ * TODO write documentation
+ */
 - (BOOL)removeFriend:(OCTFriend *)friend error:(NSError **)error;
 
 @end
