@@ -7,10 +7,25 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
 #import "OCTTox.h"
 #import "tox.h"
+
+tox_self_connection_status_cb   connectionStatusCallback;
+tox_friend_name_cb              friendNameCallback;
+tox_friend_status_message_cb    friendStatusMessageCallback;
+tox_friend_status_cb            friendStatusCallback;
+tox_friend_connection_status_cb friendConnectionStatusCallback;
+tox_friend_typing_cb            friendTypingCallback;
+tox_friend_read_receipt_cb      friendReadReceiptCallback;
+tox_friend_request_cb           friendRequestCallback;
+tox_friend_message_cb           friendMessageCallback;
+tox_file_recv_control_cb        fileReceiveControlCallback;
+tox_file_chunk_request_cb       fileChunkRequestCallback;
+tox_file_recv_cb                fileReceiveCallback;
+tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 @interface OCTTox(Tests)
 
@@ -631,6 +646,176 @@
     for (NSUInteger i = 0; i < 16; i++) {
         XCTAssertTrue(bin[i] == i);
     }
+}
+
+#pragma mark -  Callbacks
+
+- (void)testConnectionStatusCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        connectionStatusCallback(NULL, TOX_CONNECTION_UDP, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox connectionStatus:OCTToxConnectionStatusUDP]);
+    }];
+}
+
+- (void)testFriendNameCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendNameCallback(NULL, 5, (const uint8_t *)"name", 4, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox friendNameUpdate:[OCMArg isEqual:@"name"] friendNumber:5]);
+    }];
+}
+
+- (void)testFriendStatusMessageCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendStatusMessageCallback(NULL, 5, (const uint8_t *)"message", 7, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox friendStatusMessageUpdate:[OCMArg isEqual:@"message"] friendNumber:5]);
+    }];
+}
+
+- (void)testFriendStatusCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendStatusCallback(NULL, 5, TOX_USER_STATUS_BUSY, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox friendStatusUpdate:OCTToxUserStatusBusy friendNumber:5]);
+    }];
+}
+
+- (void)testFriendConnectionStatusCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendConnectionStatusCallback(NULL, 5, TOX_CONNECTION_UDP, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusUDP friendNumber:5]);
+    }];
+}
+
+- (void)testFriendTypingCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendTypingCallback(NULL, 5, true, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox friendIsTypingUpdate:YES friendNumber:5]);
+    }];
+}
+
+- (void)testFriendReadReceiptCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendReadReceiptCallback(NULL, 5, 7, (__bridge void *)self.tox);
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox messageDelivered:7 friendNumber:5]);
+    }];
+}
+
+- (void)testFriendRequestCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        uint8_t bin[64] = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+        friendRequestCallback(NULL, bin, (const uint8_t *)"message", 7, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        NSString *publicKey =
+            @"000102030405060708090A0B0C0D0E0F"
+            @"000102030405060708090A0B0C0D0E0F"
+            @"000102030405060708090A0B0C0D0E0F"
+            @"000102030405060708090A0B0C0D0E0F";
+
+        OCMExpect([self.tox.delegate tox:self.tox friendRequestWithMessage:[OCMArg isEqual:@"message"] publicKey:publicKey]);
+    }];
+}
+
+- (void)testFriendMessageCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        friendMessageCallback(NULL, 5, TOX_MESSAGE_TYPE_ACTION, (const uint8_t *)"message", 7, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox
+                           friendMessage:[OCMArg isEqual:@"message"]
+                                    type:OCTToxMessageTypeAction
+                            friendNumber:5]);
+    }];
+}
+
+- (void)testFileReceiveControlCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        fileReceiveControlCallback(NULL, 5, 4, TOX_FILE_CONTROL_PAUSE, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox fileReceiveControl:OCTToxFileControlPause friendNumber:5 fileNumber:4]);
+    }];
+}
+
+- (void)testFileChunkRequestCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        fileChunkRequestCallback(NULL, 5, 4, 300, 150, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox fileChunkRequestForFileNumber:4 friendNumber:5 position:300 length:150]);
+    }];
+}
+
+- (void)testFileReceiveCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        fileReceiveCallback(NULL, 5, 4, TOX_FILE_KIND_DATA, 500, (const uint8_t *)"filename", 8, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        OCMExpect([self.tox.delegate tox:self.tox
+                fileReceiveForFileNumber:4
+                            friendNumber:5
+                                    kind:OCTToxFileKindData
+                                fileSize:500
+                                fileName:[OCMArg isEqual:@"filename"]]);
+    }];
+}
+
+- (void)testFileReceiveChunkCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        fileReceiveChunkCallback(NULL, 5, 4, 250, (const uint8_t *)"data", 4, (__bridge void *)self.tox);
+
+    } expectBlock:^(id<OCTToxDelegate> delegate) {
+        NSData *data = [NSData dataWithBytes:"data" length:4];
+
+        OCMExpect([self.tox.delegate tox:self.tox
+                        fileReceiveChunk:[OCMArg isEqual:data]
+                              fileNumber:4
+                            friendNumber:5
+                                position:250]);
+    }];
+}
+
+- (void)makeTestCallbackWithCallBlock:(void (^)())callBlock expectBlock:(void (^)(id<OCTToxDelegate> delegate))expectBlock
+{
+    NSParameterAssert(callBlock);
+    NSParameterAssert(expectBlock);
+
+    self.tox.delegate = OCMProtocolMock(@protocol(OCTToxDelegate));
+    expectBlock(self.tox.delegate);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        callBlock();
+        [expectation fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    OCMVerifyAll((id)self.tox.delegate);
 }
 
 @end
