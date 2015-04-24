@@ -33,6 +33,8 @@
 		1173BDF01AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1173BDEF1AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m */; };
 		118EA3B21ACFB13300249E01 /* OCTToxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 118EA3B11ACFB13300249E01 /* OCTToxTests.m */; };
 		118EA3B41AD3354F00249E01 /* OCTFriendsContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 118EA3B31AD3354F00249E01 /* OCTFriendsContainerTests.m */; };
+		11B5BD481AEADDDD0046C714 /* OCTDBMessageFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD471AEADDDD0046C714 /* OCTDBMessageFileTests.m */; };
+		11B5BD4A1AEADDE70046C714 /* OCTDBMessageTextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD491AEADDE70046C714 /* OCTDBMessageTextTests.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
 		11F69A2E1AEAD166008B77FB /* OCTDBMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A2D1AEAD166008B77FB /* OCTDBMessageAbstract.m */; };
 		11F69A311AEAD17C008B77FB /* OCTDBMessageFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A301AEAD17C008B77FB /* OCTDBMessageFile.m */; };
@@ -120,6 +122,8 @@
 		1173BDEF1AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerFriendsTests.m; sourceTree = "<group>"; };
 		118EA3B11ACFB13300249E01 /* OCTToxTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxTests.m; sourceTree = "<group>"; };
 		118EA3B31AD3354F00249E01 /* OCTFriendsContainerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendsContainerTests.m; sourceTree = "<group>"; };
+		11B5BD471AEADDDD0046C714 /* OCTDBMessageFileTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBMessageFileTests.m; sourceTree = "<group>"; };
+		11B5BD491AEADDE70046C714 /* OCTDBMessageTextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBMessageTextTests.m; sourceTree = "<group>"; };
 		11EDD4551AA14B3F003A0823 /* libobjcTox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libobjcTox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4601AA14B3F003A0823 /* objcToxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcToxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4661AA14B3F003A0823 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -368,6 +372,8 @@
 				11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */,
 				116EE69C1AE40A030059C8D3 /* OCTDBFriendRequestTests.m */,
 				116EE69E1AE40B350059C8D3 /* OCTDBManagerTests.m */,
+				11B5BD471AEADDDD0046C714 /* OCTDBMessageFileTests.m */,
+				11B5BD491AEADDE70046C714 /* OCTDBMessageTextTests.m */,
 				114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */,
 				114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */,
 				11FA3DFD1AE2D60200CF7498 /* OCTFriendRequestContainerTests.m */,
@@ -597,6 +603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1173BDEC1AB62D9B00E43D75 /* OCTManagerTests.m in Sources */,
+				11B5BD481AEADDDD0046C714 /* OCTDBMessageFileTests.m in Sources */,
 				1173BDF01AB6319E00E43D75 /* OCTSubmanagerFriendsTests.m in Sources */,
 				114196D71AAC87CC0079B30A /* OCTDefaultFileStorageTests.m in Sources */,
 				114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */,
@@ -604,6 +611,7 @@
 				118EA3B41AD3354F00249E01 /* OCTFriendsContainerTests.m in Sources */,
 				11FA3DF41AE04DBE00CF7498 /* OCTBasicContainerTests.m in Sources */,
 				118EA3B21ACFB13300249E01 /* OCTToxTests.m in Sources */,
+				11B5BD4A1AEADDE70046C714 /* OCTDBMessageTextTests.m in Sources */,
 				116EE69D1AE40A030059C8D3 /* OCTDBFriendRequestTests.m in Sources */,
 				1173BDEE1AB62FD100E43D75 /* OCTManagerConfigurationTests.m in Sources */,
 				11FA3DFE1AE2D60200CF7498 /* OCTFriendRequestContainerTests.m in Sources */,

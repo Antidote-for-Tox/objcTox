@@ -8,6 +8,16 @@
 
 #import "OCTMessageFile.h"
 
+@interface OCTMessageFile ()
+
+@property (assign, nonatomic, readwrite) OCTMessageFileType fileType;
+@property (assign, nonatomic, readwrite) OCTToxFileSize fileSize;
+@property (strong, nonatomic, readwrite) NSString *fileName;
+@property (strong, nonatomic, readwrite) NSString *filePath;
+@property (strong, nonatomic, readwrite) NSString *fileUTI;
+
+@end
+
 @implementation OCTMessageFile
 
 @end

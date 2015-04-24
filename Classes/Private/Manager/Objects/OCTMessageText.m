@@ -8,6 +8,13 @@
 
 #import "OCTMessageText.h"
 
+@interface OCTMessageText ()
+
+@property (strong, nonatomic, readwrite) NSString *text;
+@property (assign, nonatomic, readwrite) BOOL isDelivered;
+
+@end
+
 @implementation OCTMessageText
 
 @end
