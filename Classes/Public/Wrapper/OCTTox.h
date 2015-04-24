@@ -74,7 +74,7 @@
 /**
  * The patch or revision number of toxcore. Incremented when bugfixes are applied without changing any functionality or API or ABI.
  */
-+ (NSUInteger)versionPath;
++ (NSUInteger)versionPatch;
 
 #pragma mark -  Lifecycle
 
