@@ -44,7 +44,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 + (NSString *)version
 {
     return [NSString stringWithFormat:@"%lu.%lu.%lu",
-            (unsigned long)[self versionMajor], (unsigned long)[self versionMinor], (unsigned long)[self versionPath]];
+            (unsigned long)[self versionMajor], (unsigned long)[self versionMinor], (unsigned long)[self versionPatch]];
 }
 
 + (NSUInteger)versionMajor
@@ -57,7 +57,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     return tox_version_minor();
 }
 
-+ (NSUInteger)versionPath
++ (NSUInteger)versionPatch
 {
     return tox_version_patch();
 }
