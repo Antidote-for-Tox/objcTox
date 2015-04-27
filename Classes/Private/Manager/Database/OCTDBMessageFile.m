@@ -13,9 +13,9 @@
 
 @implementation OCTDBMessageFile
 
-- (instancetype)initWithMessageFile:(OCTMessageFile *)message
+- (instancetype)initWithMessageFile:(OCTMessageFile *)message realm:(RLMRealm *)realm
 {
-    self = [super initWithMessageAbstract:message];
+    self = [super initWithMessageAbstract:message realm:realm];
 
     if (! self) {
         return nil;
@@ -37,7 +37,7 @@
     message.date = [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
     message.isOutgoing = self.isOutgoing;
     message.sender = [OCTFriend new];
-    message.sender.friendNumber = (OCTToxFriendNumber)self.senderFriendNumber;
+    message.sender.friendNumber = (OCTToxFriendNumber)self.sender.friendNumber;
 
     message.fileType = self.fileType;
     message.fileSize = self.fileSize;

@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
 #import "OCTDBMessageFile.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTMessageAbstract+Private.h"
 #import "OCTFriend+Private.h"
+#import "RLMRealm.h"
 
 @interface OCTDBMessageFileTests : XCTestCase
 
@@ -47,17 +49,24 @@
     message.filePath = @"filePath";
     message.fileUTI = @"fileUTI";
 
-    OCTDBMessageFile *db = [[OCTDBMessageFile alloc] initWithMessageFile:message];
+    RLMRealm *realm = OCMClassMock([RLMRealm class]);
+
+    id dbFriend = OCMClassMock([OCTDBFriend class]);
+    OCMStub([dbFriend findOrCreateFriendInRealm:realm withFriendNumber:5]).andReturn(dbFriend);
+
+    OCTDBMessageFile *db = [[OCTDBMessageFile alloc] initWithMessageFile:message realm:realm];
 
     XCTAssertNotNil(db);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.senderFriendNumber, message.sender.friendNumber);
+    XCTAssertEqual(db.sender, dbFriend);
     XCTAssertEqual(db.fileType, message.fileType);
     XCTAssertEqual(db.fileSize, message.fileSize);
     XCTAssertEqualObjects(db.fileName, message.fileName);
     XCTAssertEqualObjects(db.filePath, message.filePath);
     XCTAssertEqualObjects(db.fileUTI, message.fileUTI);
+
+    [dbFriend stopMocking];
 }
 
 - (void)testMessage
@@ -65,7 +74,8 @@
     OCTDBMessageFile *db = [OCTDBMessageFile new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
     db.isOutgoing = YES;
-    db.senderFriendNumber = 5;
+    db.sender = [OCTDBFriend new];
+    db.sender.friendNumber = 5;
     db.fileType = 2;
     db.fileSize = 123;
     db.fileName = @"fileName";
@@ -77,7 +87,7 @@
     XCTAssertNotNil(message);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.senderFriendNumber, message.sender.friendNumber);
+    XCTAssertEqual(db.sender.friendNumber, message.sender.friendNumber);
     XCTAssertEqual(db.fileType, message.fileType);
     XCTAssertEqual(db.fileSize, message.fileSize);
     XCTAssertEqualObjects(db.fileName, message.fileName);

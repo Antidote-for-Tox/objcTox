@@ -14,7 +14,7 @@
 @property NSString *text;
 @property BOOL isDelivered;
 
-- (instancetype)initWithMessageText:(OCTMessageText *)message;
+- (instancetype)initWithMessageText:(OCTMessageText *)message realm:(RLMRealm *)realm;
 
 /**
  * Please note that OCTFriend isn't stored in database.

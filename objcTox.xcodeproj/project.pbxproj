@@ -37,6 +37,7 @@
 		11B5BD4A1AEADDE70046C714 /* OCTDBMessageTextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD491AEADDE70046C714 /* OCTDBMessageTextTests.m */; };
 		11B5BD4D1AEC02DB0046C714 /* OCTChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD4C1AEC02DB0046C714 /* OCTChat.m */; };
 		11B5BD4F1AEC19340046C714 /* OCTChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD4E1AEC19340046C714 /* OCTChatTests.m */; };
+		11B5BD581AEE63080046C714 /* OCTDBFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD571AEE63080046C714 /* OCTDBFriend.m */; };
 		11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11EDD4551AA14B3F003A0823 /* libobjcTox.a */; };
 		11F69A2E1AEAD166008B77FB /* OCTDBMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A2D1AEAD166008B77FB /* OCTDBMessageAbstract.m */; };
 		11F69A311AEAD17C008B77FB /* OCTDBMessageFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A301AEAD17C008B77FB /* OCTDBMessageFile.m */; };
@@ -130,6 +131,8 @@
 		11B5BD4C1AEC02DB0046C714 /* OCTChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTChat.m; sourceTree = "<group>"; };
 		11B5BD4E1AEC19340046C714 /* OCTChatTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTChatTests.m; sourceTree = "<group>"; };
 		11B5BD501AEE4E830046C714 /* OCTChat+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTChat+Private.h"; sourceTree = "<group>"; };
+		11B5BD561AEE63080046C714 /* OCTDBFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDBFriend.h; sourceTree = "<group>"; };
+		11B5BD571AEE63080046C714 /* OCTDBFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBFriend.m; sourceTree = "<group>"; };
 		11EDD4551AA14B3F003A0823 /* libobjcTox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libobjcTox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4601AA14B3F003A0823 /* objcToxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcToxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11EDD4661AA14B3F003A0823 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -331,6 +334,8 @@
 		116EE6951AE3C6C30059C8D3 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				11B5BD561AEE63080046C714 /* OCTDBFriend.h */,
+				11B5BD571AEE63080046C714 /* OCTDBFriend.m */,
 				116EE6991AE3C72F0059C8D3 /* OCTDBFriendRequest.h */,
 				116EE69A1AE3C72F0059C8D3 /* OCTDBFriendRequest.m */,
 				116EE6961AE3C7180059C8D3 /* OCTDBManager.h */,
@@ -597,6 +602,7 @@
 				11F69A311AEAD17C008B77FB /* OCTDBMessageFile.m in Sources */,
 				116EE6981AE3C7180059C8D3 /* OCTDBManager.m in Sources */,
 				11FA3DF21AE04D1300CF7498 /* OCTManagerConstants.m in Sources */,
+				11B5BD581AEE63080046C714 /* OCTDBFriend.m in Sources */,
 				11FA3DF01AE0356700CF7498 /* OCTBasicContainer.m in Sources */,
 				115B9E2A1ADF1708000C38C2 /* OCTSubmanagerAvatars.m in Sources */,
 				115B9E2C1ADF1708000C38C2 /* OCTTox.m in Sources */,

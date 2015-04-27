@@ -17,7 +17,7 @@
 @property NSString *filePath;
 @property NSString *fileUTI;
 
-- (instancetype)initWithMessageFile:(OCTMessageFile *)message;
+- (instancetype)initWithMessageFile:(OCTMessageFile *)message realm:(RLMRealm *)realm;
 
 /**
  * Please note that OCTFriend isn't stored in database.

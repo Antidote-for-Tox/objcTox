@@ -7,6 +7,7 @@
 //
 
 #import "RLMObject.h"
+#import "OCTDBFriend.h"
 #import "OCTMessageAbstract.h"
 
 @interface OCTDBMessageAbstract : RLMObject
@@ -15,8 +16,8 @@
 // See https://github.com/realm/realm-cocoa/issues/875
 @property NSTimeInterval dateInterval;
 @property BOOL isOutgoing;
-@property NSInteger senderFriendNumber;
+@property OCTDBFriend *sender;
 
-- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message;
+- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message realm:(RLMRealm *)realm;
 
 @end

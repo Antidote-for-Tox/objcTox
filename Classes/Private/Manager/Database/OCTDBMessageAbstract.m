@@ -10,9 +10,10 @@
 
 @implementation OCTDBMessageAbstract
 
-- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message
+- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message realm:(RLMRealm *)realm
 {
     NSParameterAssert(message);
+    NSParameterAssert(realm);
 
     self = [super init];
 
@@ -22,7 +23,7 @@
 
     self.dateInterval = [message.date timeIntervalSince1970];
     self.isOutgoing = message.isOutgoing;
-    self.senderFriendNumber = message.sender.friendNumber;
+    self.sender = [OCTDBFriend findOrCreateFriendInRealm:realm withFriendNumber:message.sender.friendNumber];
 
     return self;
 }

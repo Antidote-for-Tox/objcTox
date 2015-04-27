@@ -13,9 +13,9 @@
 
 @implementation OCTDBMessageText
 
-- (instancetype)initWithMessageText:(OCTMessageText *)message
+- (instancetype)initWithMessageText:(OCTMessageText *)message realm:(RLMRealm *)realm
 {
-    self = [super initWithMessageAbstract:message];
+    self = [super initWithMessageAbstract:message realm:realm];
 
     if (! self) {
         return nil;
@@ -34,7 +34,7 @@
     message.date = [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
     message.isOutgoing = self.isOutgoing;
     message.sender = [OCTFriend new];
-    message.sender.friendNumber = (OCTToxFriendNumber)self.senderFriendNumber;
+    message.sender.friendNumber = (OCTToxFriendNumber)self.sender.friendNumber;
 
     message.text = self.text;
     message.isDelivered = self.isDelivered;
