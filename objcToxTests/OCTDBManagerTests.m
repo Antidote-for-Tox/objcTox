@@ -66,6 +66,27 @@
     XCTAssertEqualObjects(self.manager.realm.path, [self realmPath]);
 }
 
+- (void)testUpdateDBObjectWithBlock
+{
+    OCTDBFriendRequest *db = [OCTDBFriendRequest new];
+    db.publicKey = @"key";
+    db.message = @"message";
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db];
+    [self.manager.realm commitWriteTransaction];
+
+    [self.manager updateDBObjectInBlock:^{
+        db.message = @"updated message";
+    }];
+
+    OCTDBFriendRequest *updated = [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:db.publicKey];
+
+    XCTAssertEqualObjects(updated.message, @"updated message");
+}
+
+#pragma mark -  Friends
+
 - (void)testFriendRequests
 {
     OCTDBFriendRequest *db1 = [OCTDBFriendRequest new];

@@ -48,6 +48,19 @@
     return self.realm.path;
 }
 
+- (void)updateDBObjectInBlock:(void (^)())updateBlock
+{
+    NSParameterAssert(updateBlock);
+
+    dispatch_sync(self.queue, ^{
+        [self.realm beginWriteTransaction];
+        updateBlock();
+        [self.realm commitWriteTransaction];
+    });
+}
+
+#pragma mark -  Friend requests
+
 - (NSArray *)friendRequests
 {
     __block NSArray *friendRequests = nil;

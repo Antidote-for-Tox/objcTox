@@ -16,6 +16,10 @@
 
 - (NSString *)path;
 
+- (void)updateDBObjectInBlock:(void (^)())updateBlock;
+
+#pragma mark -  Friend requests
+
 - (NSArray *)friendRequests;
 - (void)addFriendRequest:(OCTFriendRequest *)friendRequest;
 - (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;
