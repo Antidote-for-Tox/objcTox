@@ -8,6 +8,8 @@
 
 #import "RLMObject.h"
 #import "OCTDBFriend.h"
+#import "OCTDBMessageText.h"
+#import "OCTDBMessageFile.h"
 #import "OCTMessageAbstract.h"
 
 @interface OCTDBMessageAbstract : RLMObject
@@ -18,6 +20,18 @@
 @property BOOL isOutgoing;
 @property OCTDBFriend *sender;
 
+/**
+ * MessageAbstract should have on of the following properties.
+ */
+@property OCTDBMessageText *textMessage;
+@property OCTDBMessageFile *fileMessage;
+
 - (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message realm:(RLMRealm *)realm;
+
+/**
+ * Please note that OCTFriend isn't stored in database.
+ * OCTMessageAbstract object will have sender with filled friendNumber and empty other fields.
+ */
+- (OCTMessageAbstract *)message;
 
 @end

@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTDBMessageAbstract.h"
+#import "RLMObject.h"
 #import "OCTMessageFile.h"
 
-@interface OCTDBMessageFile : OCTDBMessageAbstract
+@interface OCTDBMessageFile : RLMObject
 
 @property int fileType;
 @property long long fileSize;
@@ -17,12 +17,8 @@
 @property NSString *filePath;
 @property NSString *fileUTI;
 
-- (instancetype)initWithMessageFile:(OCTMessageFile *)message realm:(RLMRealm *)realm;
+- (instancetype)initWithMessageFile:(OCTMessageFile *)message;
 
-/**
- * Please note that OCTFriend isn't stored in database.
- * OCTMessageAbstract object will have sender with filled friendNumber and empty other fields.
- */
-- (OCTMessageFile *)message;
+- (void)fillMessage:(OCTMessageFile *)message;
 
 @end

@@ -36,49 +36,27 @@
 
 - (void)testInit
 {
-    OCTFriend *friend = [OCTFriend new];
-    friend.friendNumber = 5;
-
     OCTMessageText *message = [OCTMessageText new];
-    message.date = [NSDate date];
-    message.isOutgoing = YES;
-    message.sender = friend;
     message.text = @"text";
     message.isDelivered = YES;
 
-    RLMRealm *realm = OCMClassMock([RLMRealm class]);
-
-    id dbFriend = OCMClassMock([OCTDBFriend class]);
-    OCMStub([dbFriend findOrCreateFriendInRealm:realm withFriendNumber:5]).andReturn(dbFriend);
-
-    OCTDBMessageText *db = [[OCTDBMessageText alloc] initWithMessageText:message realm:realm];
+    OCTDBMessageText *db = [[OCTDBMessageText alloc] initWithMessageText:message];
 
     XCTAssertNotNil(db);
-    XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.sender, dbFriend);
     XCTAssertEqualObjects(db.text, message.text);
     XCTAssertEqual(db.isDelivered, message.isDelivered);
-
-    [dbFriend stopMocking];
 }
 
 - (void)testMessage
 {
     OCTDBMessageText *db = [OCTDBMessageText new];
-    db.dateInterval = [[NSDate date] timeIntervalSince1970];
-    db.isOutgoing = YES;
-    db.sender = [OCTDBFriend new];
-    db.sender.friendNumber = 5;
     db.text = @"text";
     db.isDelivered = YES;
 
-    OCTMessageText *message = [db message];
+    OCTMessageText *message = [OCTMessageText new];
+    [db fillMessage:message];
 
     XCTAssertNotNil(message);
-    XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.sender.friendNumber, message.sender.friendNumber);
     XCTAssertEqualObjects(db.text, message.text);
     XCTAssertEqual(db.isDelivered, message.isDelivered);
 }

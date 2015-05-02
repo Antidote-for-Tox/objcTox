@@ -8,14 +8,12 @@
 
 #import "OCTDBMessageText.h"
 #import "OCTMessageText+Private.h"
-#import "OCTMessageAbstract+Private.h"
-#import "OCTFriend+Private.h"
 
 @implementation OCTDBMessageText
 
-- (instancetype)initWithMessageText:(OCTMessageText *)message realm:(RLMRealm *)realm
+- (instancetype)initWithMessageText:(OCTMessageText *)message
 {
-    self = [super initWithMessageAbstract:message realm:realm];
+    self = [super init];
 
     if (! self) {
         return nil;
@@ -27,19 +25,10 @@
     return self;
 }
 
-- (OCTMessageText *)message
+- (void)fillMessage:(OCTMessageText *)message
 {
-    OCTMessageText *message = [OCTMessageText new];
-
-    message.date = [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
-    message.isOutgoing = self.isOutgoing;
-    message.sender = [OCTFriend new];
-    message.sender.friendNumber = (OCTToxFriendNumber)self.sender.friendNumber;
-
     message.text = self.text;
     message.isDelivered = self.isDelivered;
-
-    return message;
 }
 
 @end

@@ -6,20 +6,16 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTDBMessageAbstract.h"
+#import "RLMObject.h"
 #import "OCTMessageText.h"
 
-@interface OCTDBMessageText : OCTDBMessageAbstract
+@interface OCTDBMessageText : RLMObject
 
 @property NSString *text;
 @property BOOL isDelivered;
 
-- (instancetype)initWithMessageText:(OCTMessageText *)message realm:(RLMRealm *)realm;
+- (instancetype)initWithMessageText:(OCTMessageText *)message;
 
-/**
- * Please note that OCTFriend isn't stored in database.
- * OCTMessageAbstract object will have sender with filled friendNumber and empty other fields.
- */
-- (OCTMessageText *)message;
+- (void)fillMessage:(OCTMessageText *)message;
 
 @end
