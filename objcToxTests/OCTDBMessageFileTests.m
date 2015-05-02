@@ -53,7 +53,7 @@
     XCTAssertEqualObjects(db.fileUTI, message.fileUTI);
 }
 
-- (void)testMessage
+- (void)textFillMessage
 {
     OCTDBMessageFile *db = [OCTDBMessageFile new];
     db.fileType = 2;

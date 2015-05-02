@@ -47,7 +47,7 @@
     XCTAssertEqual(db.isDelivered, message.isDelivered);
 }
 
-- (void)testMessage
+- (void)textFillMessage
 {
     OCTDBMessageText *db = [OCTDBMessageText new];
     db.text = @"text";
