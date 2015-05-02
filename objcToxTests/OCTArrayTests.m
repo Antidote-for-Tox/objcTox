@@ -16,14 +16,14 @@
 @interface OCTArray()
 
 @property (strong, nonatomic) RLMResults *results;
-@property (strong, nonatomic) id<OCTConvertorProtocol> convertor;
+@property (strong, nonatomic) id<OCTConverterProtocol> converter;
 
 @end
 
 @interface OCTArrayTests : XCTestCase
 
 @property (strong, nonatomic) RLMResults *results;
-@property (strong, nonatomic) id<OCTConvertorProtocol> convertor;
+@property (strong, nonatomic) id<OCTConverterProtocol> converter;
 @property (strong, nonatomic) OCTArray *array;
 
 @end
@@ -36,15 +36,15 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     self.results = OCMClassMock([RLMResults class]);
-    self.convertor = OCMProtocolMock(@protocol(OCTConvertorProtocol));
+    self.converter = OCMProtocolMock(@protocol(OCTConverterProtocol));
 
-    self.array = [[OCTArray alloc] initWithRLMResults:self.results convertor:self.convertor];
+    self.array = [[OCTArray alloc] initWithRLMResults:self.results converter:self.converter];
 }
 
 - (void)tearDown
 {
     self.results = nil;
-    self.convertor = nil;
+    self.converter = nil;
 
     self.array = nil;
 
@@ -56,7 +56,7 @@
 {
     XCTAssertNotNil(self.array);
     XCTAssertEqual(self.array.results, self.results);
-    XCTAssertEqual(self.array.convertor, self.convertor);
+    XCTAssertEqual(self.array.converter, self.converter);
 }
 
 - (void)testCount
@@ -68,7 +68,7 @@
 
 - (void)testObjectClassName
 {
-    OCMStub([self.convertor objectClassName]).andReturn(@"name");
+    OCMStub([self.converter objectClassName]).andReturn(@"name");
 
     XCTAssertEqualObjects(self.array.objectClassName, @"name");
 }
@@ -79,7 +79,7 @@
     id object = @"object";
 
     OCMStub([self.results firstObject]).andReturn(rlmObject);
-    OCMStub([self.convertor objectFromRLMObject:rlmObject]).andReturn(object);
+    OCMStub([self.converter objectFromRLMObject:rlmObject]).andReturn(object);
 
     XCTAssertEqualObjects([self.array firstObject], object);
 }
@@ -97,7 +97,7 @@
     id object = @"object";
 
     OCMStub([self.results lastObject]).andReturn(rlmObject);
-    OCMStub([self.convertor objectFromRLMObject:rlmObject]).andReturn(object);
+    OCMStub([self.converter objectFromRLMObject:rlmObject]).andReturn(object);
 
     XCTAssertEqualObjects([self.array lastObject], object);
 }
@@ -113,8 +113,8 @@
 {
     id results = OCMClassMock([RLMResults class]);
 
-    OCMStub([self.convertor rlmSortDescriptorFromDescriptor:(id)@"foo"]).andReturn(@"bar");
-    OCMStub([self.convertor rlmSortDescriptorFromDescriptor:(id)@"foo2"]).andReturn(@"bar2");
+    OCMStub([self.converter rlmSortDescriptorFromDescriptor:(id)@"foo"]).andReturn(@"bar");
+    OCMStub([self.converter rlmSortDescriptorFromDescriptor:(id)@"foo2"]).andReturn(@"bar2");
 
     NSArray *rlmDescriptors = @[ @"bar", @"bar2" ];
     OCMExpect([self.results sortedResultsUsingDescriptors:rlmDescriptors]).andReturn(results);
@@ -123,7 +123,7 @@
 
     XCTAssertNotNil(array);
     XCTAssertEqual(results, array.results);
-    XCTAssertEqual(self.array.convertor, array.convertor);
+    XCTAssertEqual(self.array.converter, array.converter);
     OCMVerify((id)self.results);
 }
 
@@ -143,9 +143,9 @@
     OCMStub([self.results objectAtIndex:1]).andReturn(rlmObj1);
     OCMStub([self.results objectAtIndex:2]).andReturn(rlmObj2);
 
-    OCMStub([self.convertor objectFromRLMObject:rlmObj0]).andReturn(obj0);
-    OCMStub([self.convertor objectFromRLMObject:rlmObj1]).andReturn(obj1);
-    OCMStub([self.convertor objectFromRLMObject:rlmObj2]).andReturn(obj2);
+    OCMStub([self.converter objectFromRLMObject:rlmObj0]).andReturn(obj0);
+    OCMStub([self.converter objectFromRLMObject:rlmObj1]).andReturn(obj1);
+    OCMStub([self.converter objectFromRLMObject:rlmObj2]).andReturn(obj2);
 
     [self.array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [obj copy];

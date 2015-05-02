@@ -1,5 +1,5 @@
 //
-//  OCTConvertorProtocol.h
+//  OCTConverterProtocol.h
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 02.05.15.
@@ -11,7 +11,7 @@
 #import "RLMObject.h"
 #import "RLMArray.h"
 
-@protocol OCTConvertorProtocol <NSObject>
+@protocol OCTConverterProtocol <NSObject>
 
 @property (strong, nonatomic, readonly) NSString *objectClassName;
 

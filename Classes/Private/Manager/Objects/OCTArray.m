@@ -12,7 +12,7 @@
 @interface OCTArray()
 
 @property (strong, nonatomic) RLMResults *results;
-@property (strong, nonatomic) id<OCTConvertorProtocol> convertor;
+@property (strong, nonatomic) id<OCTConverterProtocol> converter;
 
 @end
 
@@ -20,10 +20,10 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithRLMResults:(RLMResults *)results convertor:(id<OCTConvertorProtocol>)convertor
+- (instancetype)initWithRLMResults:(RLMResults *)results converter:(id<OCTConverterProtocol>)converter
 {
     NSParameterAssert(results);
-    NSParameterAssert(convertor);
+    NSParameterAssert(converter);
 
     self = [super init];
 
@@ -32,7 +32,7 @@
     }
 
     self.results = results;
-    self.convertor = convertor;
+    self.converter = converter;
 
     return self;
 }
@@ -46,7 +46,7 @@
 
 - (NSString *)objectClassName
 {
-    return self.convertor.objectClassName;
+    return self.converter.objectClassName;
 }
 
 #pragma mark -  Public
@@ -55,28 +55,28 @@
 {
     RLMObject *object = [self.results firstObject];
 
-    return object ? [self.convertor objectFromRLMObject:object] : nil;
+    return object ? [self.converter objectFromRLMObject:object] : nil;
 }
 
 - (NSObject *)lastObject
 {
     RLMObject *object = [self.results lastObject];
 
-    return object ? [self.convertor objectFromRLMObject:object] : nil;
+    return object ? [self.converter objectFromRLMObject:object] : nil;
 }
 
 - (NSObject *)objectAtIndex:(NSUInteger)index
 {
     RLMObject *object = [self.results objectAtIndex:index];
 
-    return object ? [self.convertor objectFromRLMObject:object] : nil;
+    return object ? [self.converter objectFromRLMObject:object] : nil;
 }
 
 - (OCTArray *)sortedObjectsUsingDescriptors:(NSArray *)array
 {
     NSMutableArray *rlmArray = [NSMutableArray new];
     for (OCTSortDescriptor *descriptor in array) {
-        RLMSortDescriptor *rlmDescriptor = [self.convertor rlmSortDescriptorFromDescriptor:descriptor];
+        RLMSortDescriptor *rlmDescriptor = [self.converter rlmSortDescriptorFromDescriptor:descriptor];
 
         if (rlmDescriptor) {
             [rlmArray addObject:rlmDescriptor];
@@ -85,7 +85,7 @@
 
     RLMResults *results = [self.results sortedResultsUsingDescriptors:rlmArray];
 
-    return [[OCTArray alloc] initWithRLMResults:results convertor:self.convertor];
+    return [[OCTArray alloc] initWithRLMResults:results converter:self.converter];
 }
 
 - (void)enumerateObjectsUsingBlock:(void (^)(NSObject *obj, NSUInteger idx, BOOL *stop))block
@@ -95,7 +95,7 @@
     BOOL stop = NO;
     for (NSUInteger index = 0; index < self.results.count; index++) {
         RLMObject *rlmObject = [self.results objectAtIndex:index];
-        NSObject *object = [self.convertor objectFromRLMObject:rlmObject];
+        NSObject *object = [self.converter objectFromRLMObject:rlmObject];
 
         block(object, index, &stop);
 

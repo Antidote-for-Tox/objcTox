@@ -17,7 +17,7 @@
 
 @implementation OCTSortDescriptor
 
-+ (instancetype)sortDescryptorWithProperty:(NSString *)property ascending:(BOOL)ascending
++ (instancetype)sortDescriptorWithProperty:(NSString *)property ascending:(BOOL)ascending
 {
     NSParameterAssert(property);
 

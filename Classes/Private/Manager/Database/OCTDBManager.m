@@ -10,11 +10,14 @@
 
 #import "OCTDBManager.h"
 #import "OCTDBFriendRequest.h"
+#import "OCTConverterFriendRequest.h"
 
 @interface OCTDBManager()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
 @property (strong, nonatomic) RLMRealm *realm;
+
+@property (strong, nonatomic) id<OCTConverterProtocol> converterFriendRequest;
 
 @end
 
@@ -31,6 +34,8 @@
     if (! self) {
         return nil;
     }
+
+    _converterFriendRequest = [OCTConverterFriendRequest new];
 
     _queue = dispatch_queue_create("OCTDBManager queue", NULL);
 
@@ -72,7 +77,7 @@
         NSMutableArray *array = [NSMutableArray new];
 
         for (OCTDBFriendRequest *db in results) {
-            [array addObject:[db friendRequest]];
+            [array addObject:[self.converterFriendRequest objectFromRLMObject:db]];
         }
 
         friendRequests = [array copy];
@@ -86,7 +91,7 @@
     NSParameterAssert(friendRequest.publicKey);
 
     dispatch_sync(self.queue, ^{
-        OCTDBFriendRequest *db = [OCTDBFriendRequest createFromFriendRequest:friendRequest];
+        OCTDBFriendRequest *db = (OCTDBFriendRequest *)[self.converterFriendRequest rlmObjectFromObject:friendRequest];
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:db];

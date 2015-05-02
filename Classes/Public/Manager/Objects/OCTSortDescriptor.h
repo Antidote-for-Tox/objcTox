@@ -25,6 +25,6 @@
  */
 @property (assign, nonatomic, readonly) BOOL ascending;
 
-+ (instancetype)sortDescryptorWithProperty:(NSString *)property ascending:(BOOL)ascending;
++ (instancetype)sortDescriptorWithProperty:(NSString *)property ascending:(BOOL)ascending;
 
 @end
