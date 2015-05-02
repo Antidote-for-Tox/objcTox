@@ -7,15 +7,43 @@
 //
 
 #import "OCTChat.h"
+#import "OCTChat+Private.h"
 
 @interface OCTChat()
 
 @property (strong, nonatomic, readwrite) NSArray *friends;
 @property (strong, nonatomic, readwrite) OCTMessageAbstract *lastMessage;
 
+@property (strong, nonatomic) OCTDBChat *dbChat;
+@property (weak, nonatomic) OCTDBManager *dbManager;
+
 @end
 
 @implementation OCTChat
+
+#pragma mark -  Properties
+
+- (void)setEnteredText:(NSString *)enteredText
+{
+    _enteredText = enteredText;
+
+    __weak OCTChat *weakSelf = self;
+    [self.dbManager updateDBObjectInBlock:^{
+        weakSelf.dbChat.enteredText = enteredText;
+    }];
+}
+
+- (void)setLastReadDate:(NSDate *)date
+{
+    _lastReadDate = date;
+
+    __weak OCTChat *weakSelf = self;
+    [self.dbManager updateDBObjectInBlock:^{
+        weakSelf.dbChat.lastReadDateInterval = [date timeIntervalSince1970];
+    }];
+}
+
+#pragma mark -  Public
 
 - (void)updateLastReadDateToNow
 {
