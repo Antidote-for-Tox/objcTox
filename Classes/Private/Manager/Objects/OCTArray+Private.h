@@ -7,7 +7,11 @@
 //
 
 #import "OCTArray.h"
+#import "RLMResults.h"
+#import "OCTConvertorProtocol.h"
 
 @interface OCTArray (Private)
+
+- (instancetype)initWithRLMResults:(RLMResults *)results convertor:(id<OCTConvertorProtocol>)convertor;
 
 @end
