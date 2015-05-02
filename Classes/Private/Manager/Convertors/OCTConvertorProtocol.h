@@ -13,9 +13,11 @@
 
 @protocol OCTConvertorProtocol <NSObject>
 
-@property (strong, nonatomic) NSString *objectClassName;
+@property (strong, nonatomic, readonly) NSString *objectClassName;
 
 - (NSObject *)objectFromRLMObject:(RLMObject *)rlmObject;
+- (RLMObject *)rlmObjectFromObject:(NSObject *)object;
+
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor;
 
 @end
