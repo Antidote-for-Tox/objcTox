@@ -53,7 +53,22 @@
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor
 {
-    return nil;
+    NSParameterAssert(descriptor);
+
+    NSDictionary *mapping = @{
+#warning check if we can sort with lastMessage (lastMessage.property?)
+        NSStringFromSelector(@selector(lastMessage)) : NSStringFromSelector(@selector(lastMessage)),
+        NSStringFromSelector(@selector(enteredText)) : NSStringFromSelector(@selector(enteredText)),
+        NSStringFromSelector(@selector(lastReadDate)) : NSStringFromSelector(@selector(lastReadDateInterval)),
+    };
+
+    NSString *rlmProperty = mapping[descriptor.property];
+
+    if (! rlmProperty) {
+        return nil;
+    }
+
+    return [RLMSortDescriptor sortDescriptorWithProperty:rlmProperty ascending:descriptor.ascending];
 }
 
 @end
