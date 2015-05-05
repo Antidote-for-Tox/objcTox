@@ -25,10 +25,4 @@
     return self;
 }
 
-- (void)fillMessage:(OCTMessageText *)message
-{
-    message.text = self.text;
-    message.isDelivered = self.isDelivered;
-}
-
 @end

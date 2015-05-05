@@ -16,6 +16,4 @@
 
 - (instancetype)initWithMessageText:(OCTMessageText *)message;
 
-- (void)fillMessage:(OCTMessageText *)message;
-
 @end

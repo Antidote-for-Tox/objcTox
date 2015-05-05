@@ -53,24 +53,4 @@
     XCTAssertEqualObjects(db.fileUTI, message.fileUTI);
 }
 
-- (void)textFillMessage
-{
-    OCTDBMessageFile *db = [OCTDBMessageFile new];
-    db.fileType = 2;
-    db.fileSize = 123;
-    db.fileName = @"fileName";
-    db.filePath = @"filePath";
-    db.fileUTI = @"fileUTI";
-
-    OCTMessageFile *message = [OCTMessageFile new];
-    [db fillMessage:message];
-
-    XCTAssertNotNil(message);
-    XCTAssertEqual(db.fileType, message.fileType);
-    XCTAssertEqual(db.fileSize, message.fileSize);
-    XCTAssertEqualObjects(db.fileName, message.fileName);
-    XCTAssertEqualObjects(db.filePath, message.filePath);
-    XCTAssertEqualObjects(db.fileUTI, message.fileUTI);
-}
-
 @end

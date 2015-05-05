@@ -19,6 +19,4 @@
 
 - (instancetype)initWithMessageFile:(OCTMessageFile *)message;
 
-- (void)fillMessage:(OCTMessageFile *)message;
-
 @end

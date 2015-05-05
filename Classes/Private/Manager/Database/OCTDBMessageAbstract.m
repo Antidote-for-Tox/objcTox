@@ -39,27 +39,4 @@
     return self;
 }
 
-- (OCTMessageAbstract *)message
-{
-    OCTMessageAbstract *message;
-
-    if (self.textMessage) {
-        message = [OCTMessageText new];
-
-        [self.textMessage fillMessage:(OCTMessageText *)message];
-    }
-    else if (self.fileMessage) {
-        message = [OCTMessageFile new];
-
-        [self.fileMessage fillMessage:(OCTMessageFile *)message];
-    }
-
-    message.date = [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
-    message.isOutgoing = self.isOutgoing;
-    message.sender = [OCTFriend new];
-    message.sender.friendNumber = (OCTToxFriendNumber)self.sender.friendNumber;
-
-    return message;
-}
-
 @end

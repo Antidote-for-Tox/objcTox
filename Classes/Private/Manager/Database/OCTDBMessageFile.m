@@ -28,13 +28,4 @@
     return self;
 }
 
-- (void)fillMessage:(OCTMessageFile *)message
-{
-    message.fileType = self.fileType;
-    message.fileSize = self.fileSize;
-    message.fileName = self.fileName;
-    message.filePath = self.filePath;
-    message.fileUTI = self.fileUTI;
-}
-
 @end

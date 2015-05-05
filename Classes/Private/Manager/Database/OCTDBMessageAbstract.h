@@ -28,10 +28,4 @@
 
 - (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message realm:(RLMRealm *)realm;
 
-/**
- * Please note that OCTFriend isn't stored in database.
- * OCTMessageAbstract object will have sender with filled friendNumber and empty other fields.
- */
-- (OCTMessageAbstract *)message;
-
 @end

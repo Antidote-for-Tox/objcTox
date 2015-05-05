@@ -47,18 +47,4 @@
     XCTAssertEqual(db.isDelivered, message.isDelivered);
 }
 
-- (void)textFillMessage
-{
-    OCTDBMessageText *db = [OCTDBMessageText new];
-    db.text = @"text";
-    db.isDelivered = YES;
-
-    OCTMessageText *message = [OCTMessageText new];
-    [db fillMessage:message];
-
-    XCTAssertNotNil(message);
-    XCTAssertEqualObjects(db.text, message.text);
-    XCTAssertEqual(db.isDelivered, message.isDelivered);
-}
-
 @end

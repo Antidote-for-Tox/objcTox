@@ -17,7 +17,7 @@
 
 /**
  * Note that OCTDBFriend has only friendNumber property, thus sortDescriptor is limited to it.
- * In case if another property will be passed convertor will return nil.
+ * In case if another property will be passed converter will return nil.
  */
 @interface OCTConverterFriend : NSObject <OCTConverterProtocol>
 
