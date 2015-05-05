@@ -31,6 +31,35 @@
     [super tearDown];
 }
 
+- (void)testEnteredTextUpdateBlock
+{
+    __block NSString *result = nil;
+
+    OCTChat *chat = [OCTChat new];
+    chat.enteredTextUpdateBlock = ^(NSString *enteredText) {
+        result = enteredText;
+    };
+
+    chat.enteredText = @"text";
+
+    XCTAssertEqualObjects(result, @"text");
+}
+
+- (void)testLastReadDateUpdateBlock
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:100];
+    __block NSDate *result = nil;
+
+    OCTChat *chat = [OCTChat new];
+    chat.lastReadDateUpdateBlock = ^(NSDate *lastReadDate) {
+        result = lastReadDate;
+    };
+
+    chat.lastReadDate = date;
+
+    XCTAssertEqualObjects(result, date);
+}
+
 - (void)testHasUnreadMessages
 {
     OCTChat *chat = [OCTChat new];

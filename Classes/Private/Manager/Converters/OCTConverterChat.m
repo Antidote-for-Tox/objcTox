@@ -35,9 +35,18 @@
     chat.enteredText = db.enteredText;
     chat.lastReadDate = [NSDate dateWithTimeIntervalSince1970:db.lastReadDateInterval];
 
-    chat.dbChat = db;
-    // TODO
-    // chat.dbManager = 
+    __weak OCTConverterChat *weakSelf = self;
+    chat.enteredTextUpdateBlock = ^(NSString *enteredText) {
+        [weakSelf.delegate converterChat:weakSelf updateDBChatWithBlock:^{
+            db.enteredText = enteredText;
+        }];
+    };
+
+    chat.lastReadDateUpdateBlock = ^(NSDate *lastReadDate) {
+        [weakSelf.delegate converterChat:weakSelf updateDBChatWithBlock:^{
+            db.lastReadDateInterval = [lastReadDate timeIntervalSince1970];
+        }];
+    };
 
     return chat;
 }

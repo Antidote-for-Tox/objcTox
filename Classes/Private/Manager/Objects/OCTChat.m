@@ -14,8 +14,8 @@
 @property (strong, nonatomic, readwrite) NSArray *friends;
 @property (strong, nonatomic, readwrite) OCTMessageAbstract *lastMessage;
 
-@property (strong, nonatomic) OCTDBChat *dbChat;
-@property (weak, nonatomic) OCTDBManager *dbManager;
+@property (copy, nonatomic) void (^enteredTextUpdateBlock)(NSString *enteredText);
+@property (copy, nonatomic) void (^lastReadDateUpdateBlock)(NSDate *lastReadDate);
 
 @end
 
@@ -27,20 +27,18 @@
 {
     _enteredText = enteredText;
 
-    __weak OCTChat *weakSelf = self;
-    [self.dbManager updateDBObjectInBlock:^{
-        weakSelf.dbChat.enteredText = enteredText;
-    }];
+    if (self.enteredTextUpdateBlock) {
+        self.enteredTextUpdateBlock(enteredText);
+    }
 }
 
 - (void)setLastReadDate:(NSDate *)date
 {
     _lastReadDate = date;
 
-    __weak OCTChat *weakSelf = self;
-    [self.dbManager updateDBObjectInBlock:^{
-        weakSelf.dbChat.lastReadDateInterval = [date timeIntervalSince1970];
-    }];
+    if (self.lastReadDateUpdateBlock) {
+        self.lastReadDateUpdateBlock(date);
+    }
 }
 
 #pragma mark -  Public

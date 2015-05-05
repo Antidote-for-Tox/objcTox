@@ -7,15 +7,13 @@
 //
 
 #import "OCTChat.h"
-#import "OCTDBChat.h"
-#import "OCTDBManager.h"
 
 @interface OCTChat (Private)
 
 @property (strong, nonatomic, readwrite) NSArray *friends;
 @property (strong, nonatomic, readwrite) OCTMessageAbstract *lastMessage;
 
-@property (strong, nonatomic) OCTDBChat *dbChat;
-@property (weak, nonatomic) OCTDBManager *dbManager;
+@property (copy, nonatomic) void (^enteredTextUpdateBlock)(NSString *enteredText);
+@property (copy, nonatomic) void (^lastReadDateUpdateBlock)(NSDate *lastReadDate);
 
 @end
