@@ -43,6 +43,8 @@
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor
 {
+    NSParameterAssert(descriptor);
+
     return [RLMSortDescriptor sortDescriptorWithProperty:descriptor.property ascending:descriptor.ascending];
 }
 
