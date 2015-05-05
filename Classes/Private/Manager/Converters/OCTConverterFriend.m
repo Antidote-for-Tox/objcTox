@@ -25,16 +25,6 @@
     return [self.dataSource friendWithFriendNumber:(OCTToxFriendNumber)dbFriend.friendNumber];
 }
 
-- (RLMObject *)rlmObjectFromObject:(OCTFriend *)friend
-{
-    NSParameterAssert(friend);
-
-    OCTDBFriend *db = [OCTDBFriend new];
-    db.friendNumber = friend.friendNumber;
-
-    return db;
-}
-
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor
 {
     NSParameterAssert(descriptor);

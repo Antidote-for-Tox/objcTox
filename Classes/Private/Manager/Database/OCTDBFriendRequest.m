@@ -17,4 +17,15 @@
     return @"publicKey";
 }
 
++ (instancetype)createFromFriendRequest:(OCTFriendRequest *)friendRequest
+{
+    NSParameterAssert(friendRequest);
+
+    OCTDBFriendRequest *db = [OCTDBFriendRequest new];
+    db.publicKey = friendRequest.publicKey;
+    db.message = friendRequest.message;
+
+    return db;
+}
+
 @end

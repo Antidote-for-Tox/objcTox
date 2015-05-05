@@ -58,17 +58,6 @@
     XCTAssertEqual(friend, theFriend);
 }
 
-- (void)testRlmObjectFromObject
-{
-    OCTFriend *friend = [OCTFriend new];
-    friend.friendNumber = 5;
-
-    OCTDBFriend *db = (OCTDBFriend *)[self.converter rlmObjectFromObject:friend];
-
-    XCTAssertNotNil(db);
-    XCTAssertEqual(db.friendNumber, 5);
-}
-
 - (void)testRlmSortDescriptorFromDescriptor
 {
     OCTSortDescriptor *friendNumber = [OCTSortDescriptor sortDescriptorWithProperty:@"friendNumber" ascending:YES];

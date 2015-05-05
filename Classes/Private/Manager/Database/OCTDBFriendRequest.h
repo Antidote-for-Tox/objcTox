@@ -14,4 +14,6 @@
 @property NSString *publicKey;
 @property NSString *message;
 
++ (instancetype)createFromFriendRequest:(OCTFriendRequest *)friendRequest;
+
 @end

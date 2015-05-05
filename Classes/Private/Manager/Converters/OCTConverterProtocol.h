@@ -16,7 +16,6 @@
 @property (strong, nonatomic, readonly) NSString *objectClassName;
 
 - (NSObject *)objectFromRLMObject:(RLMObject *)rlmObject;
-- (RLMObject *)rlmObjectFromObject:(NSObject *)object;
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor;
 

@@ -30,17 +30,6 @@
     return friendRequest;
 }
 
-- (OCTDBFriendRequest *)rlmObjectFromObject:(OCTFriendRequest *)friendRequest
-{
-    NSParameterAssert(friendRequest);
-
-    OCTDBFriendRequest *db = [OCTDBFriendRequest new];
-    db.publicKey = friendRequest.publicKey;
-    db.message = friendRequest.message;
-
-    return db;
-}
-
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor
 {
     NSParameterAssert(descriptor);

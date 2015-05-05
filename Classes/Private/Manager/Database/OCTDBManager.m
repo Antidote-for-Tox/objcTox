@@ -91,7 +91,7 @@
     NSParameterAssert(friendRequest.publicKey);
 
     dispatch_sync(self.queue, ^{
-        OCTDBFriendRequest *db = (OCTDBFriendRequest *)[self.converterFriendRequest rlmObjectFromObject:friendRequest];
+        OCTDBFriendRequest *db = [OCTDBFriendRequest createFromFriendRequest:friendRequest];
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:db];

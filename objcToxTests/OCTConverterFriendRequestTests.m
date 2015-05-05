@@ -53,19 +53,6 @@
     XCTAssertEqual(db.message, request.message);
 }
 
-- (void)testRlmObjectFromObject
-{
-    OCTFriendRequest *request = [OCTFriendRequest new];
-    request.publicKey = @"key";
-    request.message = @"message";
-
-    OCTDBFriendRequest *db = (OCTDBFriendRequest *)[self.converter rlmObjectFromObject:request];
-
-    XCTAssertNotNil(db);
-    XCTAssertEqual(db.publicKey, request.publicKey);
-    XCTAssertEqual(db.message, request.message);
-}
-
 - (void)testRlmSortDescriptorFromDescriptor
 {
     OCTSortDescriptor *descriptor1 = [OCTSortDescriptor sortDescriptorWithProperty:@"publicKey" ascending:NO];
