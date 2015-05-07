@@ -2,7 +2,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '7.0'
 
-pod 'toxcore-ios', '~> 0.1.3'
+pod 'toxcore-ios', '~> 0.1.4'
 pod 'CocoaLumberjack', '~> 1.9.2'
 pod 'Realm', '~> 0.91.3'
 

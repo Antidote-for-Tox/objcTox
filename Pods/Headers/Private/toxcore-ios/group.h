@@ -1,1 +1,1 @@
-../../../toxcore-ios/toxcore/toxcore/group.h
+../../../toxcore-ios/toxcore/toxav/group.h
