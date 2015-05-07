@@ -18,7 +18,6 @@ Subject: [PATCH] Patching libopus
  Pods/libopus/celt/mathops.c                           | 2 +-
  Pods/libopus/celt/mdct.c                              | 2 +-
  Pods/libopus/celt/modes.c                             | 2 +-
- Pods/libopus/celt/opus_custom_demo.c                  | 2 +-
  Pods/libopus/celt/pitch.c                             | 2 +-
  Pods/libopus/celt/quant_bands.c                       | 2 +-
  Pods/libopus/celt/rate.c                              | 2 +-
@@ -324,19 +323,6 @@ index 42e68e1..acae833 100644
  #endif
  
  #include "celt.h"
-diff --git a/Pods/libopus/celt/opus_custom_demo.c b/Pods/libopus/celt/opus_custom_demo.c
-index ae41c0d..011eeed 100644
---- a/Pods/libopus/celt/opus_custom_demo.c
-+++ b/Pods/libopus/celt/opus_custom_demo.c
-@@ -27,7 +27,7 @@
- */
- 
- #ifdef HAVE_CONFIG_H
--#include "config.h"
-+#include "./config.h"
- #endif
- 
- #include "opus_custom.h"
 diff --git a/Pods/libopus/celt/pitch.c b/Pods/libopus/celt/pitch.c
 index d2b3054..69bb2a1 100644
 --- a/Pods/libopus/celt/pitch.c
