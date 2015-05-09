@@ -315,13 +315,21 @@
 
 #pragma mark -  OCTToxDelegate
 
-- (void)testFriendRequest
+- (void)testFriendRequestWithMessage
 {
     id dbManager = OCMClassMock([OCTDBManager class]);
     OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
 
+    NSDate *before = [NSDate date];
+
     OCMExpect([dbManager addFriendRequest:[OCMArg checkWithBlock:^BOOL (OCTDBFriendRequest *request) {
-        return [request.message isEqualToString:@"message"] && [request.publicKey isEqualToString:@"publicKey"];
+        NSDate *after = [NSDate date];
+
+        return
+            [request.message isEqualToString:@"message"] &&
+            [request.publicKey isEqualToString:@"publicKey"];
+            (request.dateInterval >= [before timeIntervalSince1970]) &&
+            (request.dateInterval <= [after timeIntervalSince1970]);
     }]]);
 
     [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];

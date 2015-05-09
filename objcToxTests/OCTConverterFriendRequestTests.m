@@ -45,12 +45,14 @@
     OCTDBFriendRequest *db = [OCTDBFriendRequest new];
     db.publicKey = @"key";
     db.message = @"message";
+    db.dateInterval = 50;
 
     OCTFriendRequest *request = (OCTFriendRequest *)[self.converter objectFromRLMObject:db];
 
     XCTAssertNotNil(request);
     XCTAssertEqual(db.publicKey, request.publicKey);
     XCTAssertEqual(db.message, request.message);
+    XCTAssertEqual(db.dateInterval, [request.date timeIntervalSince1970]);
 }
 
 - (void)testRlmSortDescriptorFromDescriptor

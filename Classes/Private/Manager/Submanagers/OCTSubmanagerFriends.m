@@ -163,6 +163,7 @@
     OCTDBFriendRequest *request = [OCTDBFriendRequest new];
     request.message = message;
     request.publicKey = publicKey;
+    request.dateInterval = [[NSDate date] timeIntervalSince1970];
 
     [[self.dataSource managerGetDBManager] addFriendRequest:request];
 }

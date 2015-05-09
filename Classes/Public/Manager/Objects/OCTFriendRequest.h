@@ -20,4 +20,9 @@
  */
 @property (strong, nonatomic) NSString *message;
 
+/**
+ * Date when friend request was received
+ */
+@property (strong, nonatomic) NSDate *date;
+
 @end
