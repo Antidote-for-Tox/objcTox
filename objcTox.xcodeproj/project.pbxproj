@@ -63,7 +63,7 @@
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 		F0EA1F611AFD597D006C96D5 /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */; };
 		F0EA1F641AFD5B69006C96D5 /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F631AFD5B69006C96D5 /* OCTCall.m */; };
-		F0EA1F671AFD5C06006C96D5 /* OCTCallSubmanager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F661AFD5C06006C96D5 /* OCTCallSubmanager.m */; };
+		F0EA1F671AFD5C06006C96D5 /* Submanagers in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F661AFD5C06006C96D5 /* Submanagers */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,10 +197,10 @@
 		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F0EA1F5F1AFD597D006C96D5 /* OCTToxAV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAV.h; sourceTree = "<group>"; };
 		F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTToxAV.m; path = ../../Public/Wrapper/OCTToxAV.m; sourceTree = "<group>"; };
-		F0EA1F621AFD5B69006C96D5 /* OCTCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTCall.h; path = ../../../Private/Manager/Objects/OCTCall.h; sourceTree = "<group>"; };
+		F0EA1F621AFD5B69006C96D5 /* OCTCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTCall.h; sourceTree = "<group>"; };
 		F0EA1F631AFD5B69006C96D5 /* OCTCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTCall.m; sourceTree = "<group>"; };
 		F0EA1F651AFD5C06006C96D5 /* OCTCallSubmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTCallSubmanager.h; sourceTree = "<group>"; };
-		F0EA1F661AFD5C06006C96D5 /* OCTCallSubmanager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTCallSubmanager.m; path = ../../../Public/Manager/Submanagers/OCTCallSubmanager.m; sourceTree = "<group>"; };
+		F0EA1F661AFD5C06006C96D5 /* Submanagers */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = Submanagers; path = ../../../Public/Manager/Submanagers; sourceTree = "<group>"; };
 		FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,9 +285,7 @@
 		115B9E001ADF1708000C38C2 /* Submanagers */ = {
 			isa = PBXGroup;
 			children = (
-				F0EA1F661AFD5C06006C96D5 /* OCTCallSubmanager.m */,
-				115B9E011ADF1708000C38C2 /* OCTFriendRequestContainer.m */,
-				115B9E011ADF1708000C38C2 /* OCTFriendRequestContainer+Private.h */,
+				F0EA1F661AFD5C06006C96D5 /* Submanagers */,
 				115B9E011ADF1708000C38C2 /* OCTFriendsContainer.m */,
 				115B9E381ADF17AB000C38C2 /* OCTFriendsContainer+Private.h */,
 				115B9E021ADF1708000C38C2 /* OCTSubmanagerAvatars.m */,
@@ -669,7 +667,7 @@
 				115B9E211ADF1708000C38C2 /* OCTDefaultFileStorage.m in Sources */,
 				118620551AF9005700793A3D /* OCTConverterMessage.m in Sources */,
 				115B9E291ADF1708000C38C2 /* OCTFriendsContainer.m in Sources */,
-				F0EA1F671AFD5C06006C96D5 /* OCTCallSubmanager.m in Sources */,
+				F0EA1F671AFD5C06006C96D5 /* Submanagers in Sources */,
 				11F69A2E1AEAD166008B77FB /* OCTDBMessageAbstract.m in Sources */,
 				115B9E221ADF1708000C38C2 /* OCTDefaultSettingsStorage.m in Sources */,
 				115B9E2B1ADF1708000C38C2 /* OCTSubmanagerFriends.m in Sources */,
