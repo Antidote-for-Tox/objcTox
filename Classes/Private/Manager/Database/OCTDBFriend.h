@@ -15,12 +15,6 @@
 
 @property NSInteger friendNumber;
 
-/**
- * Searches in realm for a friend with friendNumber. If friend is found returns it.
- * Creates new friend with friendNumber otherwise.
- */
-+ (instancetype)findOrCreateFriendInRealm:(RLMRealm *)realm withFriendNumber:(NSInteger)friendNumber;
-
 @end
 
 RLM_ARRAY_TYPE(OCTDBFriend)

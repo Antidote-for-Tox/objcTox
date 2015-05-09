@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
-#import <Realm.h>
+#import <Realm/Realm.h>
 #import <XCTest/XCTest.h>
 
 #import "OCTDBManager.h"
 #import "OCTDBFriendRequest.h"
+#import "OCTDBChat.h"
 
 @interface OCTDBManager()
 
@@ -87,7 +88,7 @@
 
 #pragma mark -  Friends
 
-- (void)testFriendRequests
+- (void)testAllFriendRequests
 {
     OCTDBFriendRequest *db1 = [OCTDBFriendRequest new];
     db1.publicKey = @"key1";
@@ -102,22 +103,19 @@
     [self.manager.realm addObject:db2];
     [self.manager.realm commitWriteTransaction];
 
-    NSArray *array = [self.manager friendRequests];
+    RLMResults *results = [self.manager allFriendRequests];
 
-    XCTAssertEqual(array.count, 2);
+    XCTAssertEqual(results.count, 2);
 
-    OCTFriendRequest *request1 = array[0];
-    OCTFriendRequest *request2 = array[1];
-
-    XCTAssertEqualObjects(db1.publicKey, request1.publicKey);
-    XCTAssertEqualObjects(db1.message, request1.message);
-    XCTAssertEqualObjects(db2.publicKey, request2.publicKey);
-    XCTAssertEqualObjects(db2.message, request2.message);
+    XCTAssertEqualObjects(db1.publicKey, [results[0] publicKey]);
+    XCTAssertEqualObjects(db1.message, [results[0] message]);
+    XCTAssertEqualObjects(db2.publicKey, [results[1] publicKey]);
+    XCTAssertEqualObjects(db2.message, [results[1] message]);
 }
 
 - (void)testAddFriendRequest
 {
-    OCTFriendRequest *request = [OCTFriendRequest new];
+    OCTDBFriendRequest *request = [OCTDBFriendRequest new];
     request.publicKey = @"key";
     request.message = @"message";
 
@@ -130,25 +128,46 @@
     XCTAssertEqualObjects(request.message, db.message);
 }
 
-- (void)testRemoveFriendRequest
+- (void)testRemoveFriendRequestWithPublicKey
 {
-    OCTDBFriendRequest *db = [OCTDBFriendRequest new];
-    db.publicKey = @"key";
-    db.message = @"message";
+    OCTDBFriendRequest *request = [OCTDBFriendRequest new];
+    request.publicKey = @"key";
+    request.message = @"message";
 
     [self.manager.realm beginWriteTransaction];
-    [self.manager.realm addObject:db];
+    [self.manager.realm addObject:request];
     [self.manager.realm commitWriteTransaction];
 
-    OCTFriendRequest *request = [OCTFriendRequest new];
-    request.publicKey = [db.publicKey copy];
-    request.message = [db.message copy];
+    [self.manager removeFriendRequestWithPublicKey:@"key"];
 
-    [self.manager removeFriendRequest:request];
+    XCTAssertThrowsSpecific(
+            [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:request.publicKey],
+            NSException);
+}
 
-    OCTDBFriendRequest *removedDb = [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:request.publicKey];
+- (void)testAllChats
+{
+    OCTDBChat *db1 = [OCTDBChat new];
+    db1.enteredText = @"";
+    db1.lastReadDateInterval = 5;
 
-    XCTAssertNil(removedDb);
+    OCTDBChat *db2 = [OCTDBChat new];
+    db2.enteredText = @"";
+    db2.lastReadDateInterval = 10;
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm commitWriteTransaction];
+
+    RLMResults *results = [self.manager allChats];
+
+    XCTAssertEqual(results.count, 2);
+
+    XCTAssertEqualObjects(db1.enteredText, [results[0] enteredText]);
+    XCTAssertEqual(db1.lastReadDateInterval, [results[0] lastReadDateInterval]);
+    XCTAssertEqualObjects(db2.enteredText, [results[1] enteredText]);
+    XCTAssertEqual(db2.lastReadDateInterval, [results[1] lastReadDateInterval]);
 }
 
 @end

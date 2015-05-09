@@ -47,22 +47,17 @@
     message.text = @"text";
     message.isDelivered = YES;
 
-    RLMRealm *realm = OCMClassMock([RLMRealm class]);
+    id sender = OCMClassMock([OCTDBFriend class]);
 
-    id dbFriend = OCMClassMock([OCTDBFriend class]);
-    OCMStub([dbFriend findOrCreateFriendInRealm:realm withFriendNumber:friend.friendNumber]).andReturn(friend);
-
-    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message realm:realm];
+    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender];
 
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.textMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.sender.friendNumber, message.sender.friendNumber);
+    XCTAssertEqual(db.sender, sender);
     XCTAssertEqualObjects(db.textMessage.text, message.text);
     XCTAssertEqual(db.textMessage.isDelivered, message.isDelivered);
-
-    [dbFriend stopMocking];
 }
 
 - (void)testInitFile
@@ -80,25 +75,20 @@
     message.filePath = @"filePath";
     message.fileUTI = @"fileUTI";
 
-    RLMRealm *realm = OCMClassMock([RLMRealm class]);
+    id sender = OCMClassMock([OCTDBFriend class]);
 
-    id dbFriend = OCMClassMock([OCTDBFriend class]);
-    OCMStub([dbFriend findOrCreateFriendInRealm:realm withFriendNumber:friend.friendNumber]).andReturn(friend);
-
-    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message realm:realm];
+    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender];
 
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.fileMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
-    XCTAssertEqual(db.sender.friendNumber, message.sender.friendNumber);
+    XCTAssertEqual(db.sender, sender);
     XCTAssertEqual(db.fileMessage.fileType, message.fileType);
     XCTAssertEqual(db.fileMessage.fileSize, message.fileSize);
     XCTAssertEqualObjects(db.fileMessage.filePath, message.filePath);
     XCTAssertEqualObjects(db.fileMessage.filePath, message.filePath);
     XCTAssertEqualObjects(db.fileMessage.fileUTI, message.fileUTI);
-
-    [dbFriend stopMocking];
 }
 
 @end

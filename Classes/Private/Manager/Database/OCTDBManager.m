@@ -9,15 +9,11 @@
 #import <Realm/Realm.h>
 
 #import "OCTDBManager.h"
-#import "OCTDBFriendRequest.h"
-#import "OCTConverterFriendRequest.h"
 
 @interface OCTDBManager()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
 @property (strong, nonatomic) RLMRealm *realm;
-
-@property (strong, nonatomic) id<OCTConverterProtocol> converterFriendRequest;
 
 @end
 
@@ -34,8 +30,6 @@
     if (! self) {
         return nil;
     }
-
-    _converterFriendRequest = [OCTConverterFriendRequest new];
 
     _queue = dispatch_queue_create("OCTDBManager queue", NULL);
 
@@ -66,45 +60,34 @@
 
 #pragma mark -  Friend requests
 
-- (NSArray *)friendRequests
+- (RLMResults *)allFriendRequests
 {
-    __block NSArray *friendRequests = nil;
+    __block RLMResults *results = nil;
 
     dispatch_sync(self.queue, ^{
-        RLMResults *results = [OCTDBFriendRequest allObjectsInRealm:self.realm];
-        results = [results sortedResultsUsingProperty:@"publicKey" ascending:YES];
-
-        NSMutableArray *array = [NSMutableArray new];
-
-        for (OCTDBFriendRequest *db in results) {
-            [array addObject:[self.converterFriendRequest objectFromRLMObject:db]];
-        }
-
-        friendRequests = [array copy];
+        results = [OCTDBFriendRequest allObjectsInRealm:self.realm];
     });
 
-    return friendRequests;
+    return results;
 }
 
-- (void)addFriendRequest:(OCTFriendRequest *)friendRequest
+- (void)addFriendRequest:(OCTDBFriendRequest *)friendRequest
 {
     NSParameterAssert(friendRequest.publicKey);
 
     dispatch_sync(self.queue, ^{
-        OCTDBFriendRequest *db = [OCTDBFriendRequest createFromFriendRequest:friendRequest];
-
         [self.realm beginWriteTransaction];
-        [self.realm addObject:db];
+        [self.realm addObject:friendRequest];
         [self.realm commitWriteTransaction];
     });
 }
 
-- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest
+- (void)removeFriendRequestWithPublicKey:(NSString *)publicKey
 {
-    NSParameterAssert(friendRequest.publicKey);
+    NSParameterAssert(publicKey);
 
     dispatch_sync(self.queue, ^{
-        OCTDBFriendRequest *db = [OCTDBFriendRequest objectInRealm:self.realm forPrimaryKey:friendRequest.publicKey];
+        OCTDBFriendRequest *db = [OCTDBFriendRequest objectInRealm:self.realm forPrimaryKey:publicKey];
 
         if (! db) {
             return;
@@ -114,6 +97,37 @@
         [self.realm deleteObject:db];
         [self.realm commitWriteTransaction];
     });
+}
+
+#pragma mark -  Friends
+
+- (OCTDBFriend *)getOrCreateFriendWithFriendNumber:(NSInteger)friendNumber
+{
+    __block OCTDBFriend *friend;
+
+    dispatch_sync(self.queue, ^{
+        friend = [OCTDBFriend new];
+        friend.friendNumber = friendNumber;
+
+        [self.realm beginWriteTransaction];
+        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withObject:friend];
+        [self.realm commitWriteTransaction];
+    });
+
+    return friend;
+}
+
+#pragma mark -  Chats
+
+- (RLMResults *)allChats
+{
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBChat allObjectsInRealm:self.realm];
+    });
+
+    return results;
 }
 
 @end

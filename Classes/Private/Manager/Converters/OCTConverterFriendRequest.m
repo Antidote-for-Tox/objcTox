@@ -26,6 +26,7 @@
     OCTFriendRequest *friendRequest = [OCTFriendRequest new];
     friendRequest.publicKey = db.publicKey;
     friendRequest.message = db.message;
+    friendRequest.date = [NSDate dateWithTimeIntervalSince1970:db.dateInterval];
 
     return friendRequest;
 }

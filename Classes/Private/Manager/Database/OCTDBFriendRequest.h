@@ -13,7 +13,6 @@
 
 @property NSString *publicKey;
 @property NSString *message;
-
-+ (instancetype)createFromFriendRequest:(OCTFriendRequest *)friendRequest;
+@property NSTimeInterval dateInterval;
 
 @end

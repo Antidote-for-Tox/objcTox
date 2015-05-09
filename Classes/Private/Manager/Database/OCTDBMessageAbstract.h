@@ -26,6 +26,6 @@
 @property OCTDBMessageText *textMessage;
 @property OCTDBMessageFile *fileMessage;
 
-- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message realm:(RLMRealm *)realm;
+- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message sender:(OCTDBFriend *)sender;
 
 @end

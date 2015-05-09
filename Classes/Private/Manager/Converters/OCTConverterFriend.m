@@ -8,8 +8,32 @@
 
 #import "OCTConverterFriend.h"
 #import "OCTDBFriend.h"
+#import "OCTFriend+Private.h"
 
 @implementation OCTConverterFriend
+
+#pragma mark -  Public
+
+- (OCTFriend *)friendFromFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTTox *tox = [self.dataSource converterFriendGetTox:self];
+
+    if (! [tox friendExistsWithFriendNumber:friendNumber]) {
+        return nil;
+    }
+
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = friendNumber;
+    friend.publicKey = [tox publicKeyFromFriendNumber:friendNumber error:nil];
+    friend.name = [tox friendNameWithFriendNumber:friendNumber error:nil];
+    friend.statusMessage = [tox friendStatusMessageWithFriendNumber:friendNumber error:nil];
+    friend.status = [tox friendStatusWithFriendNumber:friendNumber error:nil];
+    friend.connectionStatus = [tox friendConnectionStatusWithFriendNumber:friendNumber error:nil];
+    friend.lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:nil];
+    friend.isTyping = [tox isFriendTypingWithFriendNumber:friendNumber error:nil];
+
+    return friend;
+}
 
 #pragma mark -  OCTConverterProtocol
 
@@ -22,7 +46,9 @@
 {
     NSParameterAssert(dbFriend);
 
-    return [self.dataSource friendWithFriendNumber:(OCTToxFriendNumber)dbFriend.friendNumber];
+    OCTToxFriendNumber friendNumber = (OCTToxFriendNumber)dbFriend.friendNumber;
+
+    return [self friendFromFriendNumber:friendNumber];
 }
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor

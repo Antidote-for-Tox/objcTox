@@ -7,8 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Realm/Realm.h>
 
-#import "OCTFriendRequest.h"
+#import "OCTDBFriendRequest.h"
+#import "OCTDBChat.h"
 
 @interface OCTDBManager : NSObject
 
@@ -20,8 +22,16 @@
 
 #pragma mark -  Friend requests
 
-- (NSArray *)friendRequests;
-- (void)addFriendRequest:(OCTFriendRequest *)friendRequest;
-- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;
+- (RLMResults *)allFriendRequests;
+- (void)addFriendRequest:(OCTDBFriendRequest *)friendRequest;
+- (void)removeFriendRequestWithPublicKey:(NSString *)publicKey;
+
+#pragma mark -  Friends
+
+- (OCTDBFriend *)getOrCreateFriendWithFriendNumber:(NSInteger)friendNumber;
+
+#pragma mark -  Chats
+
+- (RLMResults *)allChats;
 
 @end

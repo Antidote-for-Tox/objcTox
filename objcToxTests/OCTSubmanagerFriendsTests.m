@@ -14,23 +14,14 @@
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTFriendsContainer+Private.h"
-#import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
 #import "OCTDBManager.h"
 #import "OCTFriend+Private.h"
-
-static NSString *const kPublicKey = @"publicKey";
-static NSString *const kName = @"name";
-static NSString *const kStatusMessage = @"kStatusMessage";
-static const OCTToxUserStatus kStatus = OCTToxUserStatusAway;
-static const OCTToxConnectionStatus kConnectionStatus = OCTToxConnectionStatusUDP;
-static NSDate *kLastSeenOnline;
-static const BOOL kIsTyping = YES;
+#import "OCTConverterFriend.h"
 
 @interface OCTSubmanagerFriends(Tests)
 @property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
-@property (strong, nonatomic, readwrite) OCTFriendRequestContainer *friendRequestContainer;
-- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
+@property (strong, nonatomic) OCTConverterFriend *converterFriend;
 @end
 
 @interface OCTSubmanagerFriendsTests : XCTestCase
@@ -45,8 +36,6 @@ static const BOOL kIsTyping = YES;
 - (void)setUp
 {
     [super setUp];
-
-    kLastSeenOnline = [NSDate date];
 
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
 
@@ -95,46 +84,19 @@ static const BOOL kIsTyping = YES;
         return YES;
     }]]).andReturn(friendsContainer);
 
-    OCTSubmanagerFriends *submanager = OCMPartialMock(self.submanager);
-    OCMStub([submanager createFriendWithFriendNumber:0]).andReturn(friendsArray[0]);
-    OCMStub([submanager createFriendWithFriendNumber:1]).andReturn(friendsArray[1]);
-    OCMStub([submanager createFriendWithFriendNumber:3]).andReturn(friendsArray[2]);
-    OCMStub([submanager createFriendWithFriendNumber:5]).andReturn(friendsArray[3]);
-
-    [submanager configure];
-
-    XCTAssertEqual(friendsContainer, submanager.friendsContainer);
-    OCMVerifyAll(friendsContainer);
-
-    [friendsContainer stopMocking];
-}
-
-- (void)testConfigureFriendRequests
-{
-    id friendRequests = @[
-        OCMClassMock([OCTFriendRequest class]),
-    ];
-
-    id dbManager = OCMClassMock([OCTDBManager class]);
-    OCMStub([dbManager friendRequests]).andReturn(friendRequests);
-
-    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
-
-    id friendRequestContainer = OCMClassMock([OCTFriendRequestContainer class]);
-    OCMStub([friendRequestContainer alloc]).andReturn(friendRequestContainer);
-    OCMExpect([friendRequestContainer initWithFriendRequestsArray:[OCMArg checkWithBlock:^BOOL (NSArray *array) {
-        XCTAssertEqual(array.count, 1);
-        XCTAssertEqual(array[0], friendRequests[0]);
-
-        return YES;
-    }]]).andReturn(friendRequestContainer);
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend friendFromFriendNumber:0]).andReturn(friendsArray[0]);
+    OCMStub([converterFriend friendFromFriendNumber:1]).andReturn(friendsArray[1]);
+    OCMStub([converterFriend friendFromFriendNumber:3]).andReturn(friendsArray[2]);
+    OCMStub([converterFriend friendFromFriendNumber:5]).andReturn(friendsArray[3]);
+    self.submanager.converterFriend = converterFriend;
 
     [self.submanager configure];
 
-    XCTAssertEqual(friendRequestContainer, self.submanager.friendRequestContainer);
-    OCMVerifyAll(friendRequestContainer);
+    XCTAssertEqual(friendsContainer, self.submanager.friendsContainer);
+    OCMVerifyAll(friendsContainer);
 
-    [friendRequestContainer stopMocking];
+    [friendsContainer stopMocking];
 }
 
 #pragma mark -  Public
@@ -144,8 +106,13 @@ static const BOOL kIsTyping = YES;
     NSError *error;
 
     id tox = OCMClassMock([OCTTox class]);
-    [self stubMethodsForFriendCreationInTox:tox friendNumber:7];
     OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(7);
+
+    id friend = OCMClassMock([OCTFriend class]);
+
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
+    self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -156,8 +123,8 @@ static const BOOL kIsTyping = YES;
     XCTAssertTrue(result);
     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 1);
 
-    OCTFriend *friend = [self.submanager.friendsContainer friendAtIndex:0];
-    [self verifyFriendWithStubbedConstants:friend friendNumber:7];
+    OCTFriend *theFriend = [self.submanager.friendsContainer friendAtIndex:0];
+    XCTAssertEqual(friend, theFriend);
 
     OCMVerify([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg setTo:error]]);
     OCMVerify([self.dataSource managerSaveTox:[OCMArg setTo:error]]);
@@ -182,8 +149,13 @@ static const BOOL kIsTyping = YES;
     NSError *error;
 
     id tox = OCMClassMock([OCTTox class]);
-    [self stubMethodsForFriendCreationInTox:tox friendNumber:7];
     OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(7);
+
+    id friend = OCMClassMock([OCTFriend class]);
+
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
+    self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
@@ -198,8 +170,13 @@ static const BOOL kIsTyping = YES;
     NSError *error;
 
     id tox = OCMClassMock([OCTTox class]);
-    [self stubMethodsForFriendCreationInTox:tox friendNumber:7];
     OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(7);
+
+    id friend = OCMClassMock([OCTFriend class]);
+
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
+    self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -213,8 +190,8 @@ static const BOOL kIsTyping = YES;
     XCTAssertTrue(result);
     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 1);
 
-    OCTFriend *friend = [self.submanager.friendsContainer friendAtIndex:0];
-    [self verifyFriendWithStubbedConstants:friend friendNumber:7];
+    OCTFriend *theFriend = [self.submanager.friendsContainer friendAtIndex:0];
+    XCTAssertEqual(friend, theFriend);
 
     OCMVerify([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg setTo:error]]);
     OCMVerify([self.dataSource managerSaveTox:[OCMArg setTo:error]]);
@@ -242,8 +219,13 @@ static const BOOL kIsTyping = YES;
     NSError *error;
 
     id tox = OCMClassMock([OCTTox class]);
-    [self stubMethodsForFriendCreationInTox:tox friendNumber:7];
     OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(7);
+
+    id friend = OCMClassMock([OCTFriend class]);
+
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
+    self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
@@ -259,11 +241,14 @@ static const BOOL kIsTyping = YES;
 - (void)testRemoveFriendRequest
 {
     id request = OCMClassMock([OCTFriendRequest class]);
-    [self.submanager.friendRequestContainer addRequest:request];
+    OCMStub([request publicKey]).andReturn(@"key");
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
 
     [self.submanager removeFriendRequest:request];
 
-    XCTAssertEqual([self.submanager.friendRequestContainer requestsCount], 0);
+    OCMVerify([dbManager removeFriendRequestWithPublicKey:@"key"]);
 }
 
 - (void)testRemoveFriend
@@ -276,7 +261,7 @@ static const BOOL kIsTyping = YES;
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -298,7 +283,7 @@ static const BOOL kIsTyping = YES;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -318,7 +303,7 @@ static const BOOL kIsTyping = YES;
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -330,16 +315,26 @@ static const BOOL kIsTyping = YES;
 
 #pragma mark -  OCTToxDelegate
 
-- (void)testFriendRequest
+- (void)testFriendRequestWithMessage
 {
-    self.submanager.friendRequestContainer = [[OCTFriendRequestContainer alloc] initWithFriendRequestsArray:nil];
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    NSDate *before = [NSDate date];
+
+    OCMExpect([dbManager addFriendRequest:[OCMArg checkWithBlock:^BOOL (OCTDBFriendRequest *request) {
+        NSDate *after = [NSDate date];
+
+        return
+            [request.message isEqualToString:@"message"] &&
+            [request.publicKey isEqualToString:@"publicKey"];
+            (request.dateInterval >= [before timeIntervalSince1970]) &&
+            (request.dateInterval <= [after timeIntervalSince1970]);
+    }]]);
+
     [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];
 
-    XCTAssertEqual([self.submanager.friendRequestContainer requestsCount], 1);
-
-    OCTFriendRequest *request = [self.submanager.friendRequestContainer requestAtIndex:0];
-    XCTAssertEqualObjects(request.message, @"message");
-    XCTAssertEqualObjects(request.publicKey, @"publicKey");
+    OCMVerifyAll(dbManager);
 }
 
 - (void)testToxFriendNameUpdate
@@ -395,48 +390,6 @@ static const BOOL kIsTyping = YES;
     [self.submanager tox:nil friendConnectionStatusChanged:OCTToxConnectionStatusUDP friendNumber:7];
 
     XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusUDP);
-}
-
-#pragma mark -  Private
-
-- (void)testCreateFriendWithFriendNumber
-{
-    id tox = OCMClassMock([OCTTox class]);
-    [self stubMethodsForFriendCreationInTox:tox friendNumber:5];
-
-    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-
-    // wrong friend number
-    OCTFriend *friend = [self.submanager createFriendWithFriendNumber:4];
-    XCTAssertNil(friend);
-
-    friend = [self.submanager createFriendWithFriendNumber:5];
-
-    [self verifyFriendWithStubbedConstants:friend friendNumber:5];
-}
-
-- (void)stubMethodsForFriendCreationInTox:(id)tox friendNumber:(OCTToxFriendNumber)friendNumber
-{
-    OCMStub([tox friendExistsWithFriendNumber:friendNumber]).andReturn(YES);
-    OCMStub([tox publicKeyFromFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kPublicKey);
-    OCMStub([tox friendNameWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kName);
-    OCMStub([tox friendStatusMessageWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kStatusMessage);
-    OCMStub([tox friendStatusWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kStatus);
-    OCMStub([tox friendConnectionStatusWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kConnectionStatus);
-    OCMStub([tox friendGetLastOnlineWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kLastSeenOnline);
-    OCMStub([tox isFriendTypingWithFriendNumber:friendNumber error:[OCMArg anyObjectRef]]).andReturn(kIsTyping);
-}
-
-- (void)verifyFriendWithStubbedConstants:(OCTFriend *)friend friendNumber:(OCTToxFriendNumber)friendNumber
-{
-    XCTAssertEqual(friend.friendNumber, friendNumber);
-    XCTAssertEqualObjects(friend.publicKey, kPublicKey);
-    XCTAssertEqualObjects(friend.name, kName);
-    XCTAssertEqualObjects(friend.statusMessage, kStatusMessage);
-    XCTAssertEqual(friend.status, kStatus);
-    XCTAssertEqual(friend.connectionStatus, kConnectionStatus);
-    XCTAssertEqualObjects(friend.lastSeenOnline, kLastSeenOnline);
-    XCTAssertEqual(friend.isTyping, kIsTyping);
 }
 
 @end

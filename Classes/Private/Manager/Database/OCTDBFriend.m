@@ -16,16 +16,4 @@
     return @"friendNumber";
 }
 
-+ (instancetype)findOrCreateFriendInRealm:(RLMRealm *)realm withFriendNumber:(NSInteger)friendNumber
-{
-    OCTDBFriend *friend = [OCTDBFriend new];
-    friend.friendNumber = friendNumber;
-
-    [realm beginWriteTransaction];
-    friend = [self createOrUpdateInRealm:realm withObject:friend];
-    [realm commitWriteTransaction];
-
-    return friend;
-}
-
 @end
