@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTFriendsContainer.h"
-#import "OCTFriendRequestContainer.h"
+#import "OCTFriendRequest.h"
+#import "OCTArray.h"
 
 @interface OCTSubmanagerFriends : NSObject
 
@@ -19,9 +20,11 @@
 @property (strong, nonatomic, readonly) OCTFriendsContainer *friendsContainer;
 
 /**
- * Container with all friend requests.
+ * Returns OCTArray with all friend requests.
+ *
+ * @return Autoupdating array with all friend requests.
  */
-@property (strong, nonatomic, readonly) OCTFriendRequestContainer *friendRequestContainer;
+- (OCTArray *)allFriendRequests;
 
 /**
  * This adds friend to the list.

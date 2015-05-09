@@ -10,18 +10,18 @@
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTFriendsContainer.h"
 #import "OCTFriendsContainer+Private.h"
-#import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
 #import "OCTDBManager.h"
 #import "OCTConverterFriend.h"
+#import "OCTConverterFriendRequest.h"
 #import "OCTFriend+Private.h"
+#import "OCTArray+Private.h"
 
 @interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 @property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
-@property (strong, nonatomic, readwrite) OCTFriendRequestContainer *friendRequestContainer;
 
 @property (strong, nonatomic) OCTConverterFriend *converterFriend;
 
@@ -44,6 +44,15 @@
 }
 
 #pragma mark -  Public
+
+- (OCTArray *)allFriendRequests
+{
+    OCTConverterFriendRequest *converter = [OCTConverterFriendRequest new];
+
+    RLMResults *results = [[self.dataSource managerGetDBManager] allFriendRequests];
+
+    return [[OCTArray alloc] initWithRLMResults:results converter:converter];
+}
 
 - (BOOL)sendFriendRequestToAddress:(NSString *)address message:(NSString *)message error:(NSError **)error
 {
@@ -94,7 +103,7 @@
 {
     NSParameterAssert(friendRequest);
 
-    [self.friendRequestContainer removeRequest:friendRequest];
+    [[self.dataSource managerGetDBManager] removeFriendRequestWithPublicKey:friendRequest.publicKey];
 
     return YES;
 }
@@ -138,9 +147,6 @@
     self.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:[friendsArray copy]];
     self.friendsContainer.dataSource = self;
     [self.friendsContainer configure];
-
-    NSArray *friendRequestsArray = [[self.dataSource managerGetDBManager] friendRequests];
-    self.friendRequestContainer = [[OCTFriendRequestContainer alloc] initWithFriendRequestsArray:friendRequestsArray];
 }
 
 #pragma mark -  OCTFriendsContainerDataSource
@@ -154,11 +160,11 @@
 
 - (void)tox:(OCTTox *)tox friendRequestWithMessage:(NSString *)message publicKey:(NSString *)publicKey
 {
-    OCTFriendRequest *request = [OCTFriendRequest new];
+    OCTDBFriendRequest *request = [OCTDBFriendRequest new];
     request.message = message;
     request.publicKey = publicKey;
 
-    [self.friendRequestContainer addRequest:request];
+    [[self.dataSource managerGetDBManager] addFriendRequest:request];
 }
 
 - (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber

@@ -14,7 +14,6 @@
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTFriendsContainer+Private.h"
-#import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
 #import "OCTDBManager.h"
 #import "OCTFriend+Private.h"
@@ -22,7 +21,6 @@
 
 @interface OCTSubmanagerFriends(Tests)
 @property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
-@property (strong, nonatomic, readwrite) OCTFriendRequestContainer *friendRequestContainer;
 @property (strong, nonatomic) OCTConverterFriend *converterFriend;
 @end
 
@@ -99,34 +97,6 @@
     OCMVerifyAll(friendsContainer);
 
     [friendsContainer stopMocking];
-}
-
-- (void)testConfigureFriendRequests
-{
-    id friendRequests = @[
-        OCMClassMock([OCTFriendRequest class]),
-    ];
-
-    id dbManager = OCMClassMock([OCTDBManager class]);
-    OCMStub([dbManager friendRequests]).andReturn(friendRequests);
-
-    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
-
-    id friendRequestContainer = OCMClassMock([OCTFriendRequestContainer class]);
-    OCMStub([friendRequestContainer alloc]).andReturn(friendRequestContainer);
-    OCMExpect([friendRequestContainer initWithFriendRequestsArray:[OCMArg checkWithBlock:^BOOL (NSArray *array) {
-        XCTAssertEqual(array.count, 1);
-        XCTAssertEqual(array[0], friendRequests[0]);
-
-        return YES;
-    }]]).andReturn(friendRequestContainer);
-
-    [self.submanager configure];
-
-    XCTAssertEqual(friendRequestContainer, self.submanager.friendRequestContainer);
-    OCMVerifyAll(friendRequestContainer);
-
-    [friendRequestContainer stopMocking];
 }
 
 #pragma mark -  Public
@@ -271,11 +241,14 @@
 - (void)testRemoveFriendRequest
 {
     id request = OCMClassMock([OCTFriendRequest class]);
-    [self.submanager.friendRequestContainer addRequest:request];
+    OCMStub([request publicKey]).andReturn(@"key");
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
 
     [self.submanager removeFriendRequest:request];
 
-    XCTAssertEqual([self.submanager.friendRequestContainer requestsCount], 0);
+    OCMVerify([dbManager removeFriendRequestWithPublicKey:@"key"]);
 }
 
 - (void)testRemoveFriend
@@ -288,7 +261,7 @@
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -310,7 +283,7 @@
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -330,7 +303,7 @@
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
     OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
 
-    id friend = OCMClassMock([OCTFriend class]);
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
@@ -344,14 +317,16 @@
 
 - (void)testFriendRequest
 {
-    self.submanager.friendRequestContainer = [[OCTFriendRequestContainer alloc] initWithFriendRequestsArray:nil];
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCMExpect([dbManager addFriendRequest:[OCMArg checkWithBlock:^BOOL (OCTDBFriendRequest *request) {
+        return [request.message isEqualToString:@"message"] && [request.publicKey isEqualToString:@"publicKey"];
+    }]]);
+
     [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];
 
-    XCTAssertEqual([self.submanager.friendRequestContainer requestsCount], 1);
-
-    OCTFriendRequest *request = [self.submanager.friendRequestContainer requestAtIndex:0];
-    XCTAssertEqualObjects(request.message, @"message");
-    XCTAssertEqualObjects(request.publicKey, @"publicKey");
+    OCMVerifyAll(dbManager);
 }
 
 - (void)testToxFriendNameUpdate

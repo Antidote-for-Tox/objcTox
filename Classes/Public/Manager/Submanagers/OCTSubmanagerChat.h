@@ -17,7 +17,7 @@
 /**
  * Returns OCTArray with all existing chats.
  *
- * @return Array with all chats.
+ * @return Autoupdating array with all chats.
  */
 - (OCTArray *)allChats;
 
