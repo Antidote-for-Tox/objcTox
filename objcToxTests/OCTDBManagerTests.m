@@ -13,6 +13,7 @@
 
 #import "OCTDBManager.h"
 #import "OCTDBFriendRequest.h"
+#import "OCTDBChat.h"
 
 @interface OCTDBManager()
 
@@ -149,6 +150,31 @@
     OCTDBFriendRequest *removedDb = [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:request.publicKey];
 
     XCTAssertNil(removedDb);
+}
+
+- (void)testAllChats
+{
+    OCTDBChat *db1 = [OCTDBChat new];
+    db1.enteredText = @"";
+    db1.lastReadDateInterval = 5;
+
+    OCTDBChat *db2 = [OCTDBChat new];
+    db2.enteredText = @"";
+    db2.lastReadDateInterval = 10;
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm commitWriteTransaction];
+
+    RLMResults *array = [self.manager allChats];
+
+    XCTAssertEqual(array.count, 2);
+
+    XCTAssertEqualObjects(db1.enteredText, [array[0] enteredText]);
+    XCTAssertEqual(db1.lastReadDateInterval, [array[0] lastReadDateInterval]);
+    XCTAssertEqualObjects(db2.enteredText, [array[1] enteredText]);
+    XCTAssertEqual(db2.lastReadDateInterval, [array[1] lastReadDateInterval]);
 }
 
 @end

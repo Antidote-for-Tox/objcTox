@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Realm/Realm.h>
 
 #import "OCTFriendRequest.h"
 
@@ -23,5 +24,9 @@
 - (NSArray *)friendRequests;
 - (void)addFriendRequest:(OCTFriendRequest *)friendRequest;
 - (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;
+
+#pragma mark -  Chats
+
+- (RLMResults *)allChats;
 
 @end

@@ -10,6 +10,7 @@
 
 #import "OCTDBManager.h"
 #import "OCTDBFriendRequest.h"
+#import "OCTDBChat.h"
 #import "OCTConverterFriendRequest.h"
 
 @interface OCTDBManager()
@@ -114,6 +115,19 @@
         [self.realm deleteObject:db];
         [self.realm commitWriteTransaction];
     });
+}
+
+#pragma mark -  Chats
+
+- (RLMResults *)allChats
+{
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBChat allObjectsInRealm:self.realm];
+    });
+
+    return results;
 }
 
 @end
