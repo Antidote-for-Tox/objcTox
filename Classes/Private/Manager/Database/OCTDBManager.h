@@ -26,6 +26,10 @@
 - (void)addFriendRequest:(OCTDBFriendRequest *)friendRequest;
 - (void)removeFriendRequestWithPublicKey:(NSString *)publicKey;
 
+#pragma mark -  Friends
+
+- (OCTDBFriend *)getOrCreateFriendWithFriendNumber:(NSInteger)friendNumber;
+
 #pragma mark -  Chats
 
 - (RLMResults *)allChats;

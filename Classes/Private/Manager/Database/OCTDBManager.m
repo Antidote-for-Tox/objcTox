@@ -99,6 +99,24 @@
     });
 }
 
+#pragma mark -  Friends
+
+- (OCTDBFriend *)getOrCreateFriendWithFriendNumber:(NSInteger)friendNumber
+{
+    __block OCTDBFriend *friend;
+
+    dispatch_sync(self.queue, ^{
+        friend = [OCTDBFriend new];
+        friend.friendNumber = friendNumber;
+
+        [self.realm beginWriteTransaction];
+        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withObject:friend];
+        [self.realm commitWriteTransaction];
+    });
+
+    return friend;
+}
+
 #pragma mark -  Chats
 
 - (RLMResults *)allChats
