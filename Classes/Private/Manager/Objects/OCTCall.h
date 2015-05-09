@@ -18,6 +18,11 @@
 @property (strong, nonatomic, readonly) OCTChat *chatSession;
 
 /**
+ * Friend related to the call.
+ **/
+@property (strong, nonatomic, readonly) OCTFriend *caller;
+
+/**
  * Pause the call
  * @param pause YES to pause, NO otherwise.
  * @return YES if successful, NO otherwise.
@@ -40,13 +45,20 @@
 - (BOOL)toggleMuteCall:(BOOL)mute error:(NSError **)error;
 
 /**
- *
- *
+ * The UIView that will have the video feed.
+ * @return UIView of the video feed. Nil if no video available.
  **/
 - (UIView *)videoFeed;
 
 
+/**
+ * Set the Audio bit rate.
+ */
 - (void)setAudioBitrate:(int)bitrate;
+
+/**
+ * Set the Video bit rate.
+ */
 - (void)setVideoBitrate:(int)bitrate;
 
 @end

@@ -196,7 +196,7 @@
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F0EA1F5F1AFD597D006C96D5 /* OCTToxAV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAV.h; sourceTree = "<group>"; };
-		F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAV.m; sourceTree = "<group>"; };
+		F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTToxAV.m; path = ../../Public/Wrapper/OCTToxAV.m; sourceTree = "<group>"; };
 		F0EA1F621AFD5B69006C96D5 /* OCTCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTCall.h; path = ../../../Private/Manager/Objects/OCTCall.h; sourceTree = "<group>"; };
 		F0EA1F631AFD5B69006C96D5 /* OCTCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTCall.m; sourceTree = "<group>"; };
 		F0EA1F651AFD5C06006C96D5 /* OCTCallSubmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTCallSubmanager.h; sourceTree = "<group>"; };
@@ -304,6 +304,7 @@
 		115B9E051ADF1708000C38C2 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */,
 				115B9E061ADF1708000C38C2 /* OCTTox.m */,
 				115B9E071ADF1708000C38C2 /* OCTToxConstants.m */,
 				115B9E081ADF1708000C38C2 /* OCTToxOptions.m */,
@@ -380,7 +381,6 @@
 				115B9E1F1ADF1708000C38C2 /* OCTToxDelegate.h */,
 				115B9E201ADF1708000C38C2 /* OCTToxOptions.h */,
 				F0EA1F5F1AFD597D006C96D5 /* OCTToxAV.h */,
-				F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */,
 			);
 			path = Wrapper;
 			sourceTree = "<group>";

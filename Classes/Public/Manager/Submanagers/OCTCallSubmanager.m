@@ -10,4 +10,14 @@
 
 @implementation OCTCallSubmanager : NSObject
 
+- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
+{
+    return nil;
+}
+
+- (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError**)error
+{
+    return NO;
+}
+
 @end
