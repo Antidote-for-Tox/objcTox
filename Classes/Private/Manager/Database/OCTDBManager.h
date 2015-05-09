@@ -33,5 +33,6 @@
 #pragma mark -  Chats
 
 - (RLMResults *)allChats;
+- (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber;
 
 @end

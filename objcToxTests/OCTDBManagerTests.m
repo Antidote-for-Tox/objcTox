@@ -145,6 +145,19 @@
             NSException);
 }
 
+- (void)testGetOrCreateFriendWithFriendNumber
+{
+    OCTDBFriend *friend = [self.manager getOrCreateFriendWithFriendNumber:7];
+    XCTAssertNotNil(friend);
+    XCTAssertEqual(friend.friendNumber, 7);
+
+    OCTDBFriend *friend2 = [self.manager getOrCreateFriendWithFriendNumber:7];
+    XCTAssertNotNil(friend2);
+    XCTAssertEqual(friend2.friendNumber, 7);
+
+    XCTAssertEqualObjects(friend, friend2);
+}
+
 - (void)testAllChats
 {
     OCTDBChat *db1 = [OCTDBChat new];
@@ -168,6 +181,27 @@
     XCTAssertEqual(db1.lastReadDateInterval, [results[0] lastReadDateInterval]);
     XCTAssertEqualObjects(db2.enteredText, [results[1] enteredText]);
     XCTAssertEqual(db2.lastReadDateInterval, [results[1] lastReadDateInterval]);
+}
+
+- (void)testGetOrCreateChatWithFriendNumber
+{
+    // create friend
+    OCTDBFriend *friend = [self.manager getOrCreateFriendWithFriendNumber:7];
+
+    OCTDBChat *chat = [self.manager getOrCreateChatWithFriendNumber:7];
+    XCTAssertNotNil(chat);
+    XCTAssertEqual(chat.friends.count, 1);
+    XCTAssertEqualObjects([chat.friends lastObject], friend);
+
+    [self.manager.realm beginWriteTransaction];
+    chat.enteredText = @"text";
+    chat.lastReadDateInterval = 50;
+    [self.manager.realm commitWriteTransaction];
+
+    OCTDBChat *chat2 = [self.manager getOrCreateChatWithFriendNumber:7];
+    XCTAssertNotNil(chat2);
+    XCTAssertEqualObjects(chat.enteredText, chat2.enteredText);
+    XCTAssertEqual(chat.lastReadDateInterval, chat2.lastReadDateInterval);
 }
 
 @end

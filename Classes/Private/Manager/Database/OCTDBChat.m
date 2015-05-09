@@ -10,4 +10,11 @@
 
 @implementation OCTDBChat
 
++ (NSDictionary *)defaultPropertyValues
+{
+    return @{
+        @"enteredText" : @"",
+    };
+}
+
 @end
