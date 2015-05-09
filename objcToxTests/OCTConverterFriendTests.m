@@ -14,6 +14,14 @@
 #import "OCTFriend+Private.h"
 #import "OCTDBFriend.h"
 
+static NSString *const kPublicKey = @"publicKey";
+static NSString *const kName = @"name";
+static NSString *const kStatusMessage = @"kStatusMessage";
+static const OCTToxUserStatus kStatus = OCTToxUserStatusAway;
+static const OCTToxConnectionStatus kConnectionStatus = OCTToxConnectionStatusUDP;
+static NSDate *kLastSeenOnline;
+static const BOOL kIsTyping = YES;
+
 @interface OCTConverterFriendTests : XCTestCase
 
 @property (strong, nonatomic) OCTConverterFriend *converter;
@@ -27,6 +35,8 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.converter = [OCTConverterFriend new];
+
+    kLastSeenOnline = [NSDate date];
 }
 
 - (void)tearDown
@@ -46,16 +56,32 @@
     OCTDBFriend *db = [OCTDBFriend new];
     db.friendNumber = 5;
 
-    id friend = OCMClassMock([OCTFriend class]);
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([tox friendExistsWithFriendNumber:5]).andReturn(YES);
+    OCMStub([tox publicKeyFromFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kPublicKey);
+    OCMStub([tox friendNameWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kName);
+    OCMStub([tox friendStatusMessageWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kStatusMessage);
+    OCMStub([tox friendStatusWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kStatus);
+    OCMStub([tox friendConnectionStatusWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kConnectionStatus);
+    OCMStub([tox friendGetLastOnlineWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kLastSeenOnline);
+    OCMStub([tox isFriendTypingWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kIsTyping);
 
     id dataSource = OCMProtocolMock(@protocol(OCTConverterFriendDataSource));
-    OCMStub([dataSource friendWithFriendNumber:5]).andReturn(friend);
+    OCMStub([dataSource converterFriendGetTox:self.converter]).andReturn(tox);
     self.converter.dataSource = dataSource;
 
-    OCTFriend *theFriend = (OCTFriend *)[self.converter objectFromRLMObject:db];
+    OCTFriend *friend = (OCTFriend *)[self.converter objectFromRLMObject:db];
 
-    XCTAssertNotNil(theFriend);
-    XCTAssertEqual(friend, theFriend);
+    XCTAssertNotNil(friend);
+
+    XCTAssertEqual(friend.friendNumber, 5);
+    XCTAssertEqualObjects(friend.publicKey, kPublicKey);
+    XCTAssertEqualObjects(friend.name, kName);
+    XCTAssertEqualObjects(friend.statusMessage, kStatusMessage);
+    XCTAssertEqual(friend.status, kStatus);
+    XCTAssertEqual(friend.connectionStatus, kConnectionStatus);
+    XCTAssertEqualObjects(friend.lastSeenOnline, kLastSeenOnline);
+    XCTAssertEqual(friend.isTyping, kIsTyping);
 }
 
 - (void)testRlmSortDescriptorFromDescriptor

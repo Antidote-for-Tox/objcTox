@@ -7,11 +7,14 @@
 //
 
 #import "OCTConverterProtocol.h"
+#import "OCTTox.h"
 #import "OCTFriend.h"
+
+@class OCTConverterFriend;
 
 @protocol OCTConverterFriendDataSource <NSObject>
 
-- (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
+- (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend;
 
 @end
 
@@ -22,5 +25,7 @@
 @interface OCTConverterFriend : NSObject <OCTConverterProtocol>
 
 @property (weak, nonatomic) id<OCTConverterFriendDataSource> dataSource;
+
+- (OCTFriend *)friendFromFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 @end

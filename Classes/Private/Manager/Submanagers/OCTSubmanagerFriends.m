@@ -12,15 +12,18 @@
 #import "OCTFriendsContainer+Private.h"
 #import "OCTFriendRequestContainer+Private.h"
 #import "OCTTox.h"
-#import "OCTFriend+Private.h"
 #import "OCTDBManager.h"
+#import "OCTConverterFriend.h"
+#import "OCTFriend+Private.h"
 
-@interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource>
+@interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 @property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
 @property (strong, nonatomic, readwrite) OCTFriendRequestContainer *friendRequestContainer;
+
+@property (strong, nonatomic) OCTConverterFriend *converterFriend;
 
 @end
 
@@ -33,6 +36,9 @@
     if (! self) {
         return nil;
     }
+
+    self.converterFriend = [OCTConverterFriend new];
+    self.converterFriend.dataSource = self;
 
     return self;
 }
@@ -56,7 +62,7 @@
         return NO;
     }
 
-    OCTFriend *friend = [self createFriendWithFriendNumber:friendNumber];
+    OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
 
     return YES;
@@ -78,7 +84,7 @@
         return NO;
     }
 
-    OCTFriend *friend = [self createFriendWithFriendNumber:friendNumber];
+    OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
 
     return YES;
@@ -122,7 +128,7 @@
 
     NSMutableArray *friendsArray = [NSMutableArray new];
     for (NSNumber *friendNumber in [tox friendsArray]) {
-        OCTFriend *friend = [self createFriendWithFriendNumber:friendNumber.unsignedIntValue];
+        OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber.unsignedIntValue];
 
         if (friend) {
             [friendsArray addObject:friend];
@@ -190,27 +196,11 @@
     }];
 }
 
-#pragma mark -  Private
+#pragma mark -  OCTConverterFriendDataSource
 
-- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend
 {
-    OCTTox *tox = [self.dataSource managerGetTox];
-
-    if (! [tox friendExistsWithFriendNumber:friendNumber]) {
-        return nil;
-    }
-
-    OCTFriend *friend = [OCTFriend new];
-    friend.friendNumber = friendNumber;
-    friend.publicKey = [tox publicKeyFromFriendNumber:friendNumber error:nil];
-    friend.name = [tox friendNameWithFriendNumber:friendNumber error:nil];
-    friend.statusMessage = [tox friendStatusMessageWithFriendNumber:friendNumber error:nil];
-    friend.status = [tox friendStatusWithFriendNumber:friendNumber error:nil];
-    friend.connectionStatus = [tox friendConnectionStatusWithFriendNumber:friendNumber error:nil];
-    friend.lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:nil];
-    friend.isTyping = [tox isFriendTypingWithFriendNumber:friendNumber error:nil];
-
-    return friend;
+    return [self.dataSource managerGetTox];
 }
 
 @end
