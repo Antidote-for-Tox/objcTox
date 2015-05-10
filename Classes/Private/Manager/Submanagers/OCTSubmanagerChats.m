@@ -1,18 +1,18 @@
 //
-//  OCTSubmanagerChat.m
+//  OCTSubmanagerChats.m
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 05.05.15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTSubmanagerChat.h"
-#import "OCTSubmanagerChat+Private.h"
+#import "OCTSubmanagerChats.h"
+#import "OCTSubmanagerChats+Private.h"
 #import "OCTArray+Private.h"
 #import "OCTConverterChat.h"
 #import "OCTDBManager.h"
 
-@interface OCTSubmanagerChat() <OCTConverterChatDelegate, OCTConverterFriendDataSource>
+@interface OCTSubmanagerChats() <OCTConverterChatDelegate, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation OCTSubmanagerChat
+@implementation OCTSubmanagerChats
 
 #pragma mark -  Lifecycle
 

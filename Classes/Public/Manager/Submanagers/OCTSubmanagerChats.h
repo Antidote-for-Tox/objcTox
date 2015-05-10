@@ -1,5 +1,5 @@
 //
-//  OCTSubmanagerChat.h
+//  OCTSubmanagerChats.h
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 05.05.15.
@@ -12,7 +12,7 @@
 #import "OCTChat.h"
 #import "OCTFriend.h"
 
-@interface OCTSubmanagerChat : NSObject
+@interface OCTSubmanagerChats : NSObject
 
 /**
  * Returns OCTArray with all existing chats.

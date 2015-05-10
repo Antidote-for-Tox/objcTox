@@ -11,7 +11,7 @@
 #import <XCTest/XCTest.h>
 #import <Realm/Realm.h>
 
-#import "OCTSubmanagerChat+Private.h"
+#import "OCTSubmanagerChats+Private.h"
 #import "OCTDBManager.h"
 #import "OCTConverterChat.h"
 #import "OCTFriend+Private.h"
@@ -23,7 +23,7 @@
 
 @interface OCTSubmanagerChatsTests : XCTestCase
 
-@property (strong, nonatomic) OCTSubmanagerChat *submanager;
+@property (strong, nonatomic) OCTSubmanagerChats *submanager;
 @property (strong, nonatomic) id dataSource;
 
 @end
@@ -36,7 +36,7 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
 
-    self.submanager = [OCTSubmanagerChat new];
+    self.submanager = [OCTSubmanagerChats new];
     self.submanager.dataSource = self.dataSource;
 }
 
