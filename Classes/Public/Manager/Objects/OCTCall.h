@@ -45,6 +45,14 @@
 - (BOOL)toggleMuteCall:(BOOL)mute error:(NSError **)error;
 
 /**
+ * Toggle turning off or on the video feed
+ * @param pause YES to stop the video, NO otherwise to continue.
+ * @param error Pointer to error object if there's an issue pausing the video.
+ * @return YES if successful, NO otherwise.
+ **/
+- (BOOL)togglePauseVideo:(BOOL)pause error:(NSError **)error;
+
+/**
  * The UIView that will have the video feed.
  * @return UIView of the video feed. Nil if no video available.
  **/
