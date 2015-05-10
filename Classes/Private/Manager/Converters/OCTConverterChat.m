@@ -31,7 +31,9 @@
     }
 
     chat.friends = [friends copy];
-    chat.lastMessage = (OCTMessageAbstract *)[self.converterMessage objectFromRLMObject:db.lastMessage];
+    if (db.lastMessage) {
+        chat.lastMessage = (OCTMessageAbstract *)[self.converterMessage objectFromRLMObject:db.lastMessage];
+    }
     chat.enteredText = db.enteredText;
     chat.lastReadDate = [NSDate dateWithTimeIntervalSince1970:db.lastReadDateInterval];
 

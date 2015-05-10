@@ -36,7 +36,9 @@
 
     message.date = [NSDate dateWithTimeIntervalSince1970:db.dateInterval];
     message.isOutgoing = db.isOutgoing;
-    message.sender = (OCTFriend *)[self.converterFriend objectFromRLMObject:db.sender];
+    if (db.sender) {
+        message.sender = (OCTFriend *)[self.converterFriend objectFromRLMObject:db.sender];
+    }
 
     return message;
 }
