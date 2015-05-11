@@ -228,17 +228,14 @@
 
     OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
     db1.dateInterval = 50;
-    db1.isOutgoing = YES;
     db1.chat = chat;
 
     OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
     db2.dateInterval = 70;
-    db2.isOutgoing = NO;
     db2.chat = chat;
 
     OCTDBMessageAbstract *db3 = [OCTDBMessageAbstract new];
     db3.dateInterval = 90;
-    db3.isOutgoing = YES;
     // no chat
 
     [self.manager.realm beginWriteTransaction];
@@ -252,9 +249,7 @@
     XCTAssertEqual(results.count, 2);
 
     XCTAssertEqual(db1.dateInterval, [results[0] dateInterval]);
-    XCTAssertEqual(db1.isOutgoing, [results[0] isOutgoing]);
     XCTAssertEqual(db2.dateInterval, [results[1] dateInterval]);
-    XCTAssertEqual(db2.isOutgoing, [results[1] isOutgoing]);
 }
 
 - (void)addMessage
@@ -263,12 +258,10 @@
 
     OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
     db1.dateInterval = 50;
-    db1.isOutgoing = YES;
     db1.chat = chat;
 
     OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
     db2.dateInterval = 70;
-    db2.isOutgoing = NO;
     db2.chat = chat;
 
     [self.manager addMessage:db1];

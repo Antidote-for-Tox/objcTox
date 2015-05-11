@@ -11,11 +11,15 @@
 @interface OCTMessageAbstract ()
 
 @property (strong, nonatomic, readwrite) NSDate *date;
-@property (assign, nonatomic, readwrite) BOOL isOutgoing;
 @property (strong, nonatomic, readwrite) OCTFriend *sender;
 
 @end
 
 @implementation OCTMessageAbstract
+
+- (BOOL)isOutgoing
+{
+    return (self.sender == nil);
+}
 
 @end

@@ -21,14 +21,14 @@
 @property (strong, nonatomic, readonly) NSDate *date;
 
 /**
- * Indicates if message is outgoing or incoming.
- * In case if it is incoming you can check `sender` property for message sender.
- */
-@property (assign, nonatomic, readonly) BOOL isOutgoing;
-
-/**
  * The sender of the message. If the message if outgoing sender is nil.
  */
 @property (strong, nonatomic, readonly) OCTFriend *sender;
+
+/**
+ * Indicates if message is outgoing or incoming.
+ * In case if it is incoming you can check `sender` property for message sender.
+ */
+- (BOOL)isOutgoing;
 
 @end

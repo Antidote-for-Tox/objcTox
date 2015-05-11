@@ -43,7 +43,6 @@
 
     OCTMessageText *message = [OCTMessageText new];
     message.date = [NSDate date];
-    message.isOutgoing = YES;
     message.sender = friend;
     message.text = @"text";
     message.isDelivered = YES;
@@ -56,7 +55,6 @@
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.textMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, message.isOutgoing);
     XCTAssertEqual(db.sender, sender);
     XCTAssertEqual(db.chat, chat);
     XCTAssertEqualObjects(db.textMessage.text, message.text);
@@ -70,7 +68,6 @@
 
     OCTMessageFile *message = [OCTMessageFile new];
     message.date = [NSDate date];
-    message.isOutgoing = YES;
     message.sender = friend;
     message.fileType = OCTMessageFileTypeReady;
     message.fileSize = 100;
@@ -86,7 +83,6 @@
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.fileMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, message.isOutgoing);
     XCTAssertEqual(db.sender, sender);
     XCTAssertEqual(db.chat, chat);
     XCTAssertEqual(db.fileMessage.fileType, message.fileType);
