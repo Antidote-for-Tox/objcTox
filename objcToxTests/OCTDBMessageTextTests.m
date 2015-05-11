@@ -39,12 +39,14 @@
     OCTMessageText *message = [OCTMessageText new];
     message.text = @"text";
     message.isDelivered = YES;
+    message.type = OCTToxMessageTypeAction;
 
     OCTDBMessageText *db = [[OCTDBMessageText alloc] initWithMessageText:message];
 
     XCTAssertNotNil(db);
     XCTAssertEqualObjects(db.text, message.text);
     XCTAssertEqual(db.isDelivered, message.isDelivered);
+    XCTAssertEqual(db.type, message.type);
 }
 
 @end

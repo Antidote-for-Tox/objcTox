@@ -46,6 +46,7 @@
     message.sender = friend;
     message.text = @"text";
     message.isDelivered = YES;
+    message.type = OCTToxMessageTypeAction;
 
     id sender = OCMClassMock([OCTDBFriend class]);
     id chat = OCMClassMock([OCTDBChat class]);
@@ -59,6 +60,7 @@
     XCTAssertEqual(db.chat, chat);
     XCTAssertEqualObjects(db.textMessage.text, message.text);
     XCTAssertEqual(db.textMessage.isDelivered, message.isDelivered);
+    XCTAssertEqual(db.textMessage.type, message.type);
 }
 
 - (void)testInitFile

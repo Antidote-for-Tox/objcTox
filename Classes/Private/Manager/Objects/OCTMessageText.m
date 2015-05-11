@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic, readwrite) NSString *text;
 @property (assign, nonatomic, readwrite) BOOL isDelivered;
+@property (assign, nonatomic, readwrite) OCTToxMessageType type;
 
 @end
 

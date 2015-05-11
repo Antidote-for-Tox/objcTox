@@ -7,6 +7,7 @@
 //
 
 #import "OCTMessageAbstract.h"
+#import "OCTToxConstants.h"
 
 /**
  * Simple text message.
@@ -22,5 +23,10 @@
  * Indicate if message is delivered. Actual only for outgoing messages.
  */
 @property (assign, nonatomic, readonly) BOOL isDelivered;
+
+/**
+ * Type of the message.
+ */
+@property (assign, nonatomic, readonly) OCTToxMessageType type;
 
 @end
