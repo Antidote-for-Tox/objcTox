@@ -11,13 +11,17 @@
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
 #import "OCTFriend+Private.h"
+#import "OCTChat.h"
 
 @implementation OCTDBMessageAbstract
 
-- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message sender:(OCTDBFriend *)sender
+- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message
+                                 sender:(OCTDBFriend *)sender
+                                   chat:(OCTDBChat *)chat
 {
     NSParameterAssert(message);
     NSParameterAssert(sender);
+    NSParameterAssert(chat);
 
     self = [super init];
 
@@ -28,6 +32,7 @@
     self.dateInterval = [message.date timeIntervalSince1970];
     self.isOutgoing = message.isOutgoing;
     self.sender = sender;
+    self.chat = chat;
 
     if ([message isKindOfClass:[OCTMessageText class]]) {
         self.textMessage = [[OCTDBMessageText alloc] initWithMessageText:(OCTMessageText *)message];

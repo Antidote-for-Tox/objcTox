@@ -13,6 +13,11 @@
 
 @interface OCTDBChat : RLMObject
 
+/**
+ * If no uniqueIdentifier is specified on chat creation, random one will be used.
+ */
+@property NSString *uniqueIdentifier;
+
 @property RLMArray<OCTDBFriend> *friends;
 @property OCTDBMessageAbstract *lastMessage;
 @property NSString *enteredText;

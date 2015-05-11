@@ -158,4 +158,30 @@
     return chat;
 }
 
+- (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier
+{
+    __block OCTDBChat *chat = nil;
+
+    dispatch_sync(self.queue, ^{
+        chat = [OCTDBChat objectInRealm:self.realm forPrimaryKey:uniqueIdentifier];
+    });
+
+    return chat;
+}
+
+#pragma mark -  Messages
+
+- (RLMResults *)allMessagesInChat:(OCTDBChat *)chat
+{
+    NSParameterAssert(chat);
+
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+    });
+
+    return results;
+}
+
 @end

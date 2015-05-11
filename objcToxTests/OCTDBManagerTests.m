@@ -204,4 +204,57 @@
     XCTAssertEqual(chat.lastReadDateInterval, chat2.lastReadDateInterval);
 }
 
+- (void)testChatWithUniqueIdentifier
+{
+    OCTDBChat *chat = [OCTDBChat new];
+    chat.uniqueIdentifier = @"identifier";
+    chat.enteredText = @"text";
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:chat];
+    [self.manager.realm commitWriteTransaction];
+
+    OCTDBChat *chat1 = [self.manager chatWithUniqueIdentifier:@"identifier"];
+    OCTDBChat *chat2 = [self.manager chatWithUniqueIdentifier:@"another identifier"];
+
+    XCTAssertNotNil(chat1);
+    XCTAssertNil(chat2);
+    XCTAssertEqualObjects(chat, chat1);
+}
+
+- (void)testAllMessagesInChat
+{
+    OCTDBChat *chat = [OCTDBChat new];
+
+    OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
+    db1.dateInterval = 50;
+    db1.isOutgoing = YES;
+    db1.chat = chat;
+
+    OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
+    db2.dateInterval = 70;
+    db2.isOutgoing = NO;
+    db2.chat = chat;
+
+    OCTDBMessageAbstract *db3 = [OCTDBMessageAbstract new];
+    db3.dateInterval = 90;
+    db3.isOutgoing = YES;
+    // no chat
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm addObject:db3];
+    [self.manager.realm commitWriteTransaction];
+
+    RLMResults *results = [self.manager allMessagesInChat:chat];
+
+    XCTAssertEqual(results.count, 2);
+
+    XCTAssertEqual(db1.dateInterval, [results[0] dateInterval]);
+    XCTAssertEqual(db1.isOutgoing, [results[0] isOutgoing]);
+    XCTAssertEqual(db2.dateInterval, [results[1] dateInterval]);
+    XCTAssertEqual(db2.isOutgoing, [results[1] isOutgoing]);
+}
+
 @end

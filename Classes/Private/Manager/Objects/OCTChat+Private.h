@@ -10,6 +10,8 @@
 
 @interface OCTChat (Private)
 
+@property (copy, nonatomic) NSString *uniqueIdentifier;
+
 @property (strong, nonatomic, readwrite) NSArray *friends;
 @property (strong, nonatomic, readwrite) OCTMessageAbstract *lastMessage;
 

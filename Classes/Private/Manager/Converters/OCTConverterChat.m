@@ -22,6 +22,7 @@
 - (NSObject *)objectFromRLMObject:(OCTDBChat *)db
 {
     OCTChat *chat = [OCTChat new];
+    chat.uniqueIdentifier = db.uniqueIdentifier;
 
     NSMutableArray *friends = [NSMutableArray new];
 
