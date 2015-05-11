@@ -4,11 +4,11 @@ platform :ios, '7.0'
 
 pod 'toxcore-ios', '~> 0.1.4'
 pod 'CocoaLumberjack', '~> 1.9.2'
-pod 'Realm', '~> 0.91.3'
+pod 'Realm', '~> 0.92.1'
 
 target :objcToxTests do
     pod 'OCMock', '~> 3.1.2'
-    pod 'Realm/Headers', '~> 0.91.3'
+    pod 'Realm/Headers', '~> 0.92.1'
 end
 
 post_install do |installer|

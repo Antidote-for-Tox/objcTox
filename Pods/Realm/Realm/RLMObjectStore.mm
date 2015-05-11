@@ -251,28 +251,26 @@ static bool RLMRealmCreateTables(RLMRealm *realm, RLMSchema *targetSchema, bool 
         }
 
         // update table metadata
-        if (objectSchema.primaryKeyProperty != nil) {
+        NSString *oldPrimary = tableSchema.primaryKeyProperty.name;
+        NSString *newPrimary = objectSchema.primaryKeyProperty.name;
+        if (newPrimary) {
             // if there is a primary key set, check if it is the same as the old key
-            if (tableSchema.primaryKeyProperty == nil || ![tableSchema.primaryKeyProperty isEqual:objectSchema.primaryKeyProperty]) {
-                RLMRealmSetPrimaryKeyForObjectClass(realm, objectSchema.className, objectSchema.primaryKeyProperty.name);
+            if (!oldPrimary || ![oldPrimary isEqualToString:newPrimary]) {
+                RLMRealmSetPrimaryKeyForObjectClass(realm, objectSchema.className, newPrimary);
                 changed = true;
             }
         }
-        else if (tableSchema.primaryKeyProperty) {
+        else if (oldPrimary) {
             // there is no primary key, so if there was one nil out
             RLMRealmSetPrimaryKeyForObjectClass(realm, objectSchema.className, nil);
             changed = true;
         }
     }
 
-    // FIXME - remove deleted tables
-
     return changed;
 }
 
-static bool RLMMigrationRequired(RLMRealm *realm, NSUInteger newVersion) {
-    NSUInteger oldVersion = RLMRealmSchemaVersion(realm);
-
+static bool RLMMigrationRequired(RLMRealm *realm, NSUInteger newVersion, NSUInteger oldVersion) {
     // validate versions
     if (oldVersion > newVersion && oldVersion != RLMNotVersioned) {
         NSString *reason = [NSString stringWithFormat:@"Realm at path '%@' has version number %lu which is greater than the current schema version %lu. "
@@ -287,7 +285,7 @@ static bool RLMMigrationRequired(RLMRealm *realm, NSUInteger newVersion) {
 NSError *RLMUpdateRealmToSchemaVersion(RLMRealm *realm, NSUInteger newVersion, RLMSchema *targetSchema, NSError *(^migrationBlock)()) {
     // if the schema version matches, try to get all the tables without entering
     // a write transaction
-    if (!RLMMigrationRequired(realm, newVersion) && RLMRealmGetTables(realm, targetSchema)) {
+    if (!RLMMigrationRequired(realm, newVersion, RLMRealmSchemaVersion(realm)) && RLMRealmGetTables(realm, targetSchema)) {
         RLMRealmSetSchema(realm, targetSchema, true);
         RLMRealmUpdateIndexes(realm);
         return nil;
@@ -300,7 +298,8 @@ NSError *RLMUpdateRealmToSchemaVersion(RLMRealm *realm, NSUInteger newVersion, R
     // Recheck the schema version after beginning the write transaction as
     // another process may have done the migration after we opened the read
     // transaction
-    bool migrating = RLMMigrationRequired(realm, newVersion);
+    NSUInteger oldVersion = RLMRealmSchemaVersion(realm);
+    bool migrating = RLMMigrationRequired(realm, newVersion, oldVersion);
 
     @try {
         // create tables
@@ -308,8 +307,9 @@ NSError *RLMUpdateRealmToSchemaVersion(RLMRealm *realm, NSUInteger newVersion, R
         RLMRealmSetSchema(realm, targetSchema, true);
 
         if (migrating) {
-            // apply migration block if provided
-            if (migrationBlock) {
+            // apply the migration block if provided and there's any old data
+            // to be migrated
+            if (oldVersion != RLMNotVersioned && migrationBlock) {
                 NSError *error = migrationBlock();
                 if (error) {
                     [realm cancelWriteTransaction];
@@ -463,7 +463,6 @@ void RLMAddObjectToRealm(RLMObjectBase *object, RLMRealm *realm, RLMCreationOpti
     RLMInitializeSwiftListAccessor(object);
 }
 
-
 RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *className, id value, RLMCreationOptions options) {
     if (options & RLMCreationOptionsUpdateOrCreate && RLMIsObjectSubclass([value class])) {
         RLMObjectBase *obj = value;
@@ -483,7 +482,7 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
 
     // validate values, create row, and populate
     if (NSArray *array = RLMDynamicCast<NSArray>(value)) {
-        array = RLMValidatedArrayForObjectSchema(value, objectSchema, schema);
+        array = RLMValidatedArrayForObjectSchema(value, objectSchema, schema, realm);
 
         // get or create our accessor
         bool created;
@@ -508,7 +507,7 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
         object->_row = (*objectSchema.table)[RLMCreateOrGetRowForObject(objectSchema, primaryGetter, options, created)];
 
         // assume dictionary or object with kvc properties
-        NSDictionary *dict = RLMValidatedDictionaryForObjectSchema(value, objectSchema, schema, !created);
+        NSDictionary *dict = RLMValidatedDictionaryForObjectSchema(value, objectSchema, schema, !created, realm);
 
         // populate
         for (RLMProperty *prop in objectSchema.properties) {
@@ -617,8 +616,8 @@ id RLMGetObject(RLMRealm *realm, NSString *objectClassName, id key) {
 }
 
 // Create accessor and register with realm
-RLMObjectBase *RLMCreateObjectAccessor(__unsafe_unretained RLMRealm *const realm,
-                                       __unsafe_unretained RLMObjectSchema *const objectSchema,
+RLMObjectBase *RLMCreateObjectAccessor(unretained<RLMRealm> realm,
+                                       unretained<RLMObjectSchema> objectSchema,
                                        NSUInteger index) {
     RLMObjectBase *accessor = [[objectSchema.accessorClass alloc] initWithRealm:realm schema:objectSchema];
     accessor->_row = (*objectSchema.table)[index];
