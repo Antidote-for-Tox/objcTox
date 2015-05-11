@@ -252,27 +252,29 @@
     XCTAssertEqual(db2.dateInterval, [results[1] dateInterval]);
 }
 
-- (void)addMessage
+- (void)addMessageWithText
 {
     OCTDBChat *chat = [OCTDBChat new];
+    OCTDBFriend *sender = [OCTDBFriend new];
 
-    OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
-    db1.dateInterval = 50;
-    db1.chat = chat;
-
-    OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
-    db2.dateInterval = 70;
-    db2.chat = chat;
-
-    [self.manager addMessage:db1];
-    [self.manager addMessage:db2];
+    NSDate *before = [NSDate date];
+    [self.manager addMessageWithText:@"text" type:OCTToxMessageTypeAction chat:chat sender:sender];
+    NSDate *after = [NSDate date];
 
     RLMResults *results = [OCTDBMessageAbstract allObjectsInRealm:self.manager.realm];
 
-    XCTAssertEqual(results.count, 2);
+    XCTAssertEqual(results.count, 1);
 
-    XCTAssertEqualObjects(db1, results[0]);
-    XCTAssertEqualObjects(db2, results[1]);
+    OCTDBMessageAbstract *message = [results lastObject];
+
+    XCTAssertTrue(message.dateInterval >= [before timeIntervalSince1970]);
+    XCTAssertTrue(message.dateInterval <= [before timeIntervalSince1970]);
+    XCTAssertEqualObjects(message.sender, sender);
+    XCTAssertEqualObjects(message.chat, chat);
+    XCTAssertNotNil(message.textMessage);
+    XCTAssertEqualObjects(message.textMessage.text, @"text");
+    XCTAssertFalse(message.textMessage.isDelivered);
+    XCTAssertEqual(message.textMessage.type, OCTToxMessageTypeAction);
 }
 
 @end
