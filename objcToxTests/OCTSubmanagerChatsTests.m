@@ -15,6 +15,7 @@
 #import "OCTDBManager.h"
 #import "OCTConverterChat.h"
 #import "OCTFriend+Private.h"
+#import "OCTChat+Private.h"
 
 @interface OCTArray(Tests)
 @property (strong, nonatomic) RLMResults *results;
@@ -70,9 +71,9 @@
 
 - (void)testGetOrCreateChatWithFriend
 {
-    OCTDBChat *db = [OCTDBChat new];
-    db.enteredText = @"text";
-    db.lastReadDateInterval = 70;
+    id db = OCMClassMock([OCTDBChat class]);
+    OCMStub([db enteredText]).andReturn(@"text");
+    OCMStub([db lastReadDateInterval]).andReturn(70);
 
     id dbManager = OCMClassMock([OCTDBManager class]);
     OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(db);
@@ -86,6 +87,29 @@
 
     XCTAssertEqualObjects(chat.enteredText, @"text");
     XCTAssertEqual([chat.lastReadDate timeIntervalSince1970], 70);
+}
+
+- (void)testAllMessagesInChat
+{
+    id results = OCMClassMock([RLMResults class]);
+    id dbChat = OCMClassMock([OCTDBChat class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager chatWithUniqueIdentifier:@"identifier"]).andReturn(dbChat);
+    OCMStub([dbManager allMessagesInChat:dbChat]).andReturn(results);
+
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCTChat *chat = [OCTChat new];
+    chat.uniqueIdentifier = @"identifier";
+
+    OCTArray *array = [self.submanager allMessagesInChat:chat];
+
+    XCTAssertEqualObjects(results, array.results);
+    XCTAssertTrue([array.converter isKindOfClass:[OCTConverterMessage class]]);
+
+    OCTConverterChat *converter = (OCTConverterChat *)array.converter;
+    XCTAssertNotNil(converter.converterFriend);
 }
 
 - (void)testSetIsTyping

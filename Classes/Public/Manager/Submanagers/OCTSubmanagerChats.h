@@ -31,6 +31,15 @@
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 
 /**
+ * Returns OCTArray with all messages corresponding to chat.
+ *
+ * @prop chat Chat to get messages in.
+ *
+ * @return Autoupdating array with messages.
+ */
+- (OCTArray *)allMessagesInChat:(OCTChat *)chat;
+
+/**
  * Set our typing status for a chat. You are responsible for turning it on or off.
  *
  * @param isTyping Status showing whether user is typing or not.

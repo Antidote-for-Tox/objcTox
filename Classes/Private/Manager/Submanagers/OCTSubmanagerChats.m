@@ -11,6 +11,7 @@
 #import "OCTArray+Private.h"
 #import "OCTConverterChat.h"
 #import "OCTDBManager.h"
+#import "OCTChat+Private.h"
 
 @interface OCTSubmanagerChats() <OCTConverterChatDelegate, OCTConverterFriendDataSource>
 
@@ -55,13 +56,28 @@
 
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend
 {
+    NSParameterAssert(friend);
     OCTDBChat *db = [[self.dataSource managerGetDBManager] getOrCreateChatWithFriendNumber:friend.friendNumber];
 
     return (OCTChat *)[self.converterChat objectFromRLMObject:db];
 }
 
+- (OCTArray *)allMessagesInChat:(OCTChat *)chat
+{
+    NSParameterAssert(chat);
+
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    OCTDBChat *db = [dbManager chatWithUniqueIdentifier:chat.uniqueIdentifier];
+    RLMResults *results = [dbManager allMessagesInChat:db];
+
+    return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat.converterMessage];
+}
+
 - (BOOL)setIsTyping:(BOOL)isTyping inChat:(OCTChat *)chat error:(NSError **)error
 {
+    NSParameterAssert(chat);
+
     OCTFriend *friend = [chat.friends lastObject];
     OCTTox *tox = [self.dataSource managerGetTox];
 
