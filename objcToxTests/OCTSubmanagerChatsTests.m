@@ -136,4 +136,22 @@
     XCTAssertEqual(error, error2);
 }
 
+#pragma mark -  OCTToxDelegate
+
+- (void)testFriendMessage
+{
+    id friend = OCMClassMock([OCTDBFriend class]);
+    id chat = OCMClassMock([OCTDBChat class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager getOrCreateFriendWithFriendNumber:7]).andReturn(friend);
+    OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(chat);
+
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    [self.submanager tox:nil friendMessage:@"message" type:OCTToxMessageTypeAction friendNumber:7];
+
+    OCMVerify([dbManager addMessageWithText:@"message" type:OCTToxMessageTypeAction chat:chat sender:friend]);
+}
+
 @end
