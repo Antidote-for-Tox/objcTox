@@ -184,4 +184,13 @@
     return results;
 }
 
+- (void)addMessage:(OCTDBMessageAbstract *)message
+{
+    dispatch_sync(self.queue, ^{
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:message];
+        [self.realm commitWriteTransaction];
+    });
+}
+
 @end

@@ -39,5 +39,6 @@
 #pragma mark -  Messages
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat;
+- (void)addMessage:(OCTDBMessageAbstract *)message;
 
 @end

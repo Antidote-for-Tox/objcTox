@@ -257,4 +257,29 @@
     XCTAssertEqual(db2.isOutgoing, [results[1] isOutgoing]);
 }
 
+- (void)addMessage
+{
+    OCTDBChat *chat = [OCTDBChat new];
+
+    OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
+    db1.dateInterval = 50;
+    db1.isOutgoing = YES;
+    db1.chat = chat;
+
+    OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
+    db2.dateInterval = 70;
+    db2.isOutgoing = NO;
+    db2.chat = chat;
+
+    [self.manager addMessage:db1];
+    [self.manager addMessage:db2];
+
+    RLMResults *results = [OCTDBMessageAbstract allObjectsInRealm:self.manager.realm];
+
+    XCTAssertEqual(results.count, 2);
+
+    XCTAssertEqualObjects(db1, results[0]);
+    XCTAssertEqualObjects(db2, results[1]);
+}
+
 @end
