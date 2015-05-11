@@ -33,5 +33,11 @@
 #pragma mark -  Chats
 
 - (RLMResults *)allChats;
+- (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber;
+- (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
+
+#pragma mark -  Messages
+
+- (RLMResults *)allMessagesInChat:(OCTDBChat *)chat;
 
 @end

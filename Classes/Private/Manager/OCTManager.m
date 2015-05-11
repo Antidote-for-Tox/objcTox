@@ -11,6 +11,7 @@
 #import "OCTManager.h"
 #import "OCTTox.h"
 #import "OCTSubmanagerFriends+Private.h"
+#import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTDBManager.h"
 
@@ -20,6 +21,7 @@
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
@@ -58,6 +60,10 @@
     friends.dataSource = self;
     [friends configure];
     _friends = friends;
+
+    OCTSubmanagerChats *chats = [OCTSubmanagerChats new];
+    chats.dataSource = self;
+    _chats = chats;
 
     OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
     avatars.dataSource = self;
@@ -118,8 +124,9 @@
     }
 
     NSArray *submanagers = @[
-        self.avatars,
         self.friends,
+        self.chats,
+        self.avatars,
     ];
 
     for (id delegate in submanagers) {

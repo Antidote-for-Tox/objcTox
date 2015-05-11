@@ -9,9 +9,9 @@ PODS:
   - libopus/float (1.1)
   - libsodium (1.0.2)
   - OCMock (3.1.2)
-  - Realm (0.91.3):
-    - Realm/Headers (= 0.91.3)
-  - Realm/Headers (0.91.3)
+  - Realm (0.92.2):
+    - Realm/Headers (= 0.92.2)
+  - Realm/Headers (0.92.2)
   - toxcore-ios (0.1.4):
     - libopus (~> 1.1)
     - libsodium (~> 1.0.1)
@@ -19,8 +19,8 @@ PODS:
 DEPENDENCIES:
   - CocoaLumberjack (~> 1.9.2)
   - OCMock (~> 3.1.2)
-  - Realm (~> 0.91.3)
-  - Realm/Headers (~> 0.91.3)
+  - Realm (~> 0.92.1)
+  - Realm/Headers (~> 0.92.1)
   - toxcore-ios (~> 0.1.4)
 
 SPEC CHECKSUMS:
@@ -28,7 +28,7 @@ SPEC CHECKSUMS:
   libopus: ad5f060dcb8f30f139777244d70f9111f1c80863
   libsodium: d1b482e7628e0298de350375a4ab981b5cc8c71b
   OCMock: a10ea9f0a6e921651f96f78b6faee95ebc813b92
-  Realm: 4bfdac6f0f3170a3947c7196e2e9a2e49c943719
+  Realm: fa8e8f7f788dd63744485c15b453487bc7546c8e
   toxcore-ios: 9104c3042b9b14b795a1320418dfc39bcd039c79
 
 COCOAPODS: 0.37.0

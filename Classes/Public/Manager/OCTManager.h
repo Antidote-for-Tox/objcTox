@@ -10,6 +10,7 @@
 
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerChats.h"
 #import "OCTSubmanagerAvatars.h"
 
 @interface OCTManager : NSObject
@@ -18,6 +19,11 @@
  * Submanager with all friends methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
+
+/**
+ * Submanager with all chats methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
 
 /**
  * Submanager with all user avatar methods.

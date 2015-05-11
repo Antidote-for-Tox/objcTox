@@ -6,7 +6,7 @@
  *
  *************************************************************************/
 
-#define REALM_VERSION "0.89.0"
+#define REALM_VERSION "0.89.1"
 
 #define REALM_INSTALL_PREFIX      "/usr/local"
 #define REALM_INSTALL_EXEC_PREFIX "/usr/local"

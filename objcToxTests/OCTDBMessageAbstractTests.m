@@ -9,13 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
+#import <Realm/Realm.h>
 
 #import "OCTDBMessageAbstract.h"
 #import "OCTFriend+Private.h"
 #import "OCTMessageText+Private.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTMessageAbstract+Private.h"
-#import "Realm.h"
+#import "OCTDBChat.h"
 
 @interface OCTDBMessageAbstractTests : XCTestCase
 
@@ -48,14 +49,16 @@
     message.isDelivered = YES;
 
     id sender = OCMClassMock([OCTDBFriend class]);
+    id chat = OCMClassMock([OCTDBChat class]);
 
-    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender];
+    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender chat:chat];
 
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.textMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
     XCTAssertEqual(db.sender, sender);
+    XCTAssertEqual(db.chat, chat);
     XCTAssertEqualObjects(db.textMessage.text, message.text);
     XCTAssertEqual(db.textMessage.isDelivered, message.isDelivered);
 }
@@ -76,14 +79,16 @@
     message.fileUTI = @"fileUTI";
 
     id sender = OCMClassMock([OCTDBFriend class]);
+    id chat = OCMClassMock([OCTDBChat class]);
 
-    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender];
+    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender chat:chat];
 
     XCTAssertNotNil(db);
     XCTAssertNotNil(db.fileMessage);
     XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
     XCTAssertEqual(db.isOutgoing, message.isOutgoing);
     XCTAssertEqual(db.sender, sender);
+    XCTAssertEqual(db.chat, chat);
     XCTAssertEqual(db.fileMessage.fileType, message.fileType);
     XCTAssertEqual(db.fileMessage.fileSize, message.fileSize);
     XCTAssertEqualObjects(db.fileMessage.filePath, message.filePath);

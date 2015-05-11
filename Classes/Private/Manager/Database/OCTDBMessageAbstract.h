@@ -12,6 +12,7 @@
 #import "OCTDBMessageFile.h"
 #import "OCTMessageAbstract.h"
 
+@class OCTDBChat;
 @interface OCTDBMessageAbstract : RLMObject
 
 // Realm truncates an NSDate to the second. A fix for this is in progress.
@@ -19,6 +20,7 @@
 @property NSTimeInterval dateInterval;
 @property BOOL isOutgoing;
 @property OCTDBFriend *sender;
+@property OCTDBChat *chat;
 
 /**
  * MessageAbstract should have on of the following properties.
@@ -26,6 +28,8 @@
 @property OCTDBMessageText *textMessage;
 @property OCTDBMessageFile *fileMessage;
 
-- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message sender:(OCTDBFriend *)sender;
+- (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message
+                                 sender:(OCTDBFriend *)sender
+                                   chat:(OCTDBChat *)chat;
 
 @end

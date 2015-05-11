@@ -130,4 +130,58 @@
     return results;
 }
 
+- (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber
+{
+    OCTDBFriend *friend = [self getOrCreateFriendWithFriendNumber:friendNumber];
+
+    __block OCTDBChat *chat = nil;
+
+    dispatch_sync(self.queue, ^{
+        // TODO add this (friends.@count == 1) condition. Currentry Realm doesn't support collection queries
+        // See https://github.com/realm/realm-cocoa/issues/1490
+        // chat = [[OCTDBChat objectsInRealm:self.realm
+        //                             where:@"friends.@count == 1 AND ANY friends == %@", friend] lastObject];
+
+        chat = [[OCTDBChat objectsInRealm:self.realm where:@"ANY friends == %@", friend] lastObject];
+
+        if (! chat) {
+            chat = [OCTDBChat new];
+            chat.lastMessage = nil;
+
+            [self.realm beginWriteTransaction];
+            [self.realm addObject:chat];
+            [chat.friends addObject:friend];
+            [self.realm commitWriteTransaction];
+        }
+    });
+
+    return chat;
+}
+
+- (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier
+{
+    __block OCTDBChat *chat = nil;
+
+    dispatch_sync(self.queue, ^{
+        chat = [OCTDBChat objectInRealm:self.realm forPrimaryKey:uniqueIdentifier];
+    });
+
+    return chat;
+}
+
+#pragma mark -  Messages
+
+- (RLMResults *)allMessagesInChat:(OCTDBChat *)chat
+{
+    NSParameterAssert(chat);
+
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+    });
+
+    return results;
+}
+
 @end

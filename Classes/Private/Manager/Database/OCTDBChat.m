@@ -10,4 +10,17 @@
 
 @implementation OCTDBChat
 
++ (NSString *)primaryKey
+{
+    return @"uniqueIdentifier";
+}
+
++ (NSDictionary *)defaultPropertyValues
+{
+    return @{
+        @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
+        @"enteredText" : @"",
+    };
+}
+
 @end

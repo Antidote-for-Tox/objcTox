@@ -52,6 +52,7 @@
     id lastMessage = OCMClassMock([OCTMessageAbstract class]);
 
     OCTDBChat *db = [OCTDBChat new];
+    db.uniqueIdentifier = @"identifier";
     db.friends = (RLMArray<OCTDBFriend> *)@[ dbFriend0, dbFriend1 ];
     db.lastMessage = dbLastMessage;
     db.enteredText = @"text";
@@ -80,6 +81,7 @@
     OCTChat *chat = (OCTChat *)[self.converter objectFromRLMObject:db];
 
     XCTAssertNotNil(chat);
+    XCTAssertEqual(chat.uniqueIdentifier, db.uniqueIdentifier);
     XCTAssertEqual(chat.friends[0], friend0);
     XCTAssertEqual(chat.friends[1], friend1);
     XCTAssertEqual(chat.lastMessage, lastMessage);
