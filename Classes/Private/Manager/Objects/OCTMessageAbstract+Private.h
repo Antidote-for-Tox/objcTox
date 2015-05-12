@@ -11,7 +11,6 @@
 @interface OCTMessageAbstract (Private)
 
 @property (strong, nonatomic, readwrite) NSDate *date;
-@property (assign, nonatomic, readwrite) BOOL isOutgoing;
 @property (strong, nonatomic, readwrite) OCTFriend *sender;
 
 @end

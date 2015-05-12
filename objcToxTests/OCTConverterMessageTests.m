@@ -47,7 +47,6 @@
 {
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
-    db.isOutgoing = YES;
     db.sender = [OCTDBFriend new];
     db.textMessage = [OCTDBMessageText new];
     db.textMessage.text = @"text";
@@ -65,7 +64,6 @@
     OCTMessageText *text = (OCTMessageText *)message;
 
     XCTAssertEqual(db.dateInterval, [text.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, text.isOutgoing);
     XCTAssertEqual(friend, text.sender);
     XCTAssertEqualObjects(db.textMessage.text, text.text);
     XCTAssertEqual(db.textMessage.isDelivered, text.isDelivered);
@@ -75,7 +73,6 @@
 {
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
-    db.isOutgoing = YES;
     db.sender = [OCTDBFriend new];
     db.fileMessage = [OCTDBMessageFile new];
     db.fileMessage.fileType = OCTMessageFileTypeReady;
@@ -96,7 +93,6 @@
     OCTMessageFile *file = (OCTMessageFile *)message;
 
     XCTAssertEqual(db.dateInterval, [file.date timeIntervalSince1970]);
-    XCTAssertEqual(db.isOutgoing, file.isOutgoing);
     XCTAssertEqual(friend, file.sender);
     XCTAssertEqual(db.fileMessage.fileType, file.fileType);
     XCTAssertEqual(db.fileMessage.fileSize, file.fileSize);
@@ -108,15 +104,11 @@
 - (void)testRlmSortDescriptorFromDescriptor
 {
     OCTSortDescriptor *date = [OCTSortDescriptor sortDescriptorWithProperty:@"date" ascending:YES];
-    OCTSortDescriptor *isOutgoing = [OCTSortDescriptor sortDescriptorWithProperty:@"isOutgoing" ascending:YES];
 
     RLMSortDescriptor *rlm1 = [self.converter rlmSortDescriptorFromDescriptor:date];
-    RLMSortDescriptor *rlm2 = [self.converter rlmSortDescriptorFromDescriptor:isOutgoing];
 
     XCTAssertEqualObjects(@"dateInterval", rlm1.property);
     XCTAssertEqual(date.ascending, rlm1.ascending);
-    XCTAssertEqualObjects(isOutgoing.property, rlm2.property);
-    XCTAssertEqual(date.ascending, rlm2.ascending);
 }
 
 @end

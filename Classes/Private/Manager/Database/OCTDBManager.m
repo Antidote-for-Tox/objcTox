@@ -184,4 +184,22 @@
     return results;
 }
 
+- (void)addMessageWithText:(NSString *)text type:(OCTToxMessageType)type chat:(OCTDBChat *)chat sender:(OCTDBFriend *)sender
+{
+    dispatch_sync(self.queue, ^{
+        OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+        message.dateInterval = [[NSDate date] timeIntervalSince1970];
+        message.sender = sender;
+        message.chat = chat;
+        message.textMessage = [OCTDBMessageText new];
+        message.textMessage.text = text;
+        message.textMessage.isDelivered = NO;
+        message.textMessage.type = type;
+
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:message];
+        [self.realm commitWriteTransaction];
+    });
+}
+
 @end

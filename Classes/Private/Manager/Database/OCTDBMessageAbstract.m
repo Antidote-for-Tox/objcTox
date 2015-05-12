@@ -30,7 +30,6 @@
     }
 
     self.dateInterval = [message.date timeIntervalSince1970];
-    self.isOutgoing = message.isOutgoing;
     self.sender = sender;
     self.chat = chat;
 

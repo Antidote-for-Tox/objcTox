@@ -35,7 +35,6 @@
     }
 
     message.date = [NSDate dateWithTimeIntervalSince1970:db.dateInterval];
-    message.isOutgoing = db.isOutgoing;
     if (db.sender) {
         message.sender = (OCTFriend *)[self.converterFriend objectFromRLMObject:db.sender];
     }
@@ -49,7 +48,6 @@
 
     NSDictionary *mapping = @{
         NSStringFromSelector(@selector(date)) : NSStringFromSelector(@selector(dateInterval)),
-        NSStringFromSelector(@selector(isOutgoing)) : NSStringFromSelector(@selector(isOutgoing)),
     };
 
     NSString *rlmProperty = mapping[descriptor.property];

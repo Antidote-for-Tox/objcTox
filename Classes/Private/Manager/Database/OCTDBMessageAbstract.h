@@ -18,7 +18,6 @@
 // Realm truncates an NSDate to the second. A fix for this is in progress.
 // See https://github.com/realm/realm-cocoa/issues/875
 @property NSTimeInterval dateInterval;
-@property BOOL isOutgoing;
 @property OCTDBFriend *sender;
 @property OCTDBChat *chat;
 

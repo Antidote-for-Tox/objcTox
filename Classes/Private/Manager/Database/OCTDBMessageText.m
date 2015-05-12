@@ -21,6 +21,7 @@
 
     self.text = message.text;
     self.isDelivered = message.isDelivered;
+    self.type = message.type;
 
     return self;
 }

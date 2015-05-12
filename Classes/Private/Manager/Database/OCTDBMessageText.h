@@ -13,6 +13,7 @@
 
 @property NSString *text;
 @property BOOL isDelivered;
+@property NSInteger type;
 
 - (instancetype)initWithMessageText:(OCTMessageText *)message;
 

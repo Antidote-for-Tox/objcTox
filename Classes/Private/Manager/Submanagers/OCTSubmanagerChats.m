@@ -100,4 +100,20 @@
     return [self.dataSource managerGetTox];
 }
 
+#pragma mark -  OCTToxDelegate
+
+- (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    OCTDBFriend *friend = [dbManager getOrCreateFriendWithFriendNumber:friendNumber];
+    OCTDBChat *chat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
+
+    [dbManager addMessageWithText:message type:type chat:chat sender:friend];
+}
+
+- (void)tox:(OCTTox *)tox messageDelivered:(OCTToxMessageId)messageId friendNumber:(OCTToxFriendNumber)friendNumber
+{
+}
+
 @end
