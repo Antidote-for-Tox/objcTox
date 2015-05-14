@@ -14,6 +14,7 @@
 @property NSString *text;
 @property BOOL isDelivered;
 @property NSInteger type;
+@property int messageId;
 
 - (instancetype)initWithMessageText:(OCTMessageText *)message;
 

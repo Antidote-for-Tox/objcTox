@@ -186,6 +186,15 @@
 
 - (void)addMessageWithText:(NSString *)text type:(OCTToxMessageType)type chat:(OCTDBChat *)chat sender:(OCTDBFriend *)sender
 {
+    [self addMessageWithText:text type:type chat:chat sender:sender messageId:-1];
+}
+
+- (void)addMessageWithText:(NSString *)text
+                      type:(OCTToxMessageType)type
+                      chat:(OCTDBChat *)chat
+                    sender:(OCTDBFriend *)sender
+                 messageId:(int)messageId
+{
     dispatch_sync(self.queue, ^{
         OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
         message.dateInterval = [[NSDate date] timeIntervalSince1970];
@@ -195,6 +204,7 @@
         message.textMessage.text = text;
         message.textMessage.isDelivered = NO;
         message.textMessage.type = type;
+        message.textMessage.messageId = messageId;
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:message];

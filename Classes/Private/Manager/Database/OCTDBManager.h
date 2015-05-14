@@ -40,5 +40,10 @@
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat;
 - (void)addMessageWithText:(NSString *)text type:(OCTToxMessageType)type chat:(OCTDBChat *)chat sender:(OCTDBFriend *)sender;
+- (void)addMessageWithText:(NSString *)text
+                      type:(OCTToxMessageType)type
+                      chat:(OCTDBChat *)chat
+                    sender:(OCTDBFriend *)sender
+                 messageId:(int)messageId;
 
 @end
