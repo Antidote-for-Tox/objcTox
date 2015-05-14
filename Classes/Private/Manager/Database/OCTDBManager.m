@@ -110,7 +110,7 @@
         friend.friendNumber = friendNumber;
 
         [self.realm beginWriteTransaction];
-        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withObject:friend];
+        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withValue:friend];
         [self.realm commitWriteTransaction];
     });
 
