@@ -62,6 +62,7 @@
 		11FA3DF41AE04DBE00CF7498 /* OCTBasicContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */; };
 		C7709841C6DD544C029CB779 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
+		F0D4AD151B0308D3006FEE89 /* OCTMessageCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D4AD141B0308D3006FEE89 /* OCTMessageCall.m */; };
 		F0EA1F611AFD597D006C96D5 /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */; };
 		F0EA1F641AFD5B69006C96D5 /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F631AFD5B69006C96D5 /* OCTCall.m */; };
 /* End PBXBuildFile section */
@@ -196,7 +197,10 @@
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F01789E81B053A8D00B140A5 /* OCTMessageCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageCall+Private.h"; sourceTree = "<group>"; };
 		F03CB77C1AFFCFBF00A730A8 /* OCTCallSubmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTCallSubmanager.h; sourceTree = "<group>"; };
+		F0D4AD131B0308D3006FEE89 /* OCTMessageCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTMessageCall.h; sourceTree = "<group>"; };
+		F0D4AD141B0308D3006FEE89 /* OCTMessageCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTMessageCall.m; sourceTree = "<group>"; };
 		F0EA1F5F1AFD597D006C96D5 /* OCTToxAV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAV.h; sourceTree = "<group>"; };
 		F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAV.m; sourceTree = "<group>"; };
 		F0EA1F621AFD5B69006C96D5 /* OCTCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTCall.h; sourceTree = "<group>"; };
@@ -275,9 +279,11 @@
 				115B9DFD1ADF1708000C38C2 /* OCTMessageFile.m */,
 				11F69A381AEAD43C008B77FB /* OCTMessageFile+Private.h */,
 				115B9DFE1ADF1708000C38C2 /* OCTMessageText.m */,
+				F0D4AD141B0308D3006FEE89 /* OCTMessageCall.m */,
 				11F69A3B1AEAD446008B77FB /* OCTMessageText+Private.h */,
 				118620371AF4F32800793A3D /* OCTSortDescriptor.m */,
 				F0EA1F631AFD5B69006C96D5 /* OCTCall.m */,
+				F01789E81B053A8D00B140A5 /* OCTMessageCall+Private.h */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -354,6 +360,7 @@
 				115B9E141ADF1708000C38C2 /* OCTMessageFile.h */,
 				115B9E151ADF1708000C38C2 /* OCTMessageText.h */,
 				118620341AF4F31700793A3D /* OCTSortDescriptor.h */,
+				F0D4AD131B0308D3006FEE89 /* OCTMessageCall.h */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -675,6 +682,7 @@
 				115B9E231ADF1708000C38C2 /* OCTManagerConfiguration.m in Sources */,
 				11FA3DE91AE02CF800CF7498 /* OCTFriendRequest.m in Sources */,
 				11F69A311AEAD17C008B77FB /* OCTDBMessageFile.m in Sources */,
+				F0D4AD151B0308D3006FEE89 /* OCTMessageCall.m in Sources */,
 				1186205A1AF9080A00793A3D /* OCTConverterChat.m in Sources */,
 				118620501AF6124700793A3D /* OCTConverterFriend.m in Sources */,
 				116EE6981AE3C7180059C8D3 /* OCTDBManager.m in Sources */,
