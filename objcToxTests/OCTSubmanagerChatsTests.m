@@ -112,6 +112,45 @@
     XCTAssertNotNil(converter.converterFriend);
 }
 
+- (void)testSendMessage
+{
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
+    OCMStub([friend friendNumber]).andReturn(7);
+
+    NSArray *array = @[ friend ];
+
+    id chat = OCMClassMock([OCTChat class]);
+    OCMStub([chat friends]).andReturn(array);
+
+    id dbMessage = OCMClassMock([OCTDBMessageAbstract class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+    OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(chat);
+    OCMExpect([dbManager addMessageWithText:@"text"
+                                       type:OCTToxMessageTypeAction
+                                       chat:chat
+                                     sender:nil
+                                  messageId:10]).andReturn(dbMessage);
+
+    NSError *error = nil;
+    NSError *error2 = OCMClassMock([NSError class]);
+
+    OCMExpect([tox sendMessageWithFriendNumber:7
+                                          type:OCTToxMessageTypeAction
+                                       message:@"text"
+                                         error:[OCMArg setTo:error2]]).andReturn(10);
+
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction error:&error];
+
+    OCMVerifyAll(tox);
+    OCMVerifyAll(dbManager);
+    XCTAssertEqual(error, error2);
+}
+
 - (void)testSetIsTyping
 {
     id tox = OCMClassMock([OCTTox class]);
@@ -152,6 +191,32 @@
     [self.submanager tox:nil friendMessage:@"message" type:OCTToxMessageTypeAction friendNumber:7];
 
     OCMVerify([dbManager addMessageWithText:@"message" type:OCTToxMessageTypeAction chat:chat sender:friend]);
+}
+
+- (void)testMessageDelivered
+{
+    OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+    message.textMessage = [OCTDBMessageText new];
+    message.textMessage.isDelivered = NO;
+
+    id chat = OCMClassMock([OCTDBChat class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(chat);
+    OCMStub([dbManager textMessageInChat:chat withMessageId:10]).andReturn(message);
+    OCMStub([dbManager updateDBObjectInBlock:[OCMArg checkWithBlock:^BOOL (id obj) {
+        XCTAssertNotNil(obj);
+
+        void (^updateBlock)() = obj;
+        updateBlock();
+        return YES;
+    }]]);
+
+    [self.submanager tox:nil messageDelivered:10 friendNumber:7];
+
+    XCTAssertTrue(message.textMessage.isDelivered);
 }
 
 @end

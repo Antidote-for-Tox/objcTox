@@ -110,7 +110,7 @@
         friend.friendNumber = friendNumber;
 
         [self.realm beginWriteTransaction];
-        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withObject:friend];
+        friend = [OCTDBFriend createOrUpdateInRealm:self.realm withValue:friend];
         [self.realm commitWriteTransaction];
     });
 
@@ -184,10 +184,24 @@
     return results;
 }
 
-- (void)addMessageWithText:(NSString *)text type:(OCTToxMessageType)type chat:(OCTDBChat *)chat sender:(OCTDBFriend *)sender
+- (OCTDBMessageAbstract *)addMessageWithText:(NSString *)text
+                                        type:(OCTToxMessageType)type
+                                        chat:(OCTDBChat *)chat
+                                      sender:(OCTDBFriend *)sender
 {
+    return [self addMessageWithText:text type:type chat:chat sender:sender messageId:0];
+}
+
+- (OCTDBMessageAbstract *)addMessageWithText:(NSString *)text
+                                        type:(OCTToxMessageType)type
+                                        chat:(OCTDBChat *)chat
+                                      sender:(OCTDBFriend *)sender
+                                   messageId:(int)messageId
+{
+    __block OCTDBMessageAbstract *message;
+
     dispatch_sync(self.queue, ^{
-        OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+        message = [OCTDBMessageAbstract new];
         message.dateInterval = [[NSDate date] timeIntervalSince1970];
         message.sender = sender;
         message.chat = chat;
@@ -195,11 +209,33 @@
         message.textMessage.text = text;
         message.textMessage.isDelivered = NO;
         message.textMessage.type = type;
+        message.textMessage.messageId = messageId;
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:message];
         [self.realm commitWriteTransaction];
     });
+
+    return message;
+}
+
+- (OCTDBMessageAbstract *)textMessageInChat:(OCTDBChat *)chat withMessageId:(int)messageId
+{
+    NSParameterAssert(chat);
+    NSAssert(messageId > 0, @"messageId should be positive");
+
+    __block OCTDBMessageAbstract *message;
+
+    dispatch_sync(self.queue, ^{
+        RLMResults *objects = [OCTDBMessageAbstract objectsInRealm:self.realm where:
+            @"chat == %@ AND textMessage.messageId == %d", chat, messageId];
+
+        if (objects.count) {
+            message = [objects firstObject];
+        }
+    });
+
+    return message;
 }
 
 @end
