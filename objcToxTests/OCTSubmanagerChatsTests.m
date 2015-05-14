@@ -154,4 +154,30 @@
     OCMVerify([dbManager addMessageWithText:@"message" type:OCTToxMessageTypeAction chat:chat sender:friend]);
 }
 
+- (void)testMessageDelivered
+{
+    OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+    message.textMessage = [OCTDBMessageText new];
+    message.textMessage.isDelivered = NO;
+
+    id chat = OCMClassMock([OCTDBChat class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(chat);
+    OCMStub([dbManager textMessageInChat:chat withMessageId:10]).andReturn(message);
+    OCMStub([dbManager updateDBObjectInBlock:[OCMArg checkWithBlock:^BOOL (id obj) {
+        XCTAssertNotNil(obj);
+
+        void (^updateBlock)() = obj;
+        updateBlock();
+        return YES;
+    }]]);
+
+    [self.submanager tox:nil messageDelivered:10 friendNumber:7];
+
+    XCTAssertTrue(message.textMessage.isDelivered);
+}
+
 @end

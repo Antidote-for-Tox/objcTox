@@ -114,6 +114,18 @@
 
 - (void)tox:(OCTTox *)tox messageDelivered:(OCTToxMessageId)messageId friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    OCTDBChat *chat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
+    OCTDBMessageAbstract *message = [dbManager textMessageInChat:chat withMessageId:messageId];
+
+    if (! message) {
+        return;
+    }
+
+    [dbManager updateDBObjectInBlock:^{
+        message.textMessage.isDelivered = YES;
+    }];
 }
 
 @end
