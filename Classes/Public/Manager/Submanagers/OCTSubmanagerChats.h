@@ -11,6 +11,7 @@
 #import "OCTArray.h"
 #import "OCTChat.h"
 #import "OCTFriend.h"
+#import "OCTMessageText.h"
 
 @interface OCTSubmanagerChats : NSObject
 
@@ -38,6 +39,22 @@
  * @return Autoupdating array with messages.
  */
 - (OCTArray *)allMessagesInChat:(OCTChat *)chat;
+
+/**
+ * Send text message to specific chat
+ *
+ * @param chat Chat send message to.
+ * @param text Text to send.
+ * @param type Type of message to send.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendSendMessage for all error codes.
+ *
+ * @return Returns message, or nil if there was an error.
+ */
+- (OCTMessageText *)sendMessageToChat:(OCTChat *)chat
+                                 text:(NSString *)text
+                                 type:(OCTToxMessageType)type
+                                error:(NSError **)error;
 
 /**
  * Set our typing status for a chat. You are responsible for turning it on or off.

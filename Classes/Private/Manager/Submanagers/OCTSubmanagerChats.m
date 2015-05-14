@@ -74,6 +74,32 @@
     return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat.converterMessage];
 }
 
+- (OCTMessageText *)sendMessageToChat:(OCTChat *)chat
+                                 text:(NSString *)text
+                                 type:(OCTToxMessageType)type
+                                error:(NSError **)error
+{
+    NSParameterAssert(chat);
+    NSParameterAssert(text);
+
+    OCTTox *tox = [self.dataSource managerGetTox];
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    OCTFriend *friend = [chat.friends lastObject];
+
+    OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber type:type message:text error:error];
+
+    if (messageId == 0) {
+        return nil;
+    }
+
+    OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
+
+    OCTDBMessageAbstract *db = [dbManager addMessageWithText:text type:type chat:dbChat sender:nil messageId:messageId];
+
+    return (OCTMessageText *)[self.converterChat.converterMessage objectFromRLMObject:db];
+}
+
 - (BOOL)setIsTyping:(BOOL)isTyping inChat:(OCTChat *)chat error:(NSError **)error
 {
     NSParameterAssert(chat);

@@ -112,6 +112,45 @@
     XCTAssertNotNil(converter.converterFriend);
 }
 
+- (void)testSendMessage
+{
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+
+    OCTFriend *friend = OCMClassMock([OCTFriend class]);
+    OCMStub([friend friendNumber]).andReturn(7);
+
+    NSArray *array = @[ friend ];
+
+    id chat = OCMClassMock([OCTChat class]);
+    OCMStub([chat friends]).andReturn(array);
+
+    id dbMessage = OCMClassMock([OCTDBMessageAbstract class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+    OCMStub([dbManager getOrCreateChatWithFriendNumber:7]).andReturn(chat);
+    OCMExpect([dbManager addMessageWithText:@"text"
+                                       type:OCTToxMessageTypeAction
+                                       chat:chat
+                                     sender:nil
+                                  messageId:10]).andReturn(dbMessage);
+
+    NSError *error = nil;
+    NSError *error2 = OCMClassMock([NSError class]);
+
+    OCMExpect([tox sendMessageWithFriendNumber:7
+                                          type:OCTToxMessageTypeAction
+                                       message:@"text"
+                                         error:[OCMArg setTo:error2]]).andReturn(10);
+
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction error:&error];
+
+    OCMVerifyAll(tox);
+    OCMVerifyAll(dbManager);
+    XCTAssertEqual(error, error2);
+}
+
 - (void)testSetIsTyping
 {
     id tox = OCMClassMock([OCTTox class]);
