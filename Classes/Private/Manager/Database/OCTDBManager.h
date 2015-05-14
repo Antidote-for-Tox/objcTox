@@ -39,11 +39,14 @@
 #pragma mark -  Messages
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat;
+
 - (void)addMessageWithText:(NSString *)text type:(OCTToxMessageType)type chat:(OCTDBChat *)chat sender:(OCTDBFriend *)sender;
 - (void)addMessageWithText:(NSString *)text
                       type:(OCTToxMessageType)type
                       chat:(OCTDBChat *)chat
                     sender:(OCTDBFriend *)sender
                  messageId:(int)messageId;
+
+- (OCTDBMessageAbstract *)textMessageInChat:(OCTDBChat *)chat withMessageId:(int)messageId;
 
 @end

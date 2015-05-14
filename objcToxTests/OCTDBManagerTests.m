@@ -276,4 +276,21 @@
     XCTAssertEqual(message.textMessage.messageId, 4);
 }
 
+- (void)testTextMessageInChat
+{
+    OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+    message.chat = [OCTDBChat new];
+    message.textMessage = [OCTDBMessageText new];
+    message.textMessage.messageId = 7;
+    message.textMessage.text = @"some text";
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:message];
+    [self.manager.realm commitWriteTransaction];
+
+    OCTDBMessageAbstract *db = [self.manager textMessageInChat:message.chat withMessageId:7];
+
+    XCTAssertEqualObjects(message.textMessage.text, db.textMessage.text);
+}
+
 @end

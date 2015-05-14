@@ -212,4 +212,23 @@
     });
 }
 
+- (OCTDBMessageAbstract *)textMessageInChat:(OCTDBChat *)chat withMessageId:(int)messageId
+{
+    NSParameterAssert(chat);
+    NSAssert(messageId >= 0, @"messageId should be non negative");
+
+    __block OCTDBMessageAbstract *message;
+
+    dispatch_sync(self.queue, ^{
+        RLMResults *objects = [OCTDBMessageAbstract objectsInRealm:self.realm where:
+            @"chat == %@ AND textMessage.messageId == %d", chat, messageId];
+
+        if (objects.count) {
+            message = [objects firstObject];
+        }
+    });
+
+    return message;
+}
+
 @end
