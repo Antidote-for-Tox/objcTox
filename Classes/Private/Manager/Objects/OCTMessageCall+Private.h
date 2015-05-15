@@ -10,8 +10,6 @@
 
 @interface OCTMessageCall (Private)
 
-@property (strong, nonatomic, readwrite) NSDate* endTime;
-
-- (NSTimeInterval)callDuration;
+@property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
 
 @end

@@ -15,6 +15,7 @@
 #import "OCTFriend+Private.h"
 #import "OCTMessageText+Private.h"
 #import "OCTMessageFile+Private.h"
+#import "OCTMessageCall+Private.h"
 #import "OCTMessageAbstract+Private.h"
 #import "OCTDBChat.h"
 
@@ -92,6 +93,30 @@
     XCTAssertEqualObjects(db.fileMessage.filePath, message.filePath);
     XCTAssertEqualObjects(db.fileMessage.filePath, message.filePath);
     XCTAssertEqualObjects(db.fileMessage.fileUTI, message.fileUTI);
+}
+
+- (void)testInitCall
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.friendNumber = 5;
+    NSTimeInterval callDuration = 12345.05;
+
+    OCTMessageCall *message = [OCTMessageCall new];
+    message.date = [NSDate date];
+    message.sender = friend;
+    message.callDuration = callDuration;
+
+    id sender = OCMClassMock([OCTDBFriend class]);
+    id chat = OCMClassMock([OCTDBChat class]);
+
+    OCTDBMessageAbstract *db = [[OCTDBMessageAbstract alloc] initWithMessageAbstract:message sender:sender chat:chat];
+
+    XCTAssertNotNil(db);
+    XCTAssertNotNil(db.callMessage);
+    XCTAssertEqual(db.dateInterval, [message.date timeIntervalSince1970]);
+    XCTAssertEqual(db.sender, sender);
+    XCTAssertEqual(db.chat, chat);
+    XCTAssertEqual(db.callMessage.callDuration, callDuration);
 }
 
 @end

@@ -10,15 +10,10 @@
 
 @interface OCTMessageCall ()
 
-@property (strong, nonatomic, readwrite) NSDate* endTime;
+@property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
 
 @end
 
 @implementation OCTMessageCall
-
-- (NSTimeInterval)callDuration
-{
-    return [self.endTime timeIntervalSinceDate:self.date];
-}
 
 @end

@@ -10,6 +10,7 @@
 #import "OCTDBFriend.h"
 #import "OCTDBMessageText.h"
 #import "OCTDBMessageFile.h"
+#import "OCTDBMessageCall.h"
 #import "OCTMessageAbstract.h"
 
 @class OCTDBChat;
@@ -26,6 +27,7 @@
  */
 @property OCTDBMessageText *textMessage;
 @property OCTDBMessageFile *fileMessage;
+@property OCTDBMessageCall *callMessage;
 
 - (instancetype)initWithMessageAbstract:(OCTMessageAbstract *)message
                                  sender:(OCTDBFriend *)sender
