@@ -8,12 +8,27 @@
 
 #import <Foundation/Foundation.h>
 
+@class OCTArray;
+@protocol OCTArrayDelegate <NSObject>
+/**
+ * This method is called after array was updated.
+ *
+ * Not that currently there is no way to see updated diff. This will be implemented later.
+ */
+- (void)OCTArrayWasUpdated:(OCTArray *)array;
+@end
+
 /**
  * OCTArray is auto-updating container type.
  *
  * Unlike an NSArray, OCTArray hold a single type, specified by the objectClassName property.
  */
 @interface OCTArray : NSObject
+
+/**
+ * Delegate of array.
+ */
+@property (weak, nonatomic) id<OCTArrayDelegate> delegate;
 
 /**
  * Number of objects in array.

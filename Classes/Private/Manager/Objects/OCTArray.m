@@ -8,6 +8,7 @@
 
 #import "OCTArray.h"
 #import "OCTArray+Private.h"
+#import "OCTDBManager.h"
 
 @interface OCTArray()
 
@@ -40,7 +41,17 @@
     self.results = results;
     self.converter = converter;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateNotification:)
+                                                 name:kOCTDBManagerUpdateNotification
+                                               object:nil];
+
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark -  Properties
@@ -109,6 +120,25 @@
             break;
         }
     }
+}
+
+#pragma mark -  Notifications
+
+- (void)updateNotification:(NSNotification *)notification
+{
+    Class class = notification.userInfo[kOCTDBManagerObjectClassKey];
+
+    if (! class) {
+        return;
+    }
+
+    NSString *string = NSStringFromClass(class);
+
+    if (! [string isEqualToString:[self objectClassName]]) {
+        return;
+    }
+
+    [self.delegate OCTArrayWasUpdated:self];
 }
 
 @end

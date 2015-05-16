@@ -12,6 +12,7 @@
 
 #import "OCTArray.h"
 #import "OCTArray+Private.h"
+#import "OCTDBManager.h"
 
 @interface OCTArray()
 
@@ -57,6 +58,35 @@
     XCTAssertNotNil(self.array);
     XCTAssertEqual(self.array.results, self.results);
     XCTAssertEqual(self.array.converter, self.converter);
+}
+
+- (void)testDelegate
+{
+    OCMStub([self.converter objectClassName]).andReturn(@"NSString");
+
+    id delegate = OCMProtocolMock(@protocol(OCTArrayDelegate));
+
+    self.array.delegate = delegate;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kOCTDBManagerUpdateNotification
+                                                        object:nil
+                                                      userInfo:@{ kOCTDBManagerObjectClassKey : [NSString class]}];
+
+    OCMVerify([delegate OCTArrayWasUpdated:self.array]);
+}
+
+- (void)testDelegateNoUpdate
+{
+    OCMStub([self.converter objectClassName]).andReturn(@"NSString");
+
+    id delegate = OCMProtocolMock(@protocol(OCTArrayDelegate));
+    [[delegate reject] OCTArrayWasUpdated:[OCMArg any]];
+
+    self.array.delegate = delegate;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kOCTDBManagerUpdateNotification
+                                                        object:nil
+                                                      userInfo:@{ kOCTDBManagerObjectClassKey : [NSNumber class]}];
 }
 
 - (void)testCount
