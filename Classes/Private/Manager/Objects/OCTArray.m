@@ -11,6 +11,12 @@
 
 @interface OCTArray()
 
+/**
+ * For now there is no RLMResults update notification. When it will be implemented it would
+ * be nice to add that feature for OCTArray.
+ *
+ * See https://github.com/realm/realm-cocoa/issues/687
+ */
 @property (strong, nonatomic) RLMResults *results;
 @property (strong, nonatomic) id<OCTConverterProtocol> converter;
 
