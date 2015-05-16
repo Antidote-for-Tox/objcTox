@@ -70,6 +70,14 @@
     return (OCTChat *)[self.converterChat objectFromRLMObject:db];
 }
 
+- (void)removeChatWithAllMessages:(OCTChat *)chat
+{
+    NSParameterAssert(chat);
+    OCTDBChat *db = [[self.dataSource managerGetDBManager] chatWithUniqueIdentifier:chat.uniqueIdentifier];
+
+    [[self.dataSource managerGetDBManager] removeChatWithAllMessages:db];
+}
+
 - (OCTArray *)allMessagesInChat:(OCTChat *)chat
 {
     NSParameterAssert(chat);

@@ -39,6 +39,15 @@
 - (OCTChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
 
 /**
+ * Removes chat and all appropriate messages>
+ *
+ * @param chat Chat to remove.
+ *
+ * @warning Destructive operation! There is no way to restore chat or messages after removal.
+ */
+- (void)removeChatWithAllMessages:(OCTChat *)chat;
+
+/**
  * Returns OCTArray with all messages corresponding to chat.
  *
  * @prop chat Chat to get messages in.
