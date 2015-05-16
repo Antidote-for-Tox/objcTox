@@ -169,6 +169,29 @@
     return chat;
 }
 
+- (void)removeChatWithAllMessages:(OCTDBChat *)chat
+{
+    NSParameterAssert(chat);
+
+    dispatch_sync(self.queue, ^{
+        RLMResults *messages = [OCTDBMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+
+        [self.realm beginWriteTransaction];
+        for (OCTDBMessageAbstract *message in messages) {
+            if (message.textMessage) {
+                [self.realm deleteObject:message.textMessage];
+            }
+            if (message.fileMessage) {
+                [self.realm deleteObject:message.fileMessage];
+            }
+        }
+
+        [self.realm deleteObjects:messages];
+        [self.realm deleteObject:chat];
+        [self.realm commitWriteTransaction];
+    });
+}
+
 #pragma mark -  Messages
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat
