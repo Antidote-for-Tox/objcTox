@@ -4,7 +4,7 @@
 
 Objective-C wrapper for [Tox](https://tox.im/).
 
-Under development, nothing to see here yet.
+Description will be here soon. :)
 
 ## Author
 
