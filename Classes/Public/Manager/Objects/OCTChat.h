@@ -13,6 +13,11 @@
 @interface OCTChat : NSObject
 
 /**
+ * Unique identifier of a chat.
+ */
+@property (copy, nonatomic, readonly) NSString *uniqueIdentifier;
+
+/**
  * Array with OCTFriends that participate in this chat.
  */
 @property (strong, nonatomic, readonly) NSArray *friends;

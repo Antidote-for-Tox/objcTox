@@ -89,6 +89,21 @@
     XCTAssertEqual([chat.lastReadDate timeIntervalSince1970], 70);
 }
 
+- (void)testChatWithUniqueIdentifier
+{
+    id db = OCMClassMock([OCTDBChat class]);
+    OCMStub([db uniqueIdentifier]).andReturn(@"identifier");
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager chatWithUniqueIdentifier:@"identifier"]).andReturn(db);
+
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCTChat *chat = [self.submanager chatWithUniqueIdentifier:@"identifier"];
+
+    XCTAssertEqualObjects(chat.uniqueIdentifier, @"identifier");
+}
+
 - (void)testAllMessagesInChat
 {
     id results = OCMClassMock([RLMResults class]);

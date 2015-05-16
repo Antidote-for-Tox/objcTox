@@ -35,6 +35,7 @@
 - (RLMResults *)allChats;
 - (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber;
 - (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
+- (void)removeChatWithAllMessages:(OCTDBChat *)chat;
 
 #pragma mark -  Messages
 

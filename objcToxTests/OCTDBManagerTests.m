@@ -222,6 +222,52 @@
     XCTAssertEqualObjects(chat, chat1);
 }
 
+- (void)testRemoveChatWithAllMessages
+{
+    OCTDBChat *chat = [OCTDBChat new];
+
+    OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
+    db1.dateInterval = 50;
+    db1.chat = chat;
+    db1.textMessage = [OCTDBMessageText new];
+    db1.textMessage.text = @"text";
+
+    OCTDBMessageAbstract *db2 = [OCTDBMessageAbstract new];
+    db2.dateInterval = 70;
+    db2.chat = chat;
+    db2.fileMessage = [OCTDBMessageFile new];
+    db2.fileMessage.fileName = @"name2";
+    db2.fileMessage.filePath = @"path2";
+    db2.fileMessage.fileUTI = @"uti2";
+
+    OCTDBMessageAbstract *db3 = [OCTDBMessageAbstract new];
+    db3.dateInterval = 90;
+    db3.fileMessage = [OCTDBMessageFile new];
+    db3.fileMessage.fileName = @"name3";
+    db3.fileMessage.filePath = @"path3";
+    db3.fileMessage.fileUTI = @"uti3";
+    // no chat
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm addObject:db3];
+    [self.manager.realm commitWriteTransaction];
+
+    [self.manager removeChatWithAllMessages:chat];
+
+    RLMResults *results = [OCTDBMessageAbstract allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 1);
+    XCTAssertEqual(db3.dateInterval, [results[0] dateInterval]);
+
+    results = [OCTDBMessageText allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 0);
+
+    results = [OCTDBMessageFile allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 1);
+    XCTAssertEqualObjects(db3.fileMessage.fileName, [results[0] fileName]);
+}
+
 - (void)testAllMessagesInChat
 {
     OCTDBChat *chat = [OCTDBChat new];

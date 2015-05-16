@@ -62,6 +62,14 @@
     return (OCTChat *)[self.converterChat objectFromRLMObject:db];
 }
 
+- (OCTChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier
+{
+    NSParameterAssert(uniqueIdentifier);
+    OCTDBChat *db = [[self.dataSource managerGetDBManager] chatWithUniqueIdentifier:uniqueIdentifier];
+
+    return (OCTChat *)[self.converterChat objectFromRLMObject:db];
+}
+
 - (OCTArray *)allMessagesInChat:(OCTChat *)chat
 {
     NSParameterAssert(chat);

@@ -32,6 +32,13 @@
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 
 /**
+ * @param uniqueIdentifier Identifier string to search chat.
+ *
+ * @return Chat with uniqueIdentifier or nil, if chat does not exist.
+ */
+- (OCTChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
+
+/**
  * Returns OCTArray with all messages corresponding to chat.
  *
  * @prop chat Chat to get messages in.
