@@ -104,6 +104,24 @@
     XCTAssertEqualObjects(chat.uniqueIdentifier, @"identifier");
 }
 
+- (void)testRemoveChatWithAllMessages
+{
+    id db = OCMClassMock([OCTDBChat class]);
+    OCMStub([db uniqueIdentifier]).andReturn(@"identifier");
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager chatWithUniqueIdentifier:@"identifier"]).andReturn(db);
+
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCTChat *chat = [OCTChat new];
+    chat.uniqueIdentifier = @"identifier";
+
+    [self.submanager removeChatWithAllMessages:chat];
+
+    OCMExpect([dbManager removeChatWithAllMessages:db]);
+}
+
 - (void)testAllMessagesInChat
 {
     id results = OCMClassMock([RLMResults class]);

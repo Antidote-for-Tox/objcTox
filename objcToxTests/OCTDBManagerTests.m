@@ -225,6 +225,7 @@
 - (void)testRemoveChatWithAllMessages
 {
     OCTDBChat *chat = [OCTDBChat new];
+    OCTDBChat *anotherChat = [OCTDBChat new];
 
     OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
     db1.dateInterval = 50;
@@ -249,6 +250,7 @@
     // no chat
 
     [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:anotherChat];
     [self.manager.realm addObject:db1];
     [self.manager.realm addObject:db2];
     [self.manager.realm addObject:db3];
@@ -266,6 +268,10 @@
     results = [OCTDBMessageFile allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 1);
     XCTAssertEqualObjects(db3.fileMessage.fileName, [results[0] fileName]);
+
+    results = [OCTDBChat allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 1);
+    XCTAssertEqualObjects(anotherChat, results[0]);
 }
 
 - (void)testAllMessagesInChat
