@@ -78,6 +78,18 @@
     return self;
 }
 
+#pragma mark -  Public
+
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
+}
+
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
+}
+
 #pragma mark -  OCTSubmanagerDataSource
 
 - (OCTTox *)managerGetTox

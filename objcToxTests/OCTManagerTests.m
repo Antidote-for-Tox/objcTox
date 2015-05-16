@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
 #import "OCTManager.h"
@@ -84,6 +84,48 @@
     XCTAssertNotNil(self.manager.configuration);
     XCTAssertNotNil(self.manager.dbManager);
     XCTAssertEqualObjects(self.manager.dbManager.path, self.manager.configuration.fileStorage.pathForDatabase);
+}
+
+- (void)testBootstrap
+{
+    NSError *error, *error2;
+
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([tox alloc]).andReturn(tox);
+    OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
+    OCMExpect([tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
+
+    BOOL result = [manager bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+
+    XCTAssertTrue(result);
+    XCTAssertEqual(error, error2);
+    OCMVerifyAll(tox);
+
+    tox = nil;
+}
+
+- (void)testAddTCPRelay
+{
+    NSError *error, *error2;
+
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([tox alloc]).andReturn(tox);
+    OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
+    OCMExpect([tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
+
+    BOOL result = [manager addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+
+    XCTAssertTrue(result);
+    XCTAssertEqual(error, error2);
+    OCMVerifyAll(tox);
+
+    tox = nil;
 }
 
 - (void)testSubmanagerDataSource
