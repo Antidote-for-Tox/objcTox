@@ -39,6 +39,9 @@
     else if ([message isKindOfClass:[OCTMessageFile class]]) {
         self.fileMessage = [[OCTDBMessageFile alloc] initWithMessageFile:(OCTMessageFile *)message];
     }
+    else if ([message isKindOfClass:[OCTMessageCall class]]) {
+        self.callMessage = [[OCTDBMessageCall alloc] initWithMessageCall:(OCTMessageCall *)message];
+    }
 
     return self;
 }

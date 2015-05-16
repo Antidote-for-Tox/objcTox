@@ -9,6 +9,7 @@
 #import "OCTConverterMessage.h"
 #import "OCTMessageAbstract+Private.h"
 #import "OCTMessageText+Private.h"
+#import "OCTMessageCall+Private.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTDBMessageAbstract.h"
 
@@ -32,6 +33,9 @@
     }
     else if (db.fileMessage) {
         message = [self fileMessageFromDBMessage:db.fileMessage];
+    }
+    else if (db.callMessage){
+        message = [self callMessageFromDBMessage:db.callMessage];
     }
 
     message.date = [NSDate dateWithTimeIntervalSince1970:db.dateInterval];
@@ -80,6 +84,14 @@
     message.fileUTI = db.fileUTI;
 
     return message;
+}
+
+- (OCTMessageCall *)callMessageFromDBMessage:(OCTDBMessageCall *)db
+{
+    OCTMessageCall *call = [OCTMessageCall new];
+    call.callDuration = db.callDuration;
+
+    return call;
 }
 
 @end

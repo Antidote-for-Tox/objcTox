@@ -11,14 +11,8 @@
 @interface OCTMessageCall : OCTMessageAbstract
 
 /**
- * The time the call ended.
+ * The length of the call in seconds.
  **/
-@property (strong, nonatomic, readonly) NSDate* endTime;
-
-/**
- * The duration of the call
- * @return duration of the call in seconds.
- */
-- (NSTimeInterval)callDuration;
+@property (assign, nonatomic, readonly) NSTimeInterval callDuration;
 
 @end

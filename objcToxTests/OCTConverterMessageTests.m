@@ -101,6 +101,30 @@
     XCTAssertEqualObjects(db.fileMessage.fileUTI, file.fileUTI);
 }
 
+- (void)testObjectFromRLMObjectCall
+{
+    OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
+    db.dateInterval = [[NSDate date] timeIntervalSince1970];
+    db.sender = [OCTDBFriend new];
+    db.callMessage = [OCTDBMessageCall new];
+    db.callMessage.callDuration = 12345.05;
+
+    id friend = OCMClassMock([OCTFriend class]);
+    id converterFriend = OCMClassMock([OCTConverterFriend class]);
+    OCMStub([converterFriend objectFromRLMObject:db.sender]).andReturn(friend);
+
+    self.converter.converterFriend = converterFriend;
+    OCTMessageAbstract *message = (OCTMessageAbstract *)[self.converter objectFromRLMObject:db];
+
+    XCTAssertTrue([message isKindOfClass:[OCTMessageCall class]]);
+
+    OCTMessageCall *call = (OCTMessageCall *)message;
+
+    XCTAssertEqual(db.dateInterval, [call.date timeIntervalSince1970]);
+    XCTAssertEqual(friend, call.sender);
+    XCTAssertEqual(db.callMessage.callDuration, call.callDuration);
+}
+
 - (void)testRlmSortDescriptorFromDescriptor
 {
     OCTSortDescriptor *date = [OCTSortDescriptor sortDescriptorWithProperty:@"date" ascending:YES];
