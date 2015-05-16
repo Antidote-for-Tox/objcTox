@@ -10,6 +10,9 @@
 
 #import "OCTDBManager.h"
 
+NSString *const kOCTDBManagerUpdateNotification = @"kOCTDBManagerUpdateNotification";
+NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
+
 @interface OCTDBManager()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
@@ -47,14 +50,17 @@
     return self.realm.path;
 }
 
-- (void)updateDBObjectInBlock:(void (^)())updateBlock
+- (void)updateDBObjectInBlock:(void (^)())updateBlock objectClass:(Class)class
 {
     NSParameterAssert(updateBlock);
+    NSParameterAssert(class);
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
         updateBlock();
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:class];
     });
 }
 
@@ -79,6 +85,8 @@
         [self.realm beginWriteTransaction];
         [self.realm addObject:friendRequest];
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
     });
 }
 
@@ -96,6 +104,8 @@
         [self.realm beginWriteTransaction];
         [self.realm deleteObject:db];
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
     });
 }
 
@@ -106,12 +116,20 @@
     __block OCTDBFriend *friend;
 
     dispatch_sync(self.queue, ^{
+        friend = [OCTDBFriend objectInRealm:self.realm forPrimaryKey:@(friend.friendNumber)];
+
+        if (friend) {
+            return;
+        }
+
         friend = [OCTDBFriend new];
         friend.friendNumber = friendNumber;
 
         [self.realm beginWriteTransaction];
         friend = [OCTDBFriend createOrUpdateInRealm:self.realm withValue:friend];
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBFriend class]];
     });
 
     return friend;
@@ -144,15 +162,19 @@
 
         chat = [[OCTDBChat objectsInRealm:self.realm where:@"ANY friends == %@", friend] lastObject];
 
-        if (! chat) {
-            chat = [OCTDBChat new];
-            chat.lastMessage = nil;
-
-            [self.realm beginWriteTransaction];
-            [self.realm addObject:chat];
-            [chat.friends addObject:friend];
-            [self.realm commitWriteTransaction];
+        if ( chat) {
+            return;
         }
+
+        chat = [OCTDBChat new];
+        chat.lastMessage = nil;
+
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:chat];
+        [chat.friends addObject:friend];
+        [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBChat class]];
     });
 
     return chat;
@@ -189,6 +211,9 @@
         [self.realm deleteObjects:messages];
         [self.realm deleteObject:chat];
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBChat class]];
+        [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
     });
 }
 
@@ -237,6 +262,8 @@
         [self.realm beginWriteTransaction];
         [self.realm addObject:message];
         [self.realm commitWriteTransaction];
+
+        [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
     });
 
     return message;
@@ -259,6 +286,21 @@
     });
 
     return message;
+}
+
+#pragma mark -  Private
+
+- (void)sendUpdateNotificationForClass:(Class)class
+{
+    NSParameterAssert(class);
+
+    void (^block)() = ^() {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOCTDBManagerUpdateNotification
+                                                            object:nil
+                                                          userInfo:@{ kOCTDBManagerObjectClassKey : class }];
+    };
+
+    [NSThread isMainThread] ? block() : dispatch_async(dispatch_get_main_queue(), block);
 }
 
 @end
