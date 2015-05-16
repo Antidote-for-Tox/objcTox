@@ -184,6 +184,9 @@
             if (message.fileMessage) {
                 [self.realm deleteObject:message.fileMessage];
             }
+            if (message.callMessage) {
+                [self.realm deleteObject:message.callMessage];
+            }
         }
 
         [self.realm deleteObjects:messages];

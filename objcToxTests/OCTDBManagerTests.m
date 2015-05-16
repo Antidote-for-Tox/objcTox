@@ -241,31 +241,40 @@
     db2.fileMessage.fileUTI = @"uti2";
 
     OCTDBMessageAbstract *db3 = [OCTDBMessageAbstract new];
-    db3.dateInterval = 90;
-    db3.fileMessage = [OCTDBMessageFile new];
-    db3.fileMessage.fileName = @"name3";
-    db3.fileMessage.filePath = @"path3";
-    db3.fileMessage.fileUTI = @"uti3";
+    db3.dateInterval = 80;
+    db3.chat = chat;
+    db3.callMessage = [OCTDBMessageCall new];
+
+    OCTDBMessageAbstract *nonDelete = [OCTDBMessageAbstract new];
+    nonDelete.dateInterval = 1;
+    nonDelete.fileMessage = [OCTDBMessageFile new];
+    nonDelete.fileMessage.fileName = @"name3";
+    nonDelete.fileMessage.filePath = @"path3";
+    nonDelete.fileMessage.fileUTI = @"uti3";
     // no chat
 
     [self.manager.realm beginWriteTransaction];
     [self.manager.realm addObject:db1];
     [self.manager.realm addObject:db2];
     [self.manager.realm addObject:db3];
+    [self.manager.realm addObject:nonDelete];
     [self.manager.realm commitWriteTransaction];
 
     [self.manager removeChatWithAllMessages:chat];
 
     RLMResults *results = [OCTDBMessageAbstract allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 1);
-    XCTAssertEqual(db3.dateInterval, [results[0] dateInterval]);
+    XCTAssertEqual(nonDelete.dateInterval, [results[0] dateInterval]);
 
     results = [OCTDBMessageText allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 0);
 
     results = [OCTDBMessageFile allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 1);
-    XCTAssertEqualObjects(db3.fileMessage.fileName, [results[0] fileName]);
+    XCTAssertEqualObjects(nonDelete.fileMessage.fileName, [results[0] fileName]);
+
+    results = [OCTDBMessageCall allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 0);
 }
 
 - (void)testAllMessagesInChat
