@@ -9,11 +9,17 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTManagerConfiguration.h"
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerChats.h"
 #import "OCTSubmanagerAvatars.h"
+#import "OCTSubmanagerChats.h"
+#import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerUser.h"
 
 @interface OCTManager : NSObject
+
+/**
+ * Submanager with all user methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
 
 /**
  * Submanager with all friends methods.

@@ -10,6 +10,7 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
@@ -20,6 +21,7 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
+@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
@@ -55,6 +57,10 @@
     _tox.delegate = self;
 
     _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
+
+    OCTSubmanagerUser *user = [OCTSubmanagerUser new];
+    user.dataSource = self;
+    _user = user;
 
     OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
     friends.dataSource = self;
@@ -124,6 +130,7 @@
     }
 
     NSArray *submanagers = @[
+        self.user,
         self.friends,
         self.chats,
         self.avatars,
