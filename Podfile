@@ -11,6 +11,10 @@ target :objcToxTests do
     pod 'Realm/Headers', '~> 0.92.1'
 end
 
+target :objcToxDemo do
+    pod 'Masonry', '~> 0.6.1'
+end
+
 post_install do |installer|
     puts 'Patching libopus'
     %x(git apply libopus.patch)
