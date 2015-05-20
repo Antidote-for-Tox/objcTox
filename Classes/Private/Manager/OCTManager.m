@@ -56,6 +56,10 @@
     _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
     _tox.delegate = self;
 
+    if (! savedData) {
+        [self saveTox:nil];
+    }
+
     _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
     OCTSubmanagerUser *user = [OCTSubmanagerUser new];
