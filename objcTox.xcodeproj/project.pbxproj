@@ -10,6 +10,43 @@
 		111D42691AFEC51000148994 /* OCTSubmanagerChatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42681AFEC51000148994 /* OCTSubmanagerChatsTests.m */; };
 		111D426E1B0755CA00148994 /* OCTSubmanagerUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D426D1B0755CA00148994 /* OCTSubmanagerUser.m */; };
 		111D42731B075A5300148994 /* OCTSubmanagerUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42721B075A5300148994 /* OCTSubmanagerUserTests.m */; };
+		1137B7D91B0D2E5500342DA0 /* OCTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFF1ADF1708000C38C2 /* OCTManager.m */; };
+		1137B7DA1B0D2E5500342DA0 /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */; };
+		1137B7DB1B0D2E5500342DA0 /* OCTDefaultFileStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DF71ADF1708000C38C2 /* OCTDefaultFileStorage.m */; };
+		1137B7DC1B0D2E5500342DA0 /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DF81ADF1708000C38C2 /* OCTDefaultSettingsStorage.m */; };
+		1137B7DD1B0D2E5500342DA0 /* OCTManagerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DF91ADF1708000C38C2 /* OCTManagerConfiguration.m */; };
+		1137B7DE1B0D2E5500342DA0 /* OCTConverterChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 118620591AF9080A00793A3D /* OCTConverterChat.m */; };
+		1137B7DF1B0D2E5500342DA0 /* OCTConverterFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = 1186204F1AF6124700793A3D /* OCTConverterFriend.m */; };
+		1137B7E01B0D2E5500342DA0 /* OCTConverterFriendRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1186204B1AF51CD400793A3D /* OCTConverterFriendRequest.m */; };
+		1137B7E11B0D2E5500342DA0 /* OCTConverterMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 118620541AF9005700793A3D /* OCTConverterMessage.m */; };
+		1137B7E21B0D2E5500342DA0 /* OCTDBChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD5A1AEE696F0046C714 /* OCTDBChat.m */; };
+		1137B7E31B0D2E5500342DA0 /* OCTDBFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD571AEE63080046C714 /* OCTDBFriend.m */; };
+		1137B7E41B0D2E5500342DA0 /* OCTDBFriendRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 116EE69A1AE3C72F0059C8D3 /* OCTDBFriendRequest.m */; };
+		1137B7E51B0D2E5500342DA0 /* OCTDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 116EE6971AE3C7180059C8D3 /* OCTDBManager.m */; };
+		1137B7E61B0D2E5500342DA0 /* OCTDBMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A2D1AEAD166008B77FB /* OCTDBMessageAbstract.m */; };
+		1137B7E71B0D2E5500342DA0 /* OCTDBMessageFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A301AEAD17C008B77FB /* OCTDBMessageFile.m */; };
+		1137B7E81B0D2E5500342DA0 /* OCTDBMessageText.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F69A331AEAD188008B77FB /* OCTDBMessageText.m */; };
+		1137B7E91B0D2E5500342DA0 /* OCTDBMessageCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F01789EA1B05467500B140A5 /* OCTDBMessageCall.m */; };
+		1137B7EA1B0D2E5500342DA0 /* OCTArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 1186202D1AF4CC5200793A3D /* OCTArray.m */; };
+		1137B7EB1B0D2E5500342DA0 /* OCTBasicContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */; };
+		1137B7EC1B0D2E5500342DA0 /* OCTChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD4C1AEC02DB0046C714 /* OCTChat.m */; };
+		1137B7ED1B0D2E5500342DA0 /* OCTFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFB1ADF1708000C38C2 /* OCTFriend.m */; };
+		1137B7EE1B0D2E5500342DA0 /* OCTFriendRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DE81AE02CF800CF7498 /* OCTFriendRequest.m */; };
+		1137B7EF1B0D2E5500342DA0 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFC1ADF1708000C38C2 /* OCTMessageAbstract.m */; };
+		1137B7F01B0D2E5500342DA0 /* OCTMessageFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFD1ADF1708000C38C2 /* OCTMessageFile.m */; };
+		1137B7F11B0D2E5500342DA0 /* OCTMessageText.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFE1ADF1708000C38C2 /* OCTMessageText.m */; };
+		1137B7F21B0D2E5500342DA0 /* OCTMessageCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D4AD141B0308D3006FEE89 /* OCTMessageCall.m */; };
+		1137B7F31B0D2E5500342DA0 /* OCTSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 118620371AF4F32800793A3D /* OCTSortDescriptor.m */; };
+		1137B7F41B0D2E5500342DA0 /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F631AFD5B69006C96D5 /* OCTCall.m */; };
+		1137B7F51B0D2E5500342DA0 /* OCTFriendsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E011ADF1708000C38C2 /* OCTFriendsContainer.m */; };
+		1137B7F61B0D2E5500342DA0 /* OCTSubmanagerAvatars.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E021ADF1708000C38C2 /* OCTSubmanagerAvatars.m */; };
+		1137B7F71B0D2E5500342DA0 /* OCTSubmanagerFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E041ADF1708000C38C2 /* OCTSubmanagerFriends.m */; };
+		1137B7F81B0D2E5500342DA0 /* OCTSubmanagerChats.m in Sources */ = {isa = PBXBuildFile; fileRef = 118620601AF91EDF00793A3D /* OCTSubmanagerChats.m */; };
+		1137B7F91B0D2E5500342DA0 /* OCTSubmanagerUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D426D1B0755CA00148994 /* OCTSubmanagerUser.m */; };
+		1137B7FA1B0D2E5500342DA0 /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EA1F601AFD597D006C96D5 /* OCTToxAV.m */; };
+		1137B7FB1B0D2E5500342DA0 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E061ADF1708000C38C2 /* OCTTox.m */; };
+		1137B7FC1B0D2E5500342DA0 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E071ADF1708000C38C2 /* OCTToxConstants.m */; };
+		1137B7FD1B0D2E5500342DA0 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E081ADF1708000C38C2 /* OCTToxOptions.m */; };
 		114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */; };
 		114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */; };
 		114196D71AAC87CC0079B30A /* OCTDefaultFileStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */; };
@@ -62,6 +99,13 @@
 		11FA3DF01AE0356700CF7498 /* OCTBasicContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */; };
 		11FA3DF21AE04D1300CF7498 /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */; };
 		11FA3DF41AE04DBE00CF7498 /* OCTBasicContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */; };
+		78D1F6EB0D0B990E8A3F620E /* libPods-objcToxDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */; };
+		9C0275151B0C9BB00059A663 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275141B0C9BB00059A663 /* main.m */; };
+		9C0275181B0C9BB00059A663 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275171B0C9BB00059A663 /* AppDelegate.m */; };
+		9C0275201B0C9BB00059A663 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C02751F1B0C9BB00059A663 /* Images.xcassets */; };
+		9C0275231B0C9BB00059A663 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9C0275211B0C9BB00059A663 /* LaunchScreen.xib */; };
+		9C0275381B0C9D280059A663 /* OCTStartDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */; };
+		9C02753B1B0CAEB80059A663 /* OCTFriendsDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C02753A1B0CAEB80059A663 /* OCTFriendsDemoViewController.m */; };
 		C7709841C6DD544C029CB779 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 		F01789EB1B05467500B140A5 /* OCTDBMessageCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F01789EA1B05467500B140A5 /* OCTDBMessageCall.m */; };
@@ -200,11 +244,25 @@
 		11FA3DEF1AE0356700CF7498 /* OCTBasicContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainer.m; sourceTree = "<group>"; };
 		11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerConstants.m; sourceTree = "<group>"; };
 		11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBasicContainerTests.m; sourceTree = "<group>"; };
+		23FED75C709ABC0101A98F43 /* Pods-objcToxDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxDemo/Pods-objcToxDemo.release.xcconfig"; sourceTree = "<group>"; };
 		63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.release.xcconfig"; sourceTree = "<group>"; };
+		7CBAF9229B0D3DF830CAC74E /* Pods-objcToxDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxDemo/Pods-objcToxDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		9C0275101B0C9BB00059A663 /* objcToxDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = objcToxDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C0275131B0C9BB00059A663 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9C0275141B0C9BB00059A663 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9C0275161B0C9BB00059A663 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		9C0275171B0C9BB00059A663 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		9C02751F1B0C9BB00059A663 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		9C0275221B0C9BB00059A663 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		9C0275361B0C9D280059A663 /* OCTStartDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTStartDemoViewController.h; sourceTree = "<group>"; };
+		9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTStartDemoViewController.m; sourceTree = "<group>"; };
+		9C0275391B0CAEB80059A663 /* OCTFriendsDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendsDemoViewController.h; sourceTree = "<group>"; };
+		9C02753A1B0CAEB80059A663 /* OCTFriendsDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendsDemoViewController.m; sourceTree = "<group>"; };
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F01789E81B053A8D00B140A5 /* OCTMessageCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageCall+Private.h"; sourceTree = "<group>"; };
 		F01789E91B05467500B140A5 /* OCTDBMessageCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDBMessageCall.h; sourceTree = "<group>"; };
 		F01789EA1B05467500B140A5 /* OCTDBMessageCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBMessageCall.m; sourceTree = "<group>"; };
@@ -234,6 +292,14 @@
 			files = (
 				11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */,
 				D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9C02750D1B0C9BB00059A663 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78D1F6EB0D0B990E8A3F620E /* libPods-objcToxDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +513,7 @@
 			children = (
 				11EDD4571AA14B3F003A0823 /* objcTox */,
 				11EDD4641AA14B3F003A0823 /* objcToxTests */,
+				9C0275111B0C9BB00059A663 /* objcToxDemo */,
 				11EDD4561AA14B3F003A0823 /* Products */,
 				E06EC0F6DE7EA500F122DB49 /* Pods */,
 				83A06929759624533F86F358 /* Frameworks */,
@@ -458,6 +525,7 @@
 			children = (
 				11EDD4551AA14B3F003A0823 /* libobjcTox.a */,
 				11EDD4601AA14B3F003A0823 /* objcToxTests.xctest */,
+				9C0275101B0C9BB00059A663 /* objcToxDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -515,8 +583,34 @@
 			children = (
 				A776AFD2CF355249FA2F4487 /* libPods.a */,
 				63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */,
+				E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9C0275111B0C9BB00059A663 /* objcToxDemo */ = {
+			isa = PBXGroup;
+			children = (
+				9C0275161B0C9BB00059A663 /* AppDelegate.h */,
+				9C0275171B0C9BB00059A663 /* AppDelegate.m */,
+				9C0275361B0C9D280059A663 /* OCTStartDemoViewController.h */,
+				9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */,
+				9C0275391B0CAEB80059A663 /* OCTFriendsDemoViewController.h */,
+				9C02753A1B0CAEB80059A663 /* OCTFriendsDemoViewController.m */,
+				9C02751F1B0C9BB00059A663 /* Images.xcassets */,
+				9C0275211B0C9BB00059A663 /* LaunchScreen.xib */,
+				9C0275121B0C9BB00059A663 /* Supporting Files */,
+			);
+			path = objcToxDemo;
+			sourceTree = "<group>";
+		};
+		9C0275121B0C9BB00059A663 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9C0275131B0C9BB00059A663 /* Info.plist */,
+				9C0275141B0C9BB00059A663 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		E06EC0F6DE7EA500F122DB49 /* Pods */ = {
@@ -526,6 +620,8 @@
 				FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */,
 				D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */,
 				63D0413DDDA781BF956E483E /* Pods-objcToxTests.release.xcconfig */,
+				7CBAF9229B0D3DF830CAC74E /* Pods-objcToxDemo.debug.xcconfig */,
+				23FED75C709ABC0101A98F43 /* Pods-objcToxDemo.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -572,6 +668,25 @@
 			productReference = 11EDD4601AA14B3F003A0823 /* objcToxTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		9C02750F1B0C9BB00059A663 /* objcToxDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9C0275341B0C9BB00059A663 /* Build configuration list for PBXNativeTarget "objcToxDemo" */;
+			buildPhases = (
+				31CDD7BD72E78FCE4E924F9E /* Check Pods Manifest.lock */,
+				9C02750C1B0C9BB00059A663 /* Sources */,
+				9C02750D1B0C9BB00059A663 /* Frameworks */,
+				9C02750E1B0C9BB00059A663 /* Resources */,
+				334567DE28FFE96584FDAD55 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = objcToxDemo;
+			productName = objcToxDemo;
+			productReference = 9C0275101B0C9BB00059A663 /* objcToxDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -588,6 +703,9 @@
 					11EDD45F1AA14B3F003A0823 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					9C02750F1B0C9BB00059A663 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
 				};
 			};
 			buildConfigurationList = 11EDD4501AA14B3F003A0823 /* Build configuration list for PBXProject "objcTox" */;
@@ -596,6 +714,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 11EDD44C1AA14B3F003A0823;
 			productRefGroup = 11EDD4561AA14B3F003A0823 /* Products */;
@@ -604,6 +723,7 @@
 			targets = (
 				11EDD4541AA14B3F003A0823 /* objcTox */,
 				11EDD45F1AA14B3F003A0823 /* objcToxTests */,
+				9C02750F1B0C9BB00059A663 /* objcToxDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -613,6 +733,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9C02750E1B0C9BB00059A663 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C0275231B0C9BB00059A663 /* LaunchScreen.xib in Resources */,
+				9C0275201B0C9BB00059A663 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,6 +761,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		31CDD7BD72E78FCE4E924F9E /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		334567DE28FFE96584FDAD55 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objcToxDemo/Pods-objcToxDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		81D3A563F39E4689521DD477 /* Copy Pods Resources */ = {
@@ -755,6 +914,54 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9C02750C1B0C9BB00059A663 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1137B7F21B0D2E5500342DA0 /* OCTMessageCall.m in Sources */,
+				1137B7DA1B0D2E5500342DA0 /* OCTManagerConstants.m in Sources */,
+				1137B7E01B0D2E5500342DA0 /* OCTConverterFriendRequest.m in Sources */,
+				1137B7E61B0D2E5500342DA0 /* OCTDBMessageAbstract.m in Sources */,
+				1137B7E91B0D2E5500342DA0 /* OCTDBMessageCall.m in Sources */,
+				1137B7D91B0D2E5500342DA0 /* OCTManager.m in Sources */,
+				1137B7F41B0D2E5500342DA0 /* OCTCall.m in Sources */,
+				1137B7DF1B0D2E5500342DA0 /* OCTConverterFriend.m in Sources */,
+				9C0275181B0C9BB00059A663 /* AppDelegate.m in Sources */,
+				1137B7DE1B0D2E5500342DA0 /* OCTConverterChat.m in Sources */,
+				9C0275381B0C9D280059A663 /* OCTStartDemoViewController.m in Sources */,
+				1137B7E31B0D2E5500342DA0 /* OCTDBFriend.m in Sources */,
+				1137B7DB1B0D2E5500342DA0 /* OCTDefaultFileStorage.m in Sources */,
+				1137B7F31B0D2E5500342DA0 /* OCTSortDescriptor.m in Sources */,
+				1137B7F71B0D2E5500342DA0 /* OCTSubmanagerFriends.m in Sources */,
+				1137B7EB1B0D2E5500342DA0 /* OCTBasicContainer.m in Sources */,
+				1137B7F51B0D2E5500342DA0 /* OCTFriendsContainer.m in Sources */,
+				1137B7FB1B0D2E5500342DA0 /* OCTTox.m in Sources */,
+				1137B7E71B0D2E5500342DA0 /* OCTDBMessageFile.m in Sources */,
+				1137B7DD1B0D2E5500342DA0 /* OCTManagerConfiguration.m in Sources */,
+				1137B7E11B0D2E5500342DA0 /* OCTConverterMessage.m in Sources */,
+				1137B7EA1B0D2E5500342DA0 /* OCTArray.m in Sources */,
+				1137B7EE1B0D2E5500342DA0 /* OCTFriendRequest.m in Sources */,
+				1137B7F91B0D2E5500342DA0 /* OCTSubmanagerUser.m in Sources */,
+				1137B7E21B0D2E5500342DA0 /* OCTDBChat.m in Sources */,
+				1137B7F01B0D2E5500342DA0 /* OCTMessageFile.m in Sources */,
+				1137B7FC1B0D2E5500342DA0 /* OCTToxConstants.m in Sources */,
+				1137B7FA1B0D2E5500342DA0 /* OCTToxAV.m in Sources */,
+				1137B7E51B0D2E5500342DA0 /* OCTDBManager.m in Sources */,
+				1137B7F81B0D2E5500342DA0 /* OCTSubmanagerChats.m in Sources */,
+				1137B7FD1B0D2E5500342DA0 /* OCTToxOptions.m in Sources */,
+				1137B7EC1B0D2E5500342DA0 /* OCTChat.m in Sources */,
+				1137B7E81B0D2E5500342DA0 /* OCTDBMessageText.m in Sources */,
+				1137B7E41B0D2E5500342DA0 /* OCTDBFriendRequest.m in Sources */,
+				1137B7F11B0D2E5500342DA0 /* OCTMessageText.m in Sources */,
+				9C02753B1B0CAEB80059A663 /* OCTFriendsDemoViewController.m in Sources */,
+				1137B7EF1B0D2E5500342DA0 /* OCTMessageAbstract.m in Sources */,
+				9C0275151B0C9BB00059A663 /* main.m in Sources */,
+				1137B7ED1B0D2E5500342DA0 /* OCTFriend.m in Sources */,
+				1137B7F61B0D2E5500342DA0 /* OCTSubmanagerAvatars.m in Sources */,
+				1137B7DC1B0D2E5500342DA0 /* OCTDefaultSettingsStorage.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -764,6 +971,17 @@
 			targetProxy = 11EDD4621AA14B3F003A0823 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9C0275211B0C9BB00059A663 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9C0275221B0C9BB00059A663 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		11EDD4671AA14B3F003A0823 /* Debug */ = {
@@ -894,6 +1112,43 @@
 			};
 			name = Release;
 		};
+		9C0275301B0C9BB00059A663 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CBAF9229B0D3DF830CAC74E /* Pods-objcToxDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = objcToxDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9C0275311B0C9BB00059A663 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 23FED75C709ABC0101A98F43 /* Pods-objcToxDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = objcToxDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -920,6 +1175,15 @@
 			buildConfigurations = (
 				11EDD46D1AA14B3F003A0823 /* Debug */,
 				11EDD46E1AA14B3F003A0823 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9C0275341B0C9BB00059A663 /* Build configuration list for PBXNativeTarget "objcToxDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C0275301B0C9BB00059A663 /* Debug */,
+				9C0275311B0C9BB00059A663 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

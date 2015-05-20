@@ -25,6 +25,7 @@
 @interface OCTDBManagerTests : XCTestCase
 
 @property (strong, nonatomic) OCTDBManager *manager;
+@property (strong, nonatomic) NSNotificationCenter *mockedNotificationCenter;
 
 @end
 
@@ -42,11 +43,27 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
-    self.manager = [[OCTDBManager alloc] initWithDatabasePath:[self realmPath]];
+    NSString *realmPath = [self realmPath];
+    NSString *directory = [realmPath stringByDeletingLastPathComponent];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (! [fileManager fileExistsAtPath:directory]) {
+
+        NSError *error;
+        [fileManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
+        NSLog(@"--- creating with error %@", error);
+    }
+
+    self.manager = [[OCTDBManager alloc] initWithDatabasePath:realmPath];
+
+    self.mockedNotificationCenter = OCMClassMock([NSNotificationCenter class]);
+    OCMStub([(id)self.mockedNotificationCenter defaultCenter]).andReturn(self.mockedNotificationCenter);
 }
 
 - (void)tearDown
 {
+    OCMVerifyAll((id)self.mockedNotificationCenter);
+
     NSString *realmPath = [self realmPath];
     NSString *lockPath = [realmPath stringByAppendingString:@".lock"];
 
@@ -55,6 +72,7 @@
     [fileManager removeItemAtPath:lockPath error:nil];
 
     self.manager = nil;
+    self.mockedNotificationCenter = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
@@ -69,6 +87,8 @@
 
 - (void)testUpdateDBObjectWithBlock
 {
+    [self expectUpdateNotificationWithClass:[OCTDBFriendRequest class]];
+
     OCTDBFriendRequest *db = [OCTDBFriendRequest new];
     db.publicKey = @"key";
     db.message = @"message";
@@ -79,7 +99,7 @@
 
     [self.manager updateDBObjectInBlock:^{
         db.message = @"updated message";
-    }];
+    } objectClass:[OCTDBFriendRequest class]];
 
     OCTDBFriendRequest *updated = [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:db.publicKey];
 
@@ -115,6 +135,8 @@
 
 - (void)testAddFriendRequest
 {
+    [self expectUpdateNotificationWithClass:[OCTDBFriendRequest class]];
+
     OCTDBFriendRequest *request = [OCTDBFriendRequest new];
     request.publicKey = @"key";
     request.message = @"message";
@@ -130,6 +152,8 @@
 
 - (void)testRemoveFriendRequestWithPublicKey
 {
+    [self expectUpdateNotificationWithClass:[OCTDBFriendRequest class]];
+
     OCTDBFriendRequest *request = [OCTDBFriendRequest new];
     request.publicKey = @"key";
     request.message = @"message";
@@ -147,6 +171,8 @@
 
 - (void)testGetOrCreateFriendWithFriendNumber
 {
+    [self expectUpdateNotificationWithClass:[OCTDBFriend class]];
+
     OCTDBFriend *friend = [self.manager getOrCreateFriendWithFriendNumber:7];
     XCTAssertNotNil(friend);
     XCTAssertEqual(friend.friendNumber, 7);
@@ -185,6 +211,8 @@
 
 - (void)testGetOrCreateChatWithFriendNumber
 {
+    [self expectUpdateNotificationWithClass:[OCTDBChat class]];
+
     // create friend
     OCTDBFriend *friend = [self.manager getOrCreateFriendWithFriendNumber:7];
 
@@ -224,6 +252,9 @@
 
 - (void)testRemoveChatWithAllMessages
 {
+    [self expectUpdateNotificationWithClass:[OCTDBChat class]];
+    [self expectUpdateNotificationWithClass:[OCTDBMessageAbstract class]];
+
     OCTDBChat *chat = [OCTDBChat new];
     OCTDBChat *anotherChat = [OCTDBChat new];
 
@@ -315,6 +346,8 @@
 
 - (void)addMessageWithText
 {
+    [self expectUpdateNotificationWithClass:[OCTDBMessageAbstract class]];
+
     OCTDBChat *chat = [OCTDBChat new];
     OCTDBFriend *sender = [OCTDBFriend new];
     NSDate *date = [NSDate date];
@@ -352,6 +385,23 @@
     OCTDBMessageAbstract *db = [self.manager textMessageInChat:message.chat withMessageId:7];
 
     XCTAssertEqualObjects(message.textMessage.text, db.textMessage.text);
+}
+
+#pragma mark -  Supporting methods
+
+- (void)expectUpdateNotificationWithClass:(Class)class
+{
+    BOOL (^block)(NSDictionary *) = ^(NSDictionary *dict) {
+        if (! [dict isKindOfClass:[NSDictionary class]]) {
+            return NO;
+        }
+
+        return (BOOL) (dict[kOCTDBManagerObjectClassKey] == class);
+    };
+
+    OCMExpect([self.mockedNotificationCenter postNotificationName:kOCTDBManagerUpdateNotification
+                                                           object:nil
+                                                         userInfo:[OCMArg checkWithBlock:block]]);
 }
 
 @end

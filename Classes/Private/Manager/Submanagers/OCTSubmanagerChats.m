@@ -132,7 +132,7 @@
 {
     OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
 
-    [dbManager updateDBObjectInBlock:block];
+    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBChat class]];
 }
 
 #pragma mark -  OCTConverterFriendDataSource
@@ -167,7 +167,7 @@
 
     [dbManager updateDBObjectInBlock:^{
         message.textMessage.isDelivered = YES;
-    }];
+    } objectClass:[OCTDBMessageAbstract class]];
 }
 
 @end

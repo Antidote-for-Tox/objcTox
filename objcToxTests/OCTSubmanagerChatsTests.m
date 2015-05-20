@@ -245,7 +245,7 @@
         void (^updateBlock)() = obj;
         updateBlock();
         return YES;
-    }]]);
+    }] objectClass:[OCTDBMessageAbstract class]]);
 
     [self.submanager tox:nil messageDelivered:10 friendNumber:7];
 

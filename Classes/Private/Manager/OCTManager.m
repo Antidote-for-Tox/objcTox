@@ -56,6 +56,10 @@
     _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
     _tox.delegate = self;
 
+    if (! savedData) {
+        [self saveTox:nil];
+    }
+
     _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
     OCTSubmanagerUser *user = [OCTSubmanagerUser new];
@@ -76,6 +80,18 @@
     _avatars = avatars;
 
     return self;
+}
+
+#pragma mark -  Public
+
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
+}
+
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
 }
 
 #pragma mark -  OCTSubmanagerDataSource

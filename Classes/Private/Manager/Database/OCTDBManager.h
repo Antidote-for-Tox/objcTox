@@ -12,13 +12,26 @@
 #import "OCTDBFriendRequest.h"
 #import "OCTDBChat.h"
 
+/**
+ * This notification is fired when some database object gets updated. Class of
+ * updated object is passed in userInfo for kOCTDBManagerObjectClassKey.
+ * Notification is send on main thread.
+ *
+ * Note: this is workaround for updating OCTArray. When Realm will support update
+ * notification for RLMResults, this should be removed.
+ *
+ * See https://github.com/realm/realm-cocoa/issues/687
+ */
+extern NSString *const kOCTDBManagerUpdateNotification;
+extern NSString *const kOCTDBManagerObjectClassKey;
+
 @interface OCTDBManager : NSObject
 
 - (instancetype)initWithDatabasePath:(NSString *)path;
 
 - (NSString *)path;
 
-- (void)updateDBObjectInBlock:(void (^)())updateBlock;
+- (void)updateDBObjectInBlock:(void (^)())updateBlock objectClass:(Class)class;
 
 #pragma mark -  Friend requests
 
