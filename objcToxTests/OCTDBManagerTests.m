@@ -48,10 +48,9 @@
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (! [fileManager fileExistsAtPath:directory]) {
-
-        NSError *error;
-        [fileManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
-        NSLog(@"--- creating with error %@", error);
+        // This is hack to fix xctool issue on Travis CI.
+        // For some reason it don't create documents directory.
+        [fileManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:nil];
     }
 
     self.manager = [[OCTDBManager alloc] initWithDatabasePath:realmPath];
