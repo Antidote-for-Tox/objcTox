@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 #import "OCTStartDemoViewController.h"
+#import "DDLog.h"
+#import "DDASLLogger.h"
+#import "DDTTYLogger.h"
 
 @interface AppDelegate ()
 
@@ -20,6 +23,9 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+
+    [DDLog addLogger:[DDASLLogger sharedInstance]];
+    [DDLog addLogger:[DDTTYLogger sharedInstance]];
 
     OCTStartDemoViewController *controller = [OCTStartDemoViewController new];
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:controller];
