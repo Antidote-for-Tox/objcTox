@@ -6,19 +6,26 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import <BlocksKit/UIActionSheet+BlocksKit.h>
+#import <BlocksKit/UIAlertView+BlocksKit.h>
 #import <Masonry/Masonry.h>
 
 #import "OCTFriendsDemoViewController.h"
 
 static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier";
 
-typedef NS_ENUM(NSUInteger, CellType) {
-    CellTypeUserAddress,
-    CellTypeUserPublicKey,
-    CellTypeUserNospam,
-    CellTypeUserStatus,
-    CellTypeUserName,
-    CellTypeUserStatusMessage,
+typedef NS_ENUM(NSUInteger, SectionType) {
+    SectionTypeUser = 0,
+    SectionTypeCount,
+};
+
+typedef NS_ENUM(NSUInteger, RowUser) {
+    RowUserUserAddress,
+    RowUserUserPublicKey,
+    RowUserUserNospam,
+    RowUserUserStatus,
+    RowUserUserName,
+    RowUserUserStatusMessage,
 };
 
 @interface OCTFriendsDemoViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -26,7 +33,7 @@ typedef NS_ENUM(NSUInteger, CellType) {
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) OCTManager *manager;
 
-@property (strong, nonatomic) NSMutableArray *data;
+@property (strong, nonatomic) NSArray *userData;
 
 @end
 
@@ -44,16 +51,14 @@ typedef NS_ENUM(NSUInteger, CellType) {
 
     _manager = manager;
 
-    _data = [NSMutableArray arrayWithArray:@[
-        [NSMutableArray arrayWithArray:@[
-            @(CellTypeUserAddress),
-            @(CellTypeUserPublicKey),
-            @(CellTypeUserNospam),
-            @(CellTypeUserStatus),
-            @(CellTypeUserName),
-            @(CellTypeUserStatusMessage),
-        ]],
-    ]];
+    _userData = @[
+        @(RowUserUserAddress),
+        @(RowUserUserPublicKey),
+        @(RowUserUserNospam),
+        @(RowUserUserStatus),
+        @(RowUserUserName),
+        @(RowUserUserStatusMessage),
+    ];
 
     return self;
 }
@@ -77,50 +82,49 @@ typedef NS_ENUM(NSUInteger, CellType) {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    SectionType type = indexPath.section;
+
+    switch(type) {
+        case SectionTypeUser:
+            [self didSelectUserRow:indexPath.row];
+            break;
+        case SectionTypeCount:
+            // nop
+            break;
+    }
 }
 
 #pragma mark -  UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.data.count;
+    return SectionTypeCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSMutableArray *array = self.data[section];
+    SectionType type = section;
 
-    return array.count;
+    switch(type) {
+        case SectionTypeUser:
+            return self.userData.count;
+        case SectionTypeCount:
+            return 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier forIndexPath:indexPath];
-
-    CellType type = [self cellTypeFromIndexPath:indexPath];
+    SectionType type = indexPath.section;
 
     switch(type) {
-        case CellTypeUserAddress:
-            [self configureUserAddressCell:cell];
-            break;
-        case CellTypeUserPublicKey:
-            [self configureUserPublicKeyCell:cell];
-            break;
-        case CellTypeUserNospam:
-            [self configureUserNospamCell:cell];
-            break;
-        case CellTypeUserStatus:
-            [self configureUserStatusCell:cell];
-            break;
-        case CellTypeUserName:
-            [self configureUserNameCell:cell];
-            break;
-        case CellTypeUserStatusMessage:
-            [self configureUserStatusMessageCell:cell];
-            break;
+        case SectionTypeUser:
+            return [self userCellAtRow:indexPath.row];
+        case SectionTypeCount:
+            return nil;
     }
-
-    return cell;
 }
 
 #pragma mark -  Private
@@ -132,52 +136,209 @@ typedef NS_ENUM(NSUInteger, CellType) {
     }];
 }
 
-- (CellType)cellTypeFromIndexPath:(NSIndexPath *)path
+- (UITableViewCell *)userCellAtRow:(RowUser)row
 {
-    return [self.data[path.section][path.row] unsignedIntegerValue];
-}
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:SectionTypeUser];
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier forIndexPath:indexPath];
 
-- (void)configureUserAddressCell:(UITableViewCell *)cell
-{
-    cell.textLabel.text = [NSString stringWithFormat:@"userAddress: %@", self.manager.user.userAddress];
-}
-
-- (void)configureUserPublicKeyCell:(UITableViewCell *)cell
-{
-    cell.textLabel.text = [NSString stringWithFormat:@"publicKey: %@", self.manager.user.publicKey];
-}
-
-- (void)configureUserNospamCell:(UITableViewCell *)cell
-{
-    cell.textLabel.text = [NSString stringWithFormat:@"nospam: %u", self.manager.user.nospam];
-}
-
-- (void)configureUserStatusCell:(UITableViewCell *)cell
-{
-    NSString *status = nil;
-    switch(self.manager.user.userStatus) {
-        case OCTToxUserStatusNone:
-            status = @"None";
+    switch(row) {
+        case RowUserUserAddress:
+            cell.textLabel.text = [NSString stringWithFormat:@"userAddress: %@", self.manager.user.userAddress];
             break;
-        case OCTToxUserStatusAway:
-            status = @"Away";
+        case RowUserUserPublicKey:
+            cell.textLabel.text = [NSString stringWithFormat:@"publicKey: %@", self.manager.user.publicKey];
             break;
-        case OCTToxUserStatusBusy:
-            status = @"Busy";
+        case RowUserUserNospam:
+            cell.textLabel.text = [NSString stringWithFormat:@"nospam: %u", self.manager.user.nospam];
+            break;
+        case RowUserUserStatus:
+            cell.textLabel.text = [NSString stringWithFormat:@"userStatus: %@",
+                                      [self stringFromUserStatus:self.manager.user.userStatus]];
+            break;
+        case RowUserUserName:
+            cell.textLabel.text = [NSString stringWithFormat:@"userName: %@", self.manager.user.userName];
+            break;
+        case RowUserUserStatusMessage:
+            cell.textLabel.text = [NSString stringWithFormat:@"userStatusMessage: %@", self.manager.user.userStatusMessage];
             break;
     }
 
-    cell.textLabel.text = [NSString stringWithFormat:@"userStatus: %@", status];
+    return cell;
 }
 
-- (void)configureUserNameCell:(UITableViewCell *)cell
+- (void)didSelectUserRow:(RowUser)row
 {
-    cell.textLabel.text = [NSString stringWithFormat:@"userName: %@", self.manager.user.userName];
+    __weak OCTFriendsDemoViewController *weakSelf = self;
+
+    [self showActionSheet:^(UIActionSheet *sheet) {
+        switch(row) {
+            case RowUserUserAddress:
+                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userAddress];
+                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userAddress];
+                break;
+            case RowUserUserPublicKey:
+                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.publicKey];
+                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.publicKey];
+                break;
+            case RowUserUserNospam:
+            {
+                [weakSelf addToSheet:sheet viewButtonWithValue:@(weakSelf.manager.user.nospam)];
+                [weakSelf addToSheet:sheet copyButtonWithValue:@(weakSelf.manager.user.nospam)];
+                [weakSelf addToSheet:sheet textEditButtonWithValue:@(weakSelf.manager.user.nospam) block:^(NSString *string) {
+                    weakSelf.manager.user.nospam = (OCTToxNoSpam)[string integerValue];
+                }];
+                break;
+            }
+            case RowUserUserStatus:
+            {
+                [weakSelf addToSheet:sheet multiEditButtonWithOptions:@[
+                    [weakSelf stringFromUserStatus:0],
+                    [weakSelf stringFromUserStatus:1],
+                    [weakSelf stringFromUserStatus:2],
+
+                ] block:^(NSUInteger index) {
+                    weakSelf.manager.user.userStatus = index;
+                }];
+                break;
+            }
+            case RowUserUserName:
+            {
+                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userName];
+                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userName];
+                [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userName block:^(NSString *string) {
+                    NSError *error;
+                    [weakSelf.manager.user setUserName:string error:&error];
+                    [self maybeShowError:error];
+                }];
+                break;
+            }
+            case RowUserUserStatusMessage:
+            {
+                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userStatusMessage];
+                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userStatusMessage];
+                [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userStatusMessage block:^(NSString *string) {
+                    NSError *error;
+                    [weakSelf.manager.user setUserStatusMessage:string error:&error];
+                    [self maybeShowError:error];
+                }];
+                break;
+            }
+        }
+    }];
 }
 
-- (void)configureUserStatusMessageCell:(UITableViewCell *)cell
+- (void)showActionSheet:(void (^)(UIActionSheet *sheet))block
 {
-    cell.textLabel.text = [NSString stringWithFormat:@"userStatusMessage: %@", self.manager.user.userStatusMessage];
+    if (! block) {
+        return;
+    }
+
+    UIActionSheet *sheet = [UIActionSheet bk_actionSheetWithTitle:@"Select action"];
+    [sheet bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
+
+    block(sheet);
+
+    [sheet showInView:self.view];
+}
+
+- (void)addToSheet:(UIActionSheet *)sheet viewButtonWithValue:(id)value
+{
+    [sheet bk_addButtonWithTitle:@"View" handler:^{
+        UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:nil message:[self stringFromValue:value]];
+        [alert bk_setCancelButtonWithTitle:@"OK" handler:nil];
+        [alert show];
+    }];
+}
+
+- (void)addToSheet:(UIActionSheet *)sheet copyButtonWithValue:(id)value
+{
+    [sheet bk_addButtonWithTitle:@"Copy" handler:^{
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = [self stringFromValue:value];
+    }];
+}
+
+- (void)addToSheet:(UIActionSheet *)sheet textEditButtonWithValue:(id)value block:(void (^)(NSString *string))block
+{
+    NSParameterAssert(block);
+
+    __weak OCTFriendsDemoViewController *weakSelf = self;
+
+    [sheet bk_addButtonWithTitle:@"Edit" handler:^{
+        UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"" message:nil];
+
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        [[alert textFieldAtIndex:0] setText:[self stringFromValue:value]];
+
+        [alert bk_addButtonWithTitle:@"OK" handler:^{
+            block([alert textFieldAtIndex:0].text);
+
+            [weakSelf.tableView reloadData];
+        }];
+
+        [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
+
+        [alert show];
+    }];
+}
+
+- (void)         addToSheet:(UIActionSheet *)sheet
+ multiEditButtonWithOptions:(NSArray *)options
+                      block:(void (^)(NSUInteger index))block
+{
+    NSParameterAssert(block);
+
+    __weak OCTFriendsDemoViewController *weakSelf = self;
+
+    [sheet bk_addButtonWithTitle:@"Edit" handler:^{
+        UIActionSheet *editSheet = [UIActionSheet bk_actionSheetWithTitle:@"Select action"];
+
+        for (NSUInteger index = 0; index < options.count; index++) {
+            [editSheet bk_addButtonWithTitle:options[index] handler:^{
+                block(index);
+                [weakSelf.tableView reloadData];
+            }];
+        }
+
+        [editSheet bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
+        [editSheet showInView:weakSelf.view];
+    }];
+}
+- (NSString *)stringFromValue:(id)value
+{
+    if ([value isKindOfClass:[NSString class]]) {
+        return value;
+    }
+
+    if ([value isKindOfClass:[NSNumber class]]) {
+        return [NSString stringWithFormat:@"%@", value];
+    }
+
+    return nil;
+}
+
+- (NSString *)stringFromUserStatus:(OCTToxUserStatus)status
+{
+    switch(status) {
+        case OCTToxUserStatusNone:
+            return @"None";
+        case OCTToxUserStatusAway:
+            return @"Away";
+        case OCTToxUserStatusBusy:
+            return @"Busy";
+    }
+}
+
+- (void)maybeShowError:(NSError *)error
+{
+    if (! error) {
+        return;
+    }
+
+    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:error.localizedDescription
+                                                    message:error.localizedFailureReason];
+    [alert bk_setCancelButtonWithTitle:@"OK" handler:nil];
+    [alert show];
 }
 
 @end
