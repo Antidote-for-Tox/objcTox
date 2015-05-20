@@ -43,7 +43,18 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
-    self.manager = [[OCTDBManager alloc] initWithDatabasePath:[self realmPath]];
+    NSString *realmPath = [self realmPath];
+    NSString *directory = [realmPath stringByDeletingLastPathComponent];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (! [fileManager fileExistsAtPath:directory]) {
+
+        NSError *error;
+        [fileManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
+        NSLog(@"--- creating with error %@", error);
+    }
+
+    self.manager = [[OCTDBManager alloc] initWithDatabasePath:realmPath];
 
     self.mockedNotificationCenter = OCMClassMock([NSNotificationCenter class]);
     OCMStub([(id)self.mockedNotificationCenter defaultCenter]).andReturn(self.mockedNotificationCenter);
