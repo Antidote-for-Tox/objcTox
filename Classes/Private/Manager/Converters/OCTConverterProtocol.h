@@ -6,10 +6,9 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import <Realm/Realm.h>
 #import <Foundation/Foundation.h>
 #import "OCTSortDescriptor.h"
-#import "RLMObject.h"
-#import "RLMArray.h"
 
 @protocol OCTConverterProtocol <NSObject>
 

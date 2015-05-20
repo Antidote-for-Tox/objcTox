@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "RLMObject.h"
+#import <Realm/Realm.h>
 
 /**
  * OCTDBFriend stores only friendNumber. All other friend properties are dynamic and can be obtained from Tox.

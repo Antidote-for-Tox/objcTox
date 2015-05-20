@@ -10,6 +10,12 @@
 		111D42691AFEC51000148994 /* OCTSubmanagerChatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42681AFEC51000148994 /* OCTSubmanagerChatsTests.m */; };
 		111D426E1B0755CA00148994 /* OCTSubmanagerUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D426D1B0755CA00148994 /* OCTSubmanagerUser.m */; };
 		111D42731B075A5300148994 /* OCTSubmanagerUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42721B075A5300148994 /* OCTSubmanagerUserTests.m */; };
+		1137B7FF1B0D34DF00342DA0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B7FE1B0D34DF00342DA0 /* Realm.framework */; };
+		1137B8011B0D34EA00342DA0 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B8001B0D34EA00342DA0 /* libc++.dylib */; };
+		1137B8021B0D34F300342DA0 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B8001B0D34EA00342DA0 /* libc++.dylib */; };
+		1137B8031B0D34F800342DA0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B7FE1B0D34DF00342DA0 /* Realm.framework */; };
+		1137B8041B0D35BC00342DA0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B7FE1B0D34DF00342DA0 /* Realm.framework */; };
+		1137B8051B0D35DA00342DA0 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B8001B0D34EA00342DA0 /* libc++.dylib */; };
 		114196C31AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */; };
 		114196CD1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */; };
 		114196D71AAC87CC0079B30A /* OCTDefaultFileStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */; };
@@ -134,6 +140,8 @@
 		111D426D1B0755CA00148994 /* OCTSubmanagerUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerUser.m; sourceTree = "<group>"; };
 		111D426F1B0755E100148994 /* OCTSubmanagerUser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerUser+Private.h"; sourceTree = "<group>"; };
 		111D42721B075A5300148994 /* OCTSubmanagerUserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerUserTests.m; sourceTree = "<group>"; };
+		1137B7FE1B0D34DF00342DA0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		1137B8001B0D34EA00342DA0 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultSettingsStorageTests.m; sourceTree = "<group>"; };
 		114196CC1AAC69B60079B30A /* OCTSubmanagerAvatarsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerAvatarsTests.m; sourceTree = "<group>"; };
 		114196D61AAC87CC0079B30A /* OCTDefaultFileStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorageTests.m; sourceTree = "<group>"; };
@@ -262,6 +270,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1137B8011B0D34EA00342DA0 /* libc++.dylib in Frameworks */,
+				1137B7FF1B0D34DF00342DA0 /* Realm.framework in Frameworks */,
 				C7709841C6DD544C029CB779 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +280,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1137B8051B0D35DA00342DA0 /* libc++.dylib in Frameworks */,
+				1137B8041B0D35BC00342DA0 /* Realm.framework in Frameworks */,
 				11EDD4611AA14B3F003A0823 /* libobjcTox.a in Frameworks */,
 				D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */,
 			);
@@ -279,6 +291,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1137B8031B0D34F800342DA0 /* Realm.framework in Frameworks */,
+				1137B8021B0D34F300342DA0 /* libc++.dylib in Frameworks */,
 				78D1F6EB0D0B990E8A3F620E /* libPods-objcToxDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -550,6 +564,8 @@
 		83A06929759624533F86F358 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1137B8001B0D34EA00342DA0 /* libc++.dylib */,
+				1137B7FE1B0D34DF00342DA0 /* Realm.framework */,
 				A776AFD2CF355249FA2F4487 /* libPods.a */,
 				63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */,
 				E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */,
@@ -1023,6 +1039,10 @@
 			baseConfigurationReference = 977FEB009110A2C76E6EE7B5 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1034,6 +1054,10 @@
 			baseConfigurationReference = FB6283BE28EE49868A724A91 /* Pods.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1047,6 +1071,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1065,6 +1090,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = objcToxTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1079,6 +1105,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1100,6 +1130,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = objcToxDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
