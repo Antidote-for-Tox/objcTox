@@ -8,7 +8,7 @@ before_install:
 
 script:
     - xctool -workspace objcTox.xcworkspace -scheme objcToxDemo -sdk iphonesimulator build
-    - xctool -workspace objcTox.xcworkspace -scheme objcTox -sdk iphonesimulator GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES clean test
+    - xctool -workspace objcTox.xcworkspace -scheme objcToxDemo -sdk iphonesimulator GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES clean test
 #   - pod lib lint --quick
 #
 after_success:
