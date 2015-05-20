@@ -16,6 +16,8 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
 
 typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeUser = 0,
+    SectionTypeFriends,
+    SectionTypeFriendRequests,
     SectionTypeCount,
 };
 
@@ -34,6 +36,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 @property (strong, nonatomic) OCTManager *manager;
 
 @property (strong, nonatomic) NSArray *userData;
+@property (strong, nonatomic) OCTFriendsContainer *friendsContainer;
+@property (strong, nonatomic) OCTArray *allFriendRequests;
 
 @end
 
@@ -59,6 +63,9 @@ typedef NS_ENUM(NSUInteger, RowUser) {
         @(RowUserUserName),
         @(RowUserUserStatusMessage),
     ];
+
+    _friendsContainer = self.manager.friends.friendsContainer;
+    _allFriendRequests = self.manager.friends.allFriendRequests;
 
     return self;
 }
@@ -90,6 +97,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
         case SectionTypeUser:
             [self didSelectUserRow:indexPath.row];
             break;
+        case SectionTypeFriends:
+        case SectionTypeFriendRequests:
         case SectionTypeCount:
             // nop
             break;
@@ -110,8 +119,28 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     switch(type) {
         case SectionTypeUser:
             return self.userData.count;
+        case SectionTypeFriends:
+            return self.friendsContainer.friendsCount;
+        case SectionTypeFriendRequests:
+            return self.allFriendRequests.count;
         case SectionTypeCount:
             return 0;
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    SectionType type = section;
+
+    switch(type) {
+        case SectionTypeUser:
+            return @"User";
+        case SectionTypeFriends:
+            return @"Friends";
+        case SectionTypeFriendRequests:
+            return @"FriendRequests";
+        case SectionTypeCount:
+            return nil;
     }
 }
 
@@ -121,7 +150,11 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
     switch(type) {
         case SectionTypeUser:
-            return [self userCellAtRow:indexPath.row];
+            return [self userCellAtIndexPath:indexPath];
+        case SectionTypeFriends:
+           return [self friendCellAtIndexPath:indexPath];
+        case SectionTypeFriendRequests:
+           return [self friendRequestCellAtIndexPath:indexPath];
         case SectionTypeCount:
             return nil;
     }
@@ -136,10 +169,11 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     }];
 }
 
-- (UITableViewCell *)userCellAtRow:(RowUser)row
+- (UITableViewCell *)userCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:SectionTypeUser];
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
+                                                                 forIndexPath:indexPath];
+    RowUser row = indexPath.row;
 
     switch(row) {
         case RowUserUserAddress:
@@ -163,6 +197,26 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             break;
     }
 
+    return cell;
+}
+
+- (UITableViewCell *)friendCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
+                                                                 forIndexPath:indexPath];
+
+    OCTFriend *friend = [self.friendsContainer friendAtIndex:indexPath.row];
+    cell.textLabel.text = friend.name ?: friend.publicKey;
+    return cell;
+}
+
+- (UITableViewCell *)friendRequestCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
+                                                                 forIndexPath:indexPath];
+
+    OCTFriendRequest *request = [self.allFriendRequests objectAtIndex:indexPath.row];
+    cell.textLabel.text = request.publicKey;
     return cell;
 }
 
