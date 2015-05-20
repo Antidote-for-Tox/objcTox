@@ -13,6 +13,7 @@ end
 
 target :objcToxDemo do
     pod 'Masonry', '~> 0.6.1'
+    pod 'BlocksKit', '~> 2.2.5'
 end
 
 post_install do |installer|
