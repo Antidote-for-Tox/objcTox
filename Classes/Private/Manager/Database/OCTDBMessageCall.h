@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "RLMObject.h"
+#import <Realm/Realm.h>
 #import "OCTMessageCall.h"
 
 @interface OCTDBMessageCall : RLMObject

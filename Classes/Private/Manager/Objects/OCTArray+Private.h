@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import <Realm/Realm.h>
 #import "OCTArray.h"
-#import "RLMResults.h"
 #import "OCTConverterProtocol.h"
 
 @interface OCTArray (Private)

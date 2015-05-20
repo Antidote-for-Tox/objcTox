@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
+#import <Realm/Realm.h>
 
 #import "OCTDBMessageFile.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTMessageAbstract+Private.h"
 #import "OCTFriend+Private.h"
-#import "RLMRealm.h"
 
 @interface OCTDBMessageFileTests : XCTestCase
 

@@ -716,9 +716,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 - (void)testFriendRequestCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        uint8_t bin[64] = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        uint8_t bin[32] = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
@@ -726,8 +724,6 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     } expectBlock:^(id<OCTToxDelegate> delegate) {
         NSString *publicKey =
-            @"000102030405060708090A0B0C0D0E0F"
-            @"000102030405060708090A0B0C0D0E0F"
             @"000102030405060708090A0B0C0D0E0F"
             @"000102030405060708090A0B0C0D0E0F";
 
