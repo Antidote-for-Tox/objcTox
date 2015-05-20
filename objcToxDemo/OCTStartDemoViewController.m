@@ -9,7 +9,7 @@
 #import <Masonry/Masonry.h>
 
 #import "OCTStartDemoViewController.h"
-#import "OCTFriendsDemoViewController.h"
+#import "OCTMainDemoViewController.h"
 
 static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 
@@ -47,7 +47,7 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
-    OCTFriendsDemoViewController *vc = [[OCTFriendsDemoViewController alloc] initWithManager:manager];
+    OCTMainDemoViewController *vc = [[OCTMainDemoViewController alloc] initWithManager:manager];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

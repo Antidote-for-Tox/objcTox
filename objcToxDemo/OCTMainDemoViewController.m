@@ -1,5 +1,5 @@
 //
-//  OCTFriendsDemoViewController.m
+//  OCTMainDemoViewController.m
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 20/05/15.
@@ -10,7 +10,7 @@
 #import <BlocksKit/UIAlertView+BlocksKit.h>
 #import <Masonry/Masonry.h>
 
-#import "OCTFriendsDemoViewController.h"
+#import "OCTMainDemoViewController.h"
 
 static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier";
 
@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     RowUserUserStatusMessage,
 };
 
-@interface OCTFriendsDemoViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface OCTMainDemoViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) OCTManager *manager;
@@ -41,7 +41,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
 @end
 
-@implementation OCTFriendsDemoViewController
+@implementation OCTMainDemoViewController
 
 #pragma mark -  Lifecycle
 
@@ -231,7 +231,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
 - (void)didSelectUserRow:(RowUser)row
 {
-    __weak OCTFriendsDemoViewController *weakSelf = self;
+    __weak OCTMainDemoViewController *weakSelf = self;
 
     [self showActionSheet:^(UIActionSheet *sheet) {
         switch(row) {
@@ -311,7 +311,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 {
     NSParameterAssert(block);
 
-    __weak OCTFriendsDemoViewController *weakSelf = self;
+    __weak OCTMainDemoViewController *weakSelf = self;
 
     [sheet bk_addButtonWithTitle:@"Edit" handler:^{
         UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"" message:nil];
@@ -337,7 +337,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 {
     NSParameterAssert(block);
 
-    __weak OCTFriendsDemoViewController *weakSelf = self;
+    __weak OCTMainDemoViewController *weakSelf = self;
 
     [sheet bk_addButtonWithTitle:@"Edit" handler:^{
         UIActionSheet *editSheet = [UIActionSheet bk_actionSheetWithTitle:@"Select action"];

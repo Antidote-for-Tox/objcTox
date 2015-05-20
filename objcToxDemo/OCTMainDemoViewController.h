@@ -1,5 +1,5 @@
 //
-//  OCTFriendsDemoViewController.h
+//  OCTMainDemoViewController.h
 //  objcTox
 //
 //  Created by Dmytro Vorobiov on 20/05/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "OCTManager.h"
 
-@interface OCTFriendsDemoViewController : UIViewController
+@interface OCTMainDemoViewController : UIViewController
 
 - (instancetype)initWithManager:(OCTManager *)manager;
 
