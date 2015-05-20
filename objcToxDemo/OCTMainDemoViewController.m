@@ -77,7 +77,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 {
     [super viewDidLoad];
 
-    self.title = @"Friends";
+    self.title = @"Main";
 
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.delegate = self;
