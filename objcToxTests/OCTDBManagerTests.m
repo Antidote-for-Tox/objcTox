@@ -163,9 +163,8 @@
 
     [self.manager removeFriendRequestWithPublicKey:@"key"];
 
-    XCTAssertThrowsSpecific(
-            [OCTDBFriendRequest objectInRealm:self.manager.realm forPrimaryKey:request.publicKey],
-            NSException);
+    RLMResults *results = [OCTDBFriendRequest allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 0);
 }
 
 - (void)testGetOrCreateFriendWithFriendNumber
