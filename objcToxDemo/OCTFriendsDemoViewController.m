@@ -79,6 +79,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    self.tableView.estimatedRowHeight = 44.0;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kUITableViewCellIdentifier];
     [self.view addSubview:self.tableView];
 
@@ -169,10 +171,19 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     }];
 }
 
-- (UITableViewCell *)userCellAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)cellForIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
                                                                  forIndexPath:indexPath];
+    cell.textLabel.numberOfLines = 0;
+
+    return cell;
+}
+
+- (UITableViewCell *)userCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self cellForIndexPath:indexPath];
+
     RowUser row = indexPath.row;
 
     switch(row) {
@@ -202,8 +213,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
 - (UITableViewCell *)friendCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
-                                                                 forIndexPath:indexPath];
+    UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
     OCTFriend *friend = [self.friendsContainer friendAtIndex:indexPath.row];
     cell.textLabel.text = friend.name ?: friend.publicKey;
@@ -212,8 +222,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
 - (UITableViewCell *)friendRequestCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kUITableViewCellIdentifier
-                                                                 forIndexPath:indexPath];
+    UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
     OCTFriendRequest *request = [self.allFriendRequests objectAtIndex:indexPath.row];
     cell.textLabel.text = request.publicKey;
@@ -227,16 +236,13 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     [self showActionSheet:^(UIActionSheet *sheet) {
         switch(row) {
             case RowUserUserAddress:
-                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userAddress];
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userAddress];
                 break;
             case RowUserUserPublicKey:
-                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.publicKey];
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.publicKey];
                 break;
             case RowUserUserNospam:
             {
-                [weakSelf addToSheet:sheet viewButtonWithValue:@(weakSelf.manager.user.nospam)];
                 [weakSelf addToSheet:sheet copyButtonWithValue:@(weakSelf.manager.user.nospam)];
                 [weakSelf addToSheet:sheet textEditButtonWithValue:@(weakSelf.manager.user.nospam) block:^(NSString *string) {
                     weakSelf.manager.user.nospam = (OCTToxNoSpam)[string integerValue];
@@ -257,7 +263,6 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             }
             case RowUserUserName:
             {
-                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userName];
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userName];
                 [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userName block:^(NSString *string) {
                     NSError *error;
@@ -268,7 +273,6 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             }
             case RowUserUserStatusMessage:
             {
-                [weakSelf addToSheet:sheet viewButtonWithValue:weakSelf.manager.user.userStatusMessage];
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userStatusMessage];
                 [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userStatusMessage block:^(NSString *string) {
                     NSError *error;
@@ -293,15 +297,6 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     block(sheet);
 
     [sheet showInView:self.view];
-}
-
-- (void)addToSheet:(UIActionSheet *)sheet viewButtonWithValue:(id)value
-{
-    [sheet bk_addButtonWithTitle:@"View" handler:^{
-        UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:nil message:[self stringFromValue:value]];
-        [alert bk_setCancelButtonWithTitle:@"OK" handler:nil];
-        [alert show];
-    }];
 }
 
 - (void)addToSheet:(UIActionSheet *)sheet copyButtonWithValue:(id)value
