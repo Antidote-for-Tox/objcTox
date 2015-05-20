@@ -195,7 +195,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (NSString *)userAddress
 {
-    const NSUInteger length = kOCTToxAddressLength;
+    const NSUInteger length = TOX_ADDRESS_SIZE;
     uint8_t *cAddress = malloc(length);
 
     tox_self_get_address(self.tox, cAddress);
@@ -215,11 +215,11 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (NSString *)publicKey
 {
-    uint8_t *cPublicKey = malloc(kOCTToxPublicKeyLength);
+    uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
     tox_self_get_public_key(self.tox, cPublicKey);
 
-    NSString *publicKey = [self binToHexString:cPublicKey length:kOCTToxPublicKeyLength];
+    NSString *publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     free(cPublicKey);
 
     return publicKey;
@@ -227,11 +227,11 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (NSString *)secretKey
 {
-    uint8_t *cSecretKey = malloc(kOCTToxSecretKeyLength);
+    uint8_t *cSecretKey = malloc(TOX_SECRET_KEY_SIZE);
 
     tox_self_get_secret_key(self.tox, cSecretKey);
 
-    NSString *secretKey = [self binToHexString:cSecretKey length:kOCTToxPublicKeyLength];
+    NSString *secretKey = [self binToHexString:cSecretKey length:TOX_SECRET_KEY_SIZE];
     free(cSecretKey);
 
     return secretKey;
@@ -397,7 +397,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 {
     DDLogVerbose(@"%@: get public key from friend number %d", self, friendNumber);
 
-    uint8_t *cPublicKey = malloc(kOCTToxPublicKeyLength);
+    uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
     TOX_ERR_FRIEND_GET_PUBLIC_KEY cError;
 
@@ -406,7 +406,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *publicKey = nil;
 
     if (result) {
-        publicKey = [self binToHexString:cPublicKey length:kOCTToxPublicKeyLength];
+        publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
         free(cPublicKey);
     }
 
@@ -1464,7 +1464,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
 {
-    NSMutableString *string = [NSMutableString stringWithCapacity:length * 2];
+    NSMutableString *string = [NSMutableString stringWithCapacity:length];
 
     for (NSUInteger idx = 0; idx < length; ++idx) {
         [string appendFormat:@"%02X", bin[idx]];
@@ -1603,7 +1603,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:kOCTToxPublicKeyLength];
+    NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
