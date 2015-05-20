@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 };
 
 typedef NS_ENUM(NSUInteger, RowUser) {
+    RowUserUserConnectionStatus,
     RowUserUserAddress,
     RowUserUserPublicKey,
     RowUserUserNospam,
@@ -31,7 +32,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     RowUserUserStatusMessage,
 };
 
-@interface OCTMainDemoViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface OCTMainDemoViewController () <UITableViewDelegate, UITableViewDataSource,
+    OCTSubmanagerUserDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) OCTManager *manager;
@@ -56,8 +58,10 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     }
 
     _manager = manager;
+    _manager.user.delegate = self;
 
     _userData = @[
+        @(RowUserUserConnectionStatus),
         @(RowUserUserAddress),
         @(RowUserUserPublicKey),
         @(RowUserUserNospam),
@@ -174,6 +178,13 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     }
 }
 
+#pragma mark -  OCTSubmanagerUserDelegate
+
+- (void)OCTSubmanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
+{
+    [self.tableView reloadData];
+}
+
 #pragma mark -  Private
 
 - (void)bootstrap
@@ -217,6 +228,10 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     RowUser row = indexPath.row;
 
     switch(row) {
+        case RowUserUserConnectionStatus:
+            cell.textLabel.text = [NSString stringWithFormat:@"connectionStatus: %@",
+                                      [self stringFromConnectionStatus:self.manager.user.connectionStatus]];
+            break;
         case RowUserUserAddress:
             cell.textLabel.text = [NSString stringWithFormat:@"userAddress: %@", self.manager.user.userAddress];
             break;
@@ -304,6 +319,9 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
     [self showActionSheet:^(UIActionSheet *sheet) {
         switch(row) {
+            case RowUserUserConnectionStatus:
+                // nop
+                break;
             case RowUserUserAddress:
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userAddress];
                 break;

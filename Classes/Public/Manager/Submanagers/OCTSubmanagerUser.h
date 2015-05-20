@@ -9,7 +9,19 @@
 #import <Foundation/Foundation.h>
 #import "OCTToxConstants.h"
 
+@class OCTSubmanagerUser;
+@protocol OCTSubmanagerUserDelegate <NSObject>
+- (void)OCTSubmanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
+@end
+
 @interface OCTSubmanagerUser : NSObject
+
+@property (weak, nonatomic) id<OCTSubmanagerUserDelegate> delegate;
+
+/**
+ * Indicates if client is connected to the DHT.
+ */
+@property (assign, nonatomic, readonly) OCTToxConnectionStatus connectionStatus;
 
 /**
  * Client's address.

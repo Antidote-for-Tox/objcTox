@@ -19,6 +19,11 @@
 
 #pragma mark -  Properties
 
+- (OCTToxConnectionStatus)connectionStatus
+{
+    return [self.dataSource managerGetTox].connectionStatus;
+}
+
 - (NSString *)userAddress
 {
     return [self.dataSource managerGetTox].userAddress;
@@ -69,6 +74,13 @@
 - (NSString *)userStatusMessage
 {
     return [[self.dataSource managerGetTox] userStatusMessage];
+}
+
+#pragma mark -  OCTToxDelegate
+
+- (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)connectionStatus
+{
+    [self.delegate OCTSubmanagerUser:self connectionStatusUpdate:connectionStatus];
 }
 
 @end

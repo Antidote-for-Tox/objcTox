@@ -55,6 +55,7 @@
 
     _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
     _tox.delegate = self;
+    [_tox start];
 
     if (! savedData) {
         [self saveTox:nil];
@@ -80,6 +81,11 @@
     _avatars = avatars;
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self.tox stop];
 }
 
 #pragma mark -  Public
@@ -134,6 +140,17 @@
     NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
 
     NSParameterAssert(configuration.options);
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    id submanager = [self forwardingTargetForSelector:aSelector];
+
+    if (submanager) {
+        return YES;
+    }
+
+    return [super respondsToSelector:aSelector];
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector

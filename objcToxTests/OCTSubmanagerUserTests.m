@@ -45,6 +45,12 @@
     [super tearDown];
 }
 
+- (void)testConnectionStatus
+{
+    OCMStub([self.tox connectionStatus]).andReturn(OCTToxConnectionStatusTCP);
+    XCTAssertEqual([self.submanager connectionStatus], OCTToxConnectionStatusTCP);
+}
+
 - (void)testUserAddress
 {
     OCMStub([self.tox userAddress]).andReturn(@"address");
