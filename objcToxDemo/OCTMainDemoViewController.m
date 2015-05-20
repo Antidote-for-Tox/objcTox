@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeUser = 0,
     SectionTypeFriends,
     SectionTypeFriendRequests,
+    SectionTypeChats,
     SectionTypeCount,
 };
 
@@ -38,6 +39,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 @property (strong, nonatomic) NSArray *userData;
 @property (strong, nonatomic) OCTFriendsContainer *friendsContainer;
 @property (strong, nonatomic) OCTArray *allFriendRequests;
+@property (strong, nonatomic) OCTArray *allChats;
 
 @end
 
@@ -66,6 +68,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
 
     _friendsContainer = self.manager.friends.friendsContainer;
     _allFriendRequests = self.manager.friends.allFriendRequests;
+    _allChats = self.manager.chats.allChats;
 
     return self;
 }
@@ -101,6 +104,7 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             break;
         case SectionTypeFriends:
         case SectionTypeFriendRequests:
+        case SectionTypeChats:
         case SectionTypeCount:
             // nop
             break;
@@ -125,6 +129,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             return self.friendsContainer.friendsCount;
         case SectionTypeFriendRequests:
             return self.allFriendRequests.count;
+        case SectionTypeChats:
+            return self.allChats.count;
         case SectionTypeCount:
             return 0;
     }
@@ -141,6 +147,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             return @"Friends";
         case SectionTypeFriendRequests:
             return @"FriendRequests";
+        case SectionTypeChats:
+            return @"Chats";
         case SectionTypeCount:
             return nil;
     }
@@ -157,6 +165,8 @@ typedef NS_ENUM(NSUInteger, RowUser) {
            return [self friendCellAtIndexPath:indexPath];
         case SectionTypeFriendRequests:
            return [self friendRequestCellAtIndexPath:indexPath];
+        case SectionTypeChats:
+           return [self chatCellAtIndexPath:indexPath];
         case SectionTypeCount:
             return nil;
     }
@@ -216,7 +226,24 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
     OCTFriend *friend = [self.friendsContainer friendAtIndex:indexPath.row];
-    cell.textLabel.text = friend.name ?: friend.publicKey;
+    cell.textLabel.text = [NSString stringWithFormat:@"Friend\n"
+        @"friendNumber %u\n"
+        @"publicKey %@\n"
+        @"name %@\n"
+        @"statusMessage %@\n"
+        @"status %@\n"
+        @"connectionStatus %@\n"
+        @"lastSeenOnline %@\n"
+        @"isTyping %d",
+        friend.friendNumber,
+        friend.publicKey,
+        friend.name,
+        friend.statusMessage,
+        [self stringFromUserStatus:friend.status],
+        [self stringFromConnectionStatus:friend.connectionStatus],
+        friend.lastSeenOnline,
+        friend.isTyping];
+
     return cell;
 }
 
@@ -225,7 +252,29 @@ typedef NS_ENUM(NSUInteger, RowUser) {
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
     OCTFriendRequest *request = [self.allFriendRequests objectAtIndex:indexPath.row];
-    cell.textLabel.text = request.publicKey;
+    cell.textLabel.text = [NSString stringWithFormat:@"Friend request\n"
+        @"publicKey %@\n"
+        @"message %@\n",
+        request.publicKey, request.message];
+
+    return cell;
+}
+
+- (UITableViewCell *)chatCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self cellForIndexPath:indexPath];
+
+    OCTChat *chat = [self.allChats objectAtIndex:indexPath.row];
+
+    cell.textLabel.text = [NSString stringWithFormat:@"Chat\n"
+        @"uniqueIdentifier %@\n"
+        @"friends %@\n"
+        @"lastMessage %@\n"
+        @"enteredText %@\n"
+        @"lastReadDate %@\n"
+        @"hasUnreadMessages %d",
+        chat.uniqueIdentifier, chat.friends, chat.lastMessage, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages]];
+
     return cell;
 }
 
@@ -375,6 +424,18 @@ typedef NS_ENUM(NSUInteger, RowUser) {
             return @"Away";
         case OCTToxUserStatusBusy:
             return @"Busy";
+    }
+}
+
+- (NSString *)stringFromConnectionStatus:(OCTToxConnectionStatus)status
+{
+    switch(status) {
+        case OCTToxConnectionStatusNone:
+            return @"None";
+        case OCTToxConnectionStatusTCP:
+            return @"TCP";
+        case OCTToxConnectionStatusUDP:
+            return @"UDP";
     }
 }
 
