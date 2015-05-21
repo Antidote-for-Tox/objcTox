@@ -13,8 +13,3 @@ target :objcToxDemo do
     pod 'Masonry', '~> 0.6.1'
     pod 'BlocksKit', '~> 2.2.5'
 end
-
-post_install do |installer|
-    puts 'Patching libopus'
-    %x(git apply libopus.patch)
-end
