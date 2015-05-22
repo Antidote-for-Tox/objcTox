@@ -70,8 +70,6 @@
 		9C0275181B0C9BB00059A663 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275171B0C9BB00059A663 /* AppDelegate.m */; };
 		9C0275201B0C9BB00059A663 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C02751F1B0C9BB00059A663 /* Images.xcassets */; };
 		9C0275231B0C9BB00059A663 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9C0275211B0C9BB00059A663 /* LaunchScreen.xib */; };
-		9C0275381B0C9D280059A663 /* OCTStartDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */; };
-		9C02753B1B0CAEB80059A663 /* OCTMainDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C02753A1B0CAEB80059A663 /* OCTMainDemoViewController.m */; };
 		9C02755C1B0CAFB60059A663 /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF11AE04D1300CF7498 /* OCTManagerConstants.m */; };
 		9C02755D1B0CAFB60059A663 /* OCTDefaultFileStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DF71ADF1708000C38C2 /* OCTDefaultFileStorage.m */; };
 		9C02755E1B0CAFB60059A663 /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DF81ADF1708000C38C2 /* OCTDefaultSettingsStorage.m */; };
@@ -105,6 +103,11 @@
 		9C02757A1B0CAFB60059A663 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E071ADF1708000C38C2 /* OCTToxConstants.m */; };
 		9C02757B1B0CAFB60059A663 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9E081ADF1708000C38C2 /* OCTToxOptions.m */; };
 		9C02757C1B0CAFD80059A663 /* OCTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 115B9DFF1ADF1708000C38C2 /* OCTManager.m */; };
+		9C02757F1B0F676B0059A663 /* OCTUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C02757E1B0F676B0059A663 /* OCTUserViewController.m */; };
+		9C0275831B0F677F0059A663 /* OCTTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275821B0F677F0059A663 /* OCTTableViewController.m */; };
+		9C0275861B0F678B0059A663 /* OCTFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275851B0F678B0059A663 /* OCTFriendsViewController.m */; };
+		9C0275891B0F67980059A663 /* OCTChatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275881B0F67980059A663 /* OCTChatsViewController.m */; };
+		9C02758C1B0F6DDE0059A663 /* OCTStartDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C02758B1B0F6DDE0059A663 /* OCTStartDemoViewController.m */; };
 		D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B94B3F9DF31C01ECA64A84 /* libPods-objcToxTests.a */; };
 /* End PBXBuildFile section */
 
@@ -228,10 +231,16 @@
 		9C0275171B0C9BB00059A663 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		9C02751F1B0C9BB00059A663 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9C0275221B0C9BB00059A663 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		9C0275361B0C9D280059A663 /* OCTStartDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTStartDemoViewController.h; sourceTree = "<group>"; };
-		9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTStartDemoViewController.m; sourceTree = "<group>"; };
-		9C0275391B0CAEB80059A663 /* OCTMainDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTMainDemoViewController.h; sourceTree = "<group>"; };
-		9C02753A1B0CAEB80059A663 /* OCTMainDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTMainDemoViewController.m; sourceTree = "<group>"; };
+		9C02757D1B0F676B0059A663 /* OCTUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTUserViewController.h; sourceTree = "<group>"; };
+		9C02757E1B0F676B0059A663 /* OCTUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTUserViewController.m; sourceTree = "<group>"; };
+		9C0275811B0F677F0059A663 /* OCTTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTTableViewController.h; sourceTree = "<group>"; };
+		9C0275821B0F677F0059A663 /* OCTTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTTableViewController.m; sourceTree = "<group>"; };
+		9C0275841B0F678B0059A663 /* OCTFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendsViewController.h; sourceTree = "<group>"; };
+		9C0275851B0F678B0059A663 /* OCTFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendsViewController.m; sourceTree = "<group>"; };
+		9C0275871B0F67980059A663 /* OCTChatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTChatsViewController.h; sourceTree = "<group>"; };
+		9C0275881B0F67980059A663 /* OCTChatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTChatsViewController.m; sourceTree = "<group>"; };
+		9C02758A1B0F6DDE0059A663 /* OCTStartDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTStartDemoViewController.h; sourceTree = "<group>"; };
+		9C02758B1B0F6DDE0059A663 /* OCTStartDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTStartDemoViewController.m; sourceTree = "<group>"; };
 		A776AFD2CF355249FA2F4487 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21CC3334238090ECE69B229 /* Pods-objcToxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objcToxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -538,10 +547,16 @@
 			children = (
 				9C0275161B0C9BB00059A663 /* AppDelegate.h */,
 				9C0275171B0C9BB00059A663 /* AppDelegate.m */,
-				9C0275361B0C9D280059A663 /* OCTStartDemoViewController.h */,
-				9C0275371B0C9D280059A663 /* OCTStartDemoViewController.m */,
-				9C0275391B0CAEB80059A663 /* OCTMainDemoViewController.h */,
-				9C02753A1B0CAEB80059A663 /* OCTMainDemoViewController.m */,
+				9C02758A1B0F6DDE0059A663 /* OCTStartDemoViewController.h */,
+				9C02758B1B0F6DDE0059A663 /* OCTStartDemoViewController.m */,
+				9C0275811B0F677F0059A663 /* OCTTableViewController.h */,
+				9C0275821B0F677F0059A663 /* OCTTableViewController.m */,
+				9C02757D1B0F676B0059A663 /* OCTUserViewController.h */,
+				9C02757E1B0F676B0059A663 /* OCTUserViewController.m */,
+				9C0275841B0F678B0059A663 /* OCTFriendsViewController.h */,
+				9C0275851B0F678B0059A663 /* OCTFriendsViewController.m */,
+				9C0275871B0F67980059A663 /* OCTChatsViewController.h */,
+				9C0275881B0F67980059A663 /* OCTChatsViewController.m */,
 				9C02751F1B0C9BB00059A663 /* Images.xcassets */,
 				9C0275211B0C9BB00059A663 /* LaunchScreen.xib */,
 				9C0275121B0C9BB00059A663 /* Supporting Files */,
@@ -802,12 +817,12 @@
 				9C02756C1B0CAFB60059A663 /* OCTBasicContainer.m in Sources */,
 				9C0275181B0C9BB00059A663 /* AppDelegate.m in Sources */,
 				9C0275791B0CAFB60059A663 /* OCTTox.m in Sources */,
-				9C0275381B0C9D280059A663 /* OCTStartDemoViewController.m in Sources */,
 				9C02757A1B0CAFB60059A663 /* OCTToxConstants.m in Sources */,
 				9C02757B1B0CAFB60059A663 /* OCTToxOptions.m in Sources */,
 				9C0275641B0CAFB60059A663 /* OCTDBChat.m in Sources */,
 				9C0275781B0CAFB60059A663 /* OCTSubmanagerUser.m in Sources */,
 				9C0275751B0CAFB60059A663 /* OCTSubmanagerAvatars.m in Sources */,
+				9C0275891B0F67980059A663 /* OCTChatsViewController.m in Sources */,
 				9C0275741B0CAFB60059A663 /* OCTFriendsContainer.m in Sources */,
 				9C0275661B0CAFB60059A663 /* OCTDBFriendRequest.m in Sources */,
 				9C0275731B0CAFB60059A663 /* OCTSortDescriptor.m in Sources */,
@@ -816,6 +831,7 @@
 				9C0275701B0CAFB60059A663 /* OCTMessageAbstract.m in Sources */,
 				9C0275771B0CAFB60059A663 /* OCTSubmanagerChats.m in Sources */,
 				9C02755E1B0CAFB60059A663 /* OCTDefaultSettingsStorage.m in Sources */,
+				9C02758C1B0F6DDE0059A663 /* OCTStartDemoViewController.m in Sources */,
 				9C02755C1B0CAFB60059A663 /* OCTManagerConstants.m in Sources */,
 				9C0275691B0CAFB60059A663 /* OCTDBMessageFile.m in Sources */,
 				9C0275621B0CAFB60059A663 /* OCTConverterFriendRequest.m in Sources */,
@@ -825,8 +841,10 @@
 				9C0275721B0CAFB60059A663 /* OCTMessageText.m in Sources */,
 				9C0275681B0CAFB60059A663 /* OCTDBMessageAbstract.m in Sources */,
 				9C0275651B0CAFB60059A663 /* OCTDBFriend.m in Sources */,
-				9C02753B1B0CAEB80059A663 /* OCTMainDemoViewController.m in Sources */,
+				9C0275861B0F678B0059A663 /* OCTFriendsViewController.m in Sources */,
 				9C0275611B0CAFB60059A663 /* OCTConverterFriend.m in Sources */,
+				9C0275831B0F677F0059A663 /* OCTTableViewController.m in Sources */,
+				9C02757F1B0F676B0059A663 /* OCTUserViewController.m in Sources */,
 				9C0275151B0C9BB00059A663 /* main.m in Sources */,
 				9C02756F1B0CAFB60059A663 /* OCTFriendRequest.m in Sources */,
 				9C02756E1B0CAFB60059A663 /* OCTFriend.m in Sources */,
