@@ -68,25 +68,30 @@
 
 #pragma mark -  Public
 
-- (NSObject *)firstObject
+- (id)firstObject
 {
     RLMObject *object = [self.results firstObject];
 
     return object ? [self.converter objectFromRLMObject:object] : nil;
 }
 
-- (NSObject *)lastObject
+- (id)lastObject
 {
     RLMObject *object = [self.results lastObject];
 
     return object ? [self.converter objectFromRLMObject:object] : nil;
 }
 
-- (NSObject *)objectAtIndex:(NSUInteger)index
+- (id)objectAtIndex:(NSUInteger)index
 {
     RLMObject *object = [self.results objectAtIndex:index];
 
     return object ? [self.converter objectFromRLMObject:object] : nil;
+}
+
+- (id)objectAtIndexedSubscript:(NSUInteger)index
+{
+    return [self objectAtIndex:index];
 }
 
 - (OCTArray *)sortedObjectsUsingDescriptors:(NSArray *)array
@@ -105,14 +110,14 @@
     return [[OCTArray alloc] initWithRLMResults:results converter:self.converter];
 }
 
-- (void)enumerateObjectsUsingBlock:(void (^)(NSObject *obj, NSUInteger idx, BOOL *stop))block
+- (void)enumerateObjectsUsingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block
 {
     NSParameterAssert(block);
 
     BOOL stop = NO;
     for (NSUInteger index = 0; index < self.results.count; index++) {
         RLMObject *rlmObject = [self.results objectAtIndex:index];
-        NSObject *object = [self.converter objectFromRLMObject:rlmObject];
+        id object = [self.converter objectFromRLMObject:rlmObject];
 
         block(object, index, &stop);
 
