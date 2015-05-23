@@ -45,14 +45,14 @@
  *
  * @return The first object in array.
  */
-- (NSObject *)firstObject;
+- (id)firstObject;
 
 /**
  * Returns the last object in array. Returns nil if called on empty array.
  *
  * @return The last object in array.
  */
-- (NSObject *)lastObject;
+- (id)lastObject;
 
 /**
  * Returns object at specified index.
@@ -61,7 +61,16 @@
  *
  * @return Object at specified index.
  */
-- (NSObject *)objectAtIndex:(NSUInteger)index;
+- (id)objectAtIndex:(NSUInteger)index;
+
+/**
+ * Returns object at specified index.
+ *
+ * @param index Index of object to return.
+ *
+ * @return Object at specified index.
+ */
+- (id)objectAtIndexedSubscript:(NSUInteger)index;
 
 /**
  * Get a sorted OCTArray from existing sorted by NSArray of OCTSortDescriptor's.
@@ -78,6 +87,11 @@
  *
  * @param block Block to execute. You can set `stop` argument to YES to stop enumeration.
  */
-- (void)enumerateObjectsUsingBlock:(void (^)(NSObject *obj, NSUInteger idx, BOOL *stop))block;
+- (void)enumerateObjectsUsingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block;
+
+/**
+ * Returns a string that represents the contents of the receiving class.
+ */
+- (NSString *)description;
 
 @end

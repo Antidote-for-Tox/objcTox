@@ -17,9 +17,16 @@
 
 @implementation OCTMessageAbstract
 
+#pragma mark -  Public
+
 - (BOOL)isOutgoing
 {
     return (self.sender == nil);
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ with date %@", NSStringFromClass([self class]), self.date];
 }
 
 @end

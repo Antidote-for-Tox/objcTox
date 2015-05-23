@@ -22,6 +22,11 @@
     return NSStringFromClass([OCTMessageAbstract class]);
 }
 
+- (NSString *)dbObjectClassName
+{
+    return NSStringFromClass([OCTDBMessageAbstract class]);
+}
+
 - (NSObject *)objectFromRLMObject:(OCTDBMessageAbstract *)db
 {
     NSParameterAssert(db);

@@ -18,7 +18,7 @@
  *
  * @return YES if avatar was saved to path successfully, NO otherwise.
  */
-- (BOOL)setAvatar:(UIImage *)avatar error:(NSError **)error;
+// - (BOOL)setAvatar:(UIImage *)avatar error:(NSError **)error;
 
 /**
  * Returns avatar for current user. If you want just to check if user avatar exist, it would be better to use
@@ -28,13 +28,13 @@
  *
  * @return User avatar or nil if avatar isn't set.
  */
-- (UIImage *)avatarWithError:(NSError **)error;
+// - (UIImage *)avatarWithError:(NSError **)error;
 
 /**
  * Indicates if user has avatar.
  *
  * @return YES is avatar exists, NO otherwise.
  */
-- (BOOL)hasAvatar;
+// - (BOOL)hasAvatar;
 
 @end

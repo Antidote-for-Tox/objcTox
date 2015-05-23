@@ -17,6 +17,8 @@
 
 @implementation OCTSortDescriptor
 
+#pragma mark -  Class methods
+
 + (instancetype)sortDescriptorWithProperty:(NSString *)property ascending:(BOOL)ascending
 {
     NSParameterAssert(property);
@@ -26,6 +28,14 @@
     descriptor.ascending = ascending;
 
     return descriptor;
+}
+
+#pragma mark -  Public
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"OCTSortDescriptor with property %@, ascending %@",
+        self.property, (self.ascending ? @"YES" : @"NO")];
 }
 
 @end

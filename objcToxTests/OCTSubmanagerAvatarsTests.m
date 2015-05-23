@@ -16,7 +16,7 @@
 
 static NSString *const kFilePath = @"/path/For/Avatars/";
 static NSString *const kuserAvatarFileName = @"user_avatar";
-static NSInteger kMaxDataLength = 16384;
+//static NSInteger kMaxDataLength = 16384;
 
 @interface OCTSubmanagerAvatars(Tests)
 

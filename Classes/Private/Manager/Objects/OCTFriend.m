@@ -23,4 +23,11 @@
 
 @implementation OCTFriend
 
+#pragma mark -  Public
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"OCTFriend with friendNumber %u, name %@", self.friendNumber, self.name];
+}
+
 @end

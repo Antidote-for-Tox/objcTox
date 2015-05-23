@@ -9,7 +9,13 @@
 #import <Masonry/Masonry.h>
 
 #import "OCTStartDemoViewController.h"
-#import "OCTMainDemoViewController.h"
+#import "OCTUserViewController.h"
+#import "OCTFriendsViewController.h"
+#import "OCTChatsViewController.h"
+#import "AppDelegate.h"
+
+#define NAVIGATION_WITH_CONTROLLER(class) \
+    [[UINavigationController alloc] initWithRootViewController:[[class alloc] initWithManager:manager]]
 
 static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 
@@ -47,8 +53,17 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
-    OCTMainDemoViewController *vc = [[OCTMainDemoViewController alloc] initWithManager:manager];
-    [self.navigationController pushViewController:vc animated:YES];
+    [self bootstrap:manager];
+
+    UITabBarController *tabBar = [UITabBarController new];
+    tabBar.viewControllers = @[
+        NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
+        NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
+        NAVIGATION_WITH_CONTROLLER(OCTChatsViewController),
+    ];
+
+    AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.window.rootViewController = tabBar;
 }
 
 #pragma mark -  UITableViewDataSource
@@ -61,7 +76,7 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kLoginIdentifier forIndexPath:indexPath];
-    cell.textLabel.text = @"Login";
+    cell.textLabel.text = @"Bootstrap";
     cell.textLabel.textColor = [UIColor blueColor];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
     cell.textLabel.font = [UIFont boldSystemFontOfSize:20.0];
@@ -76,6 +91,24 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
+}
+
+- (void)bootstrap:(OCTManager *)manager
+{
+    [manager bootstrapFromHost:@"192.254.75.102"
+                          port:33445
+                     publicKey:@"951C88B7E75C867418ACDB5D273821372BB5BD652740BCDF623A4FA293E75D2F"
+                         error:nil];
+
+    [manager bootstrapFromHost:@"178.62.125.224"
+                          port:33445
+                     publicKey:@"10B20C49ACBD968D7C80F2E8438F92EA51F189F4E70CFBBB2C2C8C799E97F03E"
+                         error:nil];
+
+    [manager bootstrapFromHost:@"192.210.149.121 "
+                          port:33445
+                     publicKey:@"F404ABAA1C99A9D37D61AB54898F56793E1DEF8BD46B1038B9D822E8460FAB67"
+                         error:nil];
 }
 
 @end

@@ -19,6 +19,11 @@
     return NSStringFromClass([OCTChat class]);
 }
 
+- (NSString *)dbObjectClassName
+{
+    return NSStringFromClass([OCTDBChat class]);
+}
+
 - (NSObject *)objectFromRLMObject:(OCTDBChat *)db
 {
     OCTChat *chat = [OCTChat new];

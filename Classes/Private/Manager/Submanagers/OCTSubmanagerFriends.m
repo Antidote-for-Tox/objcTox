@@ -67,9 +67,7 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
 
     OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
@@ -89,9 +87,9 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
+
+    [[self.dataSource managerGetDBManager] removeFriendRequestWithPublicKey:friendRequest.publicKey];
 
     OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
@@ -120,9 +118,7 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
 
     [self.friendsContainer removeFriend:friend];
 
@@ -173,6 +169,7 @@
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.name = name;
     }];
+    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(OCTToxFriendNumber)friendNumber
@@ -180,6 +177,7 @@
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.statusMessage = statusMessage;
     }];
+    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(OCTToxFriendNumber)friendNumber
@@ -187,6 +185,7 @@
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.status = status;
     }];
+    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber

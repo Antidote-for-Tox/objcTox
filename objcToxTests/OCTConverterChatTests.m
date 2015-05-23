@@ -41,6 +41,11 @@
     XCTAssertEqualObjects([self.converter objectClassName], @"OCTChat");
 }
 
+- (void)testDBObjectClassName
+{
+    XCTAssertEqualObjects([self.converter dbObjectClassName], @"OCTDBChat");
+}
+
 - (void)testObjectFromRLMObject
 {
     OCTDBFriend *dbFriend0 = [OCTDBFriend new];

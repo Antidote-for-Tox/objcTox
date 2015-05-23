@@ -115,7 +115,6 @@
     self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
 
     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
     BOOL result = [self.submanager sendFriendRequestToAddress:@"address" message:@"message" error:&error];
@@ -127,7 +126,7 @@
     XCTAssertEqual(friend, theFriend);
 
     OCMVerify([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg setTo:error]]);
-    OCMVerify([self.dataSource managerSaveTox:[OCMArg setTo:error]]);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testSendFriendRequestToAddressFailure1
@@ -138,27 +137,6 @@
     OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(kOCTToxFriendNumberFailure);
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-
-    BOOL result = [self.submanager sendFriendRequestToAddress:@"address" message:@"message" error:&error];
-
-    XCTAssertFalse(result);
-}
-
-- (void)testSendFriendRequestToAddressFailure2
-{
-    NSError *error;
-
-    id tox = OCMClassMock([OCTTox class]);
-    OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(7);
-
-    id friend = OCMClassMock([OCTFriend class]);
-
-    id converterFriend = OCMClassMock([OCTConverterFriend class]);
-    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
-    self.submanager.converterFriend = converterFriend;
-
-    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
 
     BOOL result = [self.submanager sendFriendRequestToAddress:@"address" message:@"message" error:&error];
 
@@ -179,7 +157,6 @@
     self.submanager.converterFriend = converterFriend;
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
 
     id request = OCMClassMock([OCTFriendRequest class]);
     OCMStub([request publicKey]).andReturn(@"address");
@@ -194,7 +171,7 @@
     XCTAssertEqual(friend, theFriend);
 
     OCMVerify([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg setTo:error]]);
-    OCMVerify([self.dataSource managerSaveTox:[OCMArg setTo:error]]);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testApproveFriendRequestFailure1
@@ -205,30 +182,6 @@
     OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(kOCTToxFriendNumberFailure);
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-
-    id request = OCMClassMock([OCTFriendRequest class]);
-    OCMStub([request publicKey]).andReturn(@"address");
-
-    BOOL result = [self.submanager approveFriendRequest:request error:&error];
-
-    XCTAssertFalse(result);
-}
-
-- (void)testApproveFriendRequestFailure2
-{
-    NSError *error;
-
-    id tox = OCMClassMock([OCTTox class]);
-    OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(7);
-
-    id friend = OCMClassMock([OCTFriend class]);
-
-    id converterFriend = OCMClassMock([OCTConverterFriend class]);
-    OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
-    self.submanager.converterFriend = converterFriend;
-
-    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
 
     id request = OCMClassMock([OCTFriendRequest class]);
     OCMStub([request publicKey]).andReturn(@"address");
@@ -259,7 +212,6 @@
     OCMStub([tox deleteFriendWithFriendNumber:7 error:[OCMArg anyObjectRef]]).andReturn(YES);
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(YES);
 
     OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
@@ -271,7 +223,7 @@
     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 0);
 
     OCMVerify([tox deleteFriendWithFriendNumber:7 error:[OCMArg setTo:error]]);
-    OCMVerify([self.dataSource managerSaveTox:[OCMArg setTo:error]]);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testRemoveFriendFailure1
@@ -282,26 +234,6 @@
     OCMStub([tox deleteFriendWithFriendNumber:7 error:[OCMArg anyObjectRef]]).andReturn(NO);
 
     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-
-    OCTFriend *friend = OCMClassMock([OCTFriend class]);
-    OCMStub([friend friendNumber]).andReturn(7);
-
-    self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-    BOOL result = [self.submanager removeFriend:friend error:&error];
-
-    XCTAssertFalse(result);
-    XCTAssertEqual([self.submanager.friendsContainer friendAtIndex:0], friend);
-}
-
-- (void)testRemoveFriendFailure2
-{
-    NSError *error;
-
-    id tox = OCMClassMock([OCTTox class]);
-    OCMStub([tox deleteFriendWithFriendNumber:7 error:[OCMArg anyObjectRef]]).andReturn(YES);
-
-    OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-    OCMStub([self.dataSource managerSaveTox:[OCMArg anyObjectRef]]).andReturn(NO);
 
     OCTFriend *friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(7);
@@ -346,6 +278,7 @@
     [self.submanager tox:nil friendNameUpdate:@"name" friendNumber:7];
 
     XCTAssertEqualObjects(friend.name, @"name");
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendStatusMessageUpdate
@@ -357,6 +290,7 @@
     [self.submanager tox:nil friendStatusMessageUpdate:@"statusMessage" friendNumber:7];
 
     XCTAssertEqualObjects(friend.statusMessage, @"statusMessage");
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendStatusUpdate
@@ -368,6 +302,7 @@
     [self.submanager tox:nil friendStatusUpdate:OCTToxUserStatusBusy friendNumber:7];
 
     XCTAssertEqual(friend.status, OCTToxUserStatusBusy);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendIsTypingUpdate

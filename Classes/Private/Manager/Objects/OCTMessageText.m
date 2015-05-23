@@ -18,4 +18,11 @@
 
 @implementation OCTMessageText
 
+- (NSString *)description
+{
+    NSString *description = [super description];
+
+    return [description stringByAppendingFormat:@"\ntext = %@", self.text];
+}
+
 @end

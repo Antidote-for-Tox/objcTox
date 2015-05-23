@@ -27,8 +27,7 @@
     [DDLog addLogger:[DDASLLogger sharedInstance]];
     [DDLog addLogger:[DDTTYLogger sharedInstance]];
 
-    OCTStartDemoViewController *controller = [OCTStartDemoViewController new];
-    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:controller];
+    self.window.rootViewController = [OCTStartDemoViewController new];
 
     [self.window makeKeyAndVisible];
 

@@ -34,6 +34,8 @@
     return [self.dataSource managerGetTox].publicKey;
 }
 
+#pragma mark -  Public
+
 - (OCTToxNoSpam)nospam
 {
     return [self.dataSource managerGetTox].nospam;
@@ -42,6 +44,7 @@
 - (void)setNospam:(OCTToxNoSpam)nospam
 {
     [self.dataSource managerGetTox].nospam = nospam;
+    [self.dataSource managerSaveTox];
 }
 
 - (OCTToxUserStatus)userStatus
@@ -52,13 +55,17 @@
 - (void)setUserStatus:(OCTToxUserStatus)userStatus
 {
     [self.dataSource managerGetTox].userStatus = userStatus;
+    [self.dataSource managerSaveTox];
 }
-
-#pragma mark -  Public
 
 - (BOOL)setUserName:(NSString *)name error:(NSError **)error
 {
-    return [[self.dataSource managerGetTox] setNickname:name error:error];
+    if ([[self.dataSource managerGetTox] setNickname:name error:error]) {
+        [self.dataSource managerSaveTox];
+        return YES;
+    }
+
+    return NO;
 }
 
 - (NSString *)userName
@@ -68,7 +75,12 @@
 
 - (BOOL)setUserStatusMessage:(NSString *)statusMessage error:(NSError **)error
 {
-    return [[self.dataSource managerGetTox] setUserStatusMessage:statusMessage error:error];
+    if ([[self.dataSource managerGetTox] setUserStatusMessage:statusMessage error:error]) {
+        [self.dataSource managerSaveTox];
+        return YES;
+    }
+
+    return NO;
 }
 
 - (NSString *)userStatusMessage

@@ -42,6 +42,11 @@
     return NSStringFromClass([OCTFriend class]);
 }
 
+- (NSString *)dbObjectClassName
+{
+    return NSStringFromClass([OCTDBFriend class]);
+}
+
 - (NSObject *)objectFromRLMObject:(OCTDBFriend *)dbFriend
 {
     NSParameterAssert(dbFriend);

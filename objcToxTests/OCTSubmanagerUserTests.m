@@ -70,6 +70,7 @@
 
     self.submanager.nospam = 7;
     OCMVerify([self.tox setNospam:7]);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testUserStatus
@@ -79,6 +80,7 @@
 
     self.submanager.userStatus = 7;
     OCMVerify([self.tox setUserStatus:7]);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testUserName
@@ -87,12 +89,13 @@
     XCTAssertEqualObjects([self.submanager userName], @"userName");
 
     NSError *error, *error2;
-    OCMExpect([self.tox setNickname:@"name" error:[OCMArg setTo:error2]]);
+    OCMExpect([self.tox setNickname:@"name" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     [self.submanager setUserName:@"name" error:&error];
 
     XCTAssertEqual(error, error2);
     OCMVerifyAll(self.tox);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testUserStatusMessage
@@ -101,12 +104,13 @@
     XCTAssertEqualObjects([self.submanager userStatusMessage], @"userStatusMessage");
 
     NSError *error, *error2;
-    OCMExpect([self.tox setUserStatusMessage:@"message" error:[OCMArg setTo:error2]]);
+    OCMExpect([self.tox setUserStatusMessage:@"message" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     [self.submanager setUserStatusMessage:@"message" error:&error];
 
     XCTAssertEqual(error, error2);
     OCMVerifyAll(self.tox);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 @end
