@@ -148,6 +148,17 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
     return results;
 }
 
+- (RLMResults *)chatsWithPredicate:(NSPredicate *)predicate
+{
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBChat objectsInRealm:self.realm withPredicate:predicate];
+    });
+
+    return results;
+}
+
 - (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber
 {
     OCTDBFriend *friend = [self getOrCreateFriendWithFriendNumber:friendNumber];

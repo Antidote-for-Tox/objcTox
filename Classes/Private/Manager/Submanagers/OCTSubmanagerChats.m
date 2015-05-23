@@ -54,6 +54,14 @@
     return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat];
 }
 
+- (OCTArray *)allChatsWithUnreadMessages
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastMessage.dateInterval > lastReadDateInterval"];
+    RLMResults *results = [[self.dataSource managerGetDBManager] chatsWithPredicate:predicate];
+
+    return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat];
+}
+
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend
 {
     NSParameterAssert(friend);
