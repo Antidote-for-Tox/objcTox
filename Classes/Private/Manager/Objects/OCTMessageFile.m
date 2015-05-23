@@ -26,7 +26,7 @@
 {
     NSString *description = [super description];
 
-    return [description stringByAppendingFormat:@"\fileName = %@\nfileSize = %llu", self.fileName, self.fileSize];
+    return [description stringByAppendingFormat:@"\nfileName = %@\nfileSize = %llu", self.fileName, self.fileSize];
 }
 
 @end
