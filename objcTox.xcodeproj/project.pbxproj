@@ -67,6 +67,7 @@
 		11B5BD4F1AEC19340046C714 /* OCTChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B5BD4E1AEC19340046C714 /* OCTChatTests.m */; };
 		11FA3DF41AE04DBE00CF7498 /* OCTBasicContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA3DF31AE04DBE00CF7498 /* OCTBasicContainerTests.m */; };
 		78D1F6EB0D0B990E8A3F620E /* libPods-objcToxDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E114BC32FD71CDC1282E14A2 /* libPods-objcToxDemo.a */; };
+		87637DF078A3F98BD8C45DF9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A776AFD2CF355249FA2F4487 /* libPods.a */; };
 		9C0275151B0C9BB00059A663 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275141B0C9BB00059A663 /* main.m */; };
 		9C0275181B0C9BB00059A663 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C0275171B0C9BB00059A663 /* AppDelegate.m */; };
 		9C0275201B0C9BB00059A663 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C02751F1B0C9BB00059A663 /* Images.xcassets */; };
@@ -258,6 +259,7 @@
 				1137B8051B0D35DA00342DA0 /* libc++.dylib in Frameworks */,
 				1137B8041B0D35BC00342DA0 /* Realm.framework in Frameworks */,
 				D5B2AED9422B65E421D700E0 /* libPods-objcToxTests.a in Frameworks */,
+				87637DF078A3F98BD8C45DF9 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

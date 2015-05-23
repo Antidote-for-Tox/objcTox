@@ -2,6 +2,9 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '7.0'
 
+# ignore all warnings from all pods
+inhibit_all_warnings!
+
 pod 'toxcore-ios', '~> 0.1.5'
 pod 'CocoaLumberjack', '~> 1.9.2'
 
