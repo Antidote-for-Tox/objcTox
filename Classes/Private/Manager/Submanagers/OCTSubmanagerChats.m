@@ -113,7 +113,7 @@
 
     OCTDBMessageAbstract *db = [dbManager addMessageWithText:text type:type chat:dbChat sender:nil messageId:messageId];
     [dbManager updateDBObjectInBlock:^{
-        chat.lastMessage = db;
+        dbChat.lastMessage = db;
     } objectClass:[OCTDBChat class]];
 
     return (OCTMessageText *)[self.converterChat.converterMessage objectFromRLMObject:db];

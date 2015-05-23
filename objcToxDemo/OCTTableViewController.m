@@ -14,7 +14,7 @@
 
 static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier";
 
-@interface OCTTableViewController ()
+@interface OCTTableViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) OCTManager *manager;
