@@ -16,4 +16,13 @@
 
 @implementation OCTMessageCall
 
+#pragma mark -  Public
+
+- (NSString *)description
+{
+    NSString *description = [super description];
+
+    return [description stringByAppendingFormat:@"\ncallDuration %f", self.callDuration];
+}
+
 @end
