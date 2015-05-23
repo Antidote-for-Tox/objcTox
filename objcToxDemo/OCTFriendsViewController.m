@@ -6,6 +6,10 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import <BlocksKit/UIActionSheet+BlocksKit.h>
+#import <BlocksKit/UIAlertView+BlocksKit.h>
+#import <BlocksKit/UIBarButtonItem+BlocksKit.h>
+
 #import "OCTFriendsViewController.h"
 
 typedef NS_ENUM(NSUInteger, SectionType) {
@@ -14,7 +18,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeCount,
 };
 
-@interface OCTFriendsViewController ()
+@interface OCTFriendsViewController () <OCTArrayDelegate>
 
 @property (strong, nonatomic) OCTFriendsContainer *friendsContainer;
 @property (strong, nonatomic) OCTArray *allFriendRequests;
@@ -35,16 +39,44 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     _friendsContainer = self.manager.friends.friendsContainer;
     _allFriendRequests = self.manager.friends.allFriendRequests;
+    _allFriendRequests.delegate = self;
 
     self.title = @"Friends";
 
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    __weak OCTFriendsViewController *weakSelf = self;
+
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+        bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
+            [weakSelf sendFriendRequest];
+        }];
+}
+
 #pragma mark -  UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    SectionType type = indexPath.section;
+
+    switch(type) {
+        case SectionTypeFriends:
+            [self didSelectFriend:[self.friendsContainer friendAtIndex:indexPath.row]];
+            break;
+        case SectionTypeFriendRequests:
+            [self didSelectFriendRequest:self.allFriendRequests[indexPath.row]];
+            break;
+        case SectionTypeCount:
+            // nop
+            break;
+    }
 }
 
 #pragma mark -  UITableViewDataSource
@@ -96,6 +128,13 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     }
 }
 
+#pragma mark -  OCTArrayDelegate
+
+- (void)OCTArrayWasUpdated:(OCTArray *)array
+{
+    [self.tableView reloadData];
+}
+
 #pragma mark -  Private
 
 - (UITableViewCell *)friendCellAtIndexPath:(NSIndexPath *)indexPath
@@ -135,6 +174,58 @@ typedef NS_ENUM(NSUInteger, SectionType) {
         request.publicKey, request.message];
 
     return cell;
+}
+
+- (void)didSelectFriend:(OCTFriend *)friend
+{
+    __weak OCTFriendsViewController *weakSelf = self;
+
+    [self showActionSheet:^(UIActionSheet *sheet) {
+        [sheet bk_addButtonWithTitle:@"Create chat" handler:^{
+            [weakSelf.manager.chats getOrCreateChatWithFriend:friend];
+        }];
+
+        [sheet bk_addButtonWithTitle:@"Remove" handler:^{
+            [weakSelf.manager.friends removeFriend:friend error:nil];
+        }];
+    }];
+}
+
+- (void)didSelectFriendRequest:(OCTFriendRequest *)request
+{
+    __weak OCTFriendsViewController *weakSelf = self;
+
+    [self showActionSheet:^(UIActionSheet *sheet) {
+        [sheet bk_addButtonWithTitle:@"Add" handler:^{
+            [weakSelf.manager.friends approveFriendRequest:request error:nil];
+        }];
+
+        [sheet bk_addButtonWithTitle:@"Remove" handler:^{
+            [weakSelf.manager.friends removeFriendRequest:request];
+        }];
+    }];
+}
+
+- (void)sendFriendRequest
+{
+    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"Send friend request" message:nil];
+
+    alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+    UITextField *addressField = [alert textFieldAtIndex:0];
+    addressField.placeholder = @"Address";
+    UITextField *messageField = [alert textFieldAtIndex:1];
+    messageField.placeholder = @"Message";
+    messageField.secureTextEntry = NO;
+
+    __weak OCTFriendsViewController *weakSelf = self;
+    [alert bk_addButtonWithTitle:@"OK" handler:^{
+       [weakSelf.tableView reloadData];
+       [weakSelf.manager.friends sendFriendRequestToAddress:addressField.text message:messageField.text error:nil];
+    }];
+
+    [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
+
+    [alert show];
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import "OCTChatsViewController.h"
 
-@interface OCTChatsViewController ()
+@interface OCTChatsViewController () <OCTArrayDelegate>
 
 @property (strong, nonatomic) OCTArray *allChats;
 
@@ -27,6 +27,7 @@
     }
 
     _allChats = self.manager.chats.allChats;
+    _allChats.delegate = self;
 
     self.title = @"Chats";
 
@@ -37,6 +38,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark -  UITableViewDataSource
@@ -62,6 +64,13 @@
         chat.uniqueIdentifier, chat.friends, chat.lastMessage, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages]];
 
     return cell;
+}
+
+#pragma mark -  OCTArrayDelegate
+
+- (void)OCTArrayWasUpdated:(OCTArray *)array
+{
+    [self.tableView reloadData];
 }
 
 @end
