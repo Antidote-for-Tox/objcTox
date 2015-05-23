@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9C02750F1B0C9BB00059A663"
+               BlueprintIdentifier = "5A233AE085D4B3843C613AE977181F0B"
                BuildableName = "objcToxDemo.app"
                BlueprintName = "objcToxDemo"
                ReferencedContainer = "container:objcTox.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "11EDD45F1AA14B3F003A0823"
+               BlueprintIdentifier = "E80B4B2B978B1C5628E19745D0D167CC"
                BuildableName = "objcToxTests.xctest"
                BlueprintName = "objcToxTests"
                ReferencedContainer = "container:objcTox.xcodeproj">
@@ -42,7 +42,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9C02750F1B0C9BB00059A663"
+            BlueprintIdentifier = "5A233AE085D4B3843C613AE977181F0B"
             BuildableName = "objcToxDemo.app"
             BlueprintName = "objcToxDemo"
             ReferencedContainer = "container:objcTox.xcodeproj">
@@ -62,7 +62,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9C02750F1B0C9BB00059A663"
+            BlueprintIdentifier = "5A233AE085D4B3843C613AE977181F0B"
             BuildableName = "objcToxDemo.app"
             BlueprintName = "objcToxDemo"
             ReferencedContainer = "container:objcTox.xcodeproj">
@@ -81,7 +81,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9C02750F1B0C9BB00059A663"
+            BlueprintIdentifier = "5A233AE085D4B3843C613AE977181F0B"
             BuildableName = "objcToxDemo.app"
             BlueprintName = "objcToxDemo"
             ReferencedContainer = "container:objcTox.xcodeproj">
