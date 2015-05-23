@@ -89,4 +89,9 @@
  */
 - (void)enumerateObjectsUsingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block;
 
+/**
+ * Returns a string that represents the contents of the receiving class.
+ */
+- (NSString *)description;
+
 @end

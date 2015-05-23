@@ -10,4 +10,11 @@
 
 @implementation OCTFriendRequest
 
+#pragma mark -  Public
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"OCTFriendRequest with publicKey %@\nmessage %@", self.publicKey, self.message];
+}
+
 @end

@@ -25,4 +25,9 @@
  */
 @property (strong, nonatomic) NSDate *date;
 
+/**
+ * Returns a string that represents the contents of the receiving class.
+ */
+- (NSString *)description;
+
 @end

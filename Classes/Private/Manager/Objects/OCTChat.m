@@ -68,4 +68,9 @@
     return (result == NSOrderedDescending);
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"OCTChat with identifier %@", self.uniqueIdentifier];
+}
+
 @end

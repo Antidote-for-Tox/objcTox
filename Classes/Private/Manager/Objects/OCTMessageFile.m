@@ -20,4 +20,13 @@
 
 @implementation OCTMessageFile
 
+#pragma mark -  Public
+
+- (NSString *)description
+{
+    NSString *description = [super description];
+
+    return [description stringByAppendingFormat:@"\fileName = %@\nfileSize = %llu", self.fileName, self.fileSize];
+}
+
 @end

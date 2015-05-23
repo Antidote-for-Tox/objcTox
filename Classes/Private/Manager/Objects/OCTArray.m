@@ -127,6 +127,11 @@
     }
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"OCTArray with %@ objects, count = %lu", self.objectClassName, (unsigned long)self.count];
+}
+
 #pragma mark -  Notifications
 
 - (void)updateNotification:(NSNotification *)notification
