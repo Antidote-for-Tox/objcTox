@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		111D42691AFEC51000148994 /* OCTSubmanagerChatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42681AFEC51000148994 /* OCTSubmanagerChatsTests.m */; };
 		111D42731B075A5300148994 /* OCTSubmanagerUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 111D42721B075A5300148994 /* OCTSubmanagerUserTests.m */; };
+		112D6C091B110752002BFC30 /* OCTConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112D6C081B110752002BFC30 /* OCTConversationViewController.m */; };
 		1137B8021B0D34F300342DA0 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B8001B0D34EA00342DA0 /* libc++.dylib */; };
 		1137B8031B0D34F800342DA0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B7FE1B0D34DF00342DA0 /* Realm.framework */; };
 		1137B8041B0D35BC00342DA0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1137B7FE1B0D34DF00342DA0 /* Realm.framework */; };
@@ -117,6 +118,8 @@
 		111D426D1B0755CA00148994 /* OCTSubmanagerUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerUser.m; sourceTree = "<group>"; };
 		111D426F1B0755E100148994 /* OCTSubmanagerUser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerUser+Private.h"; sourceTree = "<group>"; };
 		111D42721B075A5300148994 /* OCTSubmanagerUserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerUserTests.m; sourceTree = "<group>"; };
+		112D6C071B110752002BFC30 /* OCTConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTConversationViewController.h; sourceTree = "<group>"; };
+		112D6C081B110752002BFC30 /* OCTConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTConversationViewController.m; sourceTree = "<group>"; };
 		1137B7FE1B0D34DF00342DA0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1137B8001B0D34EA00342DA0 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		114196C21AAB823B0079B30A /* OCTDefaultSettingsStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultSettingsStorageTests.m; sourceTree = "<group>"; };
@@ -557,6 +560,8 @@
 				9C0275851B0F678B0059A663 /* OCTFriendsViewController.m */,
 				9C0275871B0F67980059A663 /* OCTChatsViewController.h */,
 				9C0275881B0F67980059A663 /* OCTChatsViewController.m */,
+				112D6C071B110752002BFC30 /* OCTConversationViewController.h */,
+				112D6C081B110752002BFC30 /* OCTConversationViewController.m */,
 				9C02751F1B0C9BB00059A663 /* Images.xcassets */,
 				9C0275211B0C9BB00059A663 /* LaunchScreen.xib */,
 				9C0275121B0C9BB00059A663 /* Supporting Files */,
@@ -834,6 +839,7 @@
 				9C02758C1B0F6DDE0059A663 /* OCTStartDemoViewController.m in Sources */,
 				9C02755C1B0CAFB60059A663 /* OCTManagerConstants.m in Sources */,
 				9C0275691B0CAFB60059A663 /* OCTDBMessageFile.m in Sources */,
+				112D6C091B110752002BFC30 /* OCTConversationViewController.m in Sources */,
 				9C0275621B0CAFB60059A663 /* OCTConverterFriendRequest.m in Sources */,
 				9C02757C1B0CAFD80059A663 /* OCTManager.m in Sources */,
 				9C02755F1B0CAFB60059A663 /* OCTManagerConfiguration.m in Sources */,

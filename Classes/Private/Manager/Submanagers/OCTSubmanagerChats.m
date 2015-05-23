@@ -112,6 +112,9 @@
     OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
 
     OCTDBMessageAbstract *db = [dbManager addMessageWithText:text type:type chat:dbChat sender:nil messageId:messageId];
+    [dbManager updateDBObjectInBlock:^{
+        chat.lastMessage = db;
+    } objectClass:[OCTDBChat class]];
 
     return (OCTMessageText *)[self.converterChat.converterMessage objectFromRLMObject:db];
 }
@@ -151,7 +154,10 @@
     OCTDBFriend *friend = [dbManager getOrCreateFriendWithFriendNumber:friendNumber];
     OCTDBChat *chat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
 
-    [dbManager addMessageWithText:message type:type chat:chat sender:friend];
+    OCTDBMessageAbstract *db = [dbManager addMessageWithText:message type:type chat:chat sender:friend];
+    [dbManager updateDBObjectInBlock:^{
+        chat.lastMessage = db;
+    } objectClass:[OCTDBChat class]];
 }
 
 - (void)tox:(OCTTox *)tox messageDelivered:(OCTToxMessageId)messageId friendNumber:(OCTToxFriendNumber)friendNumber

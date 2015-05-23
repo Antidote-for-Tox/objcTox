@@ -7,6 +7,7 @@
 //
 
 #import "OCTChatsViewController.h"
+#import "OCTConversationViewController.h"
 
 @interface OCTChatsViewController () <OCTArrayDelegate>
 
@@ -39,6 +40,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    OCTChat *chat = [self.allChats objectAtIndex:indexPath.row];
+
+    OCTConversationViewController *cv = [[OCTConversationViewController alloc] initWithManager:self.manager chat:chat];
+    [self.navigationController pushViewController:cv animated:YES];
 }
 
 #pragma mark -  UITableViewDataSource
@@ -57,11 +63,11 @@
     cell.textLabel.text = [NSString stringWithFormat:@"Chat\n"
         @"uniqueIdentifier %@\n"
         @"friends %@\n"
-        @"lastMessage %@\n"
         @"enteredText %@\n"
         @"lastReadDate %@\n"
-        @"hasUnreadMessages %d",
-        chat.uniqueIdentifier, chat.friends, chat.lastMessage, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages]];
+        @"hasUnreadMessages %d\n"
+        @"lastMessage: %@",
+        chat.uniqueIdentifier, chat.friends, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages], chat.lastMessage];
 
     return cell;
 }
