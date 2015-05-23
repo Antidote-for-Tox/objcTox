@@ -139,7 +139,7 @@
 
     NSString *string = NSStringFromClass(class);
 
-    if (! [string isEqualToString:[self objectClassName]]) {
+    if (! [string isEqualToString:self.converter.dbObjectClassName]) {
         return;
     }
 

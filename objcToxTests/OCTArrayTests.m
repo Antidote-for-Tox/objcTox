@@ -62,7 +62,7 @@
 
 - (void)testDelegate
 {
-    OCMStub([self.converter objectClassName]).andReturn(@"NSString");
+    OCMStub([self.converter dbObjectClassName]).andReturn(@"NSString");
 
     id delegate = OCMProtocolMock(@protocol(OCTArrayDelegate));
 

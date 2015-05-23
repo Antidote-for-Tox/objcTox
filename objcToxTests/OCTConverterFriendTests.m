@@ -51,6 +51,11 @@ static const BOOL kIsTyping = YES;
     XCTAssertEqualObjects([self.converter objectClassName], @"OCTFriend");
 }
 
+- (void)testDBObjectClassName
+{
+    XCTAssertEqualObjects([self.converter dbObjectClassName], @"OCTDBFriend");
+}
+
 - (void)testObjectFromRLMObject
 {
     OCTDBFriend *db = [OCTDBFriend new];

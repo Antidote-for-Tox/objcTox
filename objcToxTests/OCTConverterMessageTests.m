@@ -43,6 +43,11 @@
     XCTAssertEqualObjects([self.converter objectClassName], @"OCTMessageAbstract");
 }
 
+- (void)testDBObjectClassName
+{
+    XCTAssertEqualObjects([self.converter dbObjectClassName], @"OCTDBMessageAbstract");
+}
+
 - (void)testObjectFromRLMObjectText
 {
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];

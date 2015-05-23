@@ -89,6 +89,8 @@
 
     [self.dataSource managerSaveTox];
 
+    [[self.dataSource managerGetDBManager] removeFriendRequestWithPublicKey:friendRequest.publicKey];
+
     OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
 
