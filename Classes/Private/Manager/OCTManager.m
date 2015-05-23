@@ -58,7 +58,7 @@
     [_tox start];
 
     if (! savedData) {
-        [self saveTox:nil];
+        [self saveTox];
     }
 
     _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
@@ -107,9 +107,9 @@
     return self.tox;
 }
 
-- (BOOL)managerSaveTox:(NSError **)error
+- (void)managerSaveTox
 {
-    return [self saveTox:error];
+    return [self saveTox];
 }
 
 - (OCTDBManager *)managerGetDBManager
@@ -178,13 +178,19 @@
     return nil;
 }
 
-- (BOOL)saveTox:(NSError **)error
+- (void)saveTox
 {
     NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
 
     NSData *data = [self.tox save];
 
-    return [data writeToFile:savedDataPath options:0 error:error];
+    NSError *error;
+
+    if (![data writeToFile:savedDataPath options:0 error:&error]) {
+         @throw [NSException exceptionWithName:@"saveToxException"
+                                   reason:error.debugDescription
+                                 userInfo:@{ @"NSError" : error }];
+    }
 }
 
 @end

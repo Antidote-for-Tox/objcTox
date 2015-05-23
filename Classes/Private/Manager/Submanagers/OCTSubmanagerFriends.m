@@ -67,9 +67,7 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
 
     OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
@@ -89,9 +87,7 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
 
     OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
     [self.friendsContainer addFriend:friend];
@@ -120,9 +116,7 @@
         return NO;
     }
 
-    if (! [self.dataSource managerSaveTox:error]) {
-        return NO;
-    }
+    [self.dataSource managerSaveTox];
 
     [self.friendsContainer removeFriend:friend];
 
