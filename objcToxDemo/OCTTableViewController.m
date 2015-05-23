@@ -34,7 +34,7 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
     }
 
     _manager = manager;
-    
+
     return self;
 }
 
@@ -203,6 +203,5 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
         make.edges.equalTo(self.view);
     }];
 }
-
 
 @end

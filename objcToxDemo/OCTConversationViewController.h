@@ -6,10 +6,9 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "OCTManager.h"
+#import "OCTTableViewController.h"
 
-@interface OCTConversationViewController : UIViewController
+@interface OCTConversationViewController : OCTTableViewController
 
 - (instancetype)initWithManager:(OCTManager *)manager chat:(OCTChat *)chat;
 

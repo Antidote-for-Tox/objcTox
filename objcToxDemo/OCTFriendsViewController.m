@@ -231,8 +231,8 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     __weak OCTFriendsViewController *weakSelf = self;
     [alert bk_addButtonWithTitle:@"OK" handler:^{
-       [weakSelf.tableView reloadData];
        [weakSelf.manager.friends sendFriendRequestToAddress:addressField.text message:messageField.text error:nil];
+       [weakSelf.tableView reloadData];
     }];
 
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
