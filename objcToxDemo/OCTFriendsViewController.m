@@ -43,6 +43,11 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     self.title = @"Friends";
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(friendUpdateNotification)
+                                                 name:kOCTFriendsContainerUpdateNotification
+                                               object:nil];
+
     return self;
 }
 
@@ -131,6 +136,13 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 #pragma mark -  OCTArrayDelegate
 
 - (void)OCTArrayWasUpdated:(OCTArray *)array
+{
+    [self.tableView reloadData];
+}
+
+#pragma mark -  NSNotification
+
+- (void)friendUpdateNotification
 {
     [self.tableView reloadData];
 }

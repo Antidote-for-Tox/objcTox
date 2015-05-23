@@ -278,6 +278,7 @@
     [self.submanager tox:nil friendNameUpdate:@"name" friendNumber:7];
 
     XCTAssertEqualObjects(friend.name, @"name");
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendStatusMessageUpdate
@@ -289,6 +290,7 @@
     [self.submanager tox:nil friendStatusMessageUpdate:@"statusMessage" friendNumber:7];
 
     XCTAssertEqualObjects(friend.statusMessage, @"statusMessage");
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendStatusUpdate
@@ -300,6 +302,7 @@
     [self.submanager tox:nil friendStatusUpdate:OCTToxUserStatusBusy friendNumber:7];
 
     XCTAssertEqual(friend.status, OCTToxUserStatusBusy);
+    OCMVerify([self.dataSource managerSaveTox]);
 }
 
 - (void)testToxFriendIsTypingUpdate
