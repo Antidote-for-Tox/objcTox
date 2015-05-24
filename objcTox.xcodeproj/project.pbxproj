@@ -296,6 +296,66 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00BB1A4B0C327264C880852B33FA911D /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				6B2BAAC14E1289AF1DBE31D6A928E9AA /* Manager */,
+				F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
+		099D36978BA6A7D4573414441568B45B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D37DB991AC6E87170F1E49ACA119B33A /* Info.plist */,
+				0F6740C4D5BC5EAEF0899DB785509871 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		29E30FD5E3A845CEB92CCF1E4DD35ED4 /* Wrapper */ = {
+			isa = PBXGroup;
+			children = (
+				B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */,
+				9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */,
+				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
+				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
+			);
+			path = Wrapper;
+			sourceTree = "<group>";
+		};
+		343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */ = {
+			isa = PBXGroup;
+			children = (
+				A2263C840374001AB44DC433624E32DD /* OCTFriendsContainer+Private.h */,
+				D9BCAA1355D732652967C19A5F0A9E29 /* OCTFriendsContainer.m */,
+				5D189A68D6F95FD80457FCACAAB93D5D /* OCTSubmanagerAvatars+Private.h */,
+				CC7756D762A864873026929FC1CD003E /* OCTSubmanagerAvatars.m */,
+				67CE089BF824F5E312E1F2DA82200173 /* OCTSubmanagerChats+Private.h */,
+				5F8DB9E80557EDCED72F1E0D5E868D9F /* OCTSubmanagerChats.m */,
+				468C7E16643FCCEB54CFF0414052EC3C /* OCTSubmanagerDataSource.h */,
+				1F210739EBF632594BBF9C51E585A589 /* OCTSubmanagerFriends+Private.h */,
+				A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */,
+				A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */,
+				C2F358725E9EF3F392D73A1ABBDD3DAB /* OCTSubmanagerUser.m */,
+			);
+			path = Submanagers;
+			sourceTree = "<group>";
+		};
+		448FC2DD5ED91BAD73CFBF7AA206FAFC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4C6EF8ACA388138A58F81B3063753C0B /* Pods-objcToxDemo.debug.xcconfig */,
+				B666E33CD3504F532BF5FB39159B694A /* Pods-objcToxDemo.release.xcconfig */,
+				6051BAD9850AD2796F384CF760236AE6 /* Pods-objcToxTests.debug.xcconfig */,
+				A1BE5A07268E5859CFF942C355369B15 /* Pods-objcToxTests.release.xcconfig */,
+				6F04DD0CC07309B2FFDA89EB6AA6AE9E /* Pods.debug.xcconfig */,
+				73C2E2544E5F765CB5643885DE03F96D /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		491C3A03DF405B148E570C976B10BB3D /* Private */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,28 +365,53 @@
 			path = Private;
 			sourceTree = "<group>";
 		};
-		CF9416C2498272D5823396FB02DF7670 /* Manager */ = {
+		501ED01E22C2D2A5DC0D2EFC1362E1A3 /* objcToxDemo */ = {
 			isa = PBXGroup;
 			children = (
-				7DB8B234977816236C8F57408DD904FB /* Configuration */,
-				7452C0723C1DF2B40746EAD408EC1950 /* Converters */,
-				8588AB583843DF5ABD08944E00D9704D /* Database */,
-				60183FD68841CB45990A4852224E9705 /* Objects */,
-				343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */,
-				AEAF02FD4B49A2DF3C13562D48C9FEA0 /* OCTManager.m */,
-				CE5DBC12869590BEAD637C9DF06567EF /* OCTManagerConstants.m */,
+				099D36978BA6A7D4573414441568B45B /* Supporting Files */,
+				1F30DD6163A959D96CC53F79FCEDA7EC /* AppDelegate.h */,
+				630F8DD2A8CBBF1DEB10D110A9072308 /* AppDelegate.m */,
+				B2F6BF5A5E995453D311094E693CBC02 /* Images.xcassets */,
+				167DC0F4E4DED2EF002FCCFCBD1DB73C /* LaunchScreen.xib */,
+				1094F447B67781F2E4DE6E56F4AAEDCF /* OCTChatsViewController.h */,
+				9E92A5961EDDB175A728B316AACECAD0 /* OCTChatsViewController.m */,
+				F5174E797B52B59C74ABA4D0D9A95A4A /* OCTConversationViewController.h */,
+				37C20751D7DD04EBA33C18CF0929D69E /* OCTConversationViewController.m */,
+				AEDA6A96910F63507F0BDCC7767A86C6 /* OCTFriendsViewController.h */,
+				B4FD719502F8CAC073376C0369F6CF4E /* OCTFriendsViewController.m */,
+				362085FE91DFE3ABBD6056B6F9D83ECC /* OCTStartDemoViewController.h */,
+				979E2EA3AF3406624C5F28600DB4F752 /* OCTStartDemoViewController.m */,
+				2B91F61FAB0C2E350241FBEEEFF3C4A2 /* OCTTableViewController.h */,
+				BEEC12DCC5E26249B9E2FA08F50DDE8F /* OCTTableViewController.m */,
+				382D0E83DE40B766A03553CBB3A11F0B /* OCTUserViewController.h */,
+				7218668C8B51B22E4E473DA9AF6979D1 /* OCTUserViewController.m */,
 			);
-			path = Manager;
+			path = objcToxDemo;
 			sourceTree = "<group>";
 		};
-		7DB8B234977816236C8F57408DD904FB /* Configuration */ = {
+		59DFACB59220710D4B2227182A018958 /* Submanagers */ = {
 			isa = PBXGroup;
 			children = (
-				E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */,
-				F9903D6570BD33520A6B31B285B3DA31 /* OCTDefaultSettingsStorage.m */,
-				1B75FA045E32B1417FDC20970961725C /* OCTManagerConfiguration.m */,
+				1E61E3F84E1823D605E2AEDA65B856DB /* OCTCallSubmanager.h */,
+				0D4134F006596DC4086188A15ABECB0D /* OCTFriendsContainer.h */,
+				6FF6A77851AA32B2CEF6DF716083BD66 /* OCTSubmanagerAvatars.h */,
+				2CBE0C2E379DCF740AF5D469F096D309 /* OCTSubmanagerChats.h */,
+				91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */,
+				DC15169F1B57241E08B356608016D41A /* OCTSubmanagerUser.h */,
 			);
-			path = Configuration;
+			path = Submanagers;
+			sourceTree = "<group>";
+		};
+		5A2B53F1E418A85F8FF2B2AE2AD91B94 = {
+			isa = PBXGroup;
+			children = (
+				B6667C5B1813BB0AD0E5589A2B981680 /* Classes */,
+				D29005258A7D90733C79DDD0A57348E4 /* Frameworks */,
+				448FC2DD5ED91BAD73CFBF7AA206FAFC /* Pods */,
+				DB96D4CB88F5590E960C0A563BE0D34C /* Products */,
+				501ED01E22C2D2A5DC0D2EFC1362E1A3 /* objcToxDemo */,
+				CF4326DADEE7FC9DB7F27FF6DBC6778F /* objcToxTests */,
+			);
 			sourceTree = "<group>";
 		};
 		60183FD68841CB45990A4852224E9705 /* Objects */ = {
@@ -355,44 +440,6 @@
 			path = Objects;
 			sourceTree = "<group>";
 		};
-		343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */ = {
-			isa = PBXGroup;
-			children = (
-				A2263C840374001AB44DC433624E32DD /* OCTFriendsContainer+Private.h */,
-				D9BCAA1355D732652967C19A5F0A9E29 /* OCTFriendsContainer.m */,
-				5D189A68D6F95FD80457FCACAAB93D5D /* OCTSubmanagerAvatars+Private.h */,
-				CC7756D762A864873026929FC1CD003E /* OCTSubmanagerAvatars.m */,
-				67CE089BF824F5E312E1F2DA82200173 /* OCTSubmanagerChats+Private.h */,
-				5F8DB9E80557EDCED72F1E0D5E868D9F /* OCTSubmanagerChats.m */,
-				468C7E16643FCCEB54CFF0414052EC3C /* OCTSubmanagerDataSource.h */,
-				1F210739EBF632594BBF9C51E585A589 /* OCTSubmanagerFriends+Private.h */,
-				A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */,
-				A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */,
-				C2F358725E9EF3F392D73A1ABBDD3DAB /* OCTSubmanagerUser.m */,
-			);
-			path = Submanagers;
-			sourceTree = "<group>";
-		};
-		29E30FD5E3A845CEB92CCF1E4DD35ED4 /* Wrapper */ = {
-			isa = PBXGroup;
-			children = (
-				B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */,
-				9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */,
-				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
-				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
-			);
-			path = Wrapper;
-			sourceTree = "<group>";
-		};
-		00BB1A4B0C327264C880852B33FA911D /* Public */ = {
-			isa = PBXGroup;
-			children = (
-				6B2BAAC14E1289AF1DBE31D6A928E9AA /* Manager */,
-				F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */,
-			);
-			path = Public;
-			sourceTree = "<group>";
-		};
 		6B2BAAC14E1289AF1DBE31D6A928E9AA /* Manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -403,18 +450,6 @@
 				647688B7386EE74BA1E6359A822B2BE6 /* OCTManagerConstants.h */,
 			);
 			path = Manager;
-			sourceTree = "<group>";
-		};
-		B729102B12162A2F537D836802D56E79 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				4661B7235F65476C9C4E3255DB5BCE79 /* OCTDefaultFileStorage.h */,
-				7FFF1E74EDC112F863260EE65D76822F /* OCTDefaultSettingsStorage.h */,
-				2369847240F2E8FD3B4AFD5BDDC2DCF2 /* OCTFileStorageProtocol.h */,
-				F967399BFF7F28425C5194F0E5552BCA /* OCTManagerConfiguration.h */,
-				9947527983306654F3696FAB653EACC3 /* OCTSettingsStorageProtocol.h */,
-			);
-			path = Configuration;
 			sourceTree = "<group>";
 		};
 		714C4AAE365D94A8BC642E0D66F052D4 /* Objects */ = {
@@ -434,29 +469,30 @@
 			path = Objects;
 			sourceTree = "<group>";
 		};
-		59DFACB59220710D4B2227182A018958 /* Submanagers */ = {
+		7452C0723C1DF2B40746EAD408EC1950 /* Converters */ = {
 			isa = PBXGroup;
 			children = (
-				1E61E3F84E1823D605E2AEDA65B856DB /* OCTCallSubmanager.h */,
-				0D4134F006596DC4086188A15ABECB0D /* OCTFriendsContainer.h */,
-				6FF6A77851AA32B2CEF6DF716083BD66 /* OCTSubmanagerAvatars.h */,
-				2CBE0C2E379DCF740AF5D469F096D309 /* OCTSubmanagerChats.h */,
-				91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */,
-				DC15169F1B57241E08B356608016D41A /* OCTSubmanagerUser.h */,
+				9916CE8DAB3DBDFFE8E8FFDEC58C331C /* OCTConverterChat.h */,
+				C68350F50E5FBAFE0CEB645171EF2F65 /* OCTConverterChat.m */,
+				39395302A7D633E141FCD8757AE2E063 /* OCTConverterFriend.h */,
+				695C87C2F33AC3A0EC7E04169BA6AA7E /* OCTConverterFriend.m */,
+				954450AB23C8723582A4BBAC953BACCF /* OCTConverterFriendRequest.h */,
+				88CC5AD24A6497F03AEE98A2A98BDF9D /* OCTConverterFriendRequest.m */,
+				02F84D466D027FF7224BD29B5EF1C3C6 /* OCTConverterMessage.h */,
+				894610340B5469A3AD6D28C15962106D /* OCTConverterMessage.m */,
+				2E3BC6498AD4EC57094DD22498B2CFB1 /* OCTConverterProtocol.h */,
 			);
-			path = Submanagers;
+			path = Converters;
 			sourceTree = "<group>";
 		};
-		F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */ = {
+		7DB8B234977816236C8F57408DD904FB /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				1D66E7C409BC96AC7372B302BABF1D88 /* OCTTox.h */,
-				52F0E8E5DC7D621C1DAF55A9242E03FF /* OCTToxAV.h */,
-				6733F3E1A4E00CC032F25870E9083F13 /* OCTToxConstants.h */,
-				49DADF58900503E712C710CF13F175DD /* OCTToxDelegate.h */,
-				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
+				E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */,
+				F9903D6570BD33520A6B31B285B3DA31 /* OCTDefaultSettingsStorage.m */,
+				1B75FA045E32B1417FDC20970961725C /* OCTManagerConfiguration.m */,
 			);
-			path = Wrapper;
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		8588AB583843DF5ABD08944E00D9704D /* Database */ = {
@@ -482,43 +518,6 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
-		7452C0723C1DF2B40746EAD408EC1950 /* Converters */ = {
-			isa = PBXGroup;
-			children = (
-				9916CE8DAB3DBDFFE8E8FFDEC58C331C /* OCTConverterChat.h */,
-				C68350F50E5FBAFE0CEB645171EF2F65 /* OCTConverterChat.m */,
-				39395302A7D633E141FCD8757AE2E063 /* OCTConverterFriend.h */,
-				695C87C2F33AC3A0EC7E04169BA6AA7E /* OCTConverterFriend.m */,
-				954450AB23C8723582A4BBAC953BACCF /* OCTConverterFriendRequest.h */,
-				88CC5AD24A6497F03AEE98A2A98BDF9D /* OCTConverterFriendRequest.m */,
-				02F84D466D027FF7224BD29B5EF1C3C6 /* OCTConverterMessage.h */,
-				894610340B5469A3AD6D28C15962106D /* OCTConverterMessage.m */,
-				2E3BC6498AD4EC57094DD22498B2CFB1 /* OCTConverterProtocol.h */,
-			);
-			path = Converters;
-			sourceTree = "<group>";
-		};
-		5A2B53F1E418A85F8FF2B2AE2AD91B94 = {
-			isa = PBXGroup;
-			children = (
-				B6667C5B1813BB0AD0E5589A2B981680 /* Classes */,
-				D29005258A7D90733C79DDD0A57348E4 /* Frameworks */,
-				448FC2DD5ED91BAD73CFBF7AA206FAFC /* Pods */,
-				DB96D4CB88F5590E960C0A563BE0D34C /* Products */,
-				501ED01E22C2D2A5DC0D2EFC1362E1A3 /* objcToxDemo */,
-				CF4326DADEE7FC9DB7F27FF6DBC6778F /* objcToxTests */,
-			);
-			sourceTree = "<group>";
-		};
-		DB96D4CB88F5590E960C0A563BE0D34C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B42CB8A1DE242833A769EBD1F05A9DD5 /* objcToxDemo.app */,
-				B49CE6ACC1B706324965B0F5CE23E139 /* objcToxTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B6667C5B1813BB0AD0E5589A2B981680 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -526,6 +525,18 @@
 				00BB1A4B0C327264C880852B33FA911D /* Public */,
 			);
 			path = Classes;
+			sourceTree = "<group>";
+		};
+		B729102B12162A2F537D836802D56E79 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				4661B7235F65476C9C4E3255DB5BCE79 /* OCTDefaultFileStorage.h */,
+				7FFF1E74EDC112F863260EE65D76822F /* OCTDefaultSettingsStorage.h */,
+				2369847240F2E8FD3B4AFD5BDDC2DCF2 /* OCTFileStorageProtocol.h */,
+				F967399BFF7F28425C5194F0E5552BCA /* OCTManagerConfiguration.h */,
+				9947527983306654F3696FAB653EACC3 /* OCTSettingsStorageProtocol.h */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		CF4326DADEE7FC9DB7F27FF6DBC6778F /* objcToxTests */ = {
@@ -558,12 +569,18 @@
 			path = objcToxTests;
 			sourceTree = "<group>";
 		};
-		E6C69A56598B4CBEEB8A1DC64329CF08 /* Supporting Files */ = {
+		CF9416C2498272D5823396FB02DF7670 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				A9086E2F4DDF769A0F354F4AFFBD749F /* Info.plist */,
+				7DB8B234977816236C8F57408DD904FB /* Configuration */,
+				7452C0723C1DF2B40746EAD408EC1950 /* Converters */,
+				8588AB583843DF5ABD08944E00D9704D /* Database */,
+				60183FD68841CB45990A4852224E9705 /* Objects */,
+				343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */,
+				AEAF02FD4B49A2DF3C13562D48C9FEA0 /* OCTManager.m */,
+				CE5DBC12869590BEAD637C9DF06567EF /* OCTManagerConstants.m */,
 			);
-			name = "Supporting Files";
+			path = Manager;
 			sourceTree = "<group>";
 		};
 		D29005258A7D90733C79DDD0A57348E4 /* Frameworks */ = {
@@ -578,74 +595,38 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		501ED01E22C2D2A5DC0D2EFC1362E1A3 /* objcToxDemo */ = {
+		DB96D4CB88F5590E960C0A563BE0D34C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				099D36978BA6A7D4573414441568B45B /* Supporting Files */,
-				1F30DD6163A959D96CC53F79FCEDA7EC /* AppDelegate.h */,
-				630F8DD2A8CBBF1DEB10D110A9072308 /* AppDelegate.m */,
-				B2F6BF5A5E995453D311094E693CBC02 /* Images.xcassets */,
-				167DC0F4E4DED2EF002FCCFCBD1DB73C /* LaunchScreen.xib */,
-				1094F447B67781F2E4DE6E56F4AAEDCF /* OCTChatsViewController.h */,
-				9E92A5961EDDB175A728B316AACECAD0 /* OCTChatsViewController.m */,
-				F5174E797B52B59C74ABA4D0D9A95A4A /* OCTConversationViewController.h */,
-				37C20751D7DD04EBA33C18CF0929D69E /* OCTConversationViewController.m */,
-				AEDA6A96910F63507F0BDCC7767A86C6 /* OCTFriendsViewController.h */,
-				B4FD719502F8CAC073376C0369F6CF4E /* OCTFriendsViewController.m */,
-				362085FE91DFE3ABBD6056B6F9D83ECC /* OCTStartDemoViewController.h */,
-				979E2EA3AF3406624C5F28600DB4F752 /* OCTStartDemoViewController.m */,
-				2B91F61FAB0C2E350241FBEEEFF3C4A2 /* OCTTableViewController.h */,
-				BEEC12DCC5E26249B9E2FA08F50DDE8F /* OCTTableViewController.m */,
-				382D0E83DE40B766A03553CBB3A11F0B /* OCTUserViewController.h */,
-				7218668C8B51B22E4E473DA9AF6979D1 /* OCTUserViewController.m */,
+				B42CB8A1DE242833A769EBD1F05A9DD5 /* objcToxDemo.app */,
+				B49CE6ACC1B706324965B0F5CE23E139 /* objcToxTests.xctest */,
 			);
-			path = objcToxDemo;
+			name = Products;
 			sourceTree = "<group>";
 		};
-		099D36978BA6A7D4573414441568B45B /* Supporting Files */ = {
+		E6C69A56598B4CBEEB8A1DC64329CF08 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D37DB991AC6E87170F1E49ACA119B33A /* Info.plist */,
-				0F6740C4D5BC5EAEF0899DB785509871 /* main.m */,
+				A9086E2F4DDF769A0F354F4AFFBD749F /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		448FC2DD5ED91BAD73CFBF7AA206FAFC /* Pods */ = {
+		F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
-				4C6EF8ACA388138A58F81B3063753C0B /* Pods-objcToxDemo.debug.xcconfig */,
-				B666E33CD3504F532BF5FB39159B694A /* Pods-objcToxDemo.release.xcconfig */,
-				6051BAD9850AD2796F384CF760236AE6 /* Pods-objcToxTests.debug.xcconfig */,
-				A1BE5A07268E5859CFF942C355369B15 /* Pods-objcToxTests.release.xcconfig */,
-				6F04DD0CC07309B2FFDA89EB6AA6AE9E /* Pods.debug.xcconfig */,
-				73C2E2544E5F765CB5643885DE03F96D /* Pods.release.xcconfig */,
+				1D66E7C409BC96AC7372B302BABF1D88 /* OCTTox.h */,
+				52F0E8E5DC7D621C1DAF55A9242E03FF /* OCTToxAV.h */,
+				6733F3E1A4E00CC032F25870E9083F13 /* OCTToxConstants.h */,
+				49DADF58900503E712C710CF13F175DD /* OCTToxDelegate.h */,
+				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
 			);
-			name = Pods;
+			path = Wrapper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E80B4B2B978B1C5628E19745D0D167CC /* objcToxTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AE1581EDBAD9E8789A08C0FB1BEB5CEA /* Build configuration list for PBXNativeTarget "objcToxTests" */;
-			buildPhases = (
-				F9C77E6CCC763EBE6B13E8092C8FB9D6 /* Check Pods Manifest.lock */,
-				FFEA5C0AF8B40AA295628AD012E6E84A /* Sources */,
-				27CB54A39B1D33A82B5591A039050A18 /* Frameworks */,
-				AF96318AF774293047BCD2D6F7461E9A /* Resources */,
-				BB6889D14714E59385860DE1384B441D /* Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = objcToxTests;
-			productName = objcToxTests;
-			productReference = B49CE6ACC1B706324965B0F5CE23E139 /* objcToxTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		5A233AE085D4B3843C613AE977181F0B /* objcToxDemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F8529392526D0AB7551250D3E8035097 /* Build configuration list for PBXNativeTarget "objcToxDemo" */;
@@ -665,6 +646,25 @@
 			productReference = B42CB8A1DE242833A769EBD1F05A9DD5 /* objcToxDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E80B4B2B978B1C5628E19745D0D167CC /* objcToxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE1581EDBAD9E8789A08C0FB1BEB5CEA /* Build configuration list for PBXNativeTarget "objcToxTests" */;
+			buildPhases = (
+				F9C77E6CCC763EBE6B13E8092C8FB9D6 /* Check Pods Manifest.lock */,
+				FFEA5C0AF8B40AA295628AD012E6E84A /* Sources */,
+				27CB54A39B1D33A82B5591A039050A18 /* Frameworks */,
+				AF96318AF774293047BCD2D6F7461E9A /* Resources */,
+				BB6889D14714E59385860DE1384B441D /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = objcToxTests;
+			productName = objcToxTests;
+			productReference = B49CE6ACC1B706324965B0F5CE23E139 /* objcToxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -675,11 +675,11 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = dvor;
 				TargetAttributes = {
-					E80B4B2B978B1C5628E19745D0D167CC = {
-						CreatedOnToolsVersion = 6.1.1;
-					};
 					5A233AE085D4B3843C613AE977181F0B = {
 						CreatedOnToolsVersion = 6.3.1;
+					};
+					E80B4B2B978B1C5628E19745D0D167CC = {
+						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
 			};
@@ -703,13 +703,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AF96318AF774293047BCD2D6F7461E9A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		08D43538D564FDEFB847567029B363C7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -719,24 +712,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		F9C77E6CCC763EBE6B13E8092C8FB9D6 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
+		AF96318AF774293047BCD2D6F7461E9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
 		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
 		4147879197C18CF4A7A43CEC4F01AE0B /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -782,9 +767,76 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objcToxTests/Pods-objcToxTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F9C77E6CCC763EBE6B13E8092C8FB9D6 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		EAAC9A8E7B68B953D55F4A76D506F5A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CD198EE0026B99EA22137D5D0B3B7E3 /* AppDelegate.m in Sources */,
+				3D701441711F6FDF7FE748498ED28D5B /* OCTArray.m in Sources */,
+				C77B6C69F3D666A4ED5E48D20F8390CC /* OCTBasicContainer.m in Sources */,
+				EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */,
+				C363991E51115CA10E610D76F13FC009 /* OCTChat.m in Sources */,
+				D287AF9163A2B1CE36E2934FA7D9DFE7 /* OCTChatsViewController.m in Sources */,
+				E21E4B2BF02AB1089010E4ED575410FE /* OCTConversationViewController.m in Sources */,
+				506826FDB1C2213463A3CE6E43F09CB5 /* OCTConverterChat.m in Sources */,
+				D37E22FFF658D18494A9C86630085A4A /* OCTConverterFriend.m in Sources */,
+				8155DE1D9F61E9D75812FE743EE35AA4 /* OCTConverterFriendRequest.m in Sources */,
+				1027E512FC65A523953756C73B858132 /* OCTConverterMessage.m in Sources */,
+				7FBEFF3A9F9496029671B4FFE4EB27F5 /* OCTDBChat.m in Sources */,
+				97F441F3379C01CE5EB53DE454EBCF8E /* OCTDBFriend.m in Sources */,
+				48579162FC289F0F06A8B608CAF202C4 /* OCTDBFriendRequest.m in Sources */,
+				1DD7BA5F1B467437B66E5B4ADBB8E1E7 /* OCTDBManager.m in Sources */,
+				CFE05176D17B72926701009699E9567D /* OCTDBMessageAbstract.m in Sources */,
+				701C2127611D51D1261E31FB49094841 /* OCTDBMessageCall.m in Sources */,
+				0BB6280A75D7A3EF20063C90B42400F6 /* OCTDBMessageFile.m in Sources */,
+				E83C603C0CD672FA25FEA9628DA5FA7B /* OCTDBMessageText.m in Sources */,
+				2908902779B3FF698EAA2F79E6A728C4 /* OCTDefaultFileStorage.m in Sources */,
+				8A994D5A7BC169CB867437C1C2503C81 /* OCTDefaultSettingsStorage.m in Sources */,
+				6D62182B807933B8CFF8082535B2D4C4 /* OCTFriend.m in Sources */,
+				AF3564F0308F4E87BB20F6F0CDA99CE5 /* OCTFriendRequest.m in Sources */,
+				7A093C011EB9E78C3DCC89F6611751AB /* OCTFriendsContainer.m in Sources */,
+				7B6FEC56C07964FDF22C528A81D1CF9B /* OCTFriendsViewController.m in Sources */,
+				151D618362367948963B668523A2235C /* OCTManager.m in Sources */,
+				A411EAC68985CDE413644951C5CE9463 /* OCTManagerConfiguration.m in Sources */,
+				7172E3572EC95E0A06D502AE35A59FA4 /* OCTManagerConstants.m in Sources */,
+				EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */,
+				C44C0FD5B2B1D3453204F655B8928FE6 /* OCTMessageCall.m in Sources */,
+				EC8B1CF4E9445717B8E61A26FD52E36B /* OCTMessageFile.m in Sources */,
+				25E5DD48EE60A2A6203731909C2F310E /* OCTMessageText.m in Sources */,
+				28A1CAAED30EFB1FAED0BB611B062870 /* OCTSortDescriptor.m in Sources */,
+				F9A7007A32C59757AC4132DF656C5793 /* OCTStartDemoViewController.m in Sources */,
+				C32A3D05D0D8E311BE9CEDB2979424DE /* OCTSubmanagerAvatars.m in Sources */,
+				A050857A5C2D7974A8857AFF2A52053B /* OCTSubmanagerChats.m in Sources */,
+				D9D0587D1B7D85A0B474FC7872831EA8 /* OCTSubmanagerFriends.m in Sources */,
+				5FB0DDAF63C36E0050A15B56311BD5F7 /* OCTSubmanagerUser.m in Sources */,
+				17447E8C08F7FFAFB783AE0AF4207D7F /* OCTTableViewController.m in Sources */,
+				94F0A37FA0EEEA35BC0EF33D61741340 /* OCTTox.m in Sources */,
+				821638761952C80A02200E519414B52A /* OCTToxAV.m in Sources */,
+				D8F9288BBAFADBB9AA3E0E04A0876917 /* OCTToxConstants.m in Sources */,
+				4BED2FCCE976E6B6E24E087CCE893F39 /* OCTToxOptions.m in Sources */,
+				0DE4B4F9DEA2A6B0028871D2E12114AB /* OCTUserViewController.m in Sources */,
+				7B50D4015369FF9246FFFE44FA3060AB /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FFEA5C0AF8B40AA295628AD012E6E84A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -851,58 +903,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EAAC9A8E7B68B953D55F4A76D506F5A2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4CD198EE0026B99EA22137D5D0B3B7E3 /* AppDelegate.m in Sources */,
-				3D701441711F6FDF7FE748498ED28D5B /* OCTArray.m in Sources */,
-				C77B6C69F3D666A4ED5E48D20F8390CC /* OCTBasicContainer.m in Sources */,
-				EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */,
-				C363991E51115CA10E610D76F13FC009 /* OCTChat.m in Sources */,
-				D287AF9163A2B1CE36E2934FA7D9DFE7 /* OCTChatsViewController.m in Sources */,
-				E21E4B2BF02AB1089010E4ED575410FE /* OCTConversationViewController.m in Sources */,
-				506826FDB1C2213463A3CE6E43F09CB5 /* OCTConverterChat.m in Sources */,
-				D37E22FFF658D18494A9C86630085A4A /* OCTConverterFriend.m in Sources */,
-				8155DE1D9F61E9D75812FE743EE35AA4 /* OCTConverterFriendRequest.m in Sources */,
-				1027E512FC65A523953756C73B858132 /* OCTConverterMessage.m in Sources */,
-				7FBEFF3A9F9496029671B4FFE4EB27F5 /* OCTDBChat.m in Sources */,
-				97F441F3379C01CE5EB53DE454EBCF8E /* OCTDBFriend.m in Sources */,
-				48579162FC289F0F06A8B608CAF202C4 /* OCTDBFriendRequest.m in Sources */,
-				1DD7BA5F1B467437B66E5B4ADBB8E1E7 /* OCTDBManager.m in Sources */,
-				CFE05176D17B72926701009699E9567D /* OCTDBMessageAbstract.m in Sources */,
-				701C2127611D51D1261E31FB49094841 /* OCTDBMessageCall.m in Sources */,
-				0BB6280A75D7A3EF20063C90B42400F6 /* OCTDBMessageFile.m in Sources */,
-				E83C603C0CD672FA25FEA9628DA5FA7B /* OCTDBMessageText.m in Sources */,
-				2908902779B3FF698EAA2F79E6A728C4 /* OCTDefaultFileStorage.m in Sources */,
-				8A994D5A7BC169CB867437C1C2503C81 /* OCTDefaultSettingsStorage.m in Sources */,
-				6D62182B807933B8CFF8082535B2D4C4 /* OCTFriend.m in Sources */,
-				AF3564F0308F4E87BB20F6F0CDA99CE5 /* OCTFriendRequest.m in Sources */,
-				7A093C011EB9E78C3DCC89F6611751AB /* OCTFriendsContainer.m in Sources */,
-				7B6FEC56C07964FDF22C528A81D1CF9B /* OCTFriendsViewController.m in Sources */,
-				151D618362367948963B668523A2235C /* OCTManager.m in Sources */,
-				A411EAC68985CDE413644951C5CE9463 /* OCTManagerConfiguration.m in Sources */,
-				7172E3572EC95E0A06D502AE35A59FA4 /* OCTManagerConstants.m in Sources */,
-				EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */,
-				C44C0FD5B2B1D3453204F655B8928FE6 /* OCTMessageCall.m in Sources */,
-				EC8B1CF4E9445717B8E61A26FD52E36B /* OCTMessageFile.m in Sources */,
-				25E5DD48EE60A2A6203731909C2F310E /* OCTMessageText.m in Sources */,
-				28A1CAAED30EFB1FAED0BB611B062870 /* OCTSortDescriptor.m in Sources */,
-				F9A7007A32C59757AC4132DF656C5793 /* OCTStartDemoViewController.m in Sources */,
-				C32A3D05D0D8E311BE9CEDB2979424DE /* OCTSubmanagerAvatars.m in Sources */,
-				A050857A5C2D7974A8857AFF2A52053B /* OCTSubmanagerChats.m in Sources */,
-				D9D0587D1B7D85A0B474FC7872831EA8 /* OCTSubmanagerFriends.m in Sources */,
-				5FB0DDAF63C36E0050A15B56311BD5F7 /* OCTSubmanagerUser.m in Sources */,
-				17447E8C08F7FFAFB783AE0AF4207D7F /* OCTTableViewController.m in Sources */,
-				94F0A37FA0EEEA35BC0EF33D61741340 /* OCTTox.m in Sources */,
-				821638761952C80A02200E519414B52A /* OCTToxAV.m in Sources */,
-				D8F9288BBAFADBB9AA3E0E04A0876917 /* OCTToxConstants.m in Sources */,
-				4BED2FCCE976E6B6E24E087CCE893F39 /* OCTToxOptions.m in Sources */,
-				0DE4B4F9DEA2A6B0028871D2E12114AB /* OCTUserViewController.m in Sources */,
-				7B50D4015369FF9246FFFE44FA3060AB /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -917,46 +917,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		82296B29222D22F71AB2951D01507920 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
 		070BBB548773794BC7DBE0A6290FD8A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -990,25 +950,6 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
-		};
-		7EA2A5B84EEB50CA0EF4E7EDDA1388C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6051BAD9850AD2796F384CF760236AE6 /* Pods-objcToxTests.debug.xcconfig */;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = objcToxTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
 		};
 		3C992BB08E294E1ED8B487E3F0AD969B /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1049,6 +990,65 @@
 			};
 			name = Debug;
 		};
+		7EA2A5B84EEB50CA0EF4E7EDDA1388C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6051BAD9850AD2796F384CF760236AE6 /* Pods-objcToxTests.debug.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = objcToxTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		82296B29222D22F71AB2951D01507920 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
 		AFF9CB7354BF042E1C92E17220B1D91E /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B666E33CD3504F532BF5FB39159B694A /* Pods-objcToxDemo.release.xcconfig */;
@@ -1073,20 +1073,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CD70405E4519D77E9FDF252033749EF6 /* Build configuration list for PBXProject "objcTox" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				82296B29222D22F71AB2951D01507920 /* Debug */,
-				070BBB548773794BC7DBE0A6290FD8A6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		AE1581EDBAD9E8789A08C0FB1BEB5CEA /* Build configuration list for PBXNativeTarget "objcToxTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7EA2A5B84EEB50CA0EF4E7EDDA1388C8 /* Debug */,
 				3C992BB08E294E1ED8B487E3F0AD969B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD70405E4519D77E9FDF252033749EF6 /* Build configuration list for PBXProject "objcTox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82296B29222D22F71AB2951D01507920 /* Debug */,
+				070BBB548773794BC7DBE0A6290FD8A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
