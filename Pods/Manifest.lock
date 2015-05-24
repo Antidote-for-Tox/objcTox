@@ -25,7 +25,7 @@ PODS:
   - libsodium (1.0.2)
   - Masonry (0.6.1)
   - OCMock (3.1.2)
-  - toxcore-ios (0.1.5):
+  - toxcore-ios (0.1.6):
     - libopus (~> 1.1)
     - libsodium (~> 1.0.1)
 
@@ -34,7 +34,7 @@ DEPENDENCIES:
   - CocoaLumberjack (~> 1.9.2)
   - Masonry (~> 0.6.1)
   - OCMock (~> 3.1.2)
-  - toxcore-ios (~> 0.1.5)
+  - toxcore-ios (~> 0.1.6)
 
 SPEC CHECKSUMS:
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
@@ -43,6 +43,6 @@ SPEC CHECKSUMS:
   libsodium: d1b482e7628e0298de350375a4ab981b5cc8c71b
   Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
   OCMock: a10ea9f0a6e921651f96f78b6faee95ebc813b92
-  toxcore-ios: 5197d3f5186becf5f138d663bad25c62e8d81a30
+  toxcore-ios: 16f0aeb6fc09112891f336644bea864b1d8b1d41
 
 COCOAPODS: 0.37.1
