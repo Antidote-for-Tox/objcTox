@@ -12,24 +12,17 @@
 #import "OCTMessageCall+Private.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTDBMessageAbstract.h"
+#import "OCTDBChat.h"
+#import "OCTConverterChat.h"
 
 @implementation OCTConverterMessage
 
-#pragma mark -  OCTConverterProtocol
+#pragma mark -  Public
 
-- (NSString *)objectClassName
-{
-    return NSStringFromClass([OCTMessageAbstract class]);
-}
-
-- (NSString *)dbObjectClassName
-{
-    return NSStringFromClass([OCTDBMessageAbstract class]);
-}
-
-- (NSObject *)objectFromRLMObject:(OCTDBMessageAbstract *)db
+- (id)objectFromRLMObjectWithoutChat:(OCTDBMessageAbstract *)db
 {
     NSParameterAssert(db);
+    NSParameterAssert(self.converterFriend);
 
     OCTMessageAbstract *message;
 
@@ -46,6 +39,32 @@
     message.date = [NSDate dateWithTimeIntervalSince1970:db.dateInterval];
     if (db.sender) {
         message.sender = (OCTFriend *)[self.converterFriend objectFromRLMObject:db.sender];
+    }
+
+    return message;
+}
+
+#pragma mark -  OCTConverterProtocol
+
+- (NSString *)objectClassName
+{
+    return NSStringFromClass([OCTMessageAbstract class]);
+}
+
+- (NSString *)dbObjectClassName
+{
+    return NSStringFromClass([OCTDBMessageAbstract class]);
+}
+
+- (id)objectFromRLMObject:(OCTDBMessageAbstract *)db
+{
+    NSParameterAssert(db);
+    NSParameterAssert(self.converterChat);
+
+    OCTMessageAbstract *message = [self objectFromRLMObjectWithoutChat:db];
+
+    if (db.chat) {
+        message.chat = (OCTChat *)[self.converterChat objectFromRLMObject:db.chat];
     }
 
     return message;

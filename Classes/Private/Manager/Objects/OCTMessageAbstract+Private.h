@@ -12,5 +12,6 @@
 
 @property (strong, nonatomic, readwrite) NSDate *date;
 @property (strong, nonatomic, readwrite) OCTFriend *sender;
+@property (strong, nonatomic, readwrite) OCTChat *chat;
 
 @end

@@ -9,6 +9,7 @@
 #import "OCTConverterChat.h"
 #import "OCTChat+Private.h"
 #import "OCTDBChat.h"
+#import "OCTMessageAbstract+Private.h"
 
 @implementation OCTConverterChat
 
@@ -24,8 +25,12 @@
     return NSStringFromClass([OCTDBChat class]);
 }
 
-- (NSObject *)objectFromRLMObject:(OCTDBChat *)db
+- (id)objectFromRLMObject:(OCTDBChat *)db
 {
+    NSParameterAssert(db);
+    NSParameterAssert(self.converterMessage);
+    NSParameterAssert(self.converterFriend);
+
     OCTChat *chat = [OCTChat new];
     chat.uniqueIdentifier = db.uniqueIdentifier;
 
@@ -38,7 +43,9 @@
 
     chat.friends = [friends copy];
     if (db.lastMessage) {
-        chat.lastMessage = (OCTMessageAbstract *)[self.converterMessage objectFromRLMObject:db.lastMessage];
+        // avoiding retain cycle
+        chat.lastMessage = (OCTMessageAbstract *)[self.converterMessage objectFromRLMObjectWithoutChat:db.lastMessage];
+        chat.lastMessage.chat = chat;
     }
     chat.enteredText = db.enteredText;
     chat.lastReadDate = [NSDate dateWithTimeIntervalSince1970:db.lastReadDateInterval];

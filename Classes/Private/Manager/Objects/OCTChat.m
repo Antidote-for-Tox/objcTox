@@ -8,6 +8,7 @@
 
 #import "OCTChat.h"
 #import "OCTChat+Private.h"
+#import "OCTMessageAbstract.h"
 
 @interface OCTChat()
 

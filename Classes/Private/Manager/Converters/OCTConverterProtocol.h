@@ -15,7 +15,7 @@
 @property (strong, nonatomic, readonly) NSString *objectClassName;
 @property (strong, nonatomic, readonly) NSString *dbObjectClassName;
 
-- (NSObject *)objectFromRLMObject:(RLMObject *)rlmObject;
+- (id)objectFromRLMObject:(RLMObject *)rlmObject;
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor;
 

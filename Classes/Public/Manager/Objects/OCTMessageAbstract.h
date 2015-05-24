@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTFriend.h"
+#import "OCTChat.h"
 
 /**
  * An abstract message that represents one chunk of chat history.
@@ -24,6 +25,11 @@
  * The sender of the message. If the message if outgoing sender is nil.
  */
 @property (strong, nonatomic, readonly) OCTFriend *sender;
+
+/**
+ * The chat message message belongs to.
+ */
+@property (strong, nonatomic, readonly) OCTChat *chat;
 
 /**
  * Indicates if message is outgoing or incoming.

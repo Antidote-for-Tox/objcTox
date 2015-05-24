@@ -16,6 +16,8 @@
 
 - (OCTFriend *)friendFromFriendNumber:(OCTToxFriendNumber)friendNumber
 {
+    NSParameterAssert(self.dataSource);
+
     OCTTox *tox = [self.dataSource converterFriendGetTox:self];
 
     if (! [tox friendExistsWithFriendNumber:friendNumber]) {
@@ -47,7 +49,7 @@
     return NSStringFromClass([OCTDBFriend class]);
 }
 
-- (NSObject *)objectFromRLMObject:(OCTDBFriend *)dbFriend
+- (id)objectFromRLMObject:(OCTDBFriend *)dbFriend
 {
     NSParameterAssert(dbFriend);
 

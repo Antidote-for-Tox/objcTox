@@ -46,6 +46,7 @@ extern NSString *const kOCTDBManagerObjectClassKey;
 #pragma mark -  Chats
 
 - (RLMResults *)allChats;
+- (RLMResults *)chatsWithPredicate:(NSPredicate *)predicate;
 - (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber;
 - (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
 - (void)removeChatWithAllMessages:(OCTDBChat *)chat;

@@ -166,26 +166,29 @@
 
 - (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    [self.dataSource managerSaveTox];
+
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.name = name;
     }];
-    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendStatusMessageUpdate:(NSString *)statusMessage friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    [self.dataSource managerSaveTox];
+
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.statusMessage = statusMessage;
     }];
-    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendStatusUpdate:(OCTToxUserStatus)status friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    [self.dataSource managerSaveTox];
+
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.status = status;
     }];
-    [self.dataSource managerSaveTox];
 }
 
 - (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber
@@ -197,6 +200,8 @@
 
 - (void)tox:(OCTTox *)tox friendConnectionStatusChanged:(OCTToxConnectionStatus)status friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    [self.dataSource managerSaveTox];
+
     [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
         friend.connectionStatus = status;
     }];

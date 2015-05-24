@@ -207,6 +207,30 @@
     XCTAssertEqual(db2.lastReadDateInterval, [results[1] lastReadDateInterval]);
 }
 
+- (void)testChatsWithPredicate
+{
+    OCTDBChat *db1 = [OCTDBChat new];
+    db1.enteredText = @"";
+    db1.lastReadDateInterval = 5;
+
+    OCTDBChat *db2 = [OCTDBChat new];
+    db2.enteredText = @"";
+    db2.lastReadDateInterval = 10;
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm commitWriteTransaction];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastReadDateInterval == 5"];
+    RLMResults *results = [self.manager chatsWithPredicate:predicate];
+
+    XCTAssertEqual(results.count, 1);
+
+    XCTAssertEqualObjects(db1.enteredText, [results[0] enteredText]);
+    XCTAssertEqual(db1.lastReadDateInterval, [results[0] lastReadDateInterval]);
+}
+
 - (void)testGetOrCreateChatWithFriendNumber
 {
     [self expectUpdateNotificationWithClass:[OCTDBChat class]];

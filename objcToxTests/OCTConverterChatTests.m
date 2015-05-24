@@ -12,6 +12,7 @@
 
 #import "OCTConverterChat.h"
 #import "OCTChat+Private.h"
+#import "OCTMessageAbstract+Private.h"
 #import "OCTDBChat.h"
 
 @interface OCTConverterChatTests : XCTestCase
@@ -73,7 +74,7 @@
     }]]);
 
     id converterMessage = OCMClassMock([OCTConverterMessage class]);
-    OCMStub([converterMessage objectFromRLMObject:dbLastMessage]).andReturn(lastMessage);
+    OCMStub([converterMessage objectFromRLMObjectWithoutChat:dbLastMessage]).andReturn(lastMessage);
 
     id converterFriend = OCMClassMock([OCTConverterFriend class]);
     OCMStub([converterFriend objectFromRLMObject:dbFriend0]).andReturn(friend0);
@@ -90,6 +91,7 @@
     XCTAssertEqual(chat.friends[0], friend0);
     XCTAssertEqual(chat.friends[1], friend1);
     XCTAssertEqual(chat.lastMessage, lastMessage);
+    OCMVerify([lastMessage setChat:chat]);
     XCTAssertEqualObjects(chat.enteredText, db.enteredText);
     XCTAssertEqualObjects(chat.lastReadDate, [NSDate dateWithTimeIntervalSince1970:db.lastReadDateInterval]);
 

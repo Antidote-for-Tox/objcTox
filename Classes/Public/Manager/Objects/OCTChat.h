@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTMessageAbstract.h"
+@class OCTMessageAbstract;
 
 @interface OCTChat : NSObject
 

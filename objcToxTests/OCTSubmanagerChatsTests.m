@@ -69,6 +69,39 @@
     XCTAssertNotNil(converter.converterMessage.converterFriend);
 }
 
+- (void)testAllChatsWithUnreadMessages
+{
+    id results = OCMClassMock([RLMResults class]);
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager chatsWithPredicate:[OCMArg checkWithBlock:^BOOL (NSPredicate *predicate) {
+        OCTDBMessageAbstract *message = [OCTDBMessageAbstract new];
+        message.dateInterval = 20;
+
+        OCTDBChat *unreadChat = [OCTDBChat new];
+        unreadChat.lastMessage = message;
+        unreadChat.lastReadDateInterval = 10;
+
+        OCTDBChat *readChat = [OCTDBChat new];
+        readChat.lastMessage = message;
+        readChat.lastReadDateInterval = 30;
+
+        return [predicate evaluateWithObject:unreadChat] && ! [predicate evaluateWithObject:readChat];
+    }]]).andReturn(results);
+
+    OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+
+    OCTArray *array = [self.submanager allChatsWithUnreadMessages];
+
+    XCTAssertEqualObjects(results, array.results);
+    XCTAssertTrue([array.converter isKindOfClass:[OCTConverterChat class]]);
+
+    OCTConverterChat *converter = (OCTConverterChat *)array.converter;
+    XCTAssertNotNil(converter.converterFriend);
+    XCTAssertNotNil(converter.converterMessage);
+    XCTAssertNotNil(converter.converterMessage.converterFriend);
+}
+
 - (void)testGetOrCreateChatWithFriend
 {
     id db = OCMClassMock([OCTDBChat class]);

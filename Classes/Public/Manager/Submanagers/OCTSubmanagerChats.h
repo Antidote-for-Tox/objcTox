@@ -23,6 +23,13 @@
 - (OCTArray *)allChats;
 
 /**
+ * Returns OCTArray with all chats that has unread messages.
+ *
+ * @return Autoupdating array with chats.
+ */
+- (OCTArray *)allChatsWithUnreadMessages;
+
+/**
  * Searches for a chat with specific friend. If chat is not found creates one and returns it.
  *
  * @param friend Friend to get/create chat with.

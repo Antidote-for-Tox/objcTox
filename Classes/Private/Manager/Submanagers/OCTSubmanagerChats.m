@@ -41,6 +41,7 @@
 
     _converterChat.converterMessage = [OCTConverterMessage new];
     _converterChat.converterMessage.converterFriend = _converterChat.converterFriend;
+    _converterChat.converterMessage.converterChat = _converterChat;
 
     return self;
 }
@@ -50,6 +51,14 @@
 - (OCTArray *)allChats
 {
     RLMResults *results = [[self.dataSource managerGetDBManager] allChats];
+
+    return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat];
+}
+
+- (OCTArray *)allChatsWithUnreadMessages
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastMessage.dateInterval > lastReadDateInterval"];
+    RLMResults *results = [[self.dataSource managerGetDBManager] chatsWithPredicate:predicate];
 
     return [[OCTArray alloc] initWithRLMResults:results converter:self.converterChat];
 }

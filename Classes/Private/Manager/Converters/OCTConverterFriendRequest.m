@@ -24,7 +24,7 @@
     return NSStringFromClass([OCTDBFriendRequest class]);
 }
 
-- (OCTFriendRequest *)objectFromRLMObject:(OCTDBFriendRequest *)db
+- (id)objectFromRLMObject:(OCTDBFriendRequest *)db
 {
     NSParameterAssert(db);
 
