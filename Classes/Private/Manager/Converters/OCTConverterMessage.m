@@ -11,6 +11,7 @@
 #import "OCTMessageText+Private.h"
 #import "OCTMessageFile+Private.h"
 #import "OCTDBMessageAbstract.h"
+#import "OCTDBChat.h"
 #import "OCTConverterChat.h"
 
 @implementation OCTConverterMessage
