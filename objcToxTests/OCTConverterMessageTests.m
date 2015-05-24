@@ -127,6 +127,7 @@
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
     db.sender = [OCTDBFriend new];
+    db.chat = [OCTDBChat new];
     db.callMessage = [OCTDBMessageCall new];
     db.callMessage.callDuration = 12345.05;
 
@@ -134,7 +135,12 @@
     id converterFriend = OCMClassMock([OCTConverterFriend class]);
     OCMStub([converterFriend objectFromRLMObject:db.sender]).andReturn(friend);
 
+    id chat = OCMClassMock([OCTChat class]);
+    id converterChat = OCMClassMock([OCTConverterChat class]);
+    OCMStub([converterChat objectFromRLMObject:db.chat]).andReturn(chat);
+
     self.converter.converterFriend = converterFriend;
+    self.converter.converterChat = converterChat;
     OCTMessageAbstract *message = (OCTMessageAbstract *)[self.converter objectFromRLMObject:db];
 
     XCTAssertTrue([message isKindOfClass:[OCTMessageCall class]]);
@@ -143,6 +149,7 @@
 
     XCTAssertEqual(db.dateInterval, [call.date timeIntervalSince1970]);
     XCTAssertEqual(friend, call.sender);
+    XCTAssertEqual(chat, call.chat);
     XCTAssertEqual(db.callMessage.callDuration, call.callDuration);
 }
 
