@@ -11,9 +11,11 @@
 #import <XCTest/XCTest.h>
 
 #import "OCTConverterMessage.h"
+#import "OCTConverterChat.h"
 #import "OCTMessageAbstract+Private.h"
 #import "OCTMessageText+Private.h"
 #import "OCTMessageFile+Private.h"
+#import "OCTDBChat.h"
 #import "OCTDBMessageAbstract.h"
 
 @interface OCTConverterMessageTests : XCTestCase
@@ -53,6 +55,7 @@
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
     db.sender = [OCTDBFriend new];
+    db.chat = [OCTDBChat new];
     db.textMessage = [OCTDBMessageText new];
     db.textMessage.text = @"text";
     db.textMessage.isDelivered = YES;
@@ -61,7 +64,12 @@
     id converterFriend = OCMClassMock([OCTConverterFriend class]);
     OCMStub([converterFriend objectFromRLMObject:db.sender]).andReturn(friend);
 
+    id chat = OCMClassMock([OCTChat class]);
+    id converterChat = OCMClassMock([OCTConverterChat class]);
+    OCMStub([converterChat objectFromRLMObject:db.chat]).andReturn(chat);
+
     self.converter.converterFriend = converterFriend;
+    self.converter.converterChat = converterChat;
     OCTMessageAbstract *message = (OCTMessageAbstract *)[self.converter objectFromRLMObject:db];
 
     XCTAssertTrue([message isKindOfClass:[OCTMessageText class]]);
@@ -70,6 +78,7 @@
 
     XCTAssertEqual(db.dateInterval, [text.date timeIntervalSince1970]);
     XCTAssertEqual(friend, text.sender);
+    XCTAssertEqual(chat, text.chat);
     XCTAssertEqualObjects(db.textMessage.text, text.text);
     XCTAssertEqual(db.textMessage.isDelivered, text.isDelivered);
 }
@@ -79,6 +88,7 @@
     OCTDBMessageAbstract *db = [OCTDBMessageAbstract new];
     db.dateInterval = [[NSDate date] timeIntervalSince1970];
     db.sender = [OCTDBFriend new];
+    db.chat = [OCTDBChat new];
     db.fileMessage = [OCTDBMessageFile new];
     db.fileMessage.fileType = OCTMessageFileTypeReady;
     db.fileMessage.fileSize = 100;
@@ -90,7 +100,12 @@
     id converterFriend = OCMClassMock([OCTConverterFriend class]);
     OCMStub([converterFriend objectFromRLMObject:db.sender]).andReturn(friend);
 
+    id chat = OCMClassMock([OCTChat class]);
+    id converterChat = OCMClassMock([OCTConverterChat class]);
+    OCMStub([converterChat objectFromRLMObject:db.chat]).andReturn(chat);
+
     self.converter.converterFriend = converterFriend;
+    self.converter.converterChat = converterChat;
     OCTMessageAbstract *message = (OCTMessageAbstract *)[self.converter objectFromRLMObject:db];
 
     XCTAssertTrue([message isKindOfClass:[OCTMessageFile class]]);
@@ -99,6 +114,7 @@
 
     XCTAssertEqual(db.dateInterval, [file.date timeIntervalSince1970]);
     XCTAssertEqual(friend, file.sender);
+    XCTAssertEqual(chat, file.chat);
     XCTAssertEqual(db.fileMessage.fileType, file.fileType);
     XCTAssertEqual(db.fileMessage.fileSize, file.fileSize);
     XCTAssertEqualObjects(db.fileMessage.filePath, file.filePath);

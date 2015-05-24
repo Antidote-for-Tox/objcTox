@@ -41,6 +41,7 @@
 
     _converterChat.converterMessage = [OCTConverterMessage new];
     _converterChat.converterMessage.converterFriend = _converterChat.converterFriend;
+    _converterChat.converterMessage.converterChat = _converterChat;
 
     return self;
 }
