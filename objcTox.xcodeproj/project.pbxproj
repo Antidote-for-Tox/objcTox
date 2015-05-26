@@ -117,6 +117,7 @@
 		EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = A4211DF078AC723DE235503AD4D0E591 /* OCTCall.m */; };
 		EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */; };
 		EF084F94290314128486E23E3CE9B22F /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */; };
+		F0A6B9191B127EA700E48797 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F7CE5F0C8796000D383A059517E7E00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2F6BF5A5E995453D311094E693CBC02 /* Images.xcassets */; };
 		F9A7007A32C59757AC4132DF656C5793 /* OCTStartDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 979E2EA3AF3406624C5F28600DB4F752 /* OCTStartDemoViewController.m */; };
 		FF63402FE274301CB3543CAB8FEE6152 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D194E6C3DF881FB789316F560E4B3A /* Realm.framework */; };
@@ -258,6 +259,8 @@
 		E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorage.m; sourceTree = "<group>"; };
 		EEC5B20DF06F1D3048282D1068C2CE9F /* OCTDBChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDBChat.h; sourceTree = "<group>"; };
 		EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
+		F0A6B9171B127EA700E48797 /* OCTAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTAudioEngine.h; path = Audio/OCTAudioEngine.h; sourceTree = "<group>"; };
+		F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTAudioEngine.m; path = Audio/OCTAudioEngine.m; sourceTree = "<group>"; };
 		F5174E797B52B59C74ABA4D0D9A95A4A /* OCTConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTConversationViewController.h; sourceTree = "<group>"; };
 		F696BD36965BB82325B3CB931EEB9826 /* OCTMessageCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageCall+Private.h"; sourceTree = "<group>"; };
 		F72F87B591B90C0EBDD24423BB7AFA79 /* OCTMessageCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTMessageCall.h; sourceTree = "<group>"; };
@@ -572,6 +575,7 @@
 		CF9416C2498272D5823396FB02DF7670 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				F0A6B91A1B127FAD00E48797 /* Audio */,
 				7DB8B234977816236C8F57408DD904FB /* Configuration */,
 				7452C0723C1DF2B40746EAD408EC1950 /* Converters */,
 				8588AB583843DF5ABD08944E00D9704D /* Database */,
@@ -610,6 +614,15 @@
 				A9086E2F4DDF769A0F354F4AFFBD749F /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F0A6B91A1B127FAD00E48797 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F0A6B9171B127EA700E48797 /* OCTAudioEngine.h */,
+				F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */,
+			);
+			name = Audio;
 			sourceTree = "<group>";
 		};
 		F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */ = {
@@ -886,6 +899,7 @@
 				AFB61F1E9041787517383816FAFB0C95 /* OCTMessageCall.m in Sources */,
 				38713DE80E6373A18DA786BD3D5C0E8A /* OCTMessageFile.m in Sources */,
 				C7D280C18EFDE9D97CC924B85420B2BE /* OCTMessageText.m in Sources */,
+				F0A6B9191B127EA700E48797 /* OCTAudioEngine.m in Sources */,
 				6EE3EFC505C00BB87633EDABCFC4CE2B /* OCTSortDescriptor.m in Sources */,
 				3DF3E29333440F1675987C950BB70631 /* OCTSubmanagerAvatars.m in Sources */,
 				9D47C8AD7A4BB676A9D597F6BAD98E9E /* OCTSubmanagerAvatarsTests.m in Sources */,
