@@ -27,23 +27,25 @@
 /**
  * Enable or disable the microphone input.
  * @param enable YES to turn on microphone input, NO otherwise.
+ * @param error Pointer to error object.
  * @return YES if successful, NO otherwise.
  */
--(BOOL)microphoneInput:(BOOL)enable;
+-(BOOL)microphoneInput:(BOOL)enable error:(NSError **)error;
 
 /**
- * Mute the output
- * @param disable YES to disable, NO otherwise
- * @param error Pointer to error object
+ * Mute the output.
+ * @param disable YES to disable, NO otherwise.
+ * @param error Pointer to error object.
  * @return YES on success, no Otherwise.
  */
 -(BOOL)outputEnable:(BOOL)enable error:(NSError **)error;
 
 /**
  * Checks if the Audio Graph is processing.
+ * @param error Pointer to error object.
  * @return YES if Audio Graph is running, otherwise No.
  */
--(BOOL)isAudioRunning;
+-(BOOL)isAudioRunning:(NSError **)error;
 
 
 @end

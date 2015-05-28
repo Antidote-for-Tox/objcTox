@@ -8,19 +8,16 @@
 
 #import "OCTAudioEngine.h"
 @import AVFoundation;
-#define kInputBus 1
-#define kOutputBus 0
+
+static const AudioUnitElement kInputBus = 1;
+static const AudioUnitElement kOutputBus = 0;
 
 @interface OCTAudioEngine ()
-{
-    AUGraph processingGraph;
 
-    AUNode ioNode;
-    AudioUnit ioUnit;
-    AudioComponentDescription ioUnitDescription;
-}
-
-@property (nonatomic, assign) double sampleRate;
+@property (nonatomic, assign) AUGraph processingGraph;
+@property (nonatomic, assign) AUNode ioNode;
+@property (nonatomic, assign) AudioUnit ioUnit;
+@property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
 
 @end
 
@@ -33,93 +30,116 @@
     if (!self)
         return nil;
 
-    ioUnitDescription.componentType = kAudioUnitType_Output;
-    ioUnitDescription.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
-    ioUnitDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
-    ioUnitDescription.componentFlags = 0;
-    ioUnitDescription.componentFlagsMask = 0;
+    _ioUnitDescription.componentType = kAudioUnitType_Output;
+    _ioUnitDescription.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
+    _ioUnitDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
+    _ioUnitDescription.componentFlags = 0;
+    _ioUnitDescription.componentFlagsMask = 0;
 
-    NewAUGraph(&processingGraph);
-    CheckStatus(NewAUGraph(&processingGraph),
-                @"Failed to create AUGraph");
+    NewAUGraph(&_processingGraph);
+    NewAUGraph(&_processingGraph);
 
-    CheckStatus(AUGraphAddNode(processingGraph,
-                   &ioUnitDescription,
-                   &ioNode),
-                @"Failed to add ioNode");
+    AUGraphAddNode(_processingGraph,
+                   &_ioUnitDescription,
+                   &_ioNode);
 
-    CheckStatus(AUGraphOpen(processingGraph),
-                @"Failed to open graph");
+    AUGraphOpen(_processingGraph);
 
-    AUGraphNodeInfo(processingGraph, ioNode, NULL, &ioUnit);
-
+    AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
     return self;
 }
 
 #pragma mark - Audio Controls
 -(BOOL)startAudioFlow:(NSError **)error
 {
-    bool success = [self startAudioSession:error];
-    if (!success) {
-        return success;
-    }
-    success = [self microphoneInput:YES];
-    if (!success) {
-        return success;
-    }
-
-    [self setUpStreamFormat];
-
-    OSStatus status = AUGraphInitialize(processingGraph);
-    CheckStatus(status, @"Failed to initialize processing graph");
-    if (status != noErr) {
+    if (![self startAudioSession:error] ||
+        ![self microphoneInput:YES error:error] ||
+        ![self setUpStreamFormat:error] ||
+        ![self initializeGraph:error] ||
+        ![self startGraph:error]) {
         return NO;
     }
 
-    AUGraphStart(processingGraph);
-    CheckStatus(status, @"Failed to start processing graph");
-
-    return (status == noErr);
+    return YES;
 }
 
 -(BOOL)stopAudioFlow:(NSError **)error
 {
-    CheckStatus(AUGraphStop(processingGraph), @"Failed to stop processing graph");
-    CheckStatus(AUGraphUninitialize(processingGraph), @"Unable to uninitialize graph");
+    OSStatus status = AUGraphStop(_processingGraph);
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"AUGraphStop"
+                             failureReason:@"Failed to stop Graph"];
+        return NO;
+    }
+
+    status = AUGraphUninitialize(_processingGraph);
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"AUGraphUninitialize"
+                             failureReason:@"Failed to unintialize graph"];
+        return NO;
+    }
+
     AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    bool success = [session setActive:NO error:error];
-
-    return success;
+    return [session setActive:NO error:error];
 }
 
--(BOOL)microphoneInput:(BOOL)enable;
+-(BOOL)microphoneInput:(BOOL)enable error:(NSError **)error
 {
     UInt32 enableInput = (enable)? 1 : 0;
     OSStatus status = AudioUnitSetProperty(
-                                           ioUnit,
-                                           kAudioOutputUnitProperty_EnableIO,//property we are changing
+                                           _ioUnit,
+                                           kAudioOutputUnitProperty_EnableIO,
                                            kAudioUnitScope_Input,
                                            kInputBus,
                                            &enableInput,
                                            sizeof (enableInput)
                                            );
-    CheckStatus(status, @"Unable to enable/disable input");
-    return (status == noErr);
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"Microphone Enable/Disable"
+                             failureReason:@"Unable to disable/enable Mic Input"];
+        return NO;
+    }
+
+    return YES;
 }
 
 -(BOOL)outputEnable:(BOOL)enable error:(NSError **)error
 {
+
+    UInt32 enableInput = (enable)? 1 : 0;
+    OSStatus status = AudioUnitSetProperty(
+                                           _ioUnit,
+                                           kAudioOutputUnitProperty_EnableIO,
+                                           kAudioUnitScope_Output,
+                                           kOutputBus,
+                                           &enableInput,
+                                           sizeof (enableInput)
+                                           );
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"Output Enable/Disable"
+                             failureReason:@"Unable to disable/enable Output"];
+        return NO;
+    }
+
     return YES;
 }
 
 #pragma mark - Audio Status
--(BOOL)isAudioRunning
+-(BOOL)isAudioRunning:(NSError **)error
 {
     Boolean running;
-    CheckStatus(AUGraphIsRunning(processingGraph,
-                                 &running),
-                @"Unable to determine if AUGraph is running");
+    OSStatus status = AUGraphIsRunning(_processingGraph,
+                                       &running);
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"Check if Audio Graph is running"
+                             failureReason:@"Failed to check if graph is running"];
+    }
+
     return running;
 }
 
@@ -137,18 +157,17 @@
         return NO;
     }
 
-    self.sampleRate = session.sampleRate;
-
     return YES;
 }
 
--(void)setUpStreamFormat
+-(BOOL)setUpStreamFormat:(NSError **)error
 {
     //Always initialize the fields of a new audio stream basic description structure to zero
     UInt32 bytesPerSample = sizeof (SInt32);
+    double sampleRate = [AVAudioSession sharedInstance].sampleRate;
 
     AudioStreamBasicDescription asbd = {0};
-    asbd.mSampleRate = self.sampleRate;
+    asbd.mSampleRate = sampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
     asbd.mChannelsPerFrame = 2;
@@ -158,37 +177,61 @@
     asbd.mBytesPerPacket = bytesPerSample;
 
     //set the property of the ioUnit's stream format
-    CheckStatus(AudioUnitSetProperty(
-                                           ioUnit,
+    OSStatus status = AudioUnitSetProperty (_ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
                                            kInputBus,
                                            &asbd,
-                                           sizeof(asbd)),
-                @"Error setting Audio Format");
-}
-
--(BOOL)enableInputOnAudioUnit
-{
-    //set the property of the audio unit to accept input
-    UInt32 enableInput = 1;
-    OSStatus status = AudioUnitSetProperty(
-                                  ioUnit,
-                                  kAudioOutputUnitProperty_EnableIO,//property we are changing
-                                  kAudioUnitScope_Input,
-                                  kInputBus,
-                                  &enableInput,
-                                  sizeof (enableInput)
-                                  );
-    CheckStatus(status, @"Unable to enable input");
-    return (status == noErr);
-}
-
-static void CheckStatus(OSStatus result, NSString *errorString)
-{
-    if(result != noErr)
-    {
-        NSLog(@"%@ Error code: %d", errorString, (int)result);
+                                           sizeof(asbd));
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"Stream Format"
+                             failureReason:@"Failed to setup stream format"];
+        return NO;
     }
+    return YES;
+}
+
+-(BOOL)initializeGraph:(NSError **)error
+{
+    OSStatus status = AUGraphInitialize(_processingGraph);
+    if (status != noErr) {
+        *error = [self createErrorWithCode:status
+                               description:@"Intialize Graph"
+                             failureReason:@"Failed to initialize Graph"];
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+-(BOOL)startGraph:(NSError **)error
+{
+    OSStatus status = AUGraphStart(_processingGraph);
+    if (status != noErr){
+        *error = [self createErrorWithCode:status
+                               description:@"Starting Graph"
+                             failureReason:@"Failed to start Graph"];
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (NSError *)createErrorWithCode:(NSUInteger)code
+                     description:(NSString *)description
+                   failureReason:(NSString *)failureReason
+{
+    NSMutableDictionary *userInfo = [NSMutableDictionary new];
+
+    if (description) {
+        userInfo[NSLocalizedDescriptionKey] = description;
+    }
+
+    if (failureReason) {
+        userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
+    }
+
+    return [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
 }
 @end
