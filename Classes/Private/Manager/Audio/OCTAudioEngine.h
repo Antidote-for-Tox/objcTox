@@ -10,6 +10,12 @@
 
 @interface OCTAudioEngine : NSObject
 
+typedef NS_ENUM(NSInteger, OCTAudioScope)
+{
+    OCTInput,
+    OCTOutput,
+};
+
 /**
  * Starts the Audio Processing Graph.
  * @param error Pointer to error object.
@@ -24,21 +30,15 @@
  */
 -(BOOL)stopAudioFlow:(NSError **)error;
 
-/**
- * Enable or disable the microphone input.
- * @param enable YES to turn on microphone input, NO otherwise.
- * @param error Pointer to error object.
- * @return YES if successful, NO otherwise.
- */
--(BOOL)microphoneInput:(BOOL)enable error:(NSError **)error;
 
 /**
- * Mute the output.
- * @param disable YES to disable, NO otherwise.
- * @param error Pointer to error object.
- * @return YES on success, no Otherwise.
+ * Enable or disable either output (speaker) or input (microphone).
+ * @param scope AudioUnitScope
+ * @param enable YES to enable, NO otherwise.
+ * @param error Pointer to error object
+ * @return YES on success, no otherwise.
  */
--(BOOL)outputEnable:(BOOL)enable error:(NSError **)error;
+-(BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error;
 
 /**
  * Checks if the Audio Graph is processing.

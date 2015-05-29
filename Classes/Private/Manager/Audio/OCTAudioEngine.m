@@ -52,7 +52,7 @@ static const AudioUnitElement kOutputBus = 0;
 -(BOOL)startAudioFlow:(NSError **)error
 {
     return ([self startAudioSession:error] &&
-            [self microphoneInput:YES error:error] &&
+            [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
             [self initializeGraph:error] &&
             [self startGraph:error]);
@@ -82,36 +82,17 @@ static const AudioUnitElement kOutputBus = 0;
     return [session setActive:NO error:error];
 }
 
--(BOOL)microphoneInput:(BOOL)enable error:(NSError **)error
+
+
+-(BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
 {
     UInt32 enableInput = (enable)? 1 : 0;
+    AudioUnitScope unitScope = (scope == OCTInput)? kAudioUnitScope_Input : kAudioUnitScope_Output;
+
     OSStatus status = AudioUnitSetProperty(
                                            _ioUnit,
                                            kAudioOutputUnitProperty_EnableIO,
-                                           kAudioUnitScope_Input,
-                                           kInputBus,
-                                           &enableInput,
-                                           sizeof (enableInput)
-                                           );
-    if (status != noErr) {
-        [self fillError:error
-               WithCode:status
-            description:@"Microphone Enable/Disable"
-          failureReason:@"Unable to disable/enable Mic Input"];
-        return NO;
-    }
-
-    return YES;
-}
-
--(BOOL)outputEnable:(BOOL)enable error:(NSError **)error
-{
-
-    UInt32 enableInput = (enable)? 1 : 0;
-    OSStatus status = AudioUnitSetProperty(
-                                           _ioUnit,
-                                           kAudioOutputUnitProperty_EnableIO,
-                                           kAudioUnitScope_Output,
+                                           unitScope,
                                            kOutputBus,
                                            &enableInput,
                                            sizeof (enableInput)
@@ -119,13 +100,15 @@ static const AudioUnitElement kOutputBus = 0;
     if (status != noErr) {
         [self fillError:error
                WithCode:status
-            description:@"Output Enable/Disable"
-          failureReason:@"Unable to disable/enable Output"];
+            description:@"Enable/Disable Scope"
+          failureReason:@"Unable to change enable output/input on scope"];
         return NO;
     }
 
     return YES;
+
 }
+
 
 #pragma mark - Audio Status
 -(BOOL)isAudioRunning:(NSError **)error
@@ -147,17 +130,8 @@ static const AudioUnitElement kOutputBus = 0;
 -(BOOL)startAudioSession:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    bool success = [session setCategory:AVAudioSessionCategoryPlayAndRecord
-                   error:error];
-    if (!success) {
-        return NO;
-    }
-    success = [session setActive:YES error:error];
-    if (!success) {
-        return NO;
-    }
-
-    return YES;
+    return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+            [session setActive:YES error:error]);
 }
 
 -(BOOL)setUpStreamFormat:(NSError **)error
