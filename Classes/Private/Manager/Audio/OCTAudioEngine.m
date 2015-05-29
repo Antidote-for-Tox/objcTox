@@ -63,7 +63,7 @@ static const AudioUnitElement kOutputBus = 0;
     OSStatus status = AUGraphStop(_processingGraph);
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"AUGraphStop"
           failureReason:@"Failed to stop graph"];
         return NO;
@@ -72,7 +72,7 @@ static const AudioUnitElement kOutputBus = 0;
     status = AUGraphUninitialize(_processingGraph);
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"AUGraphUninitialize"
           failureReason:@"Failed to uninitialize graph"];
         return NO;
@@ -99,7 +99,7 @@ static const AudioUnitElement kOutputBus = 0;
                                            );
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"Enable/Disable Scope"
           failureReason:@"Unable to change enable output/input on scope"];
         return NO;
@@ -118,7 +118,7 @@ static const AudioUnitElement kOutputBus = 0;
                                        &running);
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"Check if Audio Graph is running"
           failureReason:@"Failed to check if graph is running"];
     }
@@ -158,7 +158,7 @@ static const AudioUnitElement kOutputBus = 0;
                                            sizeof(asbd));
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"Stream Format"
           failureReason:@"Failed to setup stream format"];
         return NO;
@@ -171,7 +171,7 @@ static const AudioUnitElement kOutputBus = 0;
     OSStatus status = AUGraphInitialize(_processingGraph);
     if (status != noErr) {
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"Initialize Graph"
           failureReason:@"Failed to initialize Graph"];
         return NO;
@@ -184,7 +184,7 @@ static const AudioUnitElement kOutputBus = 0;
     OSStatus status = AUGraphStart(_processingGraph);
     if (status != noErr){
         [self fillError:error
-               WithCode:status
+               withCode:status
             description:@"Starting Graph"
           failureReason:@"Failed to start Graph"];
         return NO;
@@ -193,7 +193,7 @@ static const AudioUnitElement kOutputBus = 0;
 }
 
 - (void)fillError:(NSError **)error
-         WithCode:(NSUInteger)code
+         withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason
 {

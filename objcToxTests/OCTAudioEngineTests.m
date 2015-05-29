@@ -15,7 +15,7 @@
 
 @interface OCTAudioEngine(tests)
 - (void)fillError:(NSError**)error
-         WithCode:(NSUInteger)code
+         withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason;
 
@@ -41,7 +41,7 @@
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
 
     self.audioEngine = OCMPartialMock([OCTAudioEngine new]);
-    OCMStub([self.audioEngine microphoneInput:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.audioEngine changeScope:OCTInput enable:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(YES);
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
@@ -62,10 +62,10 @@
 
 - (void)testStartAndStopAudioFlow
 {
-    //Uncomment when testing
+////    Uncomment when testing
 //    NSError *error;
 //    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
-//    OCMExpect([self.audioEngine microphoneInput:YES error:[OCMArg anyObjectRef]]);
+//    OCMExpect([self.audioEngine changeScope:OCTInput enable:YES error:[OCMArg anyObjectRef]]);
 //    XCTAssertTrue([self.audioEngine isAudioRunning:&error]);
 //    XCTAssertNil(error);
 //
@@ -79,7 +79,7 @@
 {
     NSError *error;
     [self.audioEngine fillError:&error
-                       WithCode:2
+                       withCode:2
                     description:@"Test"
                   failureReason:@"TestFailure"];
     XCTAssertEqual(error.localizedDescription, @"Test");
@@ -88,7 +88,7 @@
 
     //No exception should be thrown here if error is nil.
     [self.audioEngine fillError:nil
-                       WithCode:4
+                       withCode:4
                     description:@"Test"
                   failureReason:@"TestFailure"];
 }
