@@ -37,7 +37,6 @@ static const AudioUnitElement kOutputBus = 0;
     _ioUnitDescription.componentFlagsMask = 0;
 
     NewAUGraph(&_processingGraph);
-    NewAUGraph(&_processingGraph);
 
     AUGraphAddNode(_processingGraph,
                    &_ioUnitDescription,
@@ -52,32 +51,30 @@ static const AudioUnitElement kOutputBus = 0;
 #pragma mark - Audio Controls
 -(BOOL)startAudioFlow:(NSError **)error
 {
-    if (![self startAudioSession:error] ||
-        ![self microphoneInput:YES error:error] ||
-        ![self setUpStreamFormat:error] ||
-        ![self initializeGraph:error] ||
-        ![self startGraph:error]) {
-        return NO;
-    }
-
-    return YES;
+    return ([self startAudioSession:error] &&
+            [self microphoneInput:YES error:error] &&
+            [self setUpStreamFormat:error] &&
+            [self initializeGraph:error] &&
+            [self startGraph:error]);
 }
 
 -(BOOL)stopAudioFlow:(NSError **)error
 {
     OSStatus status = AUGraphStop(_processingGraph);
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"AUGraphStop"
-                             failureReason:@"Failed to stop Graph"];
+        [self fillError:error
+               WithCode:status
+            description:@"AUGraphStop"
+          failureReason:@"Failed to stop graph"];
         return NO;
     }
 
     status = AUGraphUninitialize(_processingGraph);
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"AUGraphUninitialize"
-                             failureReason:@"Failed to unintialize graph"];
+        [self fillError:error
+               WithCode:status
+            description:@"AUGraphUninitialize"
+          failureReason:@"Failed to uninitialize graph"];
         return NO;
     }
 
@@ -97,9 +94,10 @@ static const AudioUnitElement kOutputBus = 0;
                                            sizeof (enableInput)
                                            );
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"Microphone Enable/Disable"
-                             failureReason:@"Unable to disable/enable Mic Input"];
+        [self fillError:error
+               WithCode:status
+            description:@"Microphone Enable/Disable"
+          failureReason:@"Unable to disable/enable Mic Input"];
         return NO;
     }
 
@@ -119,9 +117,10 @@ static const AudioUnitElement kOutputBus = 0;
                                            sizeof (enableInput)
                                            );
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"Output Enable/Disable"
-                             failureReason:@"Unable to disable/enable Output"];
+        [self fillError:error
+               WithCode:status
+            description:@"Output Enable/Disable"
+          failureReason:@"Unable to disable/enable Output"];
         return NO;
     }
 
@@ -135,9 +134,10 @@ static const AudioUnitElement kOutputBus = 0;
     OSStatus status = AUGraphIsRunning(_processingGraph,
                                        &running);
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"Check if Audio Graph is running"
-                             failureReason:@"Failed to check if graph is running"];
+        [self fillError:error
+               WithCode:status
+            description:@"Check if Audio Graph is running"
+          failureReason:@"Failed to check if graph is running"];
     }
 
     return running;
@@ -176,7 +176,6 @@ static const AudioUnitElement kOutputBus = 0;
     asbd.mFramesPerPacket = 1;
     asbd.mBytesPerPacket = bytesPerSample;
 
-    //set the property of the ioUnit's stream format
     OSStatus status = AudioUnitSetProperty (_ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
@@ -184,9 +183,10 @@ static const AudioUnitElement kOutputBus = 0;
                                            &asbd,
                                            sizeof(asbd));
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"Stream Format"
-                             failureReason:@"Failed to setup stream format"];
+        [self fillError:error
+               WithCode:status
+            description:@"Stream Format"
+          failureReason:@"Failed to setup stream format"];
         return NO;
     }
     return YES;
@@ -196,42 +196,45 @@ static const AudioUnitElement kOutputBus = 0;
 {
     OSStatus status = AUGraphInitialize(_processingGraph);
     if (status != noErr) {
-        *error = [self createErrorWithCode:status
-                               description:@"Intialize Graph"
-                             failureReason:@"Failed to initialize Graph"];
+        [self fillError:error
+               WithCode:status
+            description:@"Initialize Graph"
+          failureReason:@"Failed to initialize Graph"];
         return NO;
-    } else {
-        return YES;
     }
+    return YES;
 }
 
 -(BOOL)startGraph:(NSError **)error
 {
     OSStatus status = AUGraphStart(_processingGraph);
     if (status != noErr){
-        *error = [self createErrorWithCode:status
-                               description:@"Starting Graph"
-                             failureReason:@"Failed to start Graph"];
+        [self fillError:error
+               WithCode:status
+            description:@"Starting Graph"
+          failureReason:@"Failed to start Graph"];
         return NO;
-    } else {
-        return YES;
     }
+    return YES;
 }
 
-- (NSError *)createErrorWithCode:(NSUInteger)code
-                     description:(NSString *)description
-                   failureReason:(NSString *)failureReason
+- (void)fillError:(NSError **)error
+         WithCode:(NSUInteger)code
+      description:(NSString *)description
+    failureReason:(NSString *)failureReason
 {
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
+    if (error) {
+        NSMutableDictionary *userInfo = [NSMutableDictionary new];
 
-    if (description) {
-        userInfo[NSLocalizedDescriptionKey] = description;
+        if (description) {
+            userInfo[NSLocalizedDescriptionKey] = description;
+        }
+
+        if (failureReason) {
+            userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
+        }
+            *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
     }
-
-    if (failureReason) {
-        userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
-    }
-
-    return [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
 }
+
 @end
