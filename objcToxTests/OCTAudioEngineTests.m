@@ -30,17 +30,23 @@
 }
 
 - (void)testInit {
+    NSError * error;
     OCTAudioEngine *engine = [OCTAudioEngine new];
     XCTAssertNotNil(engine);
-    XCTAssertFalse([engine isAudioRunning]);
+    XCTAssertFalse([engine isAudioRunning:&error]);
 }
 
-- (void)testStartAudioFlow
+- (void)testStartAndStopAudioFlow
 {
     OCTAudioEngine *engine = [OCTAudioEngine new];
     NSError *error;
     XCTAssertTrue([engine startAudioFlow:&error]);
-    XCTAssertTrue([engine isAudioRunning]);
+    XCTAssertTrue([engine isAudioRunning:&error]);
+    XCTAssertNil(error);
+
+    XCTAssertTrue([engine stopAudioFlow:&error]);
+    XCTAssertNil(error);
+    XCTAssertFalse([engine isAudioRunning:&error]);
     XCTAssertNil(error);
 }
 
