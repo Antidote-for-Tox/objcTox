@@ -72,4 +72,3 @@ extern NSString *const kOCTFriendsContainerUpdateNotification;
 extern NSString *const kOCTContainerUpdateKeyInsertedSet;
 extern NSString *const kOCTContainerUpdateKeyRemovedSet;
 extern NSString *const kOCTContainerUpdateKeyUpdatedSet;
-

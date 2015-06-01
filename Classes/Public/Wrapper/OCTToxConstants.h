@@ -544,4 +544,3 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileSendChunk) {
      */
     OCTToxErrorFileSendChunkWrongPosition
 };
-

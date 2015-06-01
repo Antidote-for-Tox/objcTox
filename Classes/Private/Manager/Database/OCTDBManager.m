@@ -13,7 +13,7 @@
 NSString *const kOCTDBManagerUpdateNotification = @"kOCTDBManagerUpdateNotification";
 NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
 
-@interface OCTDBManager()
+@interface OCTDBManager ()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
 @property (strong, nonatomic) RLMRealm *realm;
@@ -173,7 +173,7 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
 
         chat = [[OCTDBChat objectsInRealm:self.realm where:@"ANY friends == %@", friend] lastObject];
 
-        if ( chat) {
+        if (chat) {
             return;
         }
 
@@ -289,7 +289,7 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
 
     dispatch_sync(self.queue, ^{
         RLMResults *objects = [OCTDBMessageAbstract objectsInRealm:self.realm where:
-            @"chat == %@ AND textMessage.messageId == %d", chat, messageId];
+                               @"chat == %@ AND textMessage.messageId == %d", chat, messageId];
 
         if (objects.count) {
             message = [objects firstObject];

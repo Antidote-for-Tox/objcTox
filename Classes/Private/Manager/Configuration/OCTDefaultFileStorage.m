@@ -8,7 +8,7 @@
 
 #import "OCTDefaultFileStorage.h"
 
-@interface OCTDefaultFileStorage()
+@interface OCTDefaultFileStorage ()
 
 @property (copy, nonatomic) NSString *saveFileName;
 @property (copy, nonatomic) NSString *baseDirectory;

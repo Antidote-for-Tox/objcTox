@@ -61,13 +61,13 @@
     OCTChat *chat = [self.allChats objectAtIndex:indexPath.row];
 
     cell.textLabel.text = [NSString stringWithFormat:@"Chat\n"
-        @"uniqueIdentifier %@\n"
-        @"friends %@\n"
-        @"enteredText %@\n"
-        @"lastReadDate %@\n"
-        @"hasUnreadMessages %d\n"
-        @"lastMessage: %@",
-        chat.uniqueIdentifier, chat.friends, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages], chat.lastMessage];
+                           @"uniqueIdentifier %@\n"
+                           @"friends %@\n"
+                           @"enteredText %@\n"
+                           @"lastReadDate %@\n"
+                           @"hasUnreadMessages %d\n"
+                           @"lastMessage: %@",
+                           chat.uniqueIdentifier, chat.friends, chat.enteredText, chat.lastReadDate, [chat hasUnreadMessages], chat.lastMessage];
 
     return cell;
 }

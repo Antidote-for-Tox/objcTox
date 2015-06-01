@@ -16,7 +16,7 @@
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
+@interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
@@ -186,10 +186,10 @@
 
     NSError *error;
 
-    if (![data writeToFile:savedDataPath options:0 error:&error]) {
-         @throw [NSException exceptionWithName:@"saveToxException"
-                                   reason:error.debugDescription
-                                 userInfo:@{ @"NSError" : error }];
+    if (! [data writeToFile:savedDataPath options:0 error:&error]) {
+        @throw [NSException exceptionWithName:@"saveToxException"
+                                       reason:error.debugDescription
+                                     userInfo:@{ @"NSError" : error }];
     }
 }
 

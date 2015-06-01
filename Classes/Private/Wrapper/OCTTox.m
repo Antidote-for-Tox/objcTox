@@ -14,22 +14,22 @@
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 
-tox_self_connection_status_cb   connectionStatusCallback;
-tox_friend_name_cb              friendNameCallback;
-tox_friend_status_message_cb    friendStatusMessageCallback;
-tox_friend_status_cb            friendStatusCallback;
+tox_self_connection_status_cb connectionStatusCallback;
+tox_friend_name_cb friendNameCallback;
+tox_friend_status_message_cb friendStatusMessageCallback;
+tox_friend_status_cb friendStatusCallback;
 tox_friend_connection_status_cb friendConnectionStatusCallback;
-tox_friend_typing_cb            friendTypingCallback;
-tox_friend_read_receipt_cb      friendReadReceiptCallback;
-tox_friend_request_cb           friendRequestCallback;
-tox_friend_message_cb           friendMessageCallback;
-tox_file_recv_control_cb        fileReceiveControlCallback;
-tox_file_chunk_request_cb       fileChunkRequestCallback;
-tox_file_recv_cb                fileReceiveCallback;
-tox_file_recv_chunk_cb          fileReceiveChunkCallback;
+tox_friend_typing_cb friendTypingCallback;
+tox_friend_read_receipt_cb friendReadReceiptCallback;
+tox_friend_request_cb friendRequestCallback;
+tox_friend_message_cb friendMessageCallback;
+tox_file_recv_control_cb fileReceiveControlCallback;
+tox_file_chunk_request_cb fileChunkRequestCallback;
+tox_file_recv_cb fileReceiveCallback;
+tox_file_recv_chunk_cb fileReceiveChunkCallback;
 
 
-@interface OCTTox()
+@interface OCTTox ()
 
 @property (assign, nonatomic) Tox *tox;
 
@@ -76,23 +76,23 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     if (options) {
         DDLogVerbose(@"%@: init with options:\n"
-                @"IPv6Enabled %d\n"
-                @"UDPEnabled %d\n"
-                @"startPort %u\n"
-                @"endPort %u\n"
-                @"proxyType %lu\n"
-                @"proxyHost %@\n"
-                @"proxyPort %d\n"
-                @"tcpPort %d",
-                self,
-                options.IPv6Enabled,
-                options.UDPEnabled,
-                options.startPort,
-                options.endPort,
-                (unsigned long)options.proxyType,
-                options.proxyHost,
-                options.proxyPort,
-                options.tcpPort);
+                     @"IPv6Enabled %d\n"
+                     @"UDPEnabled %d\n"
+                     @"startPort %u\n"
+                     @"endPort %u\n"
+                     @"proxyType %lu\n"
+                     @"proxyHost %@\n"
+                     @"proxyPort %d\n"
+                     @"tcpPort %d",
+                     self,
+                     options.IPv6Enabled,
+                     options.UDPEnabled,
+                     options.startPort,
+                     options.endPort,
+                     (unsigned long)options.proxyType,
+                     options.proxyHost,
+                     options.proxyPort,
+                     options.tcpPort);
 
         cOptions = [self cToxOptionsFromOptions:options];
     }
@@ -117,19 +117,19 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     [self fillError:error withCErrorInit:cError];
 
-    tox_callback_self_connection_status   (_tox, connectionStatusCallback,       (__bridge void *)self);
-    tox_callback_friend_name              (_tox, friendNameCallback,             (__bridge void *)self);
-    tox_callback_friend_status_message    (_tox, friendStatusMessageCallback,    (__bridge void *)self);
-    tox_callback_friend_status            (_tox, friendStatusCallback,           (__bridge void *)self);
-    tox_callback_friend_connection_status (_tox, friendConnectionStatusCallback, (__bridge void *)self);
-    tox_callback_friend_typing            (_tox, friendTypingCallback,           (__bridge void *)self);
-    tox_callback_friend_read_receipt      (_tox, friendReadReceiptCallback,      (__bridge void *)self);
-    tox_callback_friend_request           (_tox, friendRequestCallback,          (__bridge void *)self);
-    tox_callback_friend_message           (_tox, friendMessageCallback,          (__bridge void *)self);
-    tox_callback_file_recv_control        (_tox, fileReceiveControlCallback,     (__bridge void *)self);
-    tox_callback_file_chunk_request       (_tox, fileChunkRequestCallback,       (__bridge void *)self);
-    tox_callback_file_recv                (_tox, fileReceiveCallback,            (__bridge void *)self);
-    tox_callback_file_recv_chunk          (_tox, fileReceiveChunkCallback,       (__bridge void *)self);
+    tox_callback_self_connection_status(_tox, connectionStatusCallback, (__bridge void *)self);
+    tox_callback_friend_name(_tox, friendNameCallback, (__bridge void *)self);
+    tox_callback_friend_status_message(_tox, friendStatusMessageCallback, (__bridge void *)self);
+    tox_callback_friend_status(_tox, friendStatusCallback, (__bridge void *)self);
+    tox_callback_friend_connection_status(_tox, friendConnectionStatusCallback, (__bridge void *) self);
+    tox_callback_friend_typing(_tox, friendTypingCallback, (__bridge void *)self);
+    tox_callback_friend_read_receipt(_tox, friendReadReceiptCallback, (__bridge void *)self);
+    tox_callback_friend_request(_tox, friendRequestCallback, (__bridge void *)self);
+    tox_callback_friend_message(_tox, friendMessageCallback, (__bridge void *)self);
+    tox_callback_file_recv_control(_tox, fileReceiveControlCallback, (__bridge void *)self);
+    tox_callback_file_chunk_request(_tox, fileChunkRequestCallback, (__bridge void *)self);
+    tox_callback_file_recv(_tox, fileReceiveCallback, (__bridge void *)self);
+    tox_callback_file_recv_chunk(_tox, fileReceiveChunkCallback, (__bridge void *)self);
 
     return self;
 }
@@ -273,7 +273,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 {
     TOX_USER_STATUS cStatus = TOX_USER_STATUS_NONE;
 
-    switch(status) {
+    switch (status) {
         case OCTToxUserStatusNone:
             cStatus = TOX_USER_STATUS_NONE;
             break;
@@ -494,7 +494,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     size_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
     TOX_MESSAGE_TYPE cType;
-    switch(type) {
+    switch (type) {
         case OCTToxMessageTypeNormal:
             cType = TOX_MESSAGE_TYPE_NORMAL;
             break;
@@ -721,7 +721,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 {
     TOX_FILE_CONTROL cControl;
 
-    switch(control) {
+    switch (control) {
         case OCTToxFileControlResume:
             cControl = TOX_FILE_CONTROL_RESUME;
             break;
@@ -789,7 +789,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     const uint8_t *cFileId = NULL;
     const uint8_t *cFileName = NULL;
 
-    switch(kind) {
+    switch (kind) {
         case OCTToxFileKindData:
             cKind = TOX_FILE_KIND_DATA;
             break;
@@ -833,7 +833,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (OCTToxUserStatus)userStatusFromCUserStatus:(TOX_USER_STATUS)cStatus
 {
-    switch(cStatus) {
+    switch (cStatus) {
         case TOX_USER_STATUS_NONE:
             return OCTToxUserStatusNone;
         case TOX_USER_STATUS_AWAY:
@@ -845,7 +845,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (OCTToxConnectionStatus)userConnectionStatusFromCUserStatus:(TOX_CONNECTION)cStatus
 {
-    switch(cStatus) {
+    switch (cStatus) {
         case TOX_CONNECTION_NONE:
             return OCTToxConnectionStatusNone;
         case TOX_CONNECTION_TCP:
@@ -857,7 +857,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (OCTToxMessageType)messageTypeFromCMessageType:(TOX_MESSAGE_TYPE)cType
 {
-    switch(cType) {
+    switch (cType) {
         case TOX_MESSAGE_TYPE_NORMAL:
             return OCTToxMessageTypeNormal;
         case TOX_MESSAGE_TYPE_ACTION:
@@ -867,7 +867,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (OCTToxFileControl)fileControlFromCFileControl:(TOX_FILE_CONTROL)cControl
 {
-    switch(cControl) {
+    switch (cControl) {
         case TOX_FILE_CONTROL_RESUME:
             return OCTToxFileControlResume;
         case TOX_FILE_CONTROL_PAUSE:
@@ -879,7 +879,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOX_ERR_NEW)cError
 {
-    if (! error || cError == TOX_ERR_NEW_OK) {
+    if (! error || (cError == TOX_ERR_NEW_OK)) {
         return;
     }
 
@@ -887,7 +887,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot initialize Tox";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_NEW_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -927,14 +927,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorInitCodeLoadBadFormat;
             failureReason = @"Tox save is corrupted";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorBootstrap:(TOX_ERR_BOOTSTRAP)cError
 {
-    if (! error || cError == TOX_ERR_BOOTSTRAP_OK) {
+    if (! error || (cError == TOX_ERR_BOOTSTRAP_OK)) {
         return;
     }
 
@@ -942,7 +942,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot bootstrap with specified node";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_BOOTSTRAP_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -958,14 +958,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorBootstrapCodeBadPort;
             failureReason = @"The port passed was invalid";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendAdd:(TOX_ERR_FRIEND_ADD)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_ADD_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_ADD_OK)) {
         return;
     }
 
@@ -973,7 +973,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot add friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_ADD_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1009,14 +1009,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendAddMalloc;
             failureReason = nil;
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendDelete:(TOX_ERR_FRIEND_DELETE)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_DELETE_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_DELETE_OK)) {
         return;
     }
 
@@ -1024,7 +1024,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot delete friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_DELETE_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1032,14 +1032,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendDeleteNotFound;
             failureReason = @"Friend not found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendByPublicKey:(TOX_ERR_FRIEND_BY_PUBLIC_KEY)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK)) {
         return;
     }
 
@@ -1047,7 +1047,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot get friend by public key";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1059,14 +1059,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendByPublicKeyNotFound;
             failureReason = @"No friend with the given Public Key exists on the friend list";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendGetPublicKey:(TOX_ERR_FRIEND_GET_PUBLIC_KEY)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK)) {
         return;
     }
 
@@ -1074,7 +1074,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot get public key of a friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1082,14 +1082,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendGetPublicKeyFriendNotFound;
             failureReason = @"Friend not found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorSetInfo:(TOX_ERR_SET_INFO)cError
 {
-    if (! error || cError == TOX_ERR_SET_INFO_OK) {
+    if (! error || (cError == TOX_ERR_SET_INFO_OK)) {
         return;
     }
 
@@ -1097,7 +1097,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot set user info";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_SET_INFO_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1109,14 +1109,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorSetInfoCodeTooLong;
             failureReason = @"Specified string is too long";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_GET_LAST_ONLINE_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_GET_LAST_ONLINE_OK)) {
         return;
     }
 
@@ -1124,7 +1124,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot get last online of a friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_GET_LAST_ONLINE_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1132,14 +1132,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendGetLastOnlineFriendNotFound;
             failureReason = @"Friend not found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendQuery:(TOX_ERR_FRIEND_QUERY)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_QUERY_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_QUERY_OK)) {
         return;
     }
 
@@ -1147,7 +1147,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot perform friend query";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_QUERY_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1159,14 +1159,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendQueryFriendNotFound;
             failureReason = @"Friend not found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorSetTyping:(TOX_ERR_SET_TYPING)cError
 {
-    if (! error || cError == TOX_ERR_SET_TYPING_OK) {
+    if (! error || (cError == TOX_ERR_SET_TYPING_OK)) {
         return;
     }
 
@@ -1174,7 +1174,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot set typing status for a friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_SET_TYPING_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1182,14 +1182,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorSetTypingFriendNotFound;
             failureReason = @"Friend not found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFriendSendMessage:(TOX_ERR_FRIEND_SEND_MESSAGE)cError
 {
-    if (! error || cError == TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+    if (! error || (cError == TOX_ERR_FRIEND_SEND_MESSAGE_OK)) {
         return;
     }
 
@@ -1197,7 +1197,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot send message to a friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FRIEND_SEND_MESSAGE_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1225,14 +1225,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFriendSendMessageEmpty;
             failureReason = @"Message is empty";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFileControl:(TOX_ERR_FILE_CONTROL)cError
 {
-    if (! error || cError == TOX_ERR_FILE_CONTROL_OK) {
+    if (! error || (cError == TOX_ERR_FILE_CONTROL_OK)) {
         return;
     }
 
@@ -1240,7 +1240,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot send file control to a friend";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FILE_CONTROL_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1272,14 +1272,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFileControlSendq;
             failureReason = @"Packet queue is full";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFileSeek:(TOX_ERR_FILE_SEEK)cError
 {
-    if (! error || cError == TOX_ERR_FILE_SEEK_OK) {
+    if (! error || (cError == TOX_ERR_FILE_SEEK_OK)) {
         return;
     }
 
@@ -1287,7 +1287,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot perform file seek";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FILE_SEEK_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1315,14 +1315,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFileSeekSendq;
             failureReason = @"Packet queue is full";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFileGet:(TOX_ERR_FILE_GET)cError
 {
-    if (! error || cError == TOX_ERR_FILE_GET_OK) {
+    if (! error || (cError == TOX_ERR_FILE_GET_OK)) {
         return;
     }
 
@@ -1330,7 +1330,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot get file id";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FILE_GET_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1342,14 +1342,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFileGetNotFound;
             failureReason = @"No file transfer with given file number found";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFileSend:(TOX_ERR_FILE_SEND)cError
 {
-    if (! error || cError == TOX_ERR_FILE_SEND_OK) {
+    if (! error || (cError == TOX_ERR_FILE_SEND_OK)) {
         return;
     }
 
@@ -1357,7 +1357,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot send file";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FILE_SEND_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1381,14 +1381,14 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFileSendTooMany;
             failureReason = @"Too many ongoing transfers with friend";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
 - (void)fillError:(NSError **)error withCErrorFileSendChunk:(TOX_ERR_FILE_SEND_CHUNK)cError
 {
-    if (! error || cError == TOX_ERR_FILE_SEND_CHUNK_OK) {
+    if (! error || (cError == TOX_ERR_FILE_SEND_CHUNK_OK)) {
         return;
     }
 
@@ -1396,7 +1396,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     NSString *description = @"Cannot send chunk of file";
     NSString *failureReason = nil;
 
-    switch(cError) {
+    switch (cError) {
         case TOX_ERR_FILE_SEND_CHUNK_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
@@ -1432,7 +1432,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
             code = OCTToxErrorFileSendChunkWrongPosition;
             failureReason = @"Wrong position in file";
             break;
-    };
+    }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
@@ -1461,7 +1461,7 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     cOptions.ipv6_enabled = (bool)options.IPv6Enabled;
     cOptions.udp_enabled = (bool)options.UDPEnabled;
 
-    switch(options.proxyType) {
+    switch (options.proxyType) {
         case OCTToxProxyTypeNone:
             cOptions.proxy_type = TOX_PROXY_TYPE_NONE;
             break;
@@ -1540,7 +1540,7 @@ void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    NSString *name = [NSString stringWithCString:(const char*)cName encoding:NSUTF8StringEncoding];
+    NSString *name = [NSString stringWithCString:(const char *)cName encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
@@ -1555,7 +1555,7 @@ void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, con
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    NSString *message = [NSString stringWithCString:(const char*)cMessage encoding:NSUTF8StringEncoding];
+    NSString *message = [NSString stringWithCString:(const char *)cMessage encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: statusMessageCallback with status message %@, friend number %d", tox, message, friendNumber);
@@ -1639,12 +1639,12 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 }
 
 void friendMessageCallback(
-        Tox *cTox,
-        OCTToxFriendNumber friendNumber,
-        TOX_MESSAGE_TYPE cType,
-        const uint8_t *cMessage,
-        size_t length,
-        void *userData)
+    Tox *cTox,
+    OCTToxFriendNumber friendNumber,
+    TOX_MESSAGE_TYPE cType,
+    const uint8_t *cMessage,
+    size_t length,
+    void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1668,7 +1668,7 @@ void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTT
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
-                tox, friendNumber, fileNumber, (unsigned long)control);
+                   tox, friendNumber, fileNumber, (unsigned long)control);
 
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
             [tox.delegate tox:tox fileReceiveControl:control friendNumber:friendNumber fileNumber:fileNumber];
@@ -1683,28 +1683,28 @@ void fileChunkRequestCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTTox
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([tox.delegate respondsToSelector:@selector(tox:fileChunkRequestForFileNumber:friendNumber:position:length:)]) {
             [tox.delegate tox:tox fileChunkRequestForFileNumber:fileNumber
-                                                   friendNumber:friendNumber
-                                                       position:position
-                                                         length:length];
+                 friendNumber:friendNumber
+                     position:position
+                       length:length];
         }
     });
 }
 
 void fileReceiveCallback(
-        Tox *cTox,
-        OCTToxFriendNumber friendNumber,
-        OCTToxFileNumber fileNumber,
-        enum TOX_FILE_KIND cKind,
-        OCTToxFileSize fileSize,
-        const uint8_t *cFileName,
-        size_t fileNameLength,
-        void *userData)
+    Tox *cTox,
+    OCTToxFriendNumber friendNumber,
+    OCTToxFileNumber fileNumber,
+    enum TOX_FILE_KIND cKind,
+    OCTToxFileSize fileSize,
+    const uint8_t *cFileName,
+    size_t fileNameLength,
+    void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
     OCTToxFileKind kind;
 
-    switch(cKind) {
+    switch (cKind) {
         case TOX_FILE_KIND_DATA:
             kind = OCTToxFileKindData;
             break;
@@ -1718,22 +1718,22 @@ void fileReceiveCallback(
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
             [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber
-                                              friendNumber:friendNumber
-                                                      kind:kind
-                                                  fileSize:fileSize
-                                                  fileName:fileName];
+                 friendNumber:friendNumber
+                         kind:kind
+                     fileSize:fileSize
+                     fileName:fileName];
         }
     });
 }
 
 void fileReceiveChunkCallback(
-        Tox *cTox,
-        OCTToxFriendNumber friendNumber,
-        OCTToxFileNumber fileNumber,
-        OCTToxFileSize position,
-        const uint8_t *cData,
-        size_t length,
-        void *userData)
+    Tox *cTox,
+    OCTToxFriendNumber friendNumber,
+    OCTToxFileNumber fileNumber,
+    OCTToxFileSize position,
+    const uint8_t *cData,
+    size_t length,
+    void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1749,4 +1749,3 @@ void fileReceiveChunkCallback(
         }
     });
 }
-

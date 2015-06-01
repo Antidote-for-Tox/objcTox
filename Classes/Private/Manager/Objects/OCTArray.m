@@ -10,7 +10,7 @@
 #import "OCTArray+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTArray()
+@interface OCTArray ()
 
 /**
  * For now there is no RLMResults update notification. When it will be implemented it would
@@ -72,21 +72,33 @@
 {
     RLMObject *object = [self.results firstObject];
 
-    return object ? [self.converter objectFromRLMObject:object] : nil;
+    if (! object) {
+        return nil;
+    }
+
+    return [self.converter objectFromRLMObject:object];
 }
 
 - (id)lastObject
 {
     RLMObject *object = [self.results lastObject];
 
-    return object ? [self.converter objectFromRLMObject:object] : nil;
+    if (! object) {
+        return nil;
+    }
+
+    return [self.converter objectFromRLMObject:object];
 }
 
 - (id)objectAtIndex:(NSUInteger)index
 {
     RLMObject *object = [self.results objectAtIndex:index];
 
-    return object ? [self.converter objectFromRLMObject:object] : nil;
+    if (! object) {
+        return nil;
+    }
+
+    return [self.converter objectFromRLMObject:object];
 }
 
 - (id)objectAtIndexedSubscript:(NSUInteger)index

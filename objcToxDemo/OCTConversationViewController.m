@@ -46,9 +46,9 @@
     __weak OCTConversationViewController *weakSelf = self;
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-        bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
-            [weakSelf showSendDialog];
-        }];
+                                              bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
+        [weakSelf showSendDialog];
+    }];
 }
 
 #pragma mark -  UITableViewDelegate
@@ -106,8 +106,8 @@
 
     __weak OCTConversationViewController *weakSelf = self;
     [alert bk_addButtonWithTitle:@"OK" handler:^{
-       [weakSelf.manager.chats sendMessageToChat:weakSelf.chat text:messageField.text type:OCTToxMessageTypeNormal error:nil];
-       [weakSelf.tableView reloadData];
+        [weakSelf.manager.chats sendMessageToChat:weakSelf.chat text:messageField.text type:OCTToxMessageTypeNormal error:nil];
+        [weakSelf.tableView reloadData];
     }];
 
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];

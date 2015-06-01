@@ -19,7 +19,7 @@
 #import "OCTFriend+Private.h"
 #import "OCTConverterFriend.h"
 
-@interface OCTSubmanagerFriends(Tests)
+@interface OCTSubmanagerFriends (Tests)
 @property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
 @property (strong, nonatomic) OCTConverterFriend *converterFriend;
 @end
@@ -258,10 +258,10 @@
         NSDate *after = [NSDate date];
 
         return
-            [request.message isEqualToString:@"message"] &&
-            [request.publicKey isEqualToString:@"publicKey"];
-            (request.dateInterval >= [before timeIntervalSince1970]) &&
-            (request.dateInterval <= [after timeIntervalSince1970]);
+        [request.message isEqualToString:@"message"] &&
+        [request.publicKey isEqualToString:@"publicKey"];
+        (request.dateInterval >= [before timeIntervalSince1970]) &&
+        (request.dateInterval <= [after timeIntervalSince1970]);
     }]]);
 
     [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];

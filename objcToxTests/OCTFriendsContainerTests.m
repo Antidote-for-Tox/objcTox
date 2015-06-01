@@ -16,14 +16,14 @@
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
-@interface OCTFriendsContainer(Tests)
+@interface OCTFriendsContainer (Tests)
 
 @property (strong, nonatomic) NSMutableArray *friends;
 - (NSComparator)comparatorForCurrentSort;
 
 @end
 
-@interface OCTFriend(Tests)
+@interface OCTFriend (Tests)
 @property (assign, nonatomic, readwrite) OCTToxFriendNumber friendNumber;
 @property (copy, nonatomic, readwrite) NSString *name;
 @end

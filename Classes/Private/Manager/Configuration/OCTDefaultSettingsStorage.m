@@ -8,7 +8,7 @@
 
 #import "OCTDefaultSettingsStorage.h"
 
-@interface OCTDefaultSettingsStorage()
+@interface OCTDefaultSettingsStorage ()
 
 @property (strong, nonatomic, readwrite) NSString *userDefaultsKey;
 

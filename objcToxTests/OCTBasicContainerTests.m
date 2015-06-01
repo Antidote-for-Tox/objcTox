@@ -13,7 +13,7 @@
 #import "OCTBasicContainer.h"
 #import "OCTManagerConstants.h"
 
-@interface OCTBasicContainer(Tests)
+@interface OCTBasicContainer (Tests)
 @property (strong, nonatomic) NSMutableArray *array;
 @property (strong, nonatomic) NSString *updateNotificationName;
 @end
@@ -47,7 +47,7 @@
     NSString *notification = @"notification";
 
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ object ]
-                                                       updateNotificationName:notification];
+                                                       updateNotificationName      :notification];
 
     XCTAssertTrue(container.array.count == 1);
 
@@ -115,7 +115,7 @@
     OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
 
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1, @0 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
     } sendNotification:YES];
@@ -130,7 +130,7 @@
     [[center reject] postNotificationName:@"notification" object:nil userInfo:[OCMArg any]];
 
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1, @0 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
     } sendNotification:NO];
@@ -141,7 +141,7 @@
 - (void)testUpdateNotificationForAddObject
 {
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
 
     BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
         XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
@@ -166,7 +166,7 @@
 - (void)testUpdateNotificationForAddObjectWithSort
 {
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
     } sendNotification:NO];
@@ -194,7 +194,7 @@
 - (void)testUpdateNotificationForRemoveObject
 {
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
 
     BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
         XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
@@ -220,9 +220,9 @@
 {
     __block BOOL reverseSort = NO;
     OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]
-                                                       updateNotificationName:@"notification"];
+                                                       updateNotificationName      :@"notification"];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
-        return reverseSort ? [second compare:first] : [first compare:second];
+        return reverseSort ? [second compare : first] :[first compare:second];
     } sendNotification:NO];
 
     BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
@@ -309,8 +309,8 @@
 
     XCTAssertThrowsSpecificNamed(
         [self.container updateObjectPassingTest:^BOOL (id obj, NSUInteger idx, BOOL *stop) {
-            return NO;
-        } updateBlock:^(id obj) { }],
+        return NO;
+    } updateBlock:^(id obj) { }],
         NSException,
         NSInternalInconsistencyException
     );

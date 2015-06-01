@@ -14,4 +14,3 @@ NSString *const kOCTFriendsContainerUpdateNotification = @"kOCTFriendsContainerU
 NSString *const kOCTContainerUpdateKeyInsertedSet = @"kOCTContainerUpdateKeyInsertedSet";
 NSString *const kOCTContainerUpdateKeyRemovedSet = @"kOCTContainerUpdateKeyRemovedSet";
 NSString *const kOCTContainerUpdateKeyUpdatedSet = @"kOCTContainerUpdateKeyUpdatedSet";
-

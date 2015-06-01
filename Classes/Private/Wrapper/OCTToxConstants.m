@@ -27,4 +27,3 @@ const NSUInteger kOCTToxMaxFileNameLength = TOX_MAX_FILENAME_LENGTH;
 
 const NSUInteger kOCTToxHashLength = TOX_HASH_LENGTH;
 const NSUInteger kOCTToxFileIdLength = TOX_FILE_ID_LENGTH;
-

@@ -18,7 +18,7 @@
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTManager(Tests) <OCTSubmanagerDataSource>
+@interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
@@ -40,9 +40,7 @@
 @end
 @implementation FakeSubmanager
 - (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)status
-{
-
-}
+{}
 @end
 
 @interface OCTManagerTests : XCTestCase

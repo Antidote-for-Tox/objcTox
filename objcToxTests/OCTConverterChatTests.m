@@ -17,7 +17,8 @@
 
 @interface OCTConverterChatTests : XCTestCase
 
-@property (strong, nonatomic) OCTConverterChat *converter;;
+@property (strong, nonatomic) OCTConverterChat *converter;
+;
 
 @end
 
@@ -59,7 +60,7 @@
 
     OCTDBChat *db = [OCTDBChat new];
     db.uniqueIdentifier = @"identifier";
-    db.friends = (RLMArray<OCTDBFriend> *)@[ dbFriend0, dbFriend1 ];
+    db.friends = (RLMArray<OCTDBFriend> *) @[ dbFriend0, dbFriend1 ];
     db.lastMessage = dbLastMessage;
     db.enteredText = @"text";
     db.lastReadDateInterval = 100;
