@@ -10,11 +10,11 @@
 
 @implementation OCTDBMessageCall
 
--(instancetype)initWithMessageCall:(OCTMessageCall *)call
+- (instancetype)initWithMessageCall:(OCTMessageCall *)call
 {
     self = [super init];
 
-    if (! self){
+    if (! self) {
         return nil;
     }
 

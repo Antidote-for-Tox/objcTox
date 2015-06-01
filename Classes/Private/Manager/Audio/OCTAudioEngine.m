@@ -24,11 +24,12 @@ static const AudioUnitElement kOutputBus = 0;
 @implementation OCTAudioEngine
 
 #pragma mark - LifeCycle
--(instancetype)init
+- (instancetype)init
 {
     self = [super init];
-    if (!self)
+    if (! self) {
         return nil;
+    }
 
     _ioUnitDescription.componentType = kAudioUnitType_Output;
     _ioUnitDescription.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
@@ -49,7 +50,7 @@ static const AudioUnitElement kOutputBus = 0;
 }
 
 #pragma mark - Audio Controls
--(BOOL)startAudioFlow:(NSError **)error
+- (BOOL)startAudioFlow:(NSError **)error
 {
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
@@ -58,7 +59,7 @@ static const AudioUnitElement kOutputBus = 0;
             [self startGraph:error]);
 }
 
--(BOOL)stopAudioFlow:(NSError **)error
+- (BOOL)stopAudioFlow:(NSError **)error
 {
     OSStatus status = AUGraphStop(_processingGraph);
     if (status != noErr) {
@@ -84,19 +85,19 @@ static const AudioUnitElement kOutputBus = 0;
 
 
 
--(BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
+- (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
 {
-    UInt32 enableInput = (enable)? 1 : 0;
-    AudioUnitScope unitScope = (scope == OCTInput)? kAudioUnitScope_Input : kAudioUnitScope_Output;
+    UInt32 enableInput = (enable) ? 1 : 0;
+    AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
 
     OSStatus status = AudioUnitSetProperty(
-                                           _ioUnit,
-                                           kAudioOutputUnitProperty_EnableIO,
-                                           unitScope,
-                                           kOutputBus,
-                                           &enableInput,
-                                           sizeof (enableInput)
-                                           );
+        _ioUnit,
+        kAudioOutputUnitProperty_EnableIO,
+        unitScope,
+        kOutputBus,
+        &enableInput,
+        sizeof(enableInput)
+                      );
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -111,7 +112,7 @@ static const AudioUnitElement kOutputBus = 0;
 
 
 #pragma mark - Audio Status
--(BOOL)isAudioRunning:(NSError **)error
+- (BOOL)isAudioRunning:(NSError **)error
 {
     Boolean running;
     OSStatus status = AUGraphIsRunning(_processingGraph,
@@ -127,17 +128,17 @@ static const AudioUnitElement kOutputBus = 0;
 }
 
 #pragma mark - Private
--(BOOL)startAudioSession:(NSError **)error
+- (BOOL)startAudioSession:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
             [session setActive:YES error:error]);
 }
 
--(BOOL)setUpStreamFormat:(NSError **)error
+- (BOOL)setUpStreamFormat:(NSError **)error
 {
-    //Always initialize the fields of a new audio stream basic description structure to zero
-    UInt32 bytesPerSample = sizeof (SInt32);
+    // Always initialize the fields of a new audio stream basic description structure to zero
+    UInt32 bytesPerSample = sizeof(SInt32);
     double sampleRate = [AVAudioSession sharedInstance].sampleRate;
 
     AudioStreamBasicDescription asbd = {0};
@@ -150,7 +151,7 @@ static const AudioUnitElement kOutputBus = 0;
     asbd.mFramesPerPacket = 1;
     asbd.mBytesPerPacket = bytesPerSample;
 
-    OSStatus status = AudioUnitSetProperty (_ioUnit,
+    OSStatus status = AudioUnitSetProperty(_ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
                                            kInputBus,
@@ -166,7 +167,7 @@ static const AudioUnitElement kOutputBus = 0;
     return YES;
 }
 
--(BOOL)initializeGraph:(NSError **)error
+- (BOOL)initializeGraph:(NSError **)error
 {
     OSStatus status = AUGraphInitialize(_processingGraph);
     if (status != noErr) {
@@ -179,10 +180,10 @@ static const AudioUnitElement kOutputBus = 0;
     return YES;
 }
 
--(BOOL)startGraph:(NSError **)error
+- (BOOL)startGraph:(NSError **)error
 {
     OSStatus status = AUGraphStart(_processingGraph);
-    if (status != noErr){
+    if (status != noErr) {
         [self fillError:error
                withCode:status
             description:@"Starting Graph"
@@ -207,7 +208,7 @@ static const AudioUnitElement kOutputBus = 0;
         if (failureReason) {
             userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
         }
-            *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
+        *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
     }
 }
 

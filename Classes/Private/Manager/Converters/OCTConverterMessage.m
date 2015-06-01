@@ -32,7 +32,7 @@
     else if (db.fileMessage) {
         message = [self fileMessageFromDBMessage:db.fileMessage];
     }
-    else if (db.callMessage){
+    else if (db.callMessage) {
         message = [self callMessageFromDBMessage:db.callMessage];
     }
 

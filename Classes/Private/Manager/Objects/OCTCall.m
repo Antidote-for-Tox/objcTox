@@ -32,12 +32,8 @@
 
 
 - (void)setAudioBitrate:(int)bitrate
-{
-
-}
+{}
 
 - (void)setVideoBitrate:(int)bitrate
-{
-
-}
+{}
 @end

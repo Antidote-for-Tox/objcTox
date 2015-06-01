@@ -13,6 +13,6 @@
 
 @property NSTimeInterval callDuration;
 
--(instancetype)initWithMessageCall:(OCTMessageCall *)call;
+- (instancetype)initWithMessageCall:(OCTMessageCall *)call;
 
 @end

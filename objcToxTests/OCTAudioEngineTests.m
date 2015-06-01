@@ -13,8 +13,8 @@
 #import "OCTAudioEngine.h"
 @import AVFoundation;
 
-@interface OCTAudioEngine(tests)
-- (void)fillError:(NSError**)error
+@interface OCTAudioEngine (tests)
+- (void)fillError:(NSError **)error
          withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason;
@@ -53,8 +53,9 @@
     [super tearDown];
 }
 
-- (void)testInit {
-    NSError * error;
+- (void)testInit
+{
+    NSError *error;
     OCTAudioEngine *engine = [OCTAudioEngine new];
     XCTAssertNotNil(engine);
     XCTAssertFalse([engine isAudioRunning:&error]);
@@ -62,17 +63,17 @@
 
 - (void)testStartAndStopAudioFlow
 {
-////    Uncomment when testing
-//    NSError *error;
-//    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
-//    OCMExpect([self.audioEngine changeScope:OCTInput enable:YES error:[OCMArg anyObjectRef]]);
-//    XCTAssertTrue([self.audioEngine isAudioRunning:&error]);
-//    XCTAssertNil(error);
-//
-//    XCTAssertTrue([self.audioEngine stopAudioFlow:&error]);
-//    XCTAssertNil(error);
-//    XCTAssertFalse([self.audioEngine isAudioRunning:&error]);
-//    XCTAssertNil(error);
+    ////    Uncomment when testing
+    //    NSError *error;
+    //    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+    //    OCMExpect([self.audioEngine changeScope:OCTInput enable:YES error:[OCMArg anyObjectRef]]);
+    //    XCTAssertTrue([self.audioEngine isAudioRunning:&error]);
+    //    XCTAssertNil(error);
+    //
+    //    XCTAssertTrue([self.audioEngine stopAudioFlow:&error]);
+    //    XCTAssertNil(error);
+    //    XCTAssertFalse([self.audioEngine isAudioRunning:&error]);
+    //    XCTAssertNil(error);
 }
 
 - (void)testFillError
@@ -86,7 +87,7 @@
     XCTAssertEqual(error.localizedFailureReason, @"TestFailure");
     XCTAssertEqual(error.code, 2);
 
-    //No exception should be thrown here if error is nil.
+    // No exception should be thrown here if error is nil.
     [self.audioEngine fillError:nil
                        withCode:4
                     description:@"Test"

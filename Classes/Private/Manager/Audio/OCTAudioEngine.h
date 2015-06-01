@@ -8,27 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCTAudioEngine : NSObject
-
-typedef NS_ENUM(NSInteger, OCTAudioScope)
-{
+typedef NS_ENUM(NSInteger, OCTAudioScope) {
     OCTInput,
     OCTOutput,
 };
+
+@interface OCTAudioEngine : NSObject
 
 /**
  * Starts the Audio Processing Graph.
  * @param error Pointer to error object.
  * @return YES on success, otherwise NO.
  */
--(BOOL)startAudioFlow:(NSError **)error;
+- (BOOL)startAudioFlow:(NSError **)error;
 
 /**
  * Stops the Audio Processing Graph.
  * @param error Pointer to error object.
  * @return YES on success, otherwise NO.
  */
--(BOOL)stopAudioFlow:(NSError **)error;
+- (BOOL)stopAudioFlow:(NSError **)error;
 
 
 /**
@@ -38,14 +37,14 @@ typedef NS_ENUM(NSInteger, OCTAudioScope)
  * @param error Pointer to error object
  * @return YES on success, no otherwise.
  */
--(BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error;
+- (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error;
 
 /**
  * Checks if the Audio Graph is processing.
  * @param error Pointer to error object.
  * @return YES if Audio Graph is running, otherwise No.
  */
--(BOOL)isAudioRunning:(NSError **)error;
+- (BOOL)isAudioRunning:(NSError **)error;
 
 
 @end

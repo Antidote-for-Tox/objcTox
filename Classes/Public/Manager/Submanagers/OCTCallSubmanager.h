@@ -46,6 +46,6 @@
  * @param error Pointer to an error when attempting to answer a call
  * @return YES if we were able to succesfully answer the call, otherwise NO.
  **/
-- (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError**)error;
+- (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
 @end
