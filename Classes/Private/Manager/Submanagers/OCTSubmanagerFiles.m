@@ -8,7 +8,7 @@
 
 #import "OCTSubmanagerFiles+Private.h"
 
-@interface OCTSubmanagerFiles()
+@interface OCTSubmanagerFiles ()
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
