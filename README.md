@@ -6,6 +6,12 @@ Objective-C wrapper for [Tox](https://tox.im/).
 
 Description will be here soon. :)
 
+## Downloads
+
+1. Clone repo `git clone --recursive https://github.com/dvor/objcTox.git`
+2. Install CocoaPods `pod install`
+3. Open `objcTox.xcworkspace` file with Xcode 5+.
+
 ## Contribution
 
 Before contributing please check [style guide](objective-c-style-guide.md).
