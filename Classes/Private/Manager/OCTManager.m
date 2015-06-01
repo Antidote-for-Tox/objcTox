@@ -13,10 +13,11 @@
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerChats+Private.h"
+#import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTManager() <OCTToxDelegate, OCTSubmanagerDataSource>
+@interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
@@ -25,6 +26,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
 
@@ -75,6 +77,10 @@
     OCTSubmanagerChats *chats = [OCTSubmanagerChats new];
     chats.dataSource = self;
     _chats = chats;
+
+    OCTSubmanagerFiles *files = [OCTSubmanagerFiles new];
+    files.dataSource = self;
+    _files = files;
 
     OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
     avatars.dataSource = self;
@@ -166,6 +172,7 @@
         self.user,
         self.friends,
         self.chats,
+        self.files,
         self.avatars,
     ];
 
@@ -186,10 +193,10 @@
 
     NSError *error;
 
-    if (![data writeToFile:savedDataPath options:0 error:&error]) {
-         @throw [NSException exceptionWithName:@"saveToxException"
-                                   reason:error.debugDescription
-                                 userInfo:@{ @"NSError" : error }];
+    if (! [data writeToFile:savedDataPath options:0 error:&error]) {
+        @throw [NSException exceptionWithName:@"saveToxException"
+                                       reason:error.debugDescription
+                                     userInfo:@{ @"NSError" : error }];
     }
 }
 

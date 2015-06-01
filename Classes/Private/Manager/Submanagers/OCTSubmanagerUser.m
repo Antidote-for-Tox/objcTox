@@ -9,7 +9,7 @@
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTTox.h"
 
-@interface OCTSubmanagerUser()
+@interface OCTSubmanagerUser ()
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 

@@ -58,9 +58,9 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     __weak OCTFriendsViewController *weakSelf = self;
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-        bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
-            [weakSelf sendFriendRequest];
-        }];
+                                              bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
+        [weakSelf sendFriendRequest];
+    }];
 }
 
 #pragma mark -  UITableViewDelegate
@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     SectionType type = indexPath.section;
 
-    switch(type) {
+    switch (type) {
         case SectionTypeFriends:
             [self didSelectFriend:[self.friendsContainer friendAtIndex:indexPath.row]];
             break;
@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 {
     SectionType type = section;
 
-    switch(type) {
+    switch (type) {
         case SectionTypeFriends:
             return self.friendsContainer.friendsCount;
         case SectionTypeFriendRequests:
@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 {
     SectionType type = section;
 
-    switch(type) {
+    switch (type) {
         case SectionTypeFriends:
             return @"Friends";
         case SectionTypeFriendRequests:
@@ -123,11 +123,11 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 {
     SectionType type = indexPath.section;
 
-    switch(type) {
+    switch (type) {
         case SectionTypeFriends:
-           return [self friendCellAtIndexPath:indexPath];
+            return [self friendCellAtIndexPath:indexPath];
         case SectionTypeFriendRequests:
-           return [self friendRequestCellAtIndexPath:indexPath];
+            return [self friendRequestCellAtIndexPath:indexPath];
         case SectionTypeCount:
             return nil;
     }
@@ -155,22 +155,22 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     OCTFriend *friend = [self.friendsContainer friendAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"Friend\n"
-        @"friendNumber %u\n"
-        @"publicKey %@\n"
-        @"name %@\n"
-        @"statusMessage %@\n"
-        @"status %@\n"
-        @"connectionStatus %@\n"
-        @"lastSeenOnline %@\n"
-        @"isTyping %d",
-        friend.friendNumber,
-        friend.publicKey,
-        friend.name,
-        friend.statusMessage,
-        [self stringFromUserStatus:friend.status],
-        [self stringFromConnectionStatus:friend.connectionStatus],
-        friend.lastSeenOnline,
-        friend.isTyping];
+                           @"friendNumber %u\n"
+                           @"publicKey %@\n"
+                           @"name %@\n"
+                           @"statusMessage %@\n"
+                           @"status %@\n"
+                           @"connectionStatus %@\n"
+                           @"lastSeenOnline %@\n"
+                           @"isTyping %d",
+                           friend.friendNumber,
+                           friend.publicKey,
+                           friend.name,
+                           friend.statusMessage,
+                           [self stringFromUserStatus:friend.status],
+                           [self stringFromConnectionStatus:friend.connectionStatus],
+                           friend.lastSeenOnline,
+                           friend.isTyping];
 
     return cell;
 }
@@ -181,9 +181,9 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     OCTFriendRequest *request = [self.allFriendRequests objectAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"Friend request\n"
-        @"publicKey %@\n"
-        @"message %@\n",
-        request.publicKey, request.message];
+                           @"publicKey %@\n"
+                           @"message %@\n",
+                           request.publicKey, request.message];
 
     return cell;
 }
@@ -231,8 +231,8 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     __weak OCTFriendsViewController *weakSelf = self;
     [alert bk_addButtonWithTitle:@"OK" handler:^{
-       [weakSelf.manager.friends sendFriendRequestToAddress:addressField.text message:messageField.text error:nil];
-       [weakSelf.tableView reloadData];
+        [weakSelf.manager.friends sendFriendRequestToAddress:addressField.text message:messageField.text error:nil];
+        [weakSelf.tableView reloadData];
     }];
 
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];

@@ -8,7 +8,7 @@
 
 #import "OCTFriend.h"
 
-@interface OCTFriend()
+@interface OCTFriend ()
 
 @property (assign, nonatomic, readwrite) OCTToxFriendNumber friendNumber;
 @property (copy, nonatomic, readwrite) NSString *publicKey;

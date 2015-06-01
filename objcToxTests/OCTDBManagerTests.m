@@ -15,7 +15,7 @@
 #import "OCTDBFriendRequest.h"
 #import "OCTDBChat.h"
 
-@interface OCTDBManager()
+@interface OCTDBManager ()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
 @property (strong, nonatomic) RLMRealm *realm;

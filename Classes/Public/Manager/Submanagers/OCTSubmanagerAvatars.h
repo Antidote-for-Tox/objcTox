@@ -23,7 +23,7 @@
 /**
  * Returns avatar for current user. If you want just to check if user avatar exist, it would be better to use
  * `has avatar` method as it is faster.
- * 
+ *
  * @param error Pointer to an error object if problem reading data
  *
  * @return User avatar or nil if avatar isn't set.

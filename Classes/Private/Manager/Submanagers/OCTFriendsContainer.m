@@ -12,7 +12,7 @@
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
-@interface OCTFriendsContainer()
+@interface OCTFriendsContainer ()
 
 @property (weak, nonatomic) id<OCTFriendsContainerDataSource> dataSource;
 
@@ -35,7 +35,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     }
 
     self.container = [[OCTBasicContainer alloc] initWithObjects:friends
-                                         updateNotificationName:kOCTFriendsContainerUpdateNotification];
+                                         updateNotificationName      :kOCTFriendsContainerUpdateNotification];
 
     return self;
 }
@@ -107,30 +107,29 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
         return [first.publicKey compare:second.publicKey];
     };
 
-    switch(self.friendsSort) {
+    switch (self.friendsSort) {
         case OCTFriendsSortByName:
             return nameComparator;
 
         case OCTFriendsSortByStatus:
             return ^NSComparisonResult (OCTFriend *first, OCTFriend *second) {
-                if (first.connectionStatus  == OCTToxConnectionStatusNone &&
-                    second.connectionStatus == OCTToxConnectionStatusNone)
-                {
-                    return nameComparator(first, second);
-                }
+                       if ((first.connectionStatus  == OCTToxConnectionStatusNone) &&
+                           (second.connectionStatus == OCTToxConnectionStatusNone) ) {
+                           return nameComparator(first, second);
+                       }
 
-                if (first.connectionStatus  == OCTToxConnectionStatusNone) {
-                    return NSOrderedDescending;
-                }
-                if (second.connectionStatus  == OCTToxConnectionStatusNone) {
-                    return NSOrderedAscending;
-                }
+                       if (first.connectionStatus  == OCTToxConnectionStatusNone) {
+                           return NSOrderedDescending;
+                       }
+                       if (second.connectionStatus  == OCTToxConnectionStatusNone) {
+                           return NSOrderedAscending;
+                       }
 
-                if (first.status == second.status) {
-                    return nameComparator(first, second);
-                }
+                       if (first.status == second.status) {
+                           return nameComparator(first, second);
+                       }
 
-                return (first.status > second.status) ? NSOrderedDescending : NSOrderedAscending;
+                       return (first.status > second.status) ? NSOrderedDescending : NSOrderedAscending;
             };
     }
 }

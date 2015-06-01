@@ -9,7 +9,7 @@
 #import "OCTBasicContainer.h"
 #import "OCTManagerConstants.h"
 
-@interface OCTBasicContainer()
+@interface OCTBasicContainer ()
 
 @property (strong, nonatomic) NSMutableArray *array;
 

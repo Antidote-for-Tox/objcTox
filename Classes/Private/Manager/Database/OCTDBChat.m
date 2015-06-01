@@ -18,8 +18,8 @@
 + (NSDictionary *)defaultPropertyValues
 {
     return @{
-        @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
-        @"enteredText" : @"",
+               @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
+               @"enteredText" : @"",
     };
 }
 

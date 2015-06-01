@@ -14,7 +14,7 @@
 #import "OCTArray+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTArray()
+@interface OCTArray ()
 
 @property (strong, nonatomic) RLMResults *results;
 @property (strong, nonatomic) id<OCTConverterProtocol> converter;

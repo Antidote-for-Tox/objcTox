@@ -101,9 +101,9 @@
  * @param friendNumber The friend number of the friend the file is being transferred to or received from.
  * @param fileNumber The friend-specific identifier for the file transfer.
  */
-- (void)tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
-                                friendNumber:(OCTToxFriendNumber)friendNumber
-                                  fileNumber:(OCTToxFileNumber)fileNumber;
+- (void)     tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
+    friendNumber:(OCTToxFriendNumber)friendNumber
+      fileNumber:(OCTToxFileNumber)fileNumber;
 
 /**
  * If the length parameter is 0, the file transfer is finished, and the client's
@@ -127,10 +127,10 @@
  * @param position The file or stream position from which to continue reading.
  * @param length The number of bytes requested for the current chunk.
  */
-- (void)tox:(OCTTox *)tox fileChunkRequestForFileNumber:(OCTToxFileNumber)fileNumber
-                                           friendNumber:(OCTToxFriendNumber)friendNumber
-                                               position:(OCTToxFileSize)position
-                                                 length:(size_t)length;
+- (void)     tox:(OCTTox *)tox fileChunkRequestForFileNumber:(OCTToxFileNumber)fileNumber
+    friendNumber:(OCTToxFriendNumber)friendNumber
+        position:(OCTToxFileSize)position
+          length:(size_t)length;
 
 /**
  * The client should acquire resources to be associated with the file transfer.
@@ -145,11 +145,11 @@
  * @param fileSize Size in bytes of the file about to be received from the client, kOCTToxFileSizeUnknown if unknown or streaming.
  * @param fileName The name of the file.
  */
-- (void)tox:(OCTTox *)tox fileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
-                                      friendNumber:(OCTToxFriendNumber)friendNumber
-                                              kind:(OCTToxFileKind)kind
-                                          fileSize:(OCTToxFileSize)fileSize
-                                          fileName:(NSString *)fileName;
+- (void)     tox:(OCTTox *)tox fileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
+    friendNumber:(OCTToxFriendNumber)friendNumber
+            kind:(OCTToxFileKind)kind
+        fileSize:(OCTToxFileSize)fileSize
+        fileName:(NSString *)fileName;
 
 /**
  * This method is first called when a file transfer request is received, and
@@ -168,9 +168,9 @@
  * @param friendNumber The friend number of the friend who is sending the file.
  * @param position The file position of the first byte in data.
  */
-- (void)tox:(OCTTox *)tox fileReceiveChunk:(NSData *)chunk
-                                fileNumber:(OCTToxFileNumber)fileNumber
-                              friendNumber:(OCTToxFriendNumber)friendNumber
-                                  position:(OCTToxFileSize)position;
+- (void)     tox:(OCTTox *)tox fileReceiveChunk:(NSData *)chunk
+      fileNumber:(OCTToxFileNumber)fileNumber
+    friendNumber:(OCTToxFriendNumber)friendNumber
+        position:(OCTToxFileSize)position;
 
 @end

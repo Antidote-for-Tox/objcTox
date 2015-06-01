@@ -8,7 +8,7 @@
 
 #import "OCTSortDescriptor.h"
 
-@interface OCTSortDescriptor()
+@interface OCTSortDescriptor ()
 
 @property (strong, nonatomic, readwrite) NSString *property;
 @property (assign, nonatomic, readwrite) BOOL ascending;
@@ -35,7 +35,7 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"OCTSortDescriptor with property %@, ascending %@",
-        self.property, (self.ascending ? @"YES" : @"NO")];
+            self.property, (self.ascending ? @"YES" : @"NO")];
 }
 
 @end

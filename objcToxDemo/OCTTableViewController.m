@@ -110,9 +110,9 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
     }];
 }
 
-- (void)         addToSheet:(UIActionSheet *)sheet
- multiEditButtonWithOptions:(NSArray *)options
-                      block:(void (^)(NSUInteger index))block
+- (void)            addToSheet:(UIActionSheet *)sheet
+    multiEditButtonWithOptions:(NSArray *)options
+                         block:(void (^)(NSUInteger index))block
 {
     NSParameterAssert(block);
 
@@ -147,7 +147,7 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
 
 - (NSString *)stringFromUserStatus:(OCTToxUserStatus)status
 {
-    switch(status) {
+    switch (status) {
         case OCTToxUserStatusNone:
             return @"None";
         case OCTToxUserStatusAway:
@@ -159,7 +159,7 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
 
 - (NSString *)stringFromConnectionStatus:(OCTToxConnectionStatus)status
 {
-    switch(status) {
+    switch (status) {
         case OCTToxConnectionStatusNone:
             return @"None";
         case OCTToxConnectionStatusTCP:

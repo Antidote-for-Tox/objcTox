@@ -15,17 +15,19 @@
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
+#import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTDBManager.h"
 
-@interface OCTManager(Tests) <OCTSubmanagerDataSource>
+@interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
@@ -40,9 +42,7 @@
 @end
 @implementation FakeSubmanager
 - (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)status
-{
-
-}
+{}
 @end
 
 @interface OCTManagerTests : XCTestCase
@@ -78,6 +78,8 @@
     XCTAssertEqual(self.manager.friends.dataSource, self.manager);
     XCTAssertNotNil(self.manager.chats);
     XCTAssertEqual(self.manager.chats.dataSource, self.manager);
+    XCTAssertNotNil(self.manager.files);
+    XCTAssertEqual(self.manager.files.dataSource, self.manager);
     XCTAssertNotNil(self.manager.avatars);
     XCTAssertEqual(self.manager.avatars.dataSource, self.manager);
     XCTAssertNotNil(self.manager.tox);
@@ -142,6 +144,7 @@
     self.manager.user = submanager;
     self.manager.friends = submanager;
     self.manager.chats = submanager;
+    self.manager.files = submanager;
     self.manager.avatars = submanager;
 
     // test non protocol selector
@@ -162,6 +165,7 @@
     self.manager.user = submanager;
     self.manager.friends = dummy;
     self.manager.chats = dummy;
+    self.manager.files = dummy;
     self.manager.avatars = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
@@ -169,13 +173,7 @@
     self.manager.user = dummy;
     self.manager.friends = submanager;
     self.manager.chats = dummy;
-    self.manager.avatars = dummy;
-
-    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
-
-    self.manager.user = dummy;
-    self.manager.friends = dummy;
-    self.manager.chats = submanager;
+    self.manager.files = dummy;
     self.manager.avatars = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
@@ -183,6 +181,23 @@
     self.manager.user = dummy;
     self.manager.friends = dummy;
     self.manager.chats = dummy;
+    self.manager.files = submanager;
+    self.manager.avatars = dummy;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+
+    self.manager.user = dummy;
+    self.manager.friends = dummy;
+    self.manager.chats = submanager;
+    self.manager.files = dummy;
+    self.manager.avatars = dummy;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+
+    self.manager.user = dummy;
+    self.manager.friends = dummy;
+    self.manager.chats = dummy;
+    self.manager.files = dummy;
     self.manager.avatars = submanager;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);

@@ -17,7 +17,7 @@
 #import "OCTFriend+Private.h"
 #import "OCTArray+Private.h"
 
-@interface OCTSubmanagerFriends() <OCTFriendsContainerDataSource, OCTConverterFriendDataSource>
+@interface OCTSubmanagerFriends () <OCTFriendsContainerDataSource, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
