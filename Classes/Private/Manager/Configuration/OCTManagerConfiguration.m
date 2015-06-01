@@ -22,7 +22,7 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration new];
 
     configuration.settingsStorage = [[OCTDefaultSettingsStorage alloc]
-        initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
+                                     initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
 
     NSString *baseDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     baseDirectory = [baseDirectory stringByAppendingPathComponent:kDefaultBaseDirectory];

@@ -21,9 +21,9 @@
 - (void)showActionSheet:(void (^)(UIActionSheet *sheet))block;
 - (void)addToSheet:(UIActionSheet *)sheet copyButtonWithValue:(id)value;
 - (void)addToSheet:(UIActionSheet *)sheet textEditButtonWithValue:(id)value block:(void (^)(NSString *string))block;
-- (void)         addToSheet:(UIActionSheet *)sheet
- multiEditButtonWithOptions:(NSArray *)options
-                      block:(void (^)(NSUInteger index))block;
+- (void)            addToSheet:(UIActionSheet *)sheet
+    multiEditButtonWithOptions:(NSArray *)options
+                         block:(void (^)(NSUInteger index))block;
 
 // Value can be NSString or NSNumber
 - (NSString *)stringFromValue:(id)value;

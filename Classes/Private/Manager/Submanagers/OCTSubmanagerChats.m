@@ -13,7 +13,7 @@
 #import "OCTDBManager.h"
 #import "OCTChat+Private.h"
 
-@interface OCTSubmanagerChats() <OCTConverterChatDelegate, OCTConverterFriendDataSource>
+@interface OCTSubmanagerChats () <OCTConverterChatDelegate, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 

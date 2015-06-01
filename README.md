@@ -6,6 +6,10 @@ Objective-C wrapper for [Tox](https://tox.im/).
 
 Description will be here soon. :)
 
+## Contribution
+
+Before contributing please check [style guide](objective-c-style-guide.md).
+
 ## Author
 
 Dmytro Vorobiov, d@dvor.me

@@ -13,21 +13,21 @@
 #import "OCTTox.h"
 #import "tox.h"
 
-tox_self_connection_status_cb   connectionStatusCallback;
-tox_friend_name_cb              friendNameCallback;
-tox_friend_status_message_cb    friendStatusMessageCallback;
-tox_friend_status_cb            friendStatusCallback;
+tox_self_connection_status_cb connectionStatusCallback;
+tox_friend_name_cb friendNameCallback;
+tox_friend_status_message_cb friendStatusMessageCallback;
+tox_friend_status_cb friendStatusCallback;
 tox_friend_connection_status_cb friendConnectionStatusCallback;
-tox_friend_typing_cb            friendTypingCallback;
-tox_friend_read_receipt_cb      friendReadReceiptCallback;
-tox_friend_request_cb           friendRequestCallback;
-tox_friend_message_cb           friendMessageCallback;
-tox_file_recv_control_cb        fileReceiveControlCallback;
-tox_file_chunk_request_cb       fileChunkRequestCallback;
-tox_file_recv_cb                fileReceiveCallback;
-tox_file_recv_chunk_cb          fileReceiveChunkCallback;
+tox_friend_typing_cb friendTypingCallback;
+tox_friend_read_receipt_cb friendReadReceiptCallback;
+tox_friend_request_cb friendRequestCallback;
+tox_friend_message_cb friendMessageCallback;
+tox_file_recv_control_cb fileReceiveControlCallback;
+tox_file_chunk_request_cb fileChunkRequestCallback;
+tox_file_recv_cb fileReceiveCallback;
+tox_file_recv_chunk_cb fileReceiveChunkCallback;
 
-@interface OCTTox(Tests)
+@interface OCTTox (Tests)
 
 - (OCTToxUserStatus)userStatusFromCUserStatus:(TOX_USER_STATUS)cStatus;
 - (OCTToxConnectionStatus)userConnectionStatusFromCUserStatus:(TOX_CONNECTION)cStatus;
@@ -720,7 +720,8 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
     [self makeTestCallbackWithCallBlock:^{
         uint8_t bin[32] = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+        };
 
         friendRequestCallback(NULL, bin, (const uint8_t *)"message", 7, (__bridge void *)self.tox);
 
@@ -773,11 +774,11 @@ tox_file_recv_chunk_cb          fileReceiveChunkCallback;
 
     } expectBlock:^(id<OCTToxDelegate> delegate) {
         OCMExpect([self.tox.delegate tox:self.tox
-                fileReceiveForFileNumber:4
-                            friendNumber:5
-                                    kind:OCTToxFileKindData
-                                fileSize:500
-                                fileName:[OCMArg isEqual:@"filename"]]);
+                   fileReceiveForFileNumber:4
+                               friendNumber:5
+                                       kind:OCTToxFileKindData
+                                   fileSize:500
+                                   fileName:[OCMArg isEqual:@"filename"]]);
     }];
 }
 

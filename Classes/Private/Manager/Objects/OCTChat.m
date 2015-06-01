@@ -10,7 +10,7 @@
 #import "OCTChat+Private.h"
 #import "OCTMessageAbstract.h"
 
-@interface OCTChat()
+@interface OCTChat ()
 
 @property (copy, nonatomic, readwrite) NSString *uniqueIdentifier;
 

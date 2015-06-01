@@ -13,7 +13,7 @@
 
 static NSString *const kuserAvatarFileName = @"user_avatar";
 
-@interface OCTSubmanagerAvatars()
+@interface OCTSubmanagerAvatars ()
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
@@ -56,7 +56,7 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 //                             options:NSDataWritingAtomic
 //                               error:error];
 //     }
-    
+
 //     [tox setAvatar:data];
 //     return success;
 // }
@@ -119,7 +119,7 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 //         imageSize.width *= 0.9;
 //         imageSize.height *= 0.9;
 //     } while (data.length > maxDataLength);
-    
+
 //     return data;
 // }
 

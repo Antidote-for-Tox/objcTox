@@ -68,7 +68,7 @@ typedef NS_ENUM(NSUInteger, Row) {
     __weak OCTUserViewController *weakSelf = self;
 
     [self showActionSheet:^(UIActionSheet *sheet) {
-        switch(indexPath.row) {
+        switch (indexPath.row) {
             case RowConnectionStatus:
                 // nop
                 break;
@@ -79,52 +79,52 @@ typedef NS_ENUM(NSUInteger, Row) {
                 [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.publicKey];
                 break;
             case RowNospam:
-            {
-                [weakSelf addToSheet:sheet copyButtonWithValue:@(weakSelf.manager.user.nospam)];
-                [weakSelf addToSheet:sheet textEditButtonWithValue:@(weakSelf.manager.user.nospam) block:^(NSString *string) {
+                {
+                    [weakSelf addToSheet:sheet copyButtonWithValue:@(weakSelf.manager.user.nospam)];
+                    [weakSelf addToSheet:sheet textEditButtonWithValue:@(weakSelf.manager.user.nospam) block:^(NSString *string) {
                     weakSelf.manager.user.nospam = (OCTToxNoSpam)[string integerValue];
                 }];
-                break;
-            }
+                    break;
+                }
             case RowStatus:
-            {
-                [weakSelf addToSheet:sheet multiEditButtonWithOptions:@[
-                    [weakSelf stringFromUserStatus:0],
-                    [weakSelf stringFromUserStatus:1],
-                    [weakSelf stringFromUserStatus:2],
+                {
+                    [weakSelf addToSheet:sheet multiEditButtonWithOptions:@[
+                         [weakSelf stringFromUserStatus:0],
+                         [weakSelf stringFromUserStatus:1],
+                         [weakSelf stringFromUserStatus:2],
 
-                ] block:^(NSUInteger index) {
+                     ] block:^(NSUInteger index) {
                     weakSelf.manager.user.userStatus = index;
                 }];
-                break;
-            }
+                    break;
+                }
             case RowName:
-            {
-                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userName];
-                [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userName block:^(NSString *string) {
+                {
+                    [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userName];
+                    [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userName block:^(NSString *string) {
                     NSError *error;
                     [weakSelf.manager.user setUserName:string error:&error];
                     [self maybeShowError:error];
                 }];
-                break;
-            }
+                    break;
+                }
             case RowStatusMessage:
-            {
-                [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userStatusMessage];
-                [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userStatusMessage block:^(NSString *string) {
+                {
+                    [weakSelf addToSheet:sheet copyButtonWithValue:weakSelf.manager.user.userStatusMessage];
+                    [weakSelf addToSheet:sheet textEditButtonWithValue:weakSelf.manager.user.userStatusMessage block:^(NSString *string) {
                     NSError *error;
                     [weakSelf.manager.user setUserStatusMessage:string error:&error];
                     [self maybeShowError:error];
                 }];
-                break;
-            }
+                    break;
+                }
             case RowLogOut:
-            {
-                [sheet bk_addButtonWithTitle:@"Log out" handler:^{
+                {
+                    [sheet bk_addButtonWithTitle:@"Log out" handler:^{
                     [weakSelf logOut];
                 }];
-                break;
-            }
+                    break;
+                }
         }
     }];
 }
@@ -142,10 +142,10 @@ typedef NS_ENUM(NSUInteger, Row) {
 
     Row row = indexPath.row;
 
-    switch(row) {
+    switch (row) {
         case RowConnectionStatus:
             cell.textLabel.text = [NSString stringWithFormat:@"connectionStatus: %@",
-                                      [self stringFromConnectionStatus:self.manager.user.connectionStatus]];
+                                   [self stringFromConnectionStatus:self.manager.user.connectionStatus]];
             break;
         case RowAddress:
             cell.textLabel.text = [NSString stringWithFormat:@"userAddress: %@", self.manager.user.userAddress];
@@ -158,7 +158,7 @@ typedef NS_ENUM(NSUInteger, Row) {
             break;
         case RowStatus:
             cell.textLabel.text = [NSString stringWithFormat:@"userStatus: %@",
-                                      [self stringFromUserStatus:self.manager.user.userStatus]];
+                                   [self stringFromUserStatus:self.manager.user.userStatus]];
             break;
         case RowName:
             cell.textLabel.text = [NSString stringWithFormat:@"userName: %@", self.manager.user.userName];

@@ -17,7 +17,7 @@
 #import "OCTFriend+Private.h"
 #import "OCTChat+Private.h"
 
-@interface OCTArray(Tests)
+@interface OCTArray (Tests)
 @property (strong, nonatomic) RLMResults *results;
 @property (strong, nonatomic) id<OCTConverterProtocol> converter;
 @end
