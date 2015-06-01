@@ -55,6 +55,8 @@ static const AudioUnitElement kOutputBus = 0;
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
+            [self registerInputCallBack:error] &&
+            [self registerOutputCallBack:error] &&
             [self initializeGraph:error] &&
             [self startGraph:error]);
 }
@@ -126,6 +128,92 @@ static const AudioUnitElement kOutputBus = 0;
 
     return running;
 }
+
+#pragma mark - Buffer Management
+-(void)provideAudioFrames:(const int16_t*)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate
+{
+    //To Do: copy audio frames into buffer.
+}
+
+#pragma mark - Call Backs
+
+-(BOOL)registerInputCallBack:(NSError **)error;
+{
+    AURenderCallbackStruct callbackStruct;
+    callbackStruct.inputProc = inputRenderCallBack;
+    callbackStruct.inputProcRefCon = _ioUnit;
+    OSStatus status = AudioUnitSetProperty(_ioUnit,
+                                           kAudioOutputUnitProperty_SetInputCallback,
+                                           kAudioUnitScope_Global,
+                                           kInputBus,
+                                           &callbackStruct,
+                                           sizeof(callbackStruct));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Registering Input Callback"
+          failureReason:@"Failed to register input callback"];
+        return NO;
+    }
+    return YES;
+}
+
+-(BOOL)registerOutputCallBack:(NSError **)error;
+{
+    AURenderCallbackStruct callbackStruct;
+    callbackStruct.inputProc = outputRenderCallBack;
+    callbackStruct.inputProcRefCon = _ioUnit;
+    OSStatus status = AudioUnitSetProperty(_ioUnit,
+                                           kAudioUnitProperty_SetRenderCallback,
+                                           kAudioUnitScope_Global,
+                                           kOutputBus,
+                                           &callbackStruct,
+                                           sizeof(callbackStruct));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Registering output Callback"
+          failureReason:@"Failed to register output callback"];
+        return NO;
+    }
+    return YES;
+}
+
+
+static OSStatus inputRenderCallBack(void *inRefCon,
+                                    AudioUnitRenderActionFlags  *ioActionFlags,
+                                    const AudioTimeStamp    *inTimeStamp,
+                                    UInt32 inBusNumber,
+                                    UInt32 inNumberFrames,
+                                    AudioBufferList *ioData)
+{
+
+    AudioBufferList bufferList;
+
+    AudioUnit audioUnitRef = inRefCon;
+    OSStatus status = AudioUnitRender(audioUnitRef,
+                                      ioActionFlags,
+                                      inTimeStamp,
+                                      inBusNumber,
+                                      inNumberFrames,
+                                      &bufferList);
+    //To Do: Call [OCTToxAV sendAudioFrames...]
+    return status;
+}
+
+static OSStatus outputRenderCallBack(void *inRefCon,
+                                     AudioUnitRenderActionFlags *ioActionFlags,
+                                     const AudioTimeStamp *inTimeStamp,
+                                     UInt32 inBusNumber,
+                                     UInt32 inNumberFrames,
+                                     AudioBufferList *ioData)
+{
+    //To Do: Fetch buffers and put into *ioData
+    return noErr;
+}
+
 
 #pragma mark - Private
 - (BOOL)startAudioSession:(NSError **)error
