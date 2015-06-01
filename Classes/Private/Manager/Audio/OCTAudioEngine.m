@@ -8,9 +8,11 @@
 
 #import "OCTAudioEngine.h"
 @import AVFoundation;
+#import "TPCircularBuffer.h"
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
+static const int kBufferLength = 1025;
 
 @interface OCTAudioEngine ()
 
@@ -18,6 +20,7 @@ static const AudioUnitElement kOutputBus = 0;
 @property (nonatomic, assign) AUNode ioNode;
 @property (nonatomic, assign) AudioUnit ioUnit;
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
+@property (nonatomic, assign) TPCircularBuffer buffer;
 
 @end
 
@@ -37,6 +40,8 @@ static const AudioUnitElement kOutputBus = 0;
     _ioUnitDescription.componentFlags = 0;
     _ioUnitDescription.componentFlagsMask = 0;
 
+    TPCircularBufferInit(&_buffer, kBufferLength);
+
     NewAUGraph(&_processingGraph);
 
     AUGraphAddNode(_processingGraph,
@@ -47,6 +52,12 @@ static const AudioUnitElement kOutputBus = 0;
 
     AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
     return self;
+}
+
+-(void)dealloc
+{
+    TPCircularBufferCleanup(&_buffer);
+    DisposeAUGraph(_processingGraph);
 }
 
 #pragma mark - Audio Controls
@@ -163,7 +174,7 @@ static const AudioUnitElement kOutputBus = 0;
 {
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = outputRenderCallBack;
-    callbackStruct.inputProcRefCon = _ioUnit;
+    callbackStruct.inputProcRefCon = (__bridge void *)(self);
     OSStatus status = AudioUnitSetProperty(_ioUnit,
                                            kAudioUnitProperty_SetRenderCallback,
                                            kAudioUnitScope_Global,
@@ -210,7 +221,17 @@ static OSStatus outputRenderCallBack(void *inRefCon,
                                      UInt32 inNumberFrames,
                                      AudioBufferList *ioData)
 {
-    //To Do: Fetch buffers and put into *ioData
+    OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
+
+    int bytesToCopy = ioData->mBuffers[0].mDataByteSize;
+    SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
+
+    int32_t availableBytes;
+    SInt16 *buffer = TPCircularBufferTail(&myEngine->_buffer, &availableBytes);
+    int32_t sampleCount = MIN(bytesToCopy, availableBytes);
+    memcpy(targetBuffer, buffer, sampleCount);
+    TPCircularBufferConsume(&myEngine->_buffer, sampleCount);
+
     return noErr;
 }
 
