@@ -46,5 +46,14 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  */
 - (BOOL)isAudioRunning:(NSError **)error;
 
+/**
+ * Provide audio data that will be placed in buffer to be played in speaker.
+ * @param pcm An array of audio samples (sample_count * channels elements).
+ * @param sample_count The number of audio samples per channel in the PCM array.
+ * @param channels Number of audio channels.
+ * @param sampling_rate Sampling rate used in this frame.
+ */
+-(void)provideAudioFrames:(const int16_t*)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate;
+
 
 @end
