@@ -7,8 +7,8 @@
 //
 
 #import "OCTAudioEngine.h"
-@import AVFoundation;
 #import "TPCircularBuffer.h"
+@import AVFoundation;
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
@@ -54,7 +54,7 @@ static const int kBufferLength = 1025;
     return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
     TPCircularBufferCleanup(&_buffer);
     DisposeAUGraph(_processingGraph);
@@ -141,14 +141,14 @@ static const int kBufferLength = 1025;
 }
 
 #pragma mark - Buffer Management
--(void)provideAudioFrames:(const int16_t*)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate
+- (void)provideAudioFrames:(const int16_t *)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate
 {
-    //To Do: copy audio frames into buffer.
+    // To Do: copy audio frames into buffer.
 }
 
 #pragma mark - Call Backs
 
--(BOOL)registerInputCallBack:(NSError **)error;
+- (BOOL)registerInputCallBack:(NSError **)error;
 {
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = inputRenderCallBack;
@@ -170,7 +170,7 @@ static const int kBufferLength = 1025;
     return YES;
 }
 
--(BOOL)registerOutputCallBack:(NSError **)error;
+- (BOOL)registerOutputCallBack:(NSError **)error;
 {
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = outputRenderCallBack;
@@ -210,7 +210,7 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                       inBusNumber,
                                       inNumberFrames,
                                       &bufferList);
-    //To Do: Call [OCTToxAV sendAudioFrames...]
+    // To Do: Call [OCTToxAV sendAudioFrames...]
     return status;
 }
 

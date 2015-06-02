@@ -53,7 +53,7 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  * @param channels Number of audio channels.
  * @param sampling_rate Sampling rate used in this frame.
  */
--(void)provideAudioFrames:(const int16_t*)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate;
+- (void)provideAudioFrames:(const int16_t *)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate;
 
 
 @end
