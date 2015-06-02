@@ -44,13 +44,13 @@ static const int kBufferLength = 1025;
 
     NewAUGraph(&_processingGraph);
 
-    AUGraphAddNode(self.processingGraph,
+    AUGraphAddNode(_processingGraph,
                    &_ioUnitDescription,
                    &_ioNode);
 
-    AUGraphOpen(self.processingGraph);
+    AUGraphOpen(_processingGraph);
 
-    AUGraphNodeInfo(self.processingGraph, self.ioNode, NULL, &_ioUnit);
+    AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
     return self;
 }
 
