@@ -29,7 +29,6 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  */
 - (BOOL)stopAudioFlow:(NSError **)error;
 
-
 /**
  * Enable or disable either output (speaker) or input (microphone).
  * @param scope AudioUnitScope
@@ -45,6 +44,15 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  * @return YES if Audio Graph is running, otherwise No.
  */
 - (BOOL)isAudioRunning:(NSError **)error;
+
+/**
+ * Provide audio data that will be placed in buffer to be played in speaker.
+ * @param pcm An array of audio samples (sample_count * channels elements).
+ * @param sampleCount The number of audio samples per channel in the PCM array.
+ * @param channels Number of audio channels.
+ * @param sampleRate Sampling rate used in this frame.
+ */
+- (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate;
 
 
 @end

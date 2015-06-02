@@ -7,10 +7,12 @@
 //
 
 #import "OCTAudioEngine.h"
+#import "TPCircularBuffer.h"
 @import AVFoundation;
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
+static const int kBufferLength = 1025;
 
 @interface OCTAudioEngine ()
 
@@ -18,6 +20,7 @@ static const AudioUnitElement kOutputBus = 0;
 @property (nonatomic, assign) AUNode ioNode;
 @property (nonatomic, assign) AudioUnit ioUnit;
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
+@property (nonatomic, assign) TPCircularBuffer buffer;
 
 @end
 
@@ -37,6 +40,8 @@ static const AudioUnitElement kOutputBus = 0;
     _ioUnitDescription.componentFlags = 0;
     _ioUnitDescription.componentFlagsMask = 0;
 
+    TPCircularBufferInit(&_buffer, kBufferLength);
+
     NewAUGraph(&_processingGraph);
 
     AUGraphAddNode(_processingGraph,
@@ -49,19 +54,27 @@ static const AudioUnitElement kOutputBus = 0;
     return self;
 }
 
+- (void)dealloc
+{
+    TPCircularBufferCleanup(&_buffer);
+    DisposeAUGraph(_processingGraph);
+}
+
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
+            [self registerInputCallBack:error] &&
+            [self registerOutputCallBack:error] &&
             [self initializeGraph:error] &&
             [self startGraph:error]);
 }
 
 - (BOOL)stopAudioFlow:(NSError **)error
 {
-    OSStatus status = AUGraphStop(_processingGraph);
+    OSStatus status = AUGraphStop(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -70,7 +83,7 @@ static const AudioUnitElement kOutputBus = 0;
         return NO;
     }
 
-    status = AUGraphUninitialize(_processingGraph);
+    status = AUGraphUninitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -91,7 +104,7 @@ static const AudioUnitElement kOutputBus = 0;
     AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
 
     OSStatus status = AudioUnitSetProperty(
-        _ioUnit,
+        self.ioUnit,
         kAudioOutputUnitProperty_EnableIO,
         unitScope,
         kOutputBus,
@@ -115,7 +128,7 @@ static const AudioUnitElement kOutputBus = 0;
 - (BOOL)isAudioRunning:(NSError **)error
 {
     Boolean running;
-    OSStatus status = AUGraphIsRunning(_processingGraph,
+    OSStatus status = AUGraphIsRunning(self.processingGraph,
                                        &running);
     if (status != noErr) {
         [self fillError:error
@@ -127,6 +140,103 @@ static const AudioUnitElement kOutputBus = 0;
     return running;
 }
 
+#pragma mark - Buffer Management
+- (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
+{
+    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
+    TPCircularBufferProduceBytes(&_buffer, pcm, len);
+}
+
+#pragma mark - Call Backs
+
+- (BOOL)registerInputCallBack:(NSError **)error;
+{
+    AURenderCallbackStruct callbackStruct;
+    callbackStruct.inputProc = inputRenderCallBack;
+    callbackStruct.inputProcRefCon = (__bridge void *)(self);
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
+                                           kAudioOutputUnitProperty_SetInputCallback,
+                                           kAudioUnitScope_Global,
+                                           kInputBus,
+                                           &callbackStruct,
+                                           sizeof(callbackStruct));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Registering Input Callback"
+          failureReason:@"Failed to register input callback"];
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)registerOutputCallBack:(NSError **)error;
+{
+    AURenderCallbackStruct callbackStruct;
+    callbackStruct.inputProc = outputRenderCallBack;
+    callbackStruct.inputProcRefCon = (__bridge void *)(self);
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
+                                           kAudioUnitProperty_SetRenderCallback,
+                                           kAudioUnitScope_Global,
+                                           kOutputBus,
+                                           &callbackStruct,
+                                           sizeof(callbackStruct));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Registering output Callback"
+          failureReason:@"Failed to register output callback"];
+        return NO;
+    }
+    return YES;
+}
+
+
+static OSStatus inputRenderCallBack(void *inRefCon,
+                                    AudioUnitRenderActionFlags  *ioActionFlags,
+                                    const AudioTimeStamp    *inTimeStamp,
+                                    UInt32 inBusNumber,
+                                    UInt32 inNumberFrames,
+                                    AudioBufferList *ioData)
+{
+
+    AudioBufferList bufferList;
+
+    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
+    OSStatus status = AudioUnitRender(engine.ioUnit,
+                                      ioActionFlags,
+                                      inTimeStamp,
+                                      inBusNumber,
+                                      inNumberFrames,
+                                      &bufferList);
+    // To Do: Call [OCTToxAV sendAudioFrames...]
+    return status;
+}
+
+static OSStatus outputRenderCallBack(void *inRefCon,
+                                     AudioUnitRenderActionFlags *ioActionFlags,
+                                     const AudioTimeStamp *inTimeStamp,
+                                     UInt32 inBusNumber,
+                                     UInt32 inNumberFrames,
+                                     AudioBufferList *ioData)
+{
+    OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
+
+    int bytesToCopy = ioData->mBuffers[0].mDataByteSize;
+    SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
+
+    int32_t availableBytes;
+    SInt16 *buffer = TPCircularBufferTail(&myEngine->_buffer, &availableBytes);
+    int32_t sampleCount = MIN(bytesToCopy, availableBytes);
+    memcpy(targetBuffer, buffer, sampleCount);
+    TPCircularBufferConsume(&myEngine->_buffer, sampleCount);
+
+    return noErr;
+}
+
+
 #pragma mark - Private
 - (BOOL)startAudioSession:(NSError **)error
 {
@@ -137,7 +247,6 @@ static const AudioUnitElement kOutputBus = 0;
 
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
-    // Always initialize the fields of a new audio stream basic description structure to zero
     UInt32 bytesPerSample = sizeof(SInt32);
     double sampleRate = [AVAudioSession sharedInstance].sampleRate;
 
@@ -151,7 +260,7 @@ static const AudioUnitElement kOutputBus = 0;
     asbd.mFramesPerPacket = 1;
     asbd.mBytesPerPacket = bytesPerSample;
 
-    OSStatus status = AudioUnitSetProperty(_ioUnit,
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
                                            kInputBus,
@@ -169,7 +278,7 @@ static const AudioUnitElement kOutputBus = 0;
 
 - (BOOL)initializeGraph:(NSError **)error
 {
-    OSStatus status = AUGraphInitialize(_processingGraph);
+    OSStatus status = AUGraphInitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -182,7 +291,7 @@ static const AudioUnitElement kOutputBus = 0;
 
 - (BOOL)startGraph:(NSError **)error
 {
-    OSStatus status = AUGraphStart(_processingGraph);
+    OSStatus status = AUGraphStart(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
