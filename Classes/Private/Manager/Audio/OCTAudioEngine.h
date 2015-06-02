@@ -29,7 +29,6 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  */
 - (BOOL)stopAudioFlow:(NSError **)error;
 
-
 /**
  * Enable or disable either output (speaker) or input (microphone).
  * @param scope AudioUnitScope
