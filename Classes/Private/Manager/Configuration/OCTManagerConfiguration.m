@@ -43,7 +43,6 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     configuration.options.proxyType = OCTToxProxyTypeNone;
     configuration.options.proxyHost = nil;
     configuration.options.proxyPort = 0;
-    configuration.options.tcpPort = 0;
 
     return configuration;
 }

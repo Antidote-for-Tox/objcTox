@@ -24,8 +24,6 @@
     options.proxyHost = [self.proxyHost copy];
     options.proxyPort = self.proxyPort;
 
-    options.tcpPort = self.tcpPort;
-
     return options;
 }
 

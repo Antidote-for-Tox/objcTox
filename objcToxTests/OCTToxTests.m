@@ -619,7 +619,6 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
     options.proxyType = OCTToxProxyTypeHTTP;
     options.proxyHost = @"host";
     options.proxyPort = 30;
-    options.tcpPort = 40;
 
     struct Tox_Options cOptions = [self.tox cToxOptionsFromOptions:options];
 
@@ -630,7 +629,6 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
     XCTAssertTrue(cOptions.proxy_type == TOX_PROXY_TYPE_HTTP);
     XCTAssertTrue(strcmp(cOptions.proxy_host, "host") == 0);
     XCTAssertTrue(cOptions.proxy_port == 30);
-    XCTAssertTrue(cOptions.tcp_port == 40);
 }
 
 - (void)testBinToHexString
