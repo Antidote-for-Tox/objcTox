@@ -143,7 +143,7 @@ static const int kBufferLength = 1025;
 #pragma mark - Buffer Management
 - (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
 {
-    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t)) ;
+    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
     TPCircularBufferProduceBytes(&_buffer, pcm, len);
 }
 
