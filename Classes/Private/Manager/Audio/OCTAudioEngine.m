@@ -44,13 +44,13 @@ static const int kBufferLength = 1025;
 
     NewAUGraph(&_processingGraph);
 
-    AUGraphAddNode(_processingGraph,
+    AUGraphAddNode(self.processingGraph,
                    &_ioUnitDescription,
                    &_ioNode);
 
-    AUGraphOpen(_processingGraph);
+    AUGraphOpen(self.processingGraph);
 
-    AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
+    AUGraphNodeInfo(self.processingGraph, self.ioNode, NULL, &_ioUnit);
     return self;
 }
 
@@ -74,7 +74,7 @@ static const int kBufferLength = 1025;
 
 - (BOOL)stopAudioFlow:(NSError **)error
 {
-    OSStatus status = AUGraphStop(_processingGraph);
+    OSStatus status = AUGraphStop(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -83,7 +83,7 @@ static const int kBufferLength = 1025;
         return NO;
     }
 
-    status = AUGraphUninitialize(_processingGraph);
+    status = AUGraphUninitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -104,7 +104,7 @@ static const int kBufferLength = 1025;
     AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
 
     OSStatus status = AudioUnitSetProperty(
-        _ioUnit,
+        self.ioUnit,
         kAudioOutputUnitProperty_EnableIO,
         unitScope,
         kOutputBus,
@@ -128,7 +128,7 @@ static const int kBufferLength = 1025;
 - (BOOL)isAudioRunning:(NSError **)error
 {
     Boolean running;
-    OSStatus status = AUGraphIsRunning(_processingGraph,
+    OSStatus status = AUGraphIsRunning(self.processingGraph,
                                        &running);
     if (status != noErr) {
         [self fillError:error
@@ -141,9 +141,10 @@ static const int kBufferLength = 1025;
 }
 
 #pragma mark - Buffer Management
-- (void)provideAudioFrames:(const int16_t *)pcm sample_count:(size_t)sample_count channels:(uint8_t)channels sample_rate:(uint32_t)sample_rate
+- (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
 {
-    // To Do: copy audio frames into buffer.
+    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t)) ;
+    TPCircularBufferProduceBytes(&_buffer, pcm, len);
 }
 
 #pragma mark - Call Backs
@@ -152,8 +153,8 @@ static const int kBufferLength = 1025;
 {
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = inputRenderCallBack;
-    callbackStruct.inputProcRefCon = _ioUnit;
-    OSStatus status = AudioUnitSetProperty(_ioUnit,
+    callbackStruct.inputProcRefCon = (__bridge void *)(self);
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
                                            kAudioOutputUnitProperty_SetInputCallback,
                                            kAudioUnitScope_Global,
                                            kInputBus,
@@ -175,7 +176,7 @@ static const int kBufferLength = 1025;
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = outputRenderCallBack;
     callbackStruct.inputProcRefCon = (__bridge void *)(self);
-    OSStatus status = AudioUnitSetProperty(_ioUnit,
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
                                            kAudioUnitProperty_SetRenderCallback,
                                            kAudioUnitScope_Global,
                                            kOutputBus,
@@ -203,8 +204,8 @@ static OSStatus inputRenderCallBack(void *inRefCon,
 
     AudioBufferList bufferList;
 
-    AudioUnit audioUnitRef = inRefCon;
-    OSStatus status = AudioUnitRender(audioUnitRef,
+    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
+    OSStatus status = AudioUnitRender(engine.ioUnit,
                                       ioActionFlags,
                                       inTimeStamp,
                                       inBusNumber,
@@ -246,7 +247,6 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
-    // Always initialize the fields of a new audio stream basic description structure to zero
     UInt32 bytesPerSample = sizeof(SInt32);
     double sampleRate = [AVAudioSession sharedInstance].sampleRate;
 
@@ -260,7 +260,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mFramesPerPacket = 1;
     asbd.mBytesPerPacket = bytesPerSample;
 
-    OSStatus status = AudioUnitSetProperty(_ioUnit,
+    OSStatus status = AudioUnitSetProperty(self.ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
                                            kInputBus,
@@ -278,7 +278,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)initializeGraph:(NSError **)error
 {
-    OSStatus status = AUGraphInitialize(_processingGraph);
+    OSStatus status = AUGraphInitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -291,7 +291,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)startGraph:(NSError **)error
 {
-    OSStatus status = AUGraphStart(_processingGraph);
+    OSStatus status = AUGraphStart(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
