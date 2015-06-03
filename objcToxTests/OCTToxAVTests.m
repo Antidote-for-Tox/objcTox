@@ -9,9 +9,17 @@
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
 
+#import <OCMock/OCMock.h>
 #import "OCTToxAV.h"
 #import "OCTTox+Private.h"
 #import "toxav.h"
+
+toxav_call_cb callIncomingCallback;
+toxav_call_state_cb callstateCallback;
+toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
+toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
+toxav_audio_receive_frame_cb receiveAudioFrameCallback;
+toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 @interface OCTToxAV (Tests)
 
@@ -97,6 +105,117 @@
     [self.toxAV fillError:&error withCErrorCall:TOXAV_ERR_CALL_INVALID_BIT_RATE];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxAVErrorCallInvalidBitRate);
+}
+
+#pragma mark Callbacks
+
+- (void)testReceiveCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        callIncomingCallback(NULL, 1, true, false, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                     receiveCallAudioEnabled:YES
+                                videoEnabled:NO
+                                friendNumber:1]);
+    }];
+}
+
+- (void)testCallStateCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        callstateCallback(NULL, 1, 16, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCTToxFriendNumber friendNumber = 1;
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                            callStateChanged:16
+                                friendNumber:friendNumber]);
+    }];
+}
+
+- (void)testAudioBitRateCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        audioBitRateStatusCallback(NULL, 33, true, 33000, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                         audioBitRateChanged:33000
+                                      stable:YES
+                                friendNumber:33]);
+    }];
+}
+
+- (void)testVideoBitRateCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        videoBitRateStatusCallback(NULL, 5, false, 10, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                         videoBitRateChanged:10
+                                friendNumber:5
+                                      stable:NO]);
+    }];
+}
+
+- (void)testReceiveAudioCallback
+{
+    const int16_t pcm[] = {5, 9, 5};
+    const int16_t *pointerToData = pcm;
+
+    [self makeTestCallbackWithCallBlock:^{
+        receiveAudioFrameCallback(NULL, 20, pointerToData, 4, 0, 6, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                                receiveAudio:pointerToData
+                                 sampleCount:4
+                                    channels:0
+                                  sampleRate:6
+                                friendNumber:20]);
+    }];
+}
+
+- (void)testReceiveVideoFrameCallback
+{
+    const OCTToxAVPlaneData yPlane[] = {1, 2, 3, 4, 5};
+    const OCTToxAVPlaneData *yPointer = yPlane;
+    const OCTToxAVPlaneData uPlane[] = {4, 3, 3, 4, 5};
+    const OCTToxAVPlaneData *uPointer = uPlane;
+    const OCTToxAVPlaneData vPlane[] = {1, 2, 5, 4, 5};
+    const OCTToxAVPlaneData *vPointer = vPlane;
+    const OCTToxAVPlaneData aPlane[] = {1, 2, 11, 4, 5};
+    const OCTToxAVPlaneData *aPointer = aPlane;
+
+    [self makeTestCallbackWithCallBlock:^{
+        receiveVideoFrameCallback(NULL, 123,
+                                  999, 888,
+                                  yPointer, uPointer, vPointer, aPointer,
+                                  1, 2, 3, 4,
+                                  (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                                       width:999 height:888
+                                      yPlane:yPointer uPlane:uPointer vPlane:vPointer aPlane:aPointer
+                                     yStride:1 uStride:2 vStride:3 aStride:4 friendNumber:123]);
+    }];
+}
+
+- (void)makeTestCallbackWithCallBlock:(void (^)())callBlock expectBlock:(void (^)(id<OCTToxAVDelegate> delegate))expectBlock
+{
+    NSParameterAssert(callBlock);
+    NSParameterAssert(expectBlock);
+
+    self.toxAV.delegate = OCMProtocolMock(@protocol(OCTToxAVDelegate));
+    expectBlock(self.toxAV.delegate);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        callBlock();
+        [expectation fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    OCMVerifyAll((id)self.toxAV.delegate);
 }
 
 @end
