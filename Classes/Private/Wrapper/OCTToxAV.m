@@ -144,8 +144,6 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error
 {
-    NSParameterAssert(friendNumber);
-
     TOXAV_ERR_CALL cError;
     BOOL status = toxav_call(self.toxAV, friendNumber, audioBitRate, videoBitRate, &cError);
 
