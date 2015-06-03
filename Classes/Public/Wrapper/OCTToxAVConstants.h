@@ -27,6 +27,49 @@ extern NSString *const kOCTToxAVErrorDomain;
 
 /*******************************************************************************
  *
+ * :: Call state graph
+ *
+ ******************************************************************************/
+
+typedef NS_ENUM(NSUInteger, OCTToxAVCallState) {
+    /**
+     * Set by the AV core if an error occurred on the remote end or if friend
+     * timed out. This is the final state after which no more state
+     * transitions can occur for the call. This call state will never be triggered
+     * in combination with other call states.
+     */
+    OCTToxAVCallStateError = 1,
+
+    /**
+     * The call has finished. This is the final state after which no more state
+     * transitions can occur for the call. This call state will never be
+     * triggered in combination with other call states.
+     */
+    OCTToxAVCallStateFinished = 2,
+
+    /**
+     * The flag that marks that friend is sending audio.
+     */
+    OCTToxAVCallStateSendingAudio = 4,
+
+    /**
+     * The flag that marks that friend is sending video.
+     */
+    OCTToxAVCallStateSendingVideo = 8,
+
+    /**
+     * The flag that marks that friend is receiving audio.
+     */
+    OCTToxAVCallStateReceivingAudio = 16,
+
+    /**
+     * The flag that marks that friend is receiving video.
+     */
+    OCTToxAVCallStateReceivingVideo = 32
+};
+
+/*******************************************************************************
+ *
  * Error Codes
  *
  ******************************************************************************/

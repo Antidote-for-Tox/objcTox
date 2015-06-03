@@ -10,10 +10,13 @@
 
 #import "OCTToxAVConstants.h"
 #import "OCTToxConstants.h"
+#import "OCTToxAVDelegate.h"
 
 @class OCTTox;
 
 @interface OCTToxAV : NSObject
+
+@property (weak, nonatomic) id<OCTToxAVDelegate> delegate;
 
 #pragma mark - Class Methods
 
