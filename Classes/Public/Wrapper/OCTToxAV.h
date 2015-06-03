@@ -18,7 +18,7 @@
 #pragma mark - Class Methods
 
 /**
- * Return toxcore version in format X.Y.Z, where
+ * Return toxav version in format X.Y.Z, where
  * X - The major version number.
  * Y - The minor version number.
  * Z - The patch or revision number.
@@ -66,8 +66,8 @@
  * if such behaviour is desired. If the client does not stop ringing, the
  * library will not stop until the friend is disconnected.
  * @param friendNumber The friend number of the friend that should be called.
- * @param audioBitRate Audio bit rate in Kb/sec. Set this to 0 to disable audio sending.
- * @param videoBitRate Video bit rate in Kb/sec. Set this to 0 to disable
+ * @param audioBitRate Audio bit rate in Kb/sec. Set this to kOCTToxAVAudioBitRateDisable to disable audio sending.
+ * @param videoBitRate Video bit rate in Kb/sec. Set this to kOCTToxAVVideoBitRateDisable to disable video sending.
  * video sending.
  */
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error;

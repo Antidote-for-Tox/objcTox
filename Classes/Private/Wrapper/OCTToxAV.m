@@ -169,7 +169,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     switch (cError) {
         case TOXAV_ERR_NEW_OK:
             NSAssert(NO, @"We shouldn't be here!");
-            return;
+            break;
         case TOXAV_ERR_NEW_NULL:
             code = OCTToxAVErrorInitNULL;
             failureReason = @"One of the arguments to the function was NULL when it was not expected.";

@@ -59,11 +59,6 @@
     XCTAssertTrue(error.code == OCTToxAVErrorInitNULL);
 
     error = nil;
-    [self.toxAV fillError:&error withCErrorInit:TOXAV_ERR_NEW_MULTIPLE];
-    XCTAssertNotNil(error);
-    XCTAssertTrue(error.code == OCTToxAVErrorInitMultiple);
-
-    error = nil;
     [self.toxAV fillError:&error withCErrorInit:TOXAV_ERR_NEW_MALLOC];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxAVErrorInitCodeMemoryError);
@@ -72,7 +67,6 @@
     [self.toxAV fillError:&error withCErrorInit:TOXAV_ERR_NEW_MULTIPLE];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxAVErrorInitMultiple);
-
 }
 
 - (void)testFillErrorCall

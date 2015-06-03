@@ -21,6 +21,8 @@ typedef uint16_t OCTToxAVVideoHeight;
 typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
+extern const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable;
+extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
 extern NSString *const kOCTToxAVErrorDomain;
 
 /*******************************************************************************
