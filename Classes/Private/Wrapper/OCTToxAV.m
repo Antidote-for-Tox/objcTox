@@ -135,6 +135,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 - (void)dealloc
 {
+    [self stop];
     toxav_kill(self.toxAV);
     DDLogVerbose(@"%@: dealloc called, toxav killed", self);
 }
@@ -168,16 +169,18 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     switch (cError) {
         case TOXAV_ERR_NEW_OK:
             NSAssert(NO, @"We shouldn't be here!");
-            break;
             return;
         case TOXAV_ERR_NEW_NULL:
             code = OCTToxAVErrorInitNULL;
+            failureReason = @"One of the arguments to the function was NULL when it was not expected.";
             break;
         case TOXAV_ERR_NEW_MALLOC:
             code = OCTToxAVErrorInitCodeMemoryError;
+            failureReason = @"Memory allocation failure while trying to allocate structures required for the A/V session.";
             break;
         case TOXAV_ERR_NEW_MULTIPLE:
             code = OCTToxAVErrorInitMultiple;
+            failureReason = @"Attempted to create a second session for the same Tox instance.";
             break;
     }
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
@@ -199,18 +202,23 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
             break;
         case TOXAV_ERR_CALL_MALLOC:
             code = OCTToxAVErrorCallMalloc;
+            failureReason = @"A resource allocation error occured while trying to create the structures required for the call.";
             break;
         case TOXAV_ERR_CALL_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorCallFriendNotFound;
+            failureReason = @"The friend number did not designate a valid friend.";
             break;
         case TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED:
             code = OCTToxAVErrorCallFriendNotConnected;
+            failureReason = @"The friend was valid, but not currently connected";
             break;
         case TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL:
             code = OCTToxAVErrorCallAlreadyInCall;
+            failureReason = @"Attempted to call a friend while already in an audio or video call with them.";
             break;
         case TOXAV_ERR_CALL_INVALID_BIT_RATE:
             code = OCTToxAVErrorCallInvalidBitRate;
+            failureReason = @"Audio or video bit rate is invalid";
             break;
     }
 
@@ -238,32 +246,59 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 #pragma Callbacks
 
-void callIncomingCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool audioEnabled, bool videoEnabled, void *userData)
+void callIncomingCallback(ToxAV *cToxAV,
+                          OCTToxFriendNumber friendNumber,
+                          bool audioEnabled,
+                          bool videoEnabled,
+                          void *userData)
 {
-    //To Do..
+    // To Do..
 }
 
-void callstateCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, uint32_t state, void *userData)
+void callstateCallback(ToxAV *cToxAV,
+                       OCTToxFriendNumber friendNumber,
+                       uint32_t state,
+                       void *userData)
 {
-    //To Do..
+    // To Do..
 }
 
-void audioBitRateStatusCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool stable, OCTToxAVAudioBitRate bitRate, void *userData)
+void audioBitRateStatusCallback(ToxAV *cToxAV,
+                                OCTToxFriendNumber friendNumber,
+                                bool stable,
+                                OCTToxAVAudioBitRate bitRate,
+                                void *userData)
 {
-    //To Do..
+    // To Do..
 }
 
-void videoBitRateStatusCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool stable, OCTToxAVVideoBitRate bitRate, void *userData)
+void videoBitRateStatusCallback(ToxAV *cToxAV,
+                                OCTToxFriendNumber friendNumber,
+                                bool stable,
+                                OCTToxAVVideoBitRate bitRate,
+                                void *userData)
 {
-    //To Do..
+    // To Do..
 }
 
-void receiveAudioFrameCallback(ToxAV *cToxAv, OCTToxFriendNumber friendNumber, OCTToxAVPCMData *pcm, OCTToxAVSampleCount sampleCount, OCTToxAVChannels channels, OCTToxAVSampleRate sampleRate, void *userData)
+void receiveAudioFrameCallback(ToxAV *cToxAv,
+                               OCTToxFriendNumber friendNumber,
+                               OCTToxAVPCMData *pcm,
+                               OCTToxAVSampleCount sampleCount,
+                               OCTToxAVChannels channels,
+                               OCTToxAVSampleRate sampleRate,
+                               void *userData)
 {
-    //To Do..
+    // To Do..
 }
 
-void receiveVideoFrameCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, OCTToxAVVideoWidth width, OCTToxAVVideoHeight height, OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane, OCTToxAVPlaneData *aPlane, OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride, void *userData)
+void receiveVideoFrameCallback(ToxAV *cToxAV,
+                               OCTToxFriendNumber friendNumber,
+                               OCTToxAVVideoWidth width,
+                               OCTToxAVVideoHeight height,
+                               OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane, OCTToxAVPlaneData *aPlane,
+                               OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride,
+                               void *userData)
 {
-    //To Do..
+    // To Do..
 }
