@@ -10,7 +10,16 @@
 #import "OCTToxAVConstants.h"
 
 typedef uint32_t OCTToxAVAudioBitRate;
+typedef const int16_t OCTToxAVPCMData;
+typedef size_t OCTToxAVSampleCount;
+typedef uint8_t OCTToxAVChannels;
+typedef uint32_t OCTToxAVSampleRate;
+
 typedef uint32_t OCTToxAVVideoBitRate;
+typedef uint16_t OCTToxAVVideoWidth;
+typedef uint16_t OCTToxAVVideoHeight;
+typedef const uint8_t OCTToxAVPlaneData;
+typedef const int32_t OCTToxAVStrideData;
 
 extern NSString *const kOCTToxAVErrorDomain;
 

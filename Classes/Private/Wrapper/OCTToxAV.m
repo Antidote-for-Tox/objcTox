@@ -14,6 +14,13 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
+toxav_call_cb callIncomingCallback;
+toxav_call_state_cb callstateCallback;
+toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
+toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
+toxav_audio_receive_frame_cb receiveAudioFrameCallback;
+toxav_video_receive_frame_cb receiveVideoFrameCallback;
+
 @interface OCTToxAV ()
 
 @property (assign, nonatomic) ToxAV *toxAV;
@@ -61,11 +68,19 @@
         return nil;
     }
 
+    DDLogVerbose(@"%@: init called", self);
+
     TOXAV_ERR_NEW cError;
     _toxAV = toxav_new(tox.tox, &cError);
 
     [self fillError:error withCErrorInit:cError];
-    DDLogVerbose(@"%@: init called", self);
+
+    toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
+    toxav_callback_call_state(_toxAV, callstateCallback, (__bridge void *)(self));
+    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
+    toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
 
     return self;
 }
@@ -128,6 +143,8 @@
 
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error
 {
+    NSParameterAssert(friendNumber);
+
     TOXAV_ERR_CALL cError;
     BOOL status = toxav_call(self.toxAV, friendNumber, audioBitRate, videoBitRate, &cError);
 
@@ -216,4 +233,37 @@
 
     return [NSError errorWithDomain:kOCTToxAVErrorDomain code:code userInfo:userInfo];
 }
+
 @end
+
+#pragma Callbacks
+
+void callIncomingCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool audioEnabled, bool videoEnabled, void *userData)
+{
+    //To Do..
+}
+
+void callstateCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, uint32_t state, void *userData)
+{
+    //To Do..
+}
+
+void audioBitRateStatusCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool stable, OCTToxAVAudioBitRate bitRate, void *userData)
+{
+    //To Do..
+}
+
+void videoBitRateStatusCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, bool stable, OCTToxAVVideoBitRate bitRate, void *userData)
+{
+    //To Do..
+}
+
+void receiveAudioFrameCallback(ToxAV *cToxAv, OCTToxFriendNumber friendNumber, OCTToxAVPCMData *pcm, OCTToxAVSampleCount sampleCount, OCTToxAVChannels channels, OCTToxAVSampleRate sampleRate, void *userData)
+{
+    //To Do..
+}
+
+void receiveVideoFrameCallback(ToxAV *cToxAV, OCTToxFriendNumber friendNumber, OCTToxAVVideoWidth width, OCTToxAVVideoHeight height, OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane, OCTToxAVPlaneData *aPlane, OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride, void *userData)
+{
+    //To Do..
+}
