@@ -120,6 +120,9 @@
 		EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = A4211DF078AC723DE235503AD4D0E591 /* OCTCall.m */; };
 		EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */; };
 		EF084F94290314128486E23E3CE9B22F /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */; };
+		F07C8F991B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
+		F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
+		F07C8F9E1B1E444300E399F5 /* OCTToxAVTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */; };
 		F09E0C2F1B18475F00C25A24 /* OCTCallSubmanager.m in Sources */ = {isa = PBXBuildFile; fileRef = F09E0C2E1B18475F00C25A24 /* OCTCallSubmanager.m */; };
 		F0A6B9191B127EA700E48797 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F0E77FC11B154F6000434A96 /* OCTAudioEngineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E77FC01B154F6000434A96 /* OCTAudioEngineTests.m */; };
@@ -268,6 +271,10 @@
 		E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorage.m; sourceTree = "<group>"; };
 		EEC5B20DF06F1D3048282D1068C2CE9F /* OCTDBChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDBChat.h; sourceTree = "<group>"; };
 		EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
+		F07C8F971B1E379D00E399F5 /* OCTToxAVConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAVConstants.h; sourceTree = "<group>"; };
+		F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVConstants.m; sourceTree = "<group>"; };
+		F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVTests.m; sourceTree = "<group>"; };
+		F07C8F9F1B1E4F7400E399F5 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		F09E0C2E1B18475F00C25A24 /* OCTCallSubmanager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTCallSubmanager.m; sourceTree = "<group>"; };
 		F0A6B9171B127EA700E48797 /* OCTAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTAudioEngine.h; path = Audio/OCTAudioEngine.h; sourceTree = "<group>"; };
 		F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTAudioEngine.m; path = Audio/OCTAudioEngine.m; sourceTree = "<group>"; };
@@ -333,8 +340,10 @@
 			children = (
 				B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */,
 				9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */,
-				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
 				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
+				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
+				F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */,
+				F07C8F9F1B1E4F7400E399F5 /* OCTTox+Private.h */,
 			);
 			path = Wrapper;
 			sourceTree = "<group>";
@@ -584,6 +593,7 @@
 				00599146A8F90E7F4C08E2580B614046 /* OCTSubmanagerFriendsTests.m */,
 				64EA7BAFA98EE28FB70015BEEE7CD684 /* OCTSubmanagerUserTests.m */,
 				F82F69945781A14E76974FA7A2B9220C /* OCTToxTests.m */,
+				F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */,
 				11B4BAF61B11E38A0001A96A /* OCTSubmanagerFilesTests.m */,
 			);
 			path = objcToxTests;
@@ -648,6 +658,7 @@
 				1D66E7C409BC96AC7372B302BABF1D88 /* OCTTox.h */,
 				52F0E8E5DC7D621C1DAF55A9242E03FF /* OCTToxAV.h */,
 				6733F3E1A4E00CC032F25870E9083F13 /* OCTToxConstants.h */,
+				F07C8F971B1E379D00E399F5 /* OCTToxAVConstants.h */,
 				49DADF58900503E712C710CF13F175DD /* OCTToxDelegate.h */,
 				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
 			);
@@ -859,6 +870,7 @@
 				D9D0587D1B7D85A0B474FC7872831EA8 /* OCTSubmanagerFriends.m in Sources */,
 				5FB0DDAF63C36E0050A15B56311BD5F7 /* OCTSubmanagerUser.m in Sources */,
 				17447E8C08F7FFAFB783AE0AF4207D7F /* OCTTableViewController.m in Sources */,
+				F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */,
 				94F0A37FA0EEEA35BC0EF33D61741340 /* OCTTox.m in Sources */,
 				821638761952C80A02200E519414B52A /* OCTToxAV.m in Sources */,
 				D8F9288BBAFADBB9AA3E0E04A0876917 /* OCTToxConstants.m in Sources */,
@@ -883,6 +895,7 @@
 				049DBD8CE1F268F9EEA793377BA27932 /* OCTConverterChat.m in Sources */,
 				6AE781E46CFF671941F785CD9611E912 /* OCTConverterChatTests.m in Sources */,
 				EA9DF855B773BF8EAE1CC617669E9EC1 /* OCTConverterFriend.m in Sources */,
+				F07C8F991B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */,
 				1A85FA95189B03F6CEABA4D4ADB1723F /* OCTConverterFriendRequest.m in Sources */,
 				888C57E04480581E13D03891BA5A4143 /* OCTConverterFriendRequestTests.m in Sources */,
 				7F6B208C44D7319C97DD12012E9DAB9C /* OCTConverterFriendTests.m in Sources */,
@@ -936,6 +949,7 @@
 				893066FF62015FDCE84BB45658D32643 /* OCTToxConstants.m in Sources */,
 				4E4763F528BBD1BC03942CE5539F6FC7 /* OCTToxOptions.m in Sources */,
 				5FEB6690AA990BAAC797A711582F7B5C /* OCTToxTests.m in Sources */,
+				F07C8F9E1B1E444300E399F5 /* OCTToxAVTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,6 +996,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-read_only_relocs",
+					suppress,
+				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1081,6 +1099,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-read_only_relocs",
+					suppress,
+				);
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
