@@ -14,6 +14,7 @@
 #import "OCTSubmanagerFriends.h"
 #import "OCTSubmanagerUser.h"
 #import "OCTSubmanagerFiles.h"
+#import "OCTSubmanagerCalls.h"
 
 @interface OCTManager : NSObject
 
@@ -41,6 +42,11 @@
  * Submanager with all user avatar methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
+
+/**
+ * Submanager with all video/calling methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerCalls *calls;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to

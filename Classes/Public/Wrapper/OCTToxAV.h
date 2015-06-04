@@ -61,6 +61,18 @@
  */
 - (instancetype)initWithTox:(OCTTox *)tox error:(NSError **)error;
 
+/**
+ * Starts the main loop of the ToxAV on it's own unique queue.
+ *
+ * @warning ToxAV won't do anything without calling this method.
+ */
+- (void)start;
+
+/**
+ * Stops the main loop of the ToxAV.
+ */
+- (void)stop;
+
 #pragma mark - Call Methods
 
 /**
