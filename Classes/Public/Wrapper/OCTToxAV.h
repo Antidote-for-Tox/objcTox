@@ -97,4 +97,17 @@
  */
 - (BOOL)setAudioBitRate:(OCTToxAVAudioBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
+/**
+ * Set the video bit rate to be used in subsequent video frames. If the passed
+ * bit rate is the same as the current bit rate this function will return true
+ * without calling a callback. If there is an active non forceful setup with the
+ * passed video bit rate and the new set request is forceful, the bit rate is
+ * forcefully set and the previous non forceful request is cancelled. The active
+ * non forceful setup will be canceled in favour of new non forceful setup.
+ * @param bitRate The new video bit rate in Kb/sec. Set to kOCTToxAVVideoBitRateDisable to disable video sending.
+ * @param friendNumber The friend for which to set the video bit rate.
+ * @param error If an error occurs, this pointer is set to an actual error object.
+ */
+- (BOOL)setVideoBitRate:(OCTToxAVVideoBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
+
 @end

@@ -201,6 +201,18 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
     return status;
 }
+
+- (BOOL)setVideoBitRate:(OCTToxAVVideoBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SET_BIT_RATE cError;
+
+    BOOL status = toxav_video_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+
+    [self fillError:error withCErrorSetBitRate:cError];
+
+    return status;
+}
+
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
@@ -310,7 +322,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     }
 
     OCTToxAVErrorSetBitRate code = OCTToxAVErrorSetBitRateUnknown;
-    NSString *description = @"Unable to set audio bitrate";
+    NSString *description = @"Unable to set audio/video bitrate";
     NSString *failureReason = nil;
 
     switch (cError) {

@@ -186,7 +186,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
 };
 
 /**
- * Error codes for setting the audio bit rate.
+ * Error codes for setting the bit rate.
  */
 typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateUnknown,
