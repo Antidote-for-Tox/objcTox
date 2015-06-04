@@ -100,12 +100,12 @@
  * @param friendNumber The friend number of the friend who sent an audio frame.
  */
 
-- (void)   toxAV:(OCTToxAV *)toxAV
-           width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
-          yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
-          vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
-         yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
-         vStride:(OCTToxAVStrideData)vStride aStride:(OCTToxAVStrideData)aStride
-    friendNumber:(OCTToxFriendNumber)friendNumber;
+- (void)                 toxAV:(OCTToxAV *)toxAV
+    receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                       yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
+                       vStride:(OCTToxAVStrideData)vStride aStride:(OCTToxAVStrideData)aStride
+                  friendNumber:(OCTToxFriendNumber)friendNumber;
 
 @end

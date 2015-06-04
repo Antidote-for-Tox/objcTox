@@ -337,8 +337,9 @@ void callstateCallback(ToxAV *cToxAV,
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: callstateCallback from friend %d with state: %d", cToxAV, friendNumber, state);
 
+
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV callStateChanged:state friendNumber:friendNumber];
+            [toxAV.delegate toxAV:toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:friendNumber];
         }
     });
 }
@@ -398,19 +399,19 @@ void receiveVideoFrameCallback(ToxAV *cToxAV,
                                OCTToxAVVideoWidth width,
                                OCTToxAVVideoHeight height,
                                OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane, OCTToxAVPlaneData *aPlane,
-                               const OCTToxAVStrideData yStride, const OCTToxAVStrideData uStride, const OCTToxAVStrideData vStride, const OCTToxAVStrideData aStride,
+                               OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride,
                                void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: receiveVideoFrameCallback from friend %d width: %d height: %d", cToxAV, friendNumber, width, height);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:width:height:yPlane:uPlane:vPlane:aPlane:yStride:uStride:vStride:aStride:friendNumber:)]) {
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:aPlane:yStride:uStride:vStride:aStride:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV
-                            width:width height:height
-                           yPlane:yPlane uPlane:uPlane vPlane:vPlane aPlane:aPlane
-                          yStride:yStride uStride:uStride vStride:vStride aStride:aStride
-                     friendNumber:friendNumber];
+             receiveVideoFrameWithWidth:width height:height
+                                 yPlane:yPlane uPlane:uPlane vPlane:vPlane aPlane:aPlane
+                                yStride:yStride uStride:uStride vStride:vStride aStride:aStride
+                           friendNumber:friendNumber];
         }
     });
 }

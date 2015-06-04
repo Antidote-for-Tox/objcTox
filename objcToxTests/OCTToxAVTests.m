@@ -147,11 +147,11 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 - (void)testCallStateCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        callstateCallback(NULL, 1, 16, (__bridge void *)self.toxAV);
+        callstateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:16
+                            callStateChanged:OCTToxAVCallStateReceivingAudio | OCTToxAVCallStateSendingAudio
                                 friendNumber:friendNumber]);
     }];
 }
@@ -216,9 +216,9 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
                                   (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                                       width:999 height:888
-                                      yPlane:yPointer uPlane:uPointer vPlane:vPointer aPlane:aPointer
-                                     yStride:1 uStride:2 vStride:3 aStride:4 friendNumber:123]);
+                   receiveVideoFrameWithWidth:999 height:888
+                                       yPlane:yPointer uPlane:uPointer vPlane:vPointer aPlane:aPointer
+                                      yStride:1 uStride:2 vStride:3 aStride:4 friendNumber:123]);
     }];
 }
 
