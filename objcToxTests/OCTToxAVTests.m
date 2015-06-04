@@ -25,6 +25,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError;
 - (void)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError;
+- (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError;
 
 @end
 @interface OCTToxAVTests : XCTestCase
@@ -56,6 +57,8 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 {
     XCTAssertNotNil(self.toxAV);
 }
+
+#pragma mark Private methods
 
 - (void)testFillErrorInit
 {
@@ -105,6 +108,26 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     [self.toxAV fillError:&error withCErrorCall:TOXAV_ERR_CALL_INVALID_BIT_RATE];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxAVErrorCallInvalidBitRate);
+}
+
+- (void)testFillErrorControl
+{
+    [self.toxAV fillError:nil withCErrorControl:TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION];
+
+    NSError *error;
+    [self.toxAV fillError:&error withCErrorControl:TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorControlFriendNotFound);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorControl:TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorControlFriendNotInCall);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorControl:TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorControlInvaldTransition);
 }
 
 #pragma mark Callbacks
