@@ -27,7 +27,7 @@ extern NSString *const kOCTToxAVErrorDomain;
 
 /*******************************************************************************
  *
- * :: Call state graph
+ * Call state graph
  *
  ******************************************************************************/
 
@@ -128,4 +128,107 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorCall) {
      * Audio or video bit rate is invalid.
      */
     OCTToxAVErrorCallInvalidBitRate,
+};
+
+/**
+ * Error codes for answer calls.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxAVErrorAnswer) {
+    OCTToxAVErrorAnswerUnknown,
+
+    /**
+     * Failed to initialize codecs for call session. Note that codec initiation
+     * will fail if there is no receive callback registered for either audio or
+     * video.
+     */
+    OCTToxAVErrorAnswerCodecInitialization,
+
+    /**
+     * The friend number did not designate a valid friend.
+     */
+    OCTToxAVErrorAnswerFriendNotFound,
+
+    /**
+     * The friend was valid, but they are not currently trying to initiate a call.
+     * This is also returned if this client is already in a call with the friend.
+     */
+    OCTToxAVErrorAnswerFriendNotCalling,
+
+    /**
+     * Audio or video bit rate is invalid.
+     */
+    OCTToxAVErrorAnswerInvalidBitRate,
+};
+
+/**
+ * Error codes for when sending controls.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
+    OCTToxAVErrorControlUnknown,
+
+    /**
+     * The friend_number passed did not designate a valid friend.
+     */
+    OCTToxAVErrorControlFriendNotFound,
+
+    /**
+     * This client is currently not in a call with the friend. Before the call is
+     * answered, only CANCEL is a valid control.
+     */
+    OCTToxAVErrorControlFriendNotInCall,
+
+    /**
+     * Happens if user tried to pause an already paused call or if trying to
+     * resume a call that is not paused.
+     */
+    OCTToxAVErrorControlInvaldTransition,
+
+};
+
+/*******************************************************************************
+ *
+ * Call control
+ *
+ ******************************************************************************/
+typedef NS_ENUM(NSUInteger, OCTToxAVCallControl) {
+    /**
+     * Resume a previously paused call. Only valid if the pause was caused by this
+     * client, if not, this control is ignored. Not valid before the call is accepted.
+     */
+    OCTToxAVCallControlResume,
+
+    /**
+     * Put a call on hold. Not valid before the call is accepted.
+     */
+    OCTToxAVCallControlPause,
+
+    /**
+     * Reject a call if it was not answered, yet. Cancel a call after it was
+     * answered.
+     */
+    OCTToxAVCallControlCancel,
+
+    /**
+     * Request that the friend stops sending audio. Regardless of the friend's
+     * compliance, this will cause the audio_receive_frame event to stop being
+     * triggered on receiving an audio frame from the friend.
+     */
+    OCTToxAVCallControlMuteAudio,
+
+    /**
+     * Calling this control will notify client to start sending audio again.
+     */
+    OCTToxAVCallControlUnmuteAudio,
+
+    /**
+     * Request that the friend stops sending video. Regardless of the friend's
+     * compliance, this will cause the video_receive_frame event to stop being
+     * triggered on receiving an video frame from the friend.
+     */
+    OCTToxAVCallControlHideVideo,
+
+    /**
+     * Calling this control will notify client to start sending video again.
+     */
+    OCTToxAVCallControlShowVideo,
 };

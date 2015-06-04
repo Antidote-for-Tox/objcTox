@@ -75,4 +75,11 @@
  */
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error;
 
+/**
+ * Send a call control to a friend
+ * @param control The control command to send.
+ * @param friendNumber The friend number of the friend this client is in a call with.
+ */
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
+
 @end

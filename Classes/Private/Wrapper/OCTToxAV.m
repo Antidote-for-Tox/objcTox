@@ -152,6 +152,42 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     return status;
 }
 
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_CALL_CONTROL cControl;
+
+    switch (control) {
+        case OCTToxAVCallControlResume:
+            cControl = TOXAV_CALL_CONTROL_RESUME;
+            break;
+        case OCTToxAVCallControlPause:
+            cControl = TOXAV_CALL_CONTROL_PAUSE;
+            break;
+        case OCTToxAVCallControlCancel:
+            cControl = TOXAV_CALL_CONTROL_CANCEL;
+            break;
+        case OCTToxAVCallControlMuteAudio:
+            cControl = TOXAV_CALL_CONTROL_MUTE_AUDIO;
+            break;
+        case OCTToxAVCallControlUnmuteAudio:
+            cControl = TOXAV_CALL_CONTROL_UNMUTE_AUDIO;
+            break;
+        case OCTToxAVCallControlHideVideo:
+            cControl = TOXAV_CALL_CONTROL_HIDE_VIDEO;
+            break;
+        case OCTToxAVCallControlShowVideo:
+            cControl = TOXAV_CALL_CONTROL_SHOW_VIDEO;
+            break;
+    }
+
+    TOXAV_ERR_CALL_CONTROL cError;
+
+    BOOL status = toxav_call_control(self.toxAV, friendNumber, cControl, &cError);
+
+    [self fillError:error withCErrorControl:cError];
+
+    return status;
+}
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
@@ -217,6 +253,37 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
         case TOXAV_ERR_CALL_INVALID_BIT_RATE:
             code = OCTToxAVErrorCallInvalidBitRate;
             failureReason = @"Audio or video bit rate is invalid";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError
+{
+    if (! error || (cError == TOXAV_ERR_CALL_CONTROL_OK)) {
+        return;
+    }
+
+    OCTToxErrorCallControl code = OCTToxAVErrorControlUnknown;
+    NSString *description = @"Unable set control";
+    NSString *failureReason = nil;
+
+    switch (cError) {
+        case TOXAV_ERR_CALL_CONTROL_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorControlFriendNotFound;
+            failureReason = @"The friend_number passed did not designate a valid friend.";
+            break;
+        case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorControlFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend. Before the call is answered, only CANCEL is a valid control.";
+            break;
+        case TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION:
+            code = OCTToxAVErrorControlInvaldTransition;
+            failureReason = @"Happens if user tried to pause an already paused call or if trying to resume a call that is not paused.";
             break;
     }
 
