@@ -136,4 +136,26 @@
               channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
               toFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
+/**
+ * Send a video frame to a friend.
+ *
+ * Y - plane should be of size: height * width
+ * U - plane should be of size: (height/2) * (width/2)
+ * V - plane should be of size: (height/2) * (width/2)
+ *
+ * @param friendNumber The friend number of the friend to which to send a video
+ * frame.
+ * @param width Width of the frame in pixels.
+ * @param height Height of the frame in pixels.
+ * @param y Y (Luminance) plane data.
+ * @param u U (Chroma) plane data.
+ * @param v V (Chroma) plane data.
+ * @param a A (Alpha) plane data.
+ * @param error If an error occurs, this pointer is set to an actual error object.
+ */
+- (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
+                         width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                         error:(NSError **)error;
 @end

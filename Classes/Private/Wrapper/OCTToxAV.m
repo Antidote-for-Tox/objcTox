@@ -229,6 +229,20 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     return status;
 }
 
+- (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
+                         width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                         error:(NSError **)error
+{
+    TOXAV_ERR_SEND_FRAME cError;
+    BOOL status = toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, aPlane, &cError);
+
+    [self fillError:error withCErrorSendFrame:cError];
+
+    return status;
+}
+
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
