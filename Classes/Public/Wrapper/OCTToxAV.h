@@ -110,4 +110,30 @@
  */
 - (BOOL)setVideoBitRate:(OCTToxAVVideoBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
+#pragma mark - Sending frames
+
+/**
+ * Send an audio frame to a friend.
+ *
+ * The expected format of the PCM data is: [s1c1][s1c2][...][s2c1][s2c2][...]...
+ * Meaning: sample 1 for channel 1, sample 1 for channel 2, ...
+ * For mono audio, this has no meaning, every sample is subsequent. For stereo,
+ * this means the expected format is LRLRLR... with samples for left and right
+ * alternating.
+ * @param pcm An array of audio samples. The size of this array must be
+ * sample_count * channels.
+ * @param sampleCount Number of samples in this frame. Valid numbers here are
+ * ((sample rate) * (audio length) / 1000), where audio length can be
+ * 2.5, 5, 10, 20, 40 or 60 millseconds.
+ * @param channels Number of audio channels. Supported values are 1 and 2.
+ * @param samplingRate Audio sampling rate used in this frame. Valid sampling
+ * rates are 8000, 12000, 16000, 24000, or 48000.
+ * @param friendNumber The friend number of the friend to which to send an
+ * audio frame.
+ * @param error If an error occurs, this pointer is set to an actual error object.
+ */
+- (BOOL)sendAudioFrame:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount
+              channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
+              toFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
+
 @end

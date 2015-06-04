@@ -27,6 +27,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 - (void)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError;
 - (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError;
 - (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError;
+- (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError;
 
 @end
 @interface OCTToxAVTests : XCTestCase
@@ -150,6 +151,36 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     XCTAssertTrue(error.code == OCTToxAVErrorSetBitRateFriendNotInCall);
 }
 
+- (void)testFillErrorSendFrame
+{
+    [self.toxAV fillError:nil withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_NULL];
+
+    NSError *error;
+    [self.toxAV fillError:&error withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_NULL];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorSendFrameNull);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorSendFrameFriendNotFound);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorSendFrameFriendNotInCall);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_INVALID];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorSendFrameInvalid);
+
+    error = nil;
+    [self.toxAV fillError:&error withCErrorSendFrame:TOXAV_ERR_SEND_FRAME_RTP_FAILED];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxAVErrorSendFrameRTPFailed);
+}
+
 #pragma mark Callbacks
 
 - (void)testReceiveCallback
@@ -172,6 +203,33 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
                             callStateChanged:OCTToxAVCallStateReceivingAudio | OCTToxAVCallStateSendingAudio
+                                friendNumber:friendNumber]);
+    }];
+
+    [self makeTestCallbackWithCallBlock:^{
+        callstateCallback(NULL, 1, TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCTToxFriendNumber friendNumber = 1;
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                            callStateChanged:OCTToxAVCallStateSendingAudio
+                                friendNumber:friendNumber]);
+    }];
+
+    [self makeTestCallbackWithCallBlock:^{
+        callstateCallback(NULL, 1, TOXAV_CALL_STATE_ERROR, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCTToxFriendNumber friendNumber = 1;
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                            callStateChanged:OCTToxAVCallStateError
+                                friendNumber:friendNumber]);
+    }];
+
+    [self makeTestCallbackWithCallBlock:^{
+        callstateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A | TOXAV_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCTToxFriendNumber friendNumber = 1;
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
+                            callStateChanged:OCTToxAVCallStateReceivingAudio | OCTToxAVCallStateSendingAudio | OCTToxAVCallStateSendingVideo
                                 friendNumber:friendNumber]);
     }];
 }

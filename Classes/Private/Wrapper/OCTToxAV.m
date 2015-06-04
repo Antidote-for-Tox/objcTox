@@ -213,6 +213,22 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     return status;
 }
 
+#pragma mark - Sending frames
+- (BOOL)sendAudioFrame:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount
+              channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
+              toFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SEND_FRAME cError;
+
+    BOOL status = toxav_audio_send_frame(self.toxAV, friendNumber,
+                                         pcm, sampleCount,
+                                         channels, sampleRate, &cError);
+
+    [self fillError:error withCErrorSendFrame:cError];
+
+    return status;
+}
+
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
@@ -340,6 +356,44 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
         case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_IN_CALL:
             code = OCTToxAVErrorSetBitRateFriendNotInCall;
             failureReason = @"This client is currently not in a call with the friend";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError
+{
+    if (! error || (cError == TOXAV_ERR_SEND_FRAME_OK)) {
+        return;
+    }
+
+    OCTToxAVErrorSendFrame code = OCTToxAVErrorSendFrameUnknown;
+    NSString *description = @"Failed to send audio/video frame";
+    NSString *failureReason = @"Unable to sending audio/video frame";
+    switch (cError) {
+        case TOXAV_ERR_SEND_FRAME_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_SEND_FRAME_NULL:
+            code = OCTToxAVErrorSendFrameNull;
+            failureReason = @"In case of video, one of Y, U, or V was NULL. In case of audio, the samples data pointer was NULL.";
+            break;
+        case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorSendFrameFriendNotFound;
+            failureReason = @"The friend_number passed did not designate a valid friend.";
+            break;
+        case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorSendFrameFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend";
+            break;
+        case TOXAV_ERR_SEND_FRAME_INVALID:
+            code = OCTToxAVErrorSendFrameInvalid;
+            failureReason = @"One of the frame parameters was invalid. E.g. the resolution may be too small or too large, or the audio sampling rate may be unsupported";
+            break;
+        case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
+            code = OCTToxAVErrorSendFrameRTPFailed;
+            failureReason = @"Failed to push frame through rtp interface";
             break;
     }
 

@@ -207,6 +207,40 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateFriendNotInCall,
 };
 
+/**
+ * Error codes for sending audio/video frames
+ */
+typedef NS_ENUM(NSUInteger, OCTToxAVErrorSendFrame) {
+    OCTToxAVErrorSendFrameUnknown,
+
+    /**
+     * In case of video, one of Y, U, or V was NULL. In case of audio, the samples
+     * data pointer was NULL.
+     */
+    OCTToxAVErrorSendFrameNull,
+
+    /**
+     * The friend_number passed did not designate a valid friend.
+     */
+    OCTToxAVErrorSendFrameFriendNotFound,
+
+    /**
+     * This client is currently not in a call with the friend.
+     */
+    OCTToxAVErrorSendFrameFriendNotInCall,
+
+    /**
+     * One of the frame parameters was invalid. E.g. the resolution may be too
+     * small or too large, or the audio sampling rate may be unsupported.
+     */
+    OCTToxAVErrorSendFrameInvalid,
+
+    /**
+     * Failed to push frame through rtp interface.
+     */
+    OCTToxAVErrorSendFrameRTPFailed,
+};
+
 /*******************************************************************************
  *
  * Call control
