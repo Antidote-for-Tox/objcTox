@@ -72,6 +72,7 @@
  * @param audioBitRate Audio bit rate in Kb/sec. Set this to kOCTToxAVAudioBitRateDisable to disable audio sending.
  * @param videoBitRate Video bit rate in Kb/sec. Set this to kOCTToxAVVideoBitRateDisable to disable video sending.
  * video sending.
+ * @param error If an error occurs, this pointer is set to an actual error object.
  */
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error;
 
@@ -81,5 +82,19 @@
  * @param friendNumber The friend number of the friend this client is in a call with.
  */
 - (BOOL)sendCallControl:(OCTToxAVCallControl)control toFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
+
+#pragma mark - Controlling bit rates
+/**
+ * Set the audio bit rate to be used in subsequent audio frames. If the passed
+ * bit rate is the same as the current bit rate this function will return true
+ * without calling a callback. If there is an active non forceful setup with the
+ * passed audio bit rate and the new set request is forceful, the bit rate is
+ * forcefully set and the previous non forceful request is cancelled. The active
+ * non forceful setup will be canceled in favour of new non forceful setup.
+ * @param bitRate The new audio bit rate in Kb/sec. Set to kOCTToxAVAudioBitRateDisable to disable audio sending.
+ * @param friendNumber The friend for which to set the audio bit rate.
+ * @param error If an error occurs, this pointer is set to an actual error object.
+ */
+- (BOOL)setAudioBitRate:(OCTToxAVAudioBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error;
 
 @end

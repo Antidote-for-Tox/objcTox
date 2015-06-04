@@ -185,6 +185,28 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
 
 };
 
+/**
+ * Error codes for setting the audio bit rate.
+ */
+typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
+    OCTToxAVErrorSetBitRateUnknown,
+
+    /**
+     * The bit rate passed was not one of the supported values.
+     */
+    OCTToxAVErrorSetBitRateInvalid,
+
+    /**
+     * The friend_number passed did not designate a valid friend.
+     */
+    OCTToxAVErrorSetBitRateFriendNotFound,
+
+    /**
+     * This client is currently not in a call with the friend.
+     */
+    OCTToxAVErrorSetBitRateFriendNotInCall,
+};
+
 /*******************************************************************************
  *
  * Call control

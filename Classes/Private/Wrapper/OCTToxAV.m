@@ -188,6 +188,19 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
     return status;
 }
+
+#pragma mark - Controlling bit rates
+
+- (BOOL)setAudioBitRate:(OCTToxAVAudioBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SET_BIT_RATE cError;
+
+    BOOL status = toxav_audio_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+
+    [self fillError:error withCErrorSetBitRate:cError];
+
+    return status;
+}
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
@@ -284,6 +297,37 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
         case TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION:
             code = OCTToxAVErrorControlInvaldTransition;
             failureReason = @"Happens if user tried to pause an already paused call or if trying to resume a call that is not paused.";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError
+{
+    if (! error || (cError == TOXAV_ERR_SET_BIT_RATE_OK)) {
+        return;
+    }
+
+    OCTToxAVErrorSetBitRate code = OCTToxAVErrorSetBitRateUnknown;
+    NSString *description = @"Unable to set audio bitrate";
+    NSString *failureReason = nil;
+
+    switch (cError) {
+        case TOXAV_ERR_SET_BIT_RATE_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_INVALID:
+            code = OCTToxAVErrorSetBitRateInvalid;
+            failureReason = @"The bit rate passed was not one of the supported values.";
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorSetBitRateFriendNotFound;
+            failureReason = @"The friend number passed did not designate a valid friend";
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorSetBitRateFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend";
             break;
     }
 
