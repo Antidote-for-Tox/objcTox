@@ -40,32 +40,32 @@ typedef NS_OPTIONS(NSUInteger, OCTToxAVCallState) {
      */
     OCTToxAVCallStateError = 1 << 0,
 
-        /**
-         * The call has finished. This is the final state after which no more state
-         * transitions can occur for the call. This call state will never be
-         * triggered in combination with other call states.
-         */
-        OCTToxAVCallStateFinished = 1 << 1,
+    /**
+     * The call has finished. This is the final state after which no more state
+     * transitions can occur for the call. This call state will never be
+     * triggered in combination with other call states.
+     */
+    OCTToxAVCallStateFinished = 1 << 1,
 
-        /**
-         * The flag that marks that friend is sending audio.
-         */
-        OCTToxAVCallStateSendingAudio = 1 << 2,
+    /**
+     * The flag that marks that friend is sending audio.
+     */
+    OCTToxAVCallStateSendingAudio = 1 << 2,
 
-        /**
-         * The flag that marks that friend is sending video.
-         */
-        OCTToxAVCallStateSendingVideo = 1 << 3,
+    /**
+     * The flag that marks that friend is sending video.
+     */
+    OCTToxAVCallStateSendingVideo = 1 << 3,
 
-        /**
-         * The flag that marks that friend is receiving audio.
-         */
-        OCTToxAVCallStateReceivingAudio = 1 << 4,
+    /**
+     * The flag that marks that friend is receiving audio.
+     */
+    OCTToxAVCallStateReceivingAudio = 1 << 4,
 
-        /**
-         * The flag that marks that friend is receiving video.
-         */
-        OCTToxAVCallStateReceivingVideo = 1 << 5,
+    /**
+     * The flag that marks that friend is receiving video.
+     */
+    OCTToxAVCallStateReceivingVideo = 1 << 5,
 };
 
 /*******************************************************************************
