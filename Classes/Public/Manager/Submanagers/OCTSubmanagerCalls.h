@@ -11,18 +11,18 @@
 #include "OCTCall.h"
 #include "OCTArray.h"
 
-@class OCTCallSubmanager;
+@class OCTSubmanagerCalls;
 
 @protocol OCTCallSubmanagerDelegate <NSObject>
 
 /**
  * Delegate for when we receive a call.
  **/
-- (void)callSubmanager:(OCTCallSubmanager *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
+- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
 
 @end
 
-@interface OCTCallSubmanager : NSObject
+@interface OCTSubmanagerCalls : NSObject
 
 /**
  * Call sessions that are active.

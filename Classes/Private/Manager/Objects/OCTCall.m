@@ -15,6 +15,11 @@
     return NO;
 }
 
+- (BOOL)togglePauseVideo:(BOOL)pause error:(NSError **)error
+{
+    return NO;
+}
+
 - (BOOL)endCall:(NSError **)error
 {
     return NO;

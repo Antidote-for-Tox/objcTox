@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTCallSubmanager.h"
+#import "OCTSubmanagerCalls.h"
 
-@implementation OCTCallSubmanager : NSObject
+@implementation OCTSubmanagerCalls : NSObject
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
 {

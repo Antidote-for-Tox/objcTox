@@ -15,7 +15,7 @@
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 toxav_call_cb callIncomingCallback;
-toxav_call_state_cb callstateCallback;
+toxav_call_state_cb callStateCallback;
 toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
 toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
 toxav_audio_receive_frame_cb receiveAudioFrameCallback;
@@ -76,7 +76,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     [self fillError:error withCErrorInit:cError];
 
     toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
-    toxav_callback_call_state(_toxAV, callstateCallback, (__bridge void *)(self));
+    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
     toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
     toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
     toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
@@ -152,6 +152,97 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     return status;
 }
 
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_CALL_CONTROL cControl;
+
+    switch (control) {
+        case OCTToxAVCallControlResume:
+            cControl = TOXAV_CALL_CONTROL_RESUME;
+            break;
+        case OCTToxAVCallControlPause:
+            cControl = TOXAV_CALL_CONTROL_PAUSE;
+            break;
+        case OCTToxAVCallControlCancel:
+            cControl = TOXAV_CALL_CONTROL_CANCEL;
+            break;
+        case OCTToxAVCallControlMuteAudio:
+            cControl = TOXAV_CALL_CONTROL_MUTE_AUDIO;
+            break;
+        case OCTToxAVCallControlUnmuteAudio:
+            cControl = TOXAV_CALL_CONTROL_UNMUTE_AUDIO;
+            break;
+        case OCTToxAVCallControlHideVideo:
+            cControl = TOXAV_CALL_CONTROL_HIDE_VIDEO;
+            break;
+        case OCTToxAVCallControlShowVideo:
+            cControl = TOXAV_CALL_CONTROL_SHOW_VIDEO;
+            break;
+    }
+
+    TOXAV_ERR_CALL_CONTROL cError;
+
+    BOOL status = toxav_call_control(self.toxAV, friendNumber, cControl, &cError);
+
+    [self fillError:error withCErrorControl:cError];
+
+    return status;
+}
+
+#pragma mark - Controlling bit rates
+
+- (BOOL)setAudioBitRate:(OCTToxAVAudioBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SET_BIT_RATE cError;
+
+    BOOL status = toxav_audio_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+
+    [self fillError:error withCErrorSetBitRate:cError];
+
+    return status;
+}
+
+- (BOOL)setVideoBitRate:(OCTToxAVVideoBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SET_BIT_RATE cError;
+
+    BOOL status = toxav_video_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+
+    [self fillError:error withCErrorSetBitRate:cError];
+
+    return status;
+}
+
+#pragma mark - Sending frames
+- (BOOL)sendAudioFrame:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount
+              channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
+              toFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
+{
+    TOXAV_ERR_SEND_FRAME cError;
+
+    BOOL status = toxav_audio_send_frame(self.toxAV, friendNumber,
+                                         pcm, sampleCount,
+                                         channels, sampleRate, &cError);
+
+    [self fillError:error withCErrorSendFrame:cError];
+
+    return status;
+}
+
+- (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
+                         width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                         error:(NSError **)error
+{
+    TOXAV_ERR_SEND_FRAME cError;
+    BOOL status = toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, aPlane, &cError);
+
+    [self fillError:error withCErrorSendFrame:cError];
+
+    return status;
+}
+
 #pragma mark - Private
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
@@ -223,6 +314,106 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
 }
 
+- (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError
+{
+    if (! error || (cError == TOXAV_ERR_CALL_CONTROL_OK)) {
+        return;
+    }
+
+    OCTToxErrorCallControl code = OCTToxAVErrorControlUnknown;
+    NSString *description = @"Unable set control";
+    NSString *failureReason = nil;
+
+    switch (cError) {
+        case TOXAV_ERR_CALL_CONTROL_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorControlFriendNotFound;
+            failureReason = @"The friend number passed did not designate a valid friend.";
+            break;
+        case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorControlFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend. Before the call is answered, only CANCEL is a valid control.";
+            break;
+        case TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION:
+            code = OCTToxAVErrorControlInvaldTransition;
+            failureReason = @"Happens if user tried to pause an already paused call or if trying to resume a call that is not paused.";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError
+{
+    if (! error || (cError == TOXAV_ERR_SET_BIT_RATE_OK)) {
+        return;
+    }
+
+    OCTToxAVErrorSetBitRate code = OCTToxAVErrorSetBitRateUnknown;
+    NSString *description = @"Unable to set audio/video bitrate";
+    NSString *failureReason = nil;
+
+    switch (cError) {
+        case TOXAV_ERR_SET_BIT_RATE_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_INVALID:
+            code = OCTToxAVErrorSetBitRateInvalid;
+            failureReason = @"The bit rate passed was not one of the supported values.";
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorSetBitRateFriendNotFound;
+            failureReason = @"The friend number passed did not designate a valid friend";
+            break;
+        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorSetBitRateFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError
+{
+    if (! error || (cError == TOXAV_ERR_SEND_FRAME_OK)) {
+        return;
+    }
+
+    OCTToxAVErrorSendFrame code = OCTToxAVErrorSendFrameUnknown;
+    NSString *description = @"Failed to send audio/video frame";
+    NSString *failureReason = @"Unable to sending audio/video frame";
+    switch (cError) {
+        case TOXAV_ERR_SEND_FRAME_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_SEND_FRAME_NULL:
+            code = OCTToxAVErrorSendFrameNull;
+            failureReason = @"In case of video, one of Y, U, or V was NULL. In case of audio, the samples data pointer was NULL.";
+            break;
+        case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorSendFrameFriendNotFound;
+            failureReason = @"The friend number passed did not designate a valid friend.";
+            break;
+        case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL:
+            code = OCTToxAVErrorSendFrameFriendNotInCall;
+            failureReason = @"This client is currently not in a call with the friend";
+            break;
+        case TOXAV_ERR_SEND_FRAME_INVALID:
+            code = OCTToxAVErrorSendFrameInvalid;
+            failureReason = @"One of the frame parameters was invalid. E.g. the resolution may be too small or too large, or the audio sampling rate may be unsupported";
+            break;
+        case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
+            code = OCTToxAVErrorSendFrameRTPFailed;
+            failureReason = @"Failed to push frame through rtp interface";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
 - (NSError *)createErrorWithCode:(NSUInteger)code
                      description:(NSString *)description
                    failureReason:(NSString *)failureReason
@@ -250,15 +441,52 @@ void callIncomingCallback(ToxAV *cToxAV,
                           bool videoEnabled,
                           void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: callIncomingCallback from friend %lu with audio:%d with video:%d", cToxAV, (unsigned long)friendNumber, audioEnabled, videoEnabled);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveCallAudioEnabled:videoEnabled:friendNumber:)]) {
+            [toxAV.delegate toxAV:toxAV receiveCallAudioEnabled:audioEnabled videoEnabled:videoEnabled friendNumber:friendNumber];
+        }
+    });
 }
 
-void callstateCallback(ToxAV *cToxAV,
+void callStateCallback(ToxAV *cToxAV,
                        OCTToxFriendNumber friendNumber,
-                       uint32_t state,
+                       enum TOXAV_CALL_STATE cState,
                        void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        DDLogCInfo(@"%@: callStateCallback from friend %d with state: %d", cToxAV, friendNumber, cState);
+
+        OCTToxAVCallState state = 0;
+
+        if (cState & TOXAV_CALL_STATE_ERROR) {
+            state |= OCTToxAVCallStateError;
+        }
+        if (cState & TOXAV_CALL_STATE_FINISHED) {
+            state |= OCTToxAVCallStateFinished;
+        }
+        if (cState & TOXAV_CALL_STATE_SENDING_A) {
+            state |= OCTToxAVCallStateSendingAudio;
+        }
+        if (cState & TOXAV_CALL_STATE_SENDING_V) {
+            state |= OCTToxAVCallStateSendingVideo;
+        }
+        if (cState & TOXAV_CALL_STATE_RECEIVING_A) {
+            state |= OCTToxAVCallStateReceivingAudio;
+        }
+        if (cState & TOXAV_CALL_STATE_RECEIVING_V) {
+            state |= OCTToxAVCallStateReceivingVideo;
+        }
+
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {
+            [toxAV.delegate toxAV:toxAV callStateChanged:state friendNumber:friendNumber];
+        }
+    });
 }
 
 void audioBitRateStatusCallback(ToxAV *cToxAV,
@@ -267,7 +495,14 @@ void audioBitRateStatusCallback(ToxAV *cToxAV,
                                 OCTToxAVAudioBitRate bitRate,
                                 void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: audioBitRateStatusCallback from friend %d stable: %d bitRate: %d", cToxAV, friendNumber, stable, bitRate);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:audioBitRateChanged:stable:friendNumber:)]) {
+            [toxAV.delegate toxAV:toxAV audioBitRateChanged:bitRate stable:stable friendNumber:friendNumber];
+        }
+    });
 }
 
 void videoBitRateStatusCallback(ToxAV *cToxAV,
@@ -276,10 +511,17 @@ void videoBitRateStatusCallback(ToxAV *cToxAV,
                                 OCTToxAVVideoBitRate bitRate,
                                 void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: videoBitRateStatusCallback from friend %d stable: %d bitRate: %d", cToxAV, friendNumber, stable, bitRate);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:videoBitRateChanged:friendNumber:stable:)]) {
+            [toxAV.delegate toxAV:toxAV videoBitRateChanged:bitRate friendNumber:friendNumber stable:stable];
+        }
+    });
 }
 
-void receiveAudioFrameCallback(ToxAV *cToxAv,
+void receiveAudioFrameCallback(ToxAV *cToxAV,
                                OCTToxFriendNumber friendNumber,
                                OCTToxAVPCMData *pcm,
                                OCTToxAVSampleCount sampleCount,
@@ -287,7 +529,14 @@ void receiveAudioFrameCallback(ToxAV *cToxAv,
                                OCTToxAVSampleRate sampleRate,
                                void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d", cToxAV, friendNumber, sampleCount, channels);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
+            [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
+        }
+    });
 }
 
 void receiveVideoFrameCallback(ToxAV *cToxAV,
@@ -298,5 +547,16 @@ void receiveVideoFrameCallback(ToxAV *cToxAV,
                                OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride,
                                void *userData)
 {
-    // To Do..
+    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: receiveVideoFrameCallback from friend %d width: %d height: %d", cToxAV, friendNumber, width, height);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:aPlane:yStride:uStride:vStride:aStride:friendNumber:)]) {
+            [toxAV.delegate toxAV:toxAV
+             receiveVideoFrameWithWidth:width height:height
+                                 yPlane:yPlane uPlane:uPlane vPlane:vPlane aPlane:aPlane
+                                yStride:yStride uStride:uStride vStride:vStride aStride:aStride
+                           friendNumber:friendNumber];
+        }
+    });
 }
