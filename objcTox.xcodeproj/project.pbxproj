@@ -120,6 +120,7 @@
 		EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */ = {isa = PBXBuildFile; fileRef = A4211DF078AC723DE235503AD4D0E591 /* OCTCall.m */; };
 		EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */; };
 		EF084F94290314128486E23E3CE9B22F /* OCTToxAV.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA03E67FB19C7268351D5CDA3ABCAD3 /* OCTToxAV.m */; };
+		F02C04D11B20FB98001025D1 /* OCTSubmanagerCallsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F02C04D01B20FB98001025D1 /* OCTSubmanagerCallsTests.m */; };
 		F07C8F991B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F07C8F9E1B1E444300E399F5 /* OCTToxAVTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */; };
@@ -271,6 +272,8 @@
 		E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorage.m; sourceTree = "<group>"; };
 		EEC5B20DF06F1D3048282D1068C2CE9F /* OCTDBChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDBChat.h; sourceTree = "<group>"; };
 		EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
+		F02C04CF1B20F7E0001025D1 /* OCTSubmanagerCalls+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerCalls+Private.h"; sourceTree = "<group>"; };
+		F02C04D01B20FB98001025D1 /* OCTSubmanagerCallsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerCallsTests.m; sourceTree = "<group>"; };
 		F07C8F971B1E379D00E399F5 /* OCTToxAVConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAVConstants.h; sourceTree = "<group>"; };
 		F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVConstants.m; sourceTree = "<group>"; };
 		F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVTests.m; sourceTree = "<group>"; };
@@ -353,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				F09E0C2E1B18475F00C25A24 /* OCTSubmanagerCalls.m */,
+				F02C04CF1B20F7E0001025D1 /* OCTSubmanagerCalls+Private.h */,
 				A2263C840374001AB44DC433624E32DD /* OCTFriendsContainer+Private.h */,
 				D9BCAA1355D732652967C19A5F0A9E29 /* OCTFriendsContainer.m */,
 				5D189A68D6F95FD80457FCACAAB93D5D /* OCTSubmanagerAvatars+Private.h */,
@@ -596,6 +600,7 @@
 				F82F69945781A14E76974FA7A2B9220C /* OCTToxTests.m */,
 				F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */,
 				11B4BAF61B11E38A0001A96A /* OCTSubmanagerFilesTests.m */,
+				F02C04D01B20FB98001025D1 /* OCTSubmanagerCallsTests.m */,
 			);
 			path = objcToxTests;
 			sourceTree = "<group>";
@@ -910,6 +915,7 @@
 				2E3B8D8DEC1FB9A439B7D19DCBD58BE2 /* OCTDBManagerTests.m in Sources */,
 				11B4BAF11B11E2800001A96A /* OCTSubmanagerFiles.m in Sources */,
 				69026FC65D8BFF447C434C9EDDD147A1 /* OCTDBMessageAbstract.m in Sources */,
+				F02C04D11B20FB98001025D1 /* OCTSubmanagerCallsTests.m in Sources */,
 				88DEEAE563269D07FB75AAA84F6CD08D /* OCTDBMessageAbstractTests.m in Sources */,
 				05B0A2612C8771F5F876B1901B983436 /* OCTDBMessageCall.m in Sources */,
 				04A944F5140E93E490C9F50611FD020F /* OCTDBMessageCallTests.m in Sources */,
