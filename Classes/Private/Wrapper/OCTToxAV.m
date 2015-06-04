@@ -15,7 +15,7 @@
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 toxav_call_cb callIncomingCallback;
-toxav_call_state_cb callstateCallback;
+toxav_call_state_cb callStateCallback;
 toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
 toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
 toxav_audio_receive_frame_cb receiveAudioFrameCallback;
@@ -76,7 +76,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     [self fillError:error withCErrorInit:cError];
 
     toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
-    toxav_callback_call_state(_toxAV, callstateCallback, (__bridge void *)(self));
+    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
     toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
     toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
     toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
@@ -437,16 +437,37 @@ void callIncomingCallback(ToxAV *cToxAV,
     });
 }
 
-void callstateCallback(ToxAV *cToxAV,
+void callStateCallback(ToxAV *cToxAV,
                        OCTToxFriendNumber friendNumber,
-                       uint32_t state,
+                       enum TOXAV_CALL_STATE cState,
                        void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: callstateCallback from friend %d with state: %d", cToxAV, friendNumber, state);
 
+        DDLogCInfo(@"%@: callStateCallback from friend %d with state: %d", cToxAV, friendNumber, cState);
+
+        OCTToxAVCallState state = 0;
+
+        if (cState & TOXAV_CALL_STATE_ERROR) {
+            state |= OCTToxAVCallStateError;
+        }
+        if (cState & TOXAV_CALL_STATE_FINISHED) {
+            state |= OCTToxAVCallStateFinished;
+        }
+        if (cState & TOXAV_CALL_STATE_SENDING_A) {
+            state |= OCTToxAVCallStateSendingAudio;
+        }
+        if (cState & TOXAV_CALL_STATE_SENDING_V) {
+            state |= OCTToxAVCallStateSendingVideo;
+        }
+        if (cState & TOXAV_CALL_STATE_RECEIVING_A) {
+            state |= OCTToxAVCallStateReceivingAudio;
+        }
+        if (cState & TOXAV_CALL_STATE_RECEIVING_V) {
+            state |= OCTToxAVCallStateReceivingVideo;
+        }
 
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:friendNumber];

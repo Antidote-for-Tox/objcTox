@@ -15,7 +15,7 @@
 #import "toxav.h"
 
 toxav_call_cb callIncomingCallback;
-toxav_call_state_cb callstateCallback;
+toxav_call_state_cb callStateCallback;
 toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
 toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
 toxav_audio_receive_frame_cb receiveAudioFrameCallback;
@@ -198,7 +198,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 - (void)testCallStateCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        callstateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
@@ -207,7 +207,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callstateCallback(NULL, 1, TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
@@ -216,7 +216,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callstateCallback(NULL, 1, TOXAV_CALL_STATE_ERROR, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_CALL_STATE_ERROR, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
@@ -225,7 +225,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callstateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A | TOXAV_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A | TOXAV_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
