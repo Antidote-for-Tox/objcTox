@@ -8,55 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
-#import <XCTest/XCTest.h>
 
-#import "OCTTox.h"
-#import "tox.h"
+#import "OCTTox+Private.h"
+#import "OCTCAsserts.h"
 
-tox_self_connection_status_cb connectionStatusCallback;
-tox_friend_name_cb friendNameCallback;
-tox_friend_status_message_cb friendStatusMessageCallback;
-tox_friend_status_cb friendStatusCallback;
-tox_friend_connection_status_cb friendConnectionStatusCallback;
-tox_friend_typing_cb friendTypingCallback;
-tox_friend_read_receipt_cb friendReadReceiptCallback;
-tox_friend_request_cb friendRequestCallback;
-tox_friend_message_cb friendMessageCallback;
-tox_file_recv_control_cb fileReceiveControlCallback;
-tox_file_chunk_request_cb fileChunkRequestCallback;
-tox_file_recv_cb fileReceiveCallback;
-tox_file_recv_chunk_cb fileReceiveChunkCallback;
+void *refToSelf;
 
-@interface OCTTox (Tests)
-
-- (OCTToxUserStatus)userStatusFromCUserStatus:(TOX_USER_STATUS)cStatus;
-- (OCTToxConnectionStatus)userConnectionStatusFromCUserStatus:(TOX_CONNECTION)cStatus;
-- (OCTToxMessageType)messageTypeFromCMessageType:(TOX_MESSAGE_TYPE)cType;
-- (OCTToxFileControl)fileControlFromCFileControl:(TOX_FILE_CONTROL)cControl;
-- (void)fillError:(NSError **)error withCErrorInit:(TOX_ERR_NEW)cError;
-- (void)fillError:(NSError **)error withCErrorBootstrap:(TOX_ERR_BOOTSTRAP)cError;
-- (void)fillError:(NSError **)error withCErrorFriendAdd:(TOX_ERR_FRIEND_ADD)cError;
-- (void)fillError:(NSError **)error withCErrorFriendDelete:(TOX_ERR_FRIEND_DELETE)cError;
-- (void)fillError:(NSError **)error withCErrorFriendByPublicKey:(TOX_ERR_FRIEND_BY_PUBLIC_KEY)cError;
-- (void)fillError:(NSError **)error withCErrorFriendGetPublicKey:(TOX_ERR_FRIEND_GET_PUBLIC_KEY)cError;
-- (void)fillError:(NSError **)error withCErrorSetInfo:(TOX_ERR_SET_INFO)cError;
-- (void)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError;
-- (void)fillError:(NSError **)error withCErrorFriendQuery:(TOX_ERR_FRIEND_QUERY)cError;
-- (void)fillError:(NSError **)error withCErrorSetTyping:(TOX_ERR_SET_TYPING)cError;
-- (void)fillError:(NSError **)error withCErrorFriendSendMessage:(TOX_ERR_FRIEND_SEND_MESSAGE)cError;
-- (void)fillError:(NSError **)error withCErrorFileControl:(TOX_ERR_FILE_CONTROL)cError;
-- (void)fillError:(NSError **)error withCErrorFileSeek:(TOX_ERR_FILE_SEEK)cError;
-- (void)fillError:(NSError **)error withCErrorFileGet:(TOX_ERR_FILE_GET)cError;
-- (void)fillError:(NSError **)error withCErrorFileSend:(TOX_ERR_FILE_SEND)cError;
-- (void)fillError:(NSError **)error withCErrorFileSendChunk:(TOX_ERR_FILE_SEND_CHUNK)cError;
-- (NSError *)createErrorWithCode:(NSUInteger)code
-                     description:(NSString *)description
-                   failureReason:(NSString *)failureReason;
-- (struct Tox_Options)cToxOptionsFromOptions:(OCTToxOptions *)options;
-- (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length;
-- (uint8_t *)hexStringToBin:(NSString *)string;
-
-@end
+void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
 
 @interface OCTToxTests : XCTestCase
 
@@ -71,12 +29,16 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
+    refToSelf = (__bridge void *)(self);
+
     self.tox = [[OCTTox alloc] initWithOptions:[OCTToxOptions new] savedData:nil error:nil];
 }
 
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    refToSelf = NULL;
+
     self.tox = nil;
 
     [super tearDown];
@@ -98,6 +60,15 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
     NSData *data2 = [tox save];
 
     XCTAssertTrue(data.length == data2.length);
+}
+
+- (void)testPublicKey
+{
+    _tox_self_get_public_key = mocked_tox_self_get_public_key;
+
+    NSString *publicKey = [self.tox publicKey];
+
+    XCTAssertEqualObjects(publicKey, @"000102030405060708090A0B0C0D0E0F" @"000102030405060708090A0B0C0D0E0F");
 }
 
 #pragma mark -  Private methods
@@ -813,6 +784,20 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
     OCMVerifyAll((id)self.tox.delegate);
+}
+
+void mocked_tox_self_get_public_key(const Tox *cTox, uint8_t *public_key)
+{
+    OCTTox *tox = [(__bridge OCTToxTests *)refToSelf tox];
+
+    CCCAssertTrue(cTox == tox.tox);
+
+    uint8_t bin[32] = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    };
+
+    memcpy(public_key, bin, TOX_PUBLIC_KEY_SIZE);
 }
 
 @end

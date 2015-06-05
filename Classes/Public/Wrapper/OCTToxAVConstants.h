@@ -167,7 +167,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
     OCTToxAVErrorControlUnknown,
 
     /**
-     * The friend_number passed did not designate a valid friend.
+     * The friend number passed did not designate a valid friend.
      */
     OCTToxAVErrorControlFriendNotFound,
 
@@ -197,7 +197,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateInvalid,
 
     /**
-     * The friend_number passed did not designate a valid friend.
+     * The friend number passed did not designate a valid friend.
      */
     OCTToxAVErrorSetBitRateFriendNotFound,
 
@@ -220,7 +220,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorSendFrame) {
     OCTToxAVErrorSendFrameNull,
 
     /**
-     * The friend_number passed did not designate a valid friend.
+     * The friend number passed did not designate a valid friend.
      */
     OCTToxAVErrorSendFrameFriendNotFound,
 

@@ -330,7 +330,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
             break;
         case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorControlFriendNotFound;
-            failureReason = @"The friend_number passed did not designate a valid friend.";
+            failureReason = @"The friend number passed did not designate a valid friend.";
             break;
         case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL:
             code = OCTToxAVErrorControlFriendNotInCall;
@@ -395,7 +395,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
             break;
         case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorSendFrameFriendNotFound;
-            failureReason = @"The friend_number passed did not designate a valid friend.";
+            failureReason = @"The friend number passed did not designate a valid friend.";
             break;
         case TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL:
             code = OCTToxAVErrorSendFrameFriendNotInCall;
@@ -484,7 +484,7 @@ void callStateCallback(ToxAV *cToxAV,
         }
 
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:friendNumber];
+            [toxAV.delegate toxAV:toxAV callStateChanged:state friendNumber:friendNumber];
         }
     });
 }
