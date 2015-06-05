@@ -101,6 +101,7 @@
     OCMStub([toxAV alloc]).andReturn(toxAV);
 
     OCMExpect([tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
+    OCMExpect([toxAV initWithTox:tox error:[OCMArg anyObjectRef]]);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
@@ -110,6 +111,7 @@
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
     OCMVerifyAll(tox);
+    OCMVerifyAll(toxAV);
 
     [toxAV stopMocking];
     [tox stopMocking];
