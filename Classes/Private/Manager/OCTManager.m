@@ -15,6 +15,7 @@
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTDBManager.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -27,6 +28,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
+@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
 
@@ -85,6 +87,9 @@
     OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
     avatars.dataSource = self;
     _avatars = avatars;
+
+    OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
+    _calls = calls;
 
     return self;
 }
