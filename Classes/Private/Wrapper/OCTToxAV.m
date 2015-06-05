@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTToxAV.h"
+#import "OCTToxAV+Private.h"
 #import "OCTTox+Private.h"
 #import "toxav.h"
 #import "DDLog.h"
@@ -14,12 +14,7 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-toxav_call_cb callIncomingCallback;
-toxav_call_state_cb callStateCallback;
-toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
-toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
-toxav_audio_receive_frame_cb receiveAudioFrameCallback;
-toxav_video_receive_frame_cb receiveVideoFrameCallback;
+
 
 @interface OCTToxAV ()
 
@@ -75,12 +70,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
     [self fillError:error withCErrorInit:cError];
 
-    toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
-    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
-    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
-    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
-    toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
-    toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
+    [self setupCallbacks];
 
     return self;
 }
@@ -244,6 +234,16 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 }
 
 #pragma mark - Private
+
+- (void)setupCallbacks
+{
+    toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
+    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
+    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
+    toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
+}
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
 {
