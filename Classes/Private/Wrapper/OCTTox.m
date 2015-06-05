@@ -12,6 +12,8 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
+void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
+
 @interface OCTTox ()
 
 @property (assign, nonatomic) Tox *tox;

@@ -12,7 +12,7 @@
 /**
  * Tox functions
  */
-void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
+extern void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 /**
  * Callbacks
