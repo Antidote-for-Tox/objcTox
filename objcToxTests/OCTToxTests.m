@@ -32,16 +32,12 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
     refToSelf = (__bridge void *)(self);
 
     self.tox = [[OCTTox alloc] initWithOptions:[OCTToxOptions new] savedData:nil error:nil];
-
-    _tox_self_get_public_key = mocked_tox_self_get_public_key;
 }
 
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     refToSelf = NULL;
-
-    _tox_self_get_public_key = NULL;
 
     self.tox = nil;
 
@@ -68,6 +64,8 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
 
 - (void)testPublicKey
 {
+    _tox_self_get_public_key = mocked_tox_self_get_public_key;
+
     NSString *publicKey = [self.tox publicKey];
 
     XCTAssertEqualObjects(publicKey, @"000102030405060708090A0B0C0D0E0F" @"000102030405060708090A0B0C0D0E0F");
