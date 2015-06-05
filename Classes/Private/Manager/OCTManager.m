@@ -28,7 +28,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *managerCalls;
+@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
 
@@ -89,7 +89,7 @@
     _avatars = avatars;
 
     OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
-    _callManager = calls;
+    _calls = calls;
 
     return self;
 }

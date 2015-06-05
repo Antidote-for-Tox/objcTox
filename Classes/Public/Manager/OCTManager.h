@@ -46,7 +46,7 @@
 /**
  * Submanager with all video/calling methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerCalls *callManager;
+@property (strong, nonatomic, readonly) OCTSubmanagerCalls *calls;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
