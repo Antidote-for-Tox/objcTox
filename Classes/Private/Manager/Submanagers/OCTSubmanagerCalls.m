@@ -6,9 +6,29 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTSubmanagerCalls.h"
+#import "OCTSubmanagerCalls+Private.h"
+#import "OCTToxAV.h"
+
+@interface OCTSubmanagerCalls ()
+
+@property (strong, nonatomic) OCTToxAV *toxAV;
+
+@end
 
 @implementation OCTSubmanagerCalls : NSObject
+
+- (instancetype)initWithTox:(OCTTox *)tox
+{
+    self = [super init];
+
+    if (! self) {
+        return nil;
+    }
+
+    _toxAV = [[OCTToxAV alloc] initWithTox:tox error:nil];
+
+    return self;
+}
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
 {

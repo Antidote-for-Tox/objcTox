@@ -1,5 +1,5 @@
 //
-//  OCTCallSubmanager.h
+//  OCTSubmanagerCalls.h
 //  objcTox
 //
 //  Created by Chuong Vu on 5/8/15.
@@ -12,8 +12,9 @@
 #include "OCTArray.h"
 
 @class OCTSubmanagerCalls;
+@class OCTToxAV;
 
-@protocol OCTCallSubmanagerDelegate <NSObject>
+@protocol OCTSubmanagerCallDelegate <NSObject>
 
 /**
  * Delegate for when we receive a call.
