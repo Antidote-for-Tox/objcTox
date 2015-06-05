@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTToxAV.h"
+#import "OCTToxAV+Private.h"
 #import "OCTTox+Private.h"
 #import "toxav.h"
 #import "DDLog.h"
@@ -14,12 +14,24 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-toxav_call_cb callIncomingCallback;
-toxav_call_state_cb callStateCallback;
-toxav_audio_bit_rate_status_cb audioBitRateStatusCallback;
-toxav_video_bit_rate_status_cb videoBitRateStatusCallback;
-toxav_audio_receive_frame_cb receiveAudioFrameCallback;
-toxav_video_receive_frame_cb receiveVideoFrameCallback;
+uint32_t (*_toxav_version_major)(void);
+uint32_t (*_toxav_version_minor)(void);
+uint32_t (*_toxav_version_patch)(void);
+bool (*_toxav_version_is_compatible)(uint32_t major, uint32_t minor, uint32_t patch);
+
+ToxAV *(*_toxav_new)(Tox *tox, TOXAV_ERR_NEW *error);
+uint32_t (*_toxav_iteration_interval)(const ToxAV *toxAV);
+void (*_toxav_iterate)(ToxAV *toxAV);
+void (*_toxav_kill)(ToxAV *toxAV);
+
+bool (*_toxav_call)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_CALL *error);
+bool (*_toxav_call_control)(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
+
+bool (*_toxav_audio_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
+bool (*_toxav_video_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
+
+bool (*_toxav_audio_send_frame)(ToxAV *toxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error);
+bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, const uint8_t *a, TOXAV_ERR_SEND_FRAME *error);
 
 @interface OCTToxAV ()
 
@@ -41,22 +53,22 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 + (NSUInteger)versionMajor
 {
-    return toxav_version_major();
+    return _toxav_version_major();
 }
 
 + (NSUInteger)versionMinor
 {
-    return toxav_version_minor();
+    return _toxav_version_minor();
 }
 
 + (NSUInteger)versionPatch
 {
-    return toxav_version_patch();
+    return _toxav_version_patch();
 }
 
 + (BOOL)versionIsCompatibleWith:(NSUInteger)major minor:(NSUInteger)minor patch:(NSUInteger)patch
 {
-    return toxav_version_is_compatible((uint32_t)major, (uint32_t)minor, (uint32_t)patch);
+    return _toxav_version_is_compatible((uint32_t)major, (uint32_t)minor, (uint32_t)patch);
 }
 
 #pragma mark -  Lifecycle
@@ -70,17 +82,14 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
     DDLogVerbose(@"%@: init called", self);
 
+    [self setupCFunctions];
+
     TOXAV_ERR_NEW cError;
-    _toxAV = toxav_new(tox.tox, &cError);
+    _toxAV = _toxav_new(tox.tox, &cError);
 
     [self fillError:error withCErrorInit:cError];
 
-    toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
-    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
-    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
-    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
-    toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
-    toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
+    [self setupCallbacks];
 
     return self;
 }
@@ -98,7 +107,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTToxAVQueue", NULL);
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
-        uint64_t interval = toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000);
+        uint64_t interval = _toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000);
         dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, 0), interval, interval / 5);
 
         __weak OCTToxAV *weakSelf = self;
@@ -108,7 +117,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
                 return;
             }
 
-            toxav_iterate(strongSelf.toxAV);
+            _toxav_iterate(strongSelf.toxAV);
         });
 
         dispatch_resume(self.timer);
@@ -136,7 +145,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 - (void)dealloc
 {
     [self stop];
-    toxav_kill(self.toxAV);
+    _toxav_kill(self.toxAV);
     DDLogVerbose(@"%@: dealloc called, toxav killed", self);
 }
 
@@ -145,7 +154,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error
 {
     TOXAV_ERR_CALL cError;
-    BOOL status = toxav_call(self.toxAV, friendNumber, audioBitRate, videoBitRate, &cError);
+    BOOL status = _toxav_call(self.toxAV, friendNumber, audioBitRate, videoBitRate, &cError);
 
     [self fillError:error withCErrorCall:cError];
 
@@ -182,7 +191,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
     TOXAV_ERR_CALL_CONTROL cError;
 
-    BOOL status = toxav_call_control(self.toxAV, friendNumber, cControl, &cError);
+    BOOL status = _toxav_call_control(self.toxAV, friendNumber, cControl, &cError);
 
     [self fillError:error withCErrorControl:cError];
 
@@ -195,7 +204,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 {
     TOXAV_ERR_SET_BIT_RATE cError;
 
-    BOOL status = toxav_audio_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+    BOOL status = _toxav_audio_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
 
     [self fillError:error withCErrorSetBitRate:cError];
 
@@ -206,7 +215,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 {
     TOXAV_ERR_SET_BIT_RATE cError;
 
-    BOOL status = toxav_video_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+    BOOL status = _toxav_video_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
 
     [self fillError:error withCErrorSetBitRate:cError];
 
@@ -220,9 +229,9 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 {
     TOXAV_ERR_SEND_FRAME cError;
 
-    BOOL status = toxav_audio_send_frame(self.toxAV, friendNumber,
-                                         pcm, sampleCount,
-                                         channels, sampleRate, &cError);
+    BOOL status = _toxav_audio_send_frame(self.toxAV, friendNumber,
+                                          pcm, sampleCount,
+                                          channels, sampleRate, &cError);
 
     [self fillError:error withCErrorSendFrame:cError];
 
@@ -236,7 +245,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
                          error:(NSError **)error
 {
     TOXAV_ERR_SEND_FRAME cError;
-    BOOL status = toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, aPlane, &cError);
+    BOOL status = _toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, aPlane, &cError);
 
     [self fillError:error withCErrorSendFrame:cError];
 
@@ -244,6 +253,39 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 }
 
 #pragma mark - Private
+
+- (void)setupCFunctions
+{
+    _toxav_version_major = toxav_version_major;
+    _toxav_version_minor = toxav_version_minor;
+    _toxav_version_patch = toxav_version_patch;
+
+    _toxav_version_is_compatible = toxav_version_is_compatible;
+
+    _toxav_new = toxav_new;
+    _toxav_iteration_interval = toxav_iteration_interval;
+    _toxav_iterate = toxav_iterate;
+    _toxav_kill = toxav_kill;
+
+    _toxav_call = toxav_call;
+    _toxav_call_control = toxav_call_control;
+
+    _toxav_audio_bit_rate_set = toxav_audio_bit_rate_set;
+    _toxav_video_bit_rate_set = toxav_video_bit_rate_set;
+
+    _toxav_audio_send_frame = toxav_audio_send_frame;
+    _toxav_video_send_frame = toxav_video_send_frame;
+}
+
+- (void)setupCallbacks
+{
+    toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
+    toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
+    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
+    toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
+}
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
 {

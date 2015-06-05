@@ -284,6 +284,7 @@
 		F0A6B9171B127EA700E48797 /* OCTAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTAudioEngine.h; path = Audio/OCTAudioEngine.h; sourceTree = "<group>"; };
 		F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTAudioEngine.m; path = Audio/OCTAudioEngine.m; sourceTree = "<group>"; };
 		F0A791871B1F855400F17DBA /* OCTToxAVDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAVDelegate.h; sourceTree = "<group>"; };
+		F0CAD9A81B220810008FAA62 /* OCTToxAV+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTToxAV+Private.h"; sourceTree = "<group>"; };
 		F0E77FC01B154F6000434A96 /* OCTAudioEngineTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTAudioEngineTests.m; sourceTree = "<group>"; };
 		F5174E797B52B59C74ABA4D0D9A95A4A /* OCTConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTConversationViewController.h; sourceTree = "<group>"; };
 		F696BD36965BB82325B3CB931EEB9826 /* OCTMessageCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageCall+Private.h"; sourceTree = "<group>"; };
@@ -350,6 +351,7 @@
 				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
 				F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */,
 				F07C8F9F1B1E4F7400E399F5 /* OCTTox+Private.h */,
+				F0CAD9A81B220810008FAA62 /* OCTToxAV+Private.h */,
 			);
 			path = Wrapper;
 			sourceTree = "<group>";
