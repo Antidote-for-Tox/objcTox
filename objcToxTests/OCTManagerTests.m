@@ -11,6 +11,7 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTToxAV.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerChats+Private.h"
@@ -95,6 +96,10 @@
     id tox = OCMClassMock([OCTTox class]);
     OCMStub([tox alloc]).andReturn(tox);
     OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
+
+    id toxAV = OCMClassMock([OCTToxAV class]);
+    OCMStub([toxAV alloc]).andReturn(toxAV);
+
     OCMExpect([tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
@@ -106,7 +111,8 @@
     XCTAssertEqual(error, error2);
     OCMVerifyAll(tox);
 
-    tox = nil;
+    [toxAV stopMocking];
+    [tox stopMocking];
 }
 
 - (void)testAddTCPRelay
@@ -116,6 +122,10 @@
     id tox = OCMClassMock([OCTTox class]);
     OCMStub([tox alloc]).andReturn(tox);
     OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
+
+    id toxAV = OCMClassMock([OCTToxAV class]);
+    OCMStub([toxAV alloc]).andReturn(toxAV);
+
     OCMExpect([tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
@@ -127,7 +137,8 @@
     XCTAssertEqual(error, error2);
     OCMVerifyAll(tox);
 
-    tox = nil;
+    [toxAV stopMocking];
+    [tox stopMocking];
 }
 
 - (void)testSubmanagerDataSource
