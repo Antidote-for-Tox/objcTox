@@ -6,28 +6,11 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTTox.h"
-#import "tox.h"
+#import "OCTTox+Private.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
-
-
-tox_self_connection_status_cb connectionStatusCallback;
-tox_friend_name_cb friendNameCallback;
-tox_friend_status_message_cb friendStatusMessageCallback;
-tox_friend_status_cb friendStatusCallback;
-tox_friend_connection_status_cb friendConnectionStatusCallback;
-tox_friend_typing_cb friendTypingCallback;
-tox_friend_read_receipt_cb friendReadReceiptCallback;
-tox_friend_request_cb friendRequestCallback;
-tox_friend_message_cb friendMessageCallback;
-tox_file_recv_control_cb fileReceiveControlCallback;
-tox_file_chunk_request_cb fileChunkRequestCallback;
-tox_file_recv_cb fileReceiveCallback;
-tox_file_recv_chunk_cb fileReceiveChunkCallback;
-
 
 @interface OCTTox ()
 
@@ -117,19 +100,8 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
 
     [self fillError:error withCErrorInit:cError];
 
-    tox_callback_self_connection_status(_tox, connectionStatusCallback, (__bridge void *)self);
-    tox_callback_friend_name(_tox, friendNameCallback, (__bridge void *)self);
-    tox_callback_friend_status_message(_tox, friendStatusMessageCallback, (__bridge void *)self);
-    tox_callback_friend_status(_tox, friendStatusCallback, (__bridge void *)self);
-    tox_callback_friend_connection_status(_tox, friendConnectionStatusCallback, (__bridge void *) self);
-    tox_callback_friend_typing(_tox, friendTypingCallback, (__bridge void *)self);
-    tox_callback_friend_read_receipt(_tox, friendReadReceiptCallback, (__bridge void *)self);
-    tox_callback_friend_request(_tox, friendRequestCallback, (__bridge void *)self);
-    tox_callback_friend_message(_tox, friendMessageCallback, (__bridge void *)self);
-    tox_callback_file_recv_control(_tox, fileReceiveControlCallback, (__bridge void *)self);
-    tox_callback_file_chunk_request(_tox, fileChunkRequestCallback, (__bridge void *)self);
-    tox_callback_file_recv(_tox, fileReceiveCallback, (__bridge void *)self);
-    tox_callback_file_recv_chunk(_tox, fileReceiveChunkCallback, (__bridge void *)self);
+    [self setupCFunctions];
+    [self setupCallbacks];
 
     return self;
 }
@@ -239,7 +211,7 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
 {
     uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
-    tox_self_get_public_key(self.tox, cPublicKey);
+    _tox_self_get_public_key(self.tox, cPublicKey);
 
     NSString *publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     free(cPublicKey);
@@ -830,6 +802,28 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
 }
 
 #pragma mark -  Private methods
+
+- (void)setupCFunctions
+{
+    _tox_self_get_public_key = tox_self_get_public_key;
+}
+
+- (void)setupCallbacks
+{
+    tox_callback_self_connection_status(_tox, connectionStatusCallback, (__bridge void *)self);
+    tox_callback_friend_name(_tox, friendNameCallback, (__bridge void *)self);
+    tox_callback_friend_status_message(_tox, friendStatusMessageCallback, (__bridge void *)self);
+    tox_callback_friend_status(_tox, friendStatusCallback, (__bridge void *)self);
+    tox_callback_friend_connection_status(_tox, friendConnectionStatusCallback, (__bridge void *) self);
+    tox_callback_friend_typing(_tox, friendTypingCallback, (__bridge void *)self);
+    tox_callback_friend_read_receipt(_tox, friendReadReceiptCallback, (__bridge void *)self);
+    tox_callback_friend_request(_tox, friendRequestCallback, (__bridge void *)self);
+    tox_callback_friend_message(_tox, friendMessageCallback, (__bridge void *)self);
+    tox_callback_file_recv_control(_tox, fileReceiveControlCallback, (__bridge void *)self);
+    tox_callback_file_chunk_request(_tox, fileChunkRequestCallback, (__bridge void *)self);
+    tox_callback_file_recv(_tox, fileReceiveCallback, (__bridge void *)self);
+    tox_callback_file_recv_chunk(_tox, fileReceiveChunkCallback, (__bridge void *)self);
+}
 
 - (OCTToxUserStatus)userStatusFromCUserStatus:(TOX_USER_STATUS)cStatus
 {
