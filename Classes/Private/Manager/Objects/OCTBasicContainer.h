@@ -8,24 +8,33 @@
 
 #import <Foundation/Foundation.h>
 
+@class OCTBasicContainer;
+@protocol OCTBasicContainerDelegate <NSObject>
+
+- (void)basicContainerUpdate:(OCTBasicContainer *)container
+                 insertedSet:(NSIndexSet *)inserted
+                  removedSet:(NSIndexSet *)removed
+                  updatedSet:(NSIndexSet *)updated;
+@end
+
 /**
  * Basic container that saves it's objects in sorted array. Is threadsafe.
  */
 @interface OCTBasicContainer : NSObject
 
-/**
- * @param objects Initial array with objects.
- * @param updateNotification Notification that will be send on array update (on adding, removing or updating object).
- */
-- (instancetype)initWithObjects:(NSArray *)objects updateNotificationName:(NSString *)updateNotificationName;
+@property (weak, nonatomic) id<OCTBasicContainerDelegate> delegate;
 
 /**
- * Sets comparator, resorts objects and send notification (if flag is set).
+ * @param objects Initial array with objects.
+ */
+- (instancetype)initWithObjects:(NSArray *)objects;
+
+/**
+ * Sets comparator, resorts objects and notifies delegate.
  *
  * @param comparator Comparator to be sorted with.
- * @param sendNotification If YES, container will send notification with updates.
  */
-- (void)setComparatorForCurrentSort:(NSComparator)comparator sendNotification:(BOOL)sendNotification;
+- (void)setComparatorForCurrentSort:(NSComparator)comparator;
 
 /**
  * @return Total number of objects.

@@ -57,7 +57,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMExpect([bs initWithObjects:friends updateNotificationName:kOCTFriendsContainerUpdateNotification]);
+    OCMExpect([(OCTBasicContainer *)bs initWithObjects:friends]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:friends];
 
@@ -162,7 +162,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 {
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMStub([bs count]).andReturn(5);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -176,7 +176,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 {
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMStub([bs objectAtIndex:3]).andReturn(@4);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -220,7 +220,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs addObject:friend]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -244,7 +244,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs updateObjectPassingTest:[OCMArg checkWithBlock:checkTestBlock] updateBlock:updateBlock]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -261,7 +261,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs removeObject:friend]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];

@@ -34,8 +34,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
         return nil;
     }
 
-    self.container = [[OCTBasicContainer alloc] initWithObjects:friends
-                                         updateNotificationName      :kOCTFriendsContainerUpdateNotification];
+    self.container = [[OCTBasicContainer alloc] initWithObjects:friends];
 
     return self;
 }
@@ -45,7 +44,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 - (void)setFriendsSort:(OCTFriendsSort)sort
 {
     _friendsSort = sort;
-    [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort] sendNotification:YES];
+    [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort]];
 }
 
 - (NSUInteger)friendsCount
@@ -65,7 +64,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     dispatch_once(&_configureOnceToken, ^{
         NSNumber *sort = [self.dataSource.friendsContainerGetSettingsStorage objectForKey:kSortStorageKey];
         self.friendsSort = [sort unsignedIntegerValue];
-        [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort] sendNotification:NO];
+        [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort]];
     });
 }
 
