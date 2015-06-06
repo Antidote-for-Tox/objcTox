@@ -214,6 +214,18 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     XCTAssertEqual(self.container.friendsSort, OCTFriendsSortByStatus);
 }
 
+- (void)testDelegate
+{
+    id delegate = OCMProtocolMock(@protocol(OCTFriendsContainerDelegate));
+
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
+    container.delegate = delegate;
+
+    [(id)container basicContainerUpdate:nil insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3];
+
+    OCMVerify([delegate friendsContainerUpdate:container insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3]);
+}
+
 - (void)testAddFriend
 {
     id friend = @1;

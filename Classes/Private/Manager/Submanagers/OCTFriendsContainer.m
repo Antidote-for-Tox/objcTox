@@ -12,7 +12,7 @@
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
-@interface OCTFriendsContainer ()
+@interface OCTFriendsContainer () <OCTBasicContainerDelegate>
 
 @property (weak, nonatomic) id<OCTFriendsContainerDataSource> dataSource;
 
@@ -35,6 +35,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     }
 
     self.container = [[OCTBasicContainer alloc] initWithObjects:friends];
+    self.container.delegate = self;
 
     return self;
 }
@@ -85,6 +86,16 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 - (void)removeFriend:(OCTFriend *)friend
 {
     [self.container removeObject:friend];
+}
+
+#pragma mark -  OCTBasicContainerDelegate
+
+- (void)basicContainerUpdate:(OCTBasicContainer *)container
+                 insertedSet:(NSIndexSet *)inserted
+                  removedSet:(NSIndexSet *)removed
+                  updatedSet:(NSIndexSet *)updated
+{
+    [self.delegate friendsContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
 }
 
 #pragma mark -  Private
