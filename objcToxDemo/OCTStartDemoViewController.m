@@ -105,7 +105,7 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
                      publicKey:@"10B20C49ACBD968D7C80F2E8438F92EA51F189F4E70CFBBB2C2C8C799E97F03E"
                          error:nil];
 
-    [manager bootstrapFromHost:@"192.210.149.121 "
+    [manager bootstrapFromHost:@"192.210.149.121"
                           port:33445
                      publicKey:@"F404ABAA1C99A9D37D61AB54898F56793E1DEF8BD46B1038B9D822E8460FAB67"
                          error:nil];
