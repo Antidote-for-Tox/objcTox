@@ -49,4 +49,53 @@
  **/
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
+/**
+ * Pause the call
+ * @param pause YES to pause, NO otherwise.
+ * @call The appropriate OCTCall to pause
+ * @return YES if successful, NO otherwise.
+ **/
+- (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error;
+
+/**
+ * End the call. Call can be ringing or in session.
+ * @call The call to end.
+ * @param error Pointer to error object if there's an issue with ending the call.
+ * @return YES if successful, no otherwise.
+ **/
+- (BOOL)endCall:(OCTCall *)call error:(NSError **)error;
+
+/**
+ * Mutes the call
+ * @param mute YES to mute, NO otherwise.
+ * @param call Call to mute.
+ * @param error Pointer to error object if there's an issue muting the call.
+ * @return YES if successful, NO otherwise.
+ **/
+- (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error;
+
+/**
+ * Toggle turning off or on the video feed
+ * @param pause YES to stop the video, NO otherwise to continue.
+ * @call Call to pause video.
+ * @param error Pointer to error object if there's an issue pausing the video.
+ * @return YES if successful, NO otherwise.
+ **/
+- (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error;
+
+/**
+ * The UIView that will have the video feed.
+ * @return UIView of the video feed. Nil if no video available.
+ **/
+- (UIView *)videoFeed;
+
+/**
+ * Set the Audio bit rate.
+ */
+- (void)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+
+/**
+ * Set the Video bit rate.
+ */
+- (void)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
 @end
