@@ -12,9 +12,9 @@
 #import "OCTFriend.h"
 
 typedef NS_ENUM(NSUInteger, OCTCallStatus) {
+    OCTCallStatusInactive = 0,
     OCTCallStatusPaused,
     OCTCallStatusActive,
-    OCTCallStatusInActive
 };
 
 @interface OCTCall : NSObject
@@ -32,6 +32,6 @@ typedef NS_ENUM(NSUInteger, OCTCallStatus) {
 /**
  * Call status
  **/
-@property (nonatomic, assign) OCTCallStatus status;
+@property (nonatomic, assign, readonly) OCTCallStatus status;
 
 @end

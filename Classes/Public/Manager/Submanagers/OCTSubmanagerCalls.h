@@ -85,9 +85,10 @@
 
 /**
  * The UIView that will have the video feed.
+ * @param call The call that has the video feed.
  * @return UIView of the video feed. Nil if no video available.
  **/
-- (UIView *)videoFeed;
+- (UIView *)videoFeedForCall:(OCTCall *)call;
 
 /**
  * Set the Audio bit rate.

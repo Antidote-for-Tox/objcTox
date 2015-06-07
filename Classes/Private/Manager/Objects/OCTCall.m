@@ -26,7 +26,6 @@
 
     _chatSession = chat;
     _caller = friend;
-    _status = OCTCallStatusInActive;
 
     return self;
 }

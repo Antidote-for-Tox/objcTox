@@ -12,4 +12,6 @@
 
 - (instancetype)initWithChat:(OCTChat *)chat friend:(OCTFriend *)friend;
 
+@property (nonatomic, assign, readwrite) OCTCallStatus status;
+
 @end

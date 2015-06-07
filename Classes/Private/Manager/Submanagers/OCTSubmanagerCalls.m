@@ -63,7 +63,7 @@
     return NO;
 }
 
-- (UIView *)videoFeed
+- (UIView *)videoFeedForCall:(OCTCall *)call
 {
     return nil;
 }
