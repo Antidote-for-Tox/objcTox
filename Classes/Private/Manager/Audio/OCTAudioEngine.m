@@ -6,13 +6,47 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTAudioEngine.h"
+#import "OCTAudioEngine+Private.h"
 #import "TPCircularBuffer.h"
 @import AVFoundation;
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
 static const int kBufferLength = 1024;
+
+OSStatus (*_NewAUGraph)(AUGraph *outGraph);
+OSStatus (*_AUGraphAddNode)(
+                                   AUGraph inGraph,
+                                   const AudioComponentDescription *inDescription,
+                                   AUNode *outNode);
+OSStatus (*_AUGraphOpen)(AUGraph inGraph);
+OSStatus (*_AUGraphNodeInfo)(AUGraph inGraph,
+                                    AUNode inNode,
+                                    AudioComponentDescription *outDescription,
+                                    AudioUnit *outAudioUnit);
+
+OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
+
+OSStatus (*_AUGraphStart)(AUGraph inGraph);
+OSStatus (*_AUGraphStop)(AUGraph inGraph);
+OSStatus (*_AUGraphInitialize)(AUGraph inGraph);
+OSStatus (*_AUGraphUninitialize)(AUGraph inGraph);
+OSStatus (*_AUGraphIsRunning)(AUGraph inGraph, Boolean *outIsRunning);
+OSStatus (*_AudioUnitSetProperty)(AudioUnit inUnit,
+                                         AudioUnitPropertyID inID,
+                                         AudioUnitScope inScope,
+                                         AudioUnitElement inElement,
+                                         const void *inData,
+                                         UInt32 inDataSize
+                                         );
+OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
+                                    AudioUnitRenderActionFlags *ioActionFlags,
+                                    const AudioTimeStamp *inTimeStamp,
+                                    UInt32 inOutputBusNumber,
+                                    UInt32 inNumberFrames,
+                                    AudioBufferList *ioData
+                                    );
+OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 
 @interface OCTAudioEngine ()
 
@@ -34,6 +68,8 @@ static const int kBufferLength = 1024;
         return nil;
     }
 
+    [self setupCFunctions];
+
     _ioUnitDescription.componentType = kAudioUnitType_Output;
     _ioUnitDescription.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
     _ioUnitDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
@@ -42,22 +78,22 @@ static const int kBufferLength = 1024;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
 
-    NewAUGraph(&_processingGraph);
+    _NewAUGraph(&_processingGraph);
 
-    AUGraphAddNode(_processingGraph,
+    _AUGraphAddNode(_processingGraph,
                    &_ioUnitDescription,
                    &_ioNode);
 
-    AUGraphOpen(_processingGraph);
+    _AUGraphOpen(_processingGraph);
 
-    AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
+    _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
     return self;
 }
 
 - (void)dealloc
 {
     TPCircularBufferCleanup(&_buffer);
-    DisposeAUGraph(_processingGraph);
+    _DisposeAUGraph(_processingGraph);
 }
 
 #pragma mark - Audio Controls
@@ -74,7 +110,7 @@ static const int kBufferLength = 1024;
 
 - (BOOL)stopAudioFlow:(NSError **)error
 {
-    OSStatus status = AUGraphStop(self.processingGraph);
+    OSStatus status = _AUGraphStop(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -83,7 +119,7 @@ static const int kBufferLength = 1024;
         return NO;
     }
 
-    status = AUGraphUninitialize(self.processingGraph);
+    status = _AUGraphUninitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -103,7 +139,7 @@ static const int kBufferLength = 1024;
     UInt32 enableInput = (enable) ? 1 : 0;
     AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
 
-    OSStatus status = AudioUnitSetProperty(
+    OSStatus status = _AudioUnitSetProperty(
         self.ioUnit,
         kAudioOutputUnitProperty_EnableIO,
         unitScope,
@@ -128,7 +164,7 @@ static const int kBufferLength = 1024;
 - (BOOL)isAudioRunning:(NSError **)error
 {
     Boolean running;
-    OSStatus status = AUGraphIsRunning(self.processingGraph,
+    OSStatus status = _AUGraphIsRunning(self.processingGraph,
                                        &running);
     if (status != noErr) {
         [self fillError:error
@@ -154,7 +190,7 @@ static const int kBufferLength = 1024;
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = inputRenderCallBack;
     callbackStruct.inputProcRefCon = (__bridge void *)(self);
-    OSStatus status = AudioUnitSetProperty(self.ioUnit,
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                            kAudioOutputUnitProperty_SetInputCallback,
                                            kAudioUnitScope_Global,
                                            kInputBus,
@@ -176,7 +212,7 @@ static const int kBufferLength = 1024;
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = outputRenderCallBack;
     callbackStruct.inputProcRefCon = (__bridge void *)(self);
-    OSStatus status = AudioUnitSetProperty(self.ioUnit,
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                            kAudioUnitProperty_SetRenderCallback,
                                            kAudioUnitScope_Global,
                                            kOutputBus,
@@ -205,7 +241,7 @@ static OSStatus inputRenderCallBack(void *inRefCon,
     AudioBufferList bufferList;
 
     OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
-    OSStatus status = AudioUnitRender(engine.ioUnit,
+    OSStatus status = _AudioUnitRender(engine.ioUnit,
                                       ioActionFlags,
                                       inTimeStamp,
                                       inBusNumber,
@@ -238,6 +274,24 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 
 #pragma mark - Private
+
+- (void)setupCFunctions
+{
+    _NewAUGraph = NewAUGraph;
+    _AUGraphAddNode = AUGraphAddNode;
+    _AUGraphOpen = AUGraphOpen;
+    _AUGraphNodeInfo = AUGraphNodeInfo;
+    _DisposeAUGraph = DisposeAUGraph;
+    _AUGraphStart = AUGraphStart;
+    _AUGraphStop = AUGraphStop;
+    _AUGraphInitialize = AUGraphInitialize;
+    _AUGraphUninitialize = AUGraphUninitialize;
+    _AUGraphIsRunning = AUGraphIsRunning;
+    _AudioUnitSetProperty = AudioUnitSetProperty;
+    _AudioUnitRender = AudioUnitRender;
+    _DisposeAUGraph = DisposeAUGraph;
+}
+
 - (BOOL)startAudioSession:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -260,7 +314,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mFramesPerPacket = 1;
     asbd.mBytesPerPacket = bytesPerSample;
 
-    OSStatus status = AudioUnitSetProperty(self.ioUnit,
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                            kAudioUnitProperty_StreamFormat,
                                            kAudioUnitScope_Output,
                                            kInputBus,
@@ -278,7 +332,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)initializeGraph:(NSError **)error
 {
-    OSStatus status = AUGraphInitialize(self.processingGraph);
+    OSStatus status = _AUGraphInitialize(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -291,7 +345,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)startGraph:(NSError **)error
 {
-    OSStatus status = AUGraphStart(self.processingGraph);
+    OSStatus status = _AUGraphStart(self.processingGraph);
     if (status != noErr) {
         [self fillError:error
                withCode:status
