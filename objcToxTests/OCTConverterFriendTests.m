@@ -56,6 +56,37 @@ static const BOOL kIsTyping = YES;
     XCTAssertEqualObjects([self.converter dbObjectClassName], @"OCTDBFriend");
 }
 
+- (void)testFriendNickname
+{
+    OCTDBFriend *db = [OCTDBFriend new];
+    db.friendNumber = 5;
+
+    id dbManager = OCMClassMock([OCTDBManager class]);
+    OCMStub([dbManager getOrCreateFriendWithFriendNumber:5]).andReturn(db);
+
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([tox friendExistsWithFriendNumber:5]).andReturn(YES);
+    OCMStub([tox publicKeyFromFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kPublicKey);
+
+    id dataSource = OCMProtocolMock(@protocol(OCTConverterFriendDataSource));
+    OCMStub([dataSource converterFriendGetDBManager:self.converter]).andReturn(dbManager);
+    OCMStub([dataSource converterFriendGetTox:self.converter]).andReturn(tox);
+    self.converter.dataSource = dataSource;
+
+    OCTFriend *friend = (OCTFriend *)[self.converter objectFromRLMObject:db];
+    XCTAssertEqualObjects(friend.nickname, kPublicKey);
+
+    OCMStub([tox friendNameWithFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(kName);
+
+    friend = (OCTFriend *)[self.converter objectFromRLMObject:db];
+    XCTAssertEqualObjects(friend.nickname, kName);
+
+    db.nickname = @"nickname";
+
+    friend = (OCTFriend *)[self.converter objectFromRLMObject:db];
+    XCTAssertEqualObjects(friend.nickname, @"nickname");
+}
+
 - (void)testObjectFromRLMObject
 {
     OCTDBFriend *db = [OCTDBFriend new];

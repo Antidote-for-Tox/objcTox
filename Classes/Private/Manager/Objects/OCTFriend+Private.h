@@ -19,4 +19,6 @@
 @property (strong, nonatomic, readwrite) NSDate *lastSeenOnline;
 @property (assign, nonatomic, readwrite) BOOL isTyping;
 
+@property (copy, nonatomic) void (^nicknameUpdateBlock)(NSString *nickname);
+
 @end

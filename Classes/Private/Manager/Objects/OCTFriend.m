@@ -19,9 +19,22 @@
 @property (strong, nonatomic, readwrite) NSDate *lastSeenOnline;
 @property (assign, nonatomic, readwrite) BOOL isTyping;
 
+@property (copy, nonatomic) void (^nicknameUpdateBlock)(NSString *nickname);
+
 @end
 
 @implementation OCTFriend
+
+#pragma mark -  Properties
+
+- (void)setNickname:(NSString *)nickname
+{
+    _nickname = nickname;
+
+    if (self.nicknameUpdateBlock) {
+        self.nicknameUpdateBlock(nickname);
+    }
+}
 
 #pragma mark -  Public
 
