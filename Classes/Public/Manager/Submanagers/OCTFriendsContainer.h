@@ -14,6 +14,8 @@
 @class OCTFriendsContainer;
 @protocol OCTFriendsContainerDelegate <NSObject>
 
+@optional
+
 /**
  * Method called on any friend updates (friend added, removed, or some of friend properties updated).
  *
@@ -26,6 +28,14 @@
                    insertedSet:(NSIndexSet *)inserted
                     removedSet:(NSIndexSet *)removed
                     updatedSet:(NSIndexSet *)updated;
+
+/**
+ * Method call when friend gets updated.
+ *
+ * @param container Container that was updated.
+ * @param friend Friend that was updated.
+ */
+- (void)friendsContainer:(OCTFriendsContainer *)container friendUpdated:(OCTFriend *)friend;
 
 @end
 

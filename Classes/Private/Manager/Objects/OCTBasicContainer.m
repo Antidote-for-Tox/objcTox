@@ -15,8 +15,6 @@
 
 @property (copy, nonatomic) NSComparator comparator;
 
-
-
 @end
 
 @implementation OCTBasicContainer
@@ -189,6 +187,7 @@
         }
 
         [self.delegate basicContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
+        [self.delegate basicContainer:self objectUpdated:object];
     }
 }
 

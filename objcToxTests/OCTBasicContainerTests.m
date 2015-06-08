@@ -199,6 +199,7 @@
 
         return YES;
     }] updatedSet:nil]);
+    OCMExpect([delegate basicContainer:container objectUpdated:@0]);
 
     [container updateObjectPassingTest:^BOOL (NSNumber *obj, NSUInteger idx, BOOL *stop) {
         return [obj isEqualToNumber:@0];

@@ -15,6 +15,9 @@
                  insertedSet:(NSIndexSet *)inserted
                   removedSet:(NSIndexSet *)removed
                   updatedSet:(NSIndexSet *)updated;
+
+- (void)basicContainer:(OCTBasicContainer *)container objectUpdated:(id)object;
+
 @end
 
 /**

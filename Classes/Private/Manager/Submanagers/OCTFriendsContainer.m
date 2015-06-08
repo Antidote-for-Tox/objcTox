@@ -95,7 +95,16 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
                   removedSet:(NSIndexSet *)removed
                   updatedSet:(NSIndexSet *)updated
 {
-    [self.delegate friendsContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
+    if ([self.delegate respondsToSelector:@selector(friendsContainerUpdate:insertedSet:removedSet:updatedSet:)]) {
+        [self.delegate friendsContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
+    }
+}
+
+- (void)basicContainer:(OCTBasicContainer *)container objectUpdated:(id)object
+{
+    if ([self.delegate respondsToSelector:@selector(friendsContainer:friendUpdated:)]) {
+        [self.delegate friendsContainer:self friendUpdated:object];
+    }
 }
 
 #pragma mark -  Private

@@ -222,8 +222,17 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     container.delegate = delegate;
 
     [(id)container basicContainerUpdate:nil insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3];
+    [(id)container basicContainer:nil objectUpdated:(id)@4];
 
     OCMVerify([delegate friendsContainerUpdate:container insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3]);
+    OCMVerify([delegate friendsContainer:container friendUpdated:(id)@4]);
+
+    id badDelegate = OCMClassMock([NSObject class]);
+
+    container.delegate = badDelegate;
+
+    [(id)container basicContainerUpdate:nil insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3];
+    [(id)container basicContainer:nil objectUpdated:(id)@4];
 }
 
 - (void)testAddFriend
