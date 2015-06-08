@@ -8,10 +8,12 @@
 
 #import "OCTSubmanagerCalls+Private.h"
 #import "OCTToxAV.h"
+#import "OCTAudioEngine.h"
 
-@interface OCTSubmanagerCalls ()
+@interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
+@property (strong, nonatomic) OCTAudioEngine *audioEngine;
 
 @end
 
@@ -26,6 +28,7 @@
     }
 
     _toxAV = [[OCTToxAV alloc] initWithTox:tox error:nil];
+    _toxAV.delegate = self;
 
     return self;
 }
@@ -39,5 +42,43 @@
 {
     return NO;
 }
+
+- (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
+{
+    return NO;
+}
+
+- (BOOL)endCall:(OCTCall *)call error:(NSError **)error
+{
+    return NO;
+}
+
+- (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error
+{
+    return NO;
+}
+
+- (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
+{
+    return NO;
+}
+
+- (UIView *)videoFeedForCall:(OCTCall *)call
+{
+    return nil;
+}
+
+- (void)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
+{
+    // To Do
+}
+
+- (void)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
+{
+    // To Do
+}
+
+#pragma mark OCTToxAV delegate methods
+
 
 @end

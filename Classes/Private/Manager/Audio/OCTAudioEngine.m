@@ -12,7 +12,7 @@
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
-static const int kBufferLength = 1025;
+static const int kBufferLength = 1024;
 
 @interface OCTAudioEngine ()
 
@@ -253,7 +253,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     AudioStreamBasicDescription asbd = {0};
     asbd.mSampleRate = sampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
-    asbd.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
+    asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     asbd.mChannelsPerFrame = 2;
     asbd.mBytesPerFrame = bytesPerSample;
     asbd.mBitsPerChannel = 8 * bytesPerSample;

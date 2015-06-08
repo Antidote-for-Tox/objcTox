@@ -11,6 +11,12 @@
 #import "OCTChat.h"
 #import "OCTFriend.h"
 
+typedef NS_ENUM(NSUInteger, OCTCallStatus) {
+    OCTCallStatusInactive = 0,
+    OCTCallStatusPaused,
+    OCTCallStatusActive,
+};
+
 @interface OCTCall : NSObject
 
 /**
@@ -24,50 +30,8 @@
 @property (strong, nonatomic, readonly) OCTFriend *caller;
 
 /**
- * Pause the call
- * @param pause YES to pause, NO otherwise.
- * @return YES if successful, NO otherwise.
+ * Call status
  **/
-- (BOOL)togglePauseCall:(BOOL)pause error:(NSError **)error;
-
-/**
- * End the call. Call be ringing or in session.
- * @param error Pointer to error object if there's an issue with ending the call.
- * @return YES if successful, no otherwise.
- **/
-- (BOOL)endCall:(NSError **)error;
-
-/**
- * Mutes the call
- * @param mute YES to mute, NO otherwise.
- * @param error Pointer to error object if there's an issue muting the call.
- * @return YES if successful, NO otherwise.
- **/
-- (BOOL)toggleMuteCall:(BOOL)mute error:(NSError **)error;
-
-/**
- * Toggle turning off or on the video feed
- * @param pause YES to stop the video, NO otherwise to continue.
- * @param error Pointer to error object if there's an issue pausing the video.
- * @return YES if successful, NO otherwise.
- **/
-- (BOOL)togglePauseVideo:(BOOL)pause error:(NSError **)error;
-
-/**
- * The UIView that will have the video feed.
- * @return UIView of the video feed. Nil if no video available.
- **/
-- (UIView *)videoFeed;
-
-
-/**
- * Set the Audio bit rate.
- */
-- (void)setAudioBitrate:(int)bitrate;
-
-/**
- * Set the Video bit rate.
- */
-- (void)setVideoBitrate:(int)bitrate;
+@property (nonatomic, assign, readonly) OCTCallStatus status;
 
 @end

@@ -7,38 +7,27 @@
 //
 
 #import "OCTCall.h"
+#import "OCTAudioEngine.h"
+#import "OCTToxAV.h"
+
+@interface OCTCall ()
+
+@end
 
 @implementation OCTCall
 
-- (BOOL)togglePauseCall:(BOOL)pause error:(NSError **)error
+- (instancetype)initWithChat:(OCTChat *)chat friend:(OCTFriend *)friend
 {
-    return NO;
+    self = [super init];
+
+    if (! self) {
+        return nil;
+    }
+
+    _chatSession = chat;
+    _caller = friend;
+
+    return self;
 }
 
-- (BOOL)togglePauseVideo:(BOOL)pause error:(NSError **)error
-{
-    return NO;
-}
-
-- (BOOL)endCall:(NSError **)error
-{
-    return NO;
-}
-
-- (BOOL)toggleMuteCall:(BOOL)mute error:(NSError **)error
-{
-    return NO;
-}
-
-- (UIView *)videoFeed
-{
-    return nil;
-}
-
-
-- (void)setAudioBitrate:(int)bitrate
-{}
-
-- (void)setVideoBitrate:(int)bitrate
-{}
 @end
