@@ -16,14 +16,14 @@ static const int kBufferLength = 1024;
 
 OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 OSStatus (*_AUGraphAddNode)(
-                                   AUGraph inGraph,
-                                   const AudioComponentDescription *inDescription,
-                                   AUNode *outNode);
+    AUGraph inGraph,
+    const AudioComponentDescription *inDescription,
+    AUNode *outNode);
 OSStatus (*_AUGraphOpen)(AUGraph inGraph);
 OSStatus (*_AUGraphNodeInfo)(AUGraph inGraph,
-                                    AUNode inNode,
-                                    AudioComponentDescription *outDescription,
-                                    AudioUnit *outAudioUnit);
+                             AUNode inNode,
+                             AudioComponentDescription *outDescription,
+                             AudioUnit *outAudioUnit);
 
 OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 
@@ -33,20 +33,19 @@ OSStatus (*_AUGraphInitialize)(AUGraph inGraph);
 OSStatus (*_AUGraphUninitialize)(AUGraph inGraph);
 OSStatus (*_AUGraphIsRunning)(AUGraph inGraph, Boolean *outIsRunning);
 OSStatus (*_AudioUnitSetProperty)(AudioUnit inUnit,
-                                         AudioUnitPropertyID inID,
-                                         AudioUnitScope inScope,
-                                         AudioUnitElement inElement,
-                                         const void *inData,
-                                         UInt32 inDataSize
-                                         );
+                                  AudioUnitPropertyID inID,
+                                  AudioUnitScope inScope,
+                                  AudioUnitElement inElement,
+                                  const void *inData,
+                                  UInt32 inDataSize
+);
 OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
-                                    AudioUnitRenderActionFlags *ioActionFlags,
-                                    const AudioTimeStamp *inTimeStamp,
-                                    UInt32 inOutputBusNumber,
-                                    UInt32 inNumberFrames,
-                                    AudioBufferList *ioData
-                                    );
-OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
+                             AudioUnitRenderActionFlags *ioActionFlags,
+                             const AudioTimeStamp *inTimeStamp,
+                             UInt32 inOutputBusNumber,
+                             UInt32 inNumberFrames,
+                             AudioBufferList *ioData
+);
 
 @interface OCTAudioEngine ()
 
@@ -81,8 +80,8 @@ OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
     _NewAUGraph(&_processingGraph);
 
     _AUGraphAddNode(_processingGraph,
-                   &_ioUnitDescription,
-                   &_ioNode);
+                    &_ioUnitDescription,
+                    &_ioNode);
 
     _AUGraphOpen(_processingGraph);
 
@@ -165,7 +164,7 @@ OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 {
     Boolean running;
     OSStatus status = _AUGraphIsRunning(self.processingGraph,
-                                       &running);
+                                        &running);
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -191,11 +190,11 @@ OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
     callbackStruct.inputProc = inputRenderCallBack;
     callbackStruct.inputProcRefCon = (__bridge void *)(self);
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                           kAudioOutputUnitProperty_SetInputCallback,
-                                           kAudioUnitScope_Global,
-                                           kInputBus,
-                                           &callbackStruct,
-                                           sizeof(callbackStruct));
+                                            kAudioOutputUnitProperty_SetInputCallback,
+                                            kAudioUnitScope_Global,
+                                            kInputBus,
+                                            &callbackStruct,
+                                            sizeof(callbackStruct));
 
     if (status != noErr) {
         [self fillError:error
@@ -213,11 +212,11 @@ OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
     callbackStruct.inputProc = outputRenderCallBack;
     callbackStruct.inputProcRefCon = (__bridge void *)(self);
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                           kAudioUnitProperty_SetRenderCallback,
-                                           kAudioUnitScope_Global,
-                                           kOutputBus,
-                                           &callbackStruct,
-                                           sizeof(callbackStruct));
+                                            kAudioUnitProperty_SetRenderCallback,
+                                            kAudioUnitScope_Global,
+                                            kOutputBus,
+                                            &callbackStruct,
+                                            sizeof(callbackStruct));
 
     if (status != noErr) {
         [self fillError:error
@@ -242,11 +241,11 @@ static OSStatus inputRenderCallBack(void *inRefCon,
 
     OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
     OSStatus status = _AudioUnitRender(engine.ioUnit,
-                                      ioActionFlags,
-                                      inTimeStamp,
-                                      inBusNumber,
-                                      inNumberFrames,
-                                      &bufferList);
+                                       ioActionFlags,
+                                       inTimeStamp,
+                                       inBusNumber,
+                                       inNumberFrames,
+                                       &bufferList);
     // To Do: Call [OCTToxAV sendAudioFrames...]
     return status;
 }
@@ -315,11 +314,11 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mBytesPerPacket = bytesPerSample;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                           kAudioUnitProperty_StreamFormat,
-                                           kAudioUnitScope_Output,
-                                           kInputBus,
-                                           &asbd,
-                                           sizeof(asbd));
+                                            kAudioUnitProperty_StreamFormat,
+                                            kAudioUnitScope_Output,
+                                            kInputBus,
+                                            &asbd,
+                                            sizeof(asbd));
     if (status != noErr) {
         [self fillError:error
                withCode:status

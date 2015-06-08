@@ -14,9 +14,9 @@
  */
 extern OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 extern OSStatus (*_AUGraphAddNode)(
-                       AUGraph inGraph,
-                       const AudioComponentDescription *inDescription,
-                       AUNode *outNode);
+    AUGraph inGraph,
+    const AudioComponentDescription *inDescription,
+    AUNode *outNode);
 extern OSStatus (*_AUGraphOpen)(AUGraph inGraph);
 extern OSStatus (*_AUGraphNodeInfo)(AUGraph inGraph,
                                     AUNode inNode,
@@ -34,18 +34,25 @@ extern OSStatus (*_AudioUnitSetProperty)(AudioUnit inUnit,
                                          AudioUnitElement inElement,
                                          const void *inData,
                                          UInt32 inDataSize
-                                         );
+);
 extern OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
                                     AudioUnitRenderActionFlags *ioActionFlags,
                                     const AudioTimeStamp *inTimeStamp,
                                     UInt32 inOutputBusNumber,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData
-                                    );
+);
 
 extern OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 
 @interface OCTAudioEngine (Private)
 
+@property (nonatomic, assign) AUGraph processingGraph;
+@property (nonatomic, assign) AudioUnit ioUnit;
+
+- (void)fillError:(NSError **)error
+         withCode:(NSUInteger)code
+      description:(NSString *)description
+    failureReason:(NSString *)failureReason;
 
 @end
