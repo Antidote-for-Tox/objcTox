@@ -30,6 +30,8 @@
 
 @property (strong, nonatomic) OCTDBManager *dbManager;
 
+@property (strong, nonatomic, readonly) NSObject *toxSaveFileLock;
+
 @end
 
 @implementation OCTManager
@@ -37,6 +39,12 @@
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+{
+    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil];
+}
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
 {
     self = [super init];
 
@@ -46,10 +54,15 @@
 
     [self validateConfiguration:configuration];
 
+    NSString *savedDataPath = configuration.fileStorage.pathForToxSaveFile;
+
+    if (toxSaveFilePath && [[NSFileManager defaultManager] fileExistsAtPath:toxSaveFilePath]) {
+        [[NSFileManager defaultManager] moveItemAtPath:toxSaveFilePath toPath:savedDataPath error:nil];
+    }
+
     _configuration = [configuration copy];
 
     NSData *savedData = nil;
-    NSString *savedDataPath = configuration.fileStorage.pathForToxSaveFile;
 
     if ([[NSFileManager defaultManager] fileExistsAtPath:savedDataPath]) {
         savedData = [NSData dataWithContentsOfFile:savedDataPath];
@@ -86,6 +99,8 @@
     avatars.dataSource = self;
     _avatars = avatars;
 
+    _toxSaveFileLock = [NSObject new];
+
     return self;
 }
 
@@ -104,6 +119,21 @@
 - (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
 {
     return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
+}
+
+- (NSString *)exportToxSaveFile:(NSError **)error
+{
+    @synchronized(self.toxSaveFileLock) {
+        NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
+        NSString *tempPath = self.configuration.fileStorage.pathForTemporaryFilesDirectory;
+        tempPath = [tempPath stringByAppendingPathComponent:[savedDataPath lastPathComponent]];
+
+        if (! [[NSFileManager defaultManager] copyItemAtPath:savedDataPath toPath:tempPath error:error]) {
+            return nil;
+        }
+
+        return tempPath;
+    }
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -187,16 +217,18 @@
 
 - (void)saveTox
 {
-    NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
+    @synchronized(self.toxSaveFileLock) {
+        NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
 
-    NSData *data = [self.tox save];
+        NSData *data = [self.tox save];
 
-    NSError *error;
+        NSError *error;
 
-    if (! [data writeToFile:savedDataPath options:0 error:&error]) {
-        @throw [NSException exceptionWithName:@"saveToxException"
-                                       reason:error.debugDescription
-                                     userInfo:@{ @"NSError" : error }];
+        if (! [data writeToFile:savedDataPath options:0 error:&error]) {
+            @throw [NSException exceptionWithName:@"saveToxException"
+                                           reason:error.debugDescription
+                                         userInfo:@{ @"NSError" : error }];
+        }
     }
 }
 
