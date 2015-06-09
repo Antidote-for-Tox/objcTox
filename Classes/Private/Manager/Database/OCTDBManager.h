@@ -56,6 +56,7 @@ extern NSString *const kOCTDBManagerObjectClassKey;
 
 - (RLMResults *)allCalls;
 - (RLMResults *)callsWithChat:(OCTDBChat *)chat;
+- (OCTDBCall *)getOrCreateCallWithFriendNumber:(NSInteger)friendNumber;
 
 #pragma mark -  Messages
 

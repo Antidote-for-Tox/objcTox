@@ -257,6 +257,27 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
     return results;
 }
 
+- (OCTDBCall *)getOrCreateCallWithFriendNumber:(NSInteger)friendNumber
+{
+    OCTDBChat *chat = [self getOrCreateChatWithFriendNumber:friendNumber];
+    __block OCTDBCall *call = [[self callsWithChat:chat] lastObject];
+
+    dispatch_sync(self.queue, ^{
+        if (call) {
+            return;
+        }
+
+        call = [OCTDBCall new];
+        call.chat = chat;
+
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:call];
+        [self.realm commitWriteTransaction];
+    });
+
+    return call;
+}
+
 #pragma mark -  Messages
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat
