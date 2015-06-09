@@ -31,15 +31,16 @@
 
     OCTChat *chat = [self.converterChat objectFromRLMObject:dbCall.chat];
 
-    call.chatSession = chat;
-    call.friends = [chat.friends copy];
+    call.chat = chat;
 
     return call;
 }
 
 - (RLMSortDescriptor *)rlmSortDescriptorFromDescriptor:(OCTSortDescriptor *)descriptor
 {
-    return nil;
+    NSParameterAssert(descriptor);
+
+    return [RLMSortDescriptor sortDescriptorWithProperty:descriptor.property ascending:descriptor.ascending];
 }
 
 @end

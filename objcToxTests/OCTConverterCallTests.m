@@ -57,9 +57,9 @@
     OCTCall *call = [self.callConverter objectFromRLMObject:dbCall];
 
     XCTAssertNotNil(call);
-    XCTAssertEqual(2, call.friends.count);
-    XCTAssertEqualObjects(friend1, call.friends.firstObject);
-    XCTAssertEqualObjects(friend2, call.friends[1]);
-    XCTAssertEqualObjects(chat.uniqueIdentifier, call.chatSession.uniqueIdentifier);
+    XCTAssertEqual(2, call.chat.friends.count);
+    XCTAssertEqualObjects(friend1, call.chat.friends.firstObject);
+    XCTAssertEqualObjects(friend2, call.chat.friends[1]);
+    XCTAssertEqualObjects(chat.uniqueIdentifier, call.chat.uniqueIdentifier);
 }
 @end
