@@ -10,8 +10,9 @@
 
 @interface OCTCall (Private)
 
-- (instancetype)initWithChat:(OCTChat *)chat friend:(OCTFriend *)friend;
+- (instancetype)initCallWithChat:(OCTChat *)chat;
 
+@property (strong, nonatomic, readwrite) OCTChat *chat;
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
 
 @end

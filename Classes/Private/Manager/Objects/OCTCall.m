@@ -12,11 +12,14 @@
 
 @interface OCTCall ()
 
+@property (strong, nonatomic, readwrite) OCTChat *chat;
+@property (nonatomic, assign, readwrite) OCTCallStatus status;
+
 @end
 
 @implementation OCTCall
 
-- (instancetype)initWithChat:(OCTChat *)chat friend:(OCTFriend *)friend
+- (instancetype)initCallWithChat:(OCTChat *)chat
 {
     self = [super init];
 
@@ -24,8 +27,7 @@
         return nil;
     }
 
-    _chatSession = chat;
-    _caller = friend;
+    _chat = chat;
 
     return self;
 }

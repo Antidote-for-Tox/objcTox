@@ -22,12 +22,7 @@ typedef NS_ENUM(NSUInteger, OCTCallStatus) {
 /**
  * OCTChat related session with the call.
  **/
-@property (strong, nonatomic, readonly) OCTChat *chatSession;
-
-/**
- * Friend related to the call.
- **/
-@property (strong, nonatomic, readonly) OCTFriend *caller;
+@property (strong, nonatomic, readonly) OCTChat *chat;
 
 /**
  * Call status

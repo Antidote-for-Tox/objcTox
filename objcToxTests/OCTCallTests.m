@@ -31,12 +31,10 @@
 - (void)testInit
 {
     OCTChat *chat = [OCTChat new];
-    OCTFriend *friend = [[OCTFriend alloc] init];
-    OCTCall *call = [[OCTCall alloc] initWithChat:chat friend:friend];
+    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
 
     XCTAssertNotNil(call);
-    XCTAssertEqualObjects(call.chatSession, chat);
-    XCTAssertEqualObjects(call.caller, friend);
+    XCTAssertEqualObjects(call.chat, chat);
     XCTAssertEqual(call.status, OCTCallStatusInactive);
 }
 
