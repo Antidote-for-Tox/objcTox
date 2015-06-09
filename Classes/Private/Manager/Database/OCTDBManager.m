@@ -59,9 +59,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm beginWriteTransaction];
         updateBlock();
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:class];
     });
+
+    [self sendUpdateNotificationForClass:class];
 }
 
 #pragma mark -  Friend requests
@@ -85,9 +85,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm beginWriteTransaction];
         [self.realm addObject:friendRequest];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
 }
 
 - (void)removeFriendRequestWithPublicKey:(NSString *)publicKey
@@ -104,9 +104,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm beginWriteTransaction];
         [self.realm deleteObject:db];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBFriendRequest class]];
 }
 
 #pragma mark -  Friends
@@ -128,9 +128,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm beginWriteTransaction];
         friend = [OCTDBFriend createOrUpdateInRealm:self.realm withValue:friend];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBFriend class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBFriend class]];
 
     return friend;
 }
@@ -184,9 +184,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm addObject:chat];
         [chat.friends addObject:friend];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBChat class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBChat class]];
 
     return chat;
 }
@@ -222,10 +222,10 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm deleteObjects:messages];
         [self.realm deleteObject:chat];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBChat class]];
-        [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBChat class]];
+    [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
 }
 
 #pragma mark -  Messages
@@ -273,9 +273,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         [self.realm beginWriteTransaction];
         [self.realm addObject:message];
         [self.realm commitWriteTransaction];
-
-        [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
     });
+
+    [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
 
     return message;
 }
