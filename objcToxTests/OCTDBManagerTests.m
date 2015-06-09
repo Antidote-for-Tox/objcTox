@@ -280,6 +280,12 @@
     OCTDBChat *chat = [OCTDBChat new];
     OCTDBChat *anotherChat = [OCTDBChat new];
 
+    OCTDBCall *db1Call = [OCTDBCall new];
+    db1Call.chat = chat;
+
+    OCTDBCall *db2Call = [OCTDBCall new];
+    db2Call.chat = anotherChat;
+
     OCTDBMessageAbstract *db1 = [OCTDBMessageAbstract new];
     db1.dateInterval = 50;
     db1.chat = chat;
@@ -309,6 +315,8 @@
 
     [self.manager.realm beginWriteTransaction];
     [self.manager.realm addObject:anotherChat];
+    [self.manager.realm addObject:db1Call];
+    [self.manager.realm addObject:db2Call];
     [self.manager.realm addObject:db1];
     [self.manager.realm addObject:db2];
     [self.manager.realm addObject:db3];
@@ -334,6 +342,10 @@
     results = [OCTDBChat allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 1);
     XCTAssertEqualObjects(anotherChat, results[0]);
+
+    results = [OCTDBCall allObjectsInRealm:self.manager.realm];
+    XCTAssertEqual(results.count, 1);
+    XCTAssertEqualObjects(anotherChat, [results[0] chat]);
 }
 
 - (void)testAllCalls
@@ -349,6 +361,7 @@
     RLMResults *results = [self.manager allCalls];
 
     XCTAssertEqual(results.count, 2);
+    XCTAssertEqualObjects(db1, results[0]);
 }
 
 - (void)testCallsWithChat

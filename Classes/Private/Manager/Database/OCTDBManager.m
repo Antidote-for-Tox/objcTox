@@ -222,6 +222,9 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
             }
         }
 
+        RLMResults *calls = [OCTDBCall objectsInRealm:self.realm where:@"chat == %@", chat];
+
+        [self.realm deleteObjects:calls];
         [self.realm deleteObjects:messages];
         [self.realm deleteObject:chat];
         [self.realm commitWriteTransaction];

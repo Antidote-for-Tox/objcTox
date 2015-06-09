@@ -10,4 +10,9 @@
 
 @implementation OCTDBCall
 
+- (BOOL)isEqual:(OCTDBCall *)object
+{
+    return self.chat.uniqueIdentifier == object.chat.uniqueIdentifier;
+}
+
 @end

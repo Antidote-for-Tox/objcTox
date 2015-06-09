@@ -7,8 +7,6 @@
 //
 
 #import <Realm/Realm.h>
-#import "OCTDBFriend.h"
-#import "OCTDBCall.h"
 #import "OCTDBChat.h"
 
 @interface OCTDBCall : RLMObject
