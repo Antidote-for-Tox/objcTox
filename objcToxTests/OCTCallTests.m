@@ -36,7 +36,7 @@
 
     XCTAssertNotNil(call);
     XCTAssertEqualObjects(call.chatSession, chat);
-    XCTAssertEqualObjects(call.caller, friend);
+    XCTAssertEqualObjects(call.friends.firstObject, friend);
     XCTAssertEqual(call.status, OCTCallStatusInactive);
 }
 

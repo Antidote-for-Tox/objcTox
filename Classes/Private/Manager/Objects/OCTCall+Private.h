@@ -12,6 +12,8 @@
 
 - (instancetype)initWithChat:(OCTChat *)chat friend:(OCTFriend *)friend;
 
+@property (strong, nonatomic, readwrite) OCTChat *chatSession;
+@property (strong, nonatomic, readwrite) NSArray *friends;
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
 
 @end

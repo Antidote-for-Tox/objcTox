@@ -12,6 +12,10 @@
 
 @interface OCTCall ()
 
+@property (strong, nonatomic, readwrite) OCTChat *chatSession;
+@property (strong, nonatomic, readwrite) NSArray *friends;
+@property (nonatomic, assign, readwrite) OCTCallStatus status;
+
 @end
 
 @implementation OCTCall
@@ -25,7 +29,7 @@
     }
 
     _chatSession = chat;
-    _caller = friend;
+    _friends = @[friend];
 
     return self;
 }

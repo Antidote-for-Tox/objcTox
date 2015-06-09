@@ -231,6 +231,29 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
     });
 }
 
+#pragma mark - Calls
+- (RLMResults *)allCalls
+{
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBCall allObjectsInRealm:self.realm];
+    });
+
+    return results;
+}
+
+- (RLMResults *)callsWithChat:(OCTDBChat *)chat
+{
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [OCTDBCall objectsInRealm:self.realm where:@"uniqueIdentifier == %@", chat.uniqueIdentifier];
+    });
+
+    return results;
+}
+
 #pragma mark -  Messages
 
 - (RLMResults *)allMessagesInChat:(OCTDBChat *)chat
