@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OCTToxAV.h"
 
 typedef NS_ENUM(NSInteger, OCTAudioScope) {
     OCTInput,
@@ -14,6 +15,10 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
 };
 
 @interface OCTAudioEngine : NSObject
+
+@property (weak, nonatomic) OCTToxAV *toxav;
+@property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
+@property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 
 /**
  * Starts the Audio Processing Graph.

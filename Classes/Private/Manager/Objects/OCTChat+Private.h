@@ -18,4 +18,7 @@
 @property (copy, nonatomic) void (^enteredTextUpdateBlock)(NSString *enteredText);
 @property (copy, nonatomic) void (^lastReadDateUpdateBlock)(NSDate *lastReadDate);
 
+- (void)startTimer;
+- (NSTimeInterval)stopTimer;
+
 @end

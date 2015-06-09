@@ -27,11 +27,10 @@
 - (id)objectFromRLMObject:(OCTDBCall *)dbCall
 {
     NSParameterAssert(self.converterChat);
-    OCTCall *call = [OCTCall new];
 
     OCTChat *chat = [self.converterChat objectFromRLMObject:dbCall.chat];
 
-    call.chat = chat;
+    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
 
     return call;
 }

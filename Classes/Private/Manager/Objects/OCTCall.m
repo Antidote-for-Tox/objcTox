@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic, readwrite) OCTChat *chat;
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
+@property (strong, nonatomic) NSDate *callStartTime;
 
 @end
 
@@ -32,4 +33,33 @@
     return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+
+    if (! [object isKindOfClass:[OCTCall class]]) {
+        return NO;
+    }
+
+    OCTCall *otherCall = object;
+
+    return (self.chat.uniqueIdentifier == otherCall.chat.uniqueIdentifier);
+}
+
+- (NSUInteger)hash
+{
+    return [self.chat.uniqueIdentifier hash];
+}
+
+- (void)startTimer
+{
+    self.callStartTime = [[NSDate alloc] init];
+}
+
+- (NSTimeInterval)stopTimer
+{
+    return [self.callStartTime timeIntervalSinceNow];
+}
 @end

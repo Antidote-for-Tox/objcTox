@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 #import "OCTChat.h"
 #import "OCTFriend.h"
 
 typedef NS_ENUM(NSUInteger, OCTCallStatus) {
     OCTCallStatusInactive = 0,
+    OCTCallStatusDialing,
+    OCTCallStatusIncoming,
     OCTCallStatusPaused,
     OCTCallStatusActive,
 };

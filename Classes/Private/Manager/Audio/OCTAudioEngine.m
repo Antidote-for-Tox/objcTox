@@ -246,7 +246,13 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        inBusNumber,
                                        inNumberFrames,
                                        &bufferList);
-    // To Do: Call [OCTToxAV sendAudioFrames...]
+
+    [engine.toxav sendAudioFrame:bufferList.mBuffers[1].mData
+                     sampleCount:bufferList.mNumberBuffers
+                        channels:2
+                      sampleRate:48000
+                        toFriend:engine.friendNumber
+                           error:nil];
     return status;
 }
 
