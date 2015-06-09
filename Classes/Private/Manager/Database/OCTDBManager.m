@@ -248,7 +248,7 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
     __block RLMResults *results;
 
     dispatch_sync(self.queue, ^{
-        results = [OCTDBCall objectsInRealm:self.realm where:@"uniqueIdentifier == %@", chat.uniqueIdentifier];
+        results = [OCTDBCall objectsInRealm:self.realm where:@"chat == %@", chat];
     });
 
     return results;

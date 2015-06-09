@@ -339,7 +339,6 @@
 - (void)testAllCalls
 {
     OCTDBCall *db1 = [OCTDBCall new];
-    db1.uniqueIdentifier = @"Test";
     OCTDBCall *db2 = [OCTDBCall new];
 
     [self.manager.realm beginWriteTransaction];
@@ -350,15 +349,12 @@
     RLMResults *results = [self.manager allCalls];
 
     XCTAssertEqual(results.count, 2);
-    XCTAssertEqualObjects([results.firstObject uniqueIdentifier], db1.uniqueIdentifier);
 }
 
 - (void)testCallsWithChat
 {
     OCTDBCall *db1 = [OCTDBCall new];
     OCTDBChat *dbChat = [OCTDBChat new];
-    dbChat.uniqueIdentifier = @"unique";
-    db1.uniqueIdentifier = dbChat.uniqueIdentifier;
     db1.chat = dbChat;
 
     OCTDBCall *db2 = [OCTDBCall new];
@@ -371,7 +367,6 @@
     RLMResults *results = [self.manager callsWithChat:dbChat];
 
     XCTAssertEqual(results.count, 1);
-    XCTAssertEqualObjects([results.firstObject uniqueIdentifier], dbChat.uniqueIdentifier);
 }
 
 - (void)testAllMessagesInChat

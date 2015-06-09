@@ -10,15 +10,4 @@
 
 @implementation OCTDBCall
 
-+ (NSString *)primaryKey
-{
-    return @"uniqueIdentifier";
-}
-
-+ (NSDictionary *)defaultPropertyValues
-{
-    return @{
-               @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
-    };
-}
 @end

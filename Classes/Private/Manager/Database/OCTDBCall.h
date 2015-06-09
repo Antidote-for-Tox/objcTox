@@ -13,11 +13,6 @@
 
 @interface OCTDBCall : RLMObject
 
-/**
- * This unique identifier is tied to the same one as the OCTChat.
- * In an event an OCTChat is not found, a random one will be created.
- */
-@property NSString *uniqueIdentifier;
 @property OCTDBChat *chat;
 
 @end
