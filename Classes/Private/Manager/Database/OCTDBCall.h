@@ -11,6 +11,7 @@
 
 @interface OCTDBCall : RLMObject
 
+@property NSString *uniqueIdentifier;
 @property OCTDBChat *chat;
 
 @end

@@ -345,7 +345,7 @@
 
     results = [OCTDBCall allObjectsInRealm:self.manager.realm];
     XCTAssertEqual(results.count, 1);
-    XCTAssertEqualObjects(anotherChat, [results[0] chat]);
+    XCTAssertEqualObjects(db2Call, results[0]);
 }
 
 - (void)testAllCalls

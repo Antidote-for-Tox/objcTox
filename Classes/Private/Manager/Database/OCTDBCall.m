@@ -10,9 +10,16 @@
 
 @implementation OCTDBCall
 
-- (BOOL)isEqual:(OCTDBCall *)object
++ (NSString *)primaryKey
 {
-    return self.chat.uniqueIdentifier == object.chat.uniqueIdentifier;
+    return @"uniqueIdentifier";
+}
+
++ (NSDictionary *)defaultPropertyValues
+{
+    return @{
+               @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
+    };
 }
 
 @end
