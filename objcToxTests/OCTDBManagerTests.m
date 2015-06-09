@@ -364,7 +364,7 @@
     XCTAssertEqualObjects(db1, results[0]);
 }
 
-- (void)testCallsWithChat
+- (void)testCallWithChat
 {
     OCTDBCall *db1 = [OCTDBCall new];
     OCTDBChat *dbChat = [OCTDBChat new];
@@ -377,9 +377,27 @@
     [self.manager.realm addObject:db2];
     [self.manager.realm commitWriteTransaction];
 
-    RLMResults *results = [self.manager callsWithChat:dbChat];
+    OCTDBCall *call = [self.manager callWithChat:dbChat];
 
-    XCTAssertEqual(results.count, 1);
+    XCTAssertNotNil(call);
+    XCTAssertEqualObjects(call.chat, dbChat);
+}
+
+- (void)testGetOrCreateCallWithFriendNumber
+{
+    OCTDBCall *db1 = [OCTDBCall new];
+    OCTDBChat *dbChat = [self.manager getOrCreateChatWithFriendNumber:7];
+    db1.chat = dbChat;
+
+    OCTDBCall *db2 = [OCTDBCall new];
+
+    [self.manager.realm beginWriteTransaction];
+    [self.manager.realm addObject:db1];
+    [self.manager.realm addObject:db2];
+    [self.manager.realm commitWriteTransaction];
+
+    OCTDBCall *call = [self.manager getOrCreateCallWithFriendNumber:7];
+    XCTAssertEqualObjects(call.chat, dbChat);
 }
 
 - (void)testAllMessagesInChat
