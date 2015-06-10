@@ -11,7 +11,6 @@
 
 #import "OCTDBFriendRequest.h"
 #import "OCTDBChat.h"
-#import "OCTDBCall.h"
 
 /**
  * This notification is fired when some database object gets updated. Class of
@@ -51,12 +50,6 @@ extern NSString *const kOCTDBManagerObjectClassKey;
 - (OCTDBChat *)getOrCreateChatWithFriendNumber:(NSInteger)friendNumber;
 - (OCTDBChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
 - (void)removeChatWithAllMessages:(OCTDBChat *)chat;
-
-#pragma mark - Calls
-
-- (RLMResults *)allCalls;
-- (OCTDBCall *)callWithChat:(OCTDBChat *)chat;
-- (OCTDBCall *)getOrCreateCallWithFriendNumber:(NSInteger)friendNumber;
 
 #pragma mark -  Messages
 

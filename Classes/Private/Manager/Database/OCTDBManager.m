@@ -222,9 +222,6 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
             }
         }
 
-        RLMResults *calls = [OCTDBCall objectsInRealm:self.realm where:@"chat == %@", chat];
-
-        [self.realm deleteObjects:calls];
         [self.realm deleteObjects:messages];
         [self.realm deleteObject:chat];
         [self.realm commitWriteTransaction];
@@ -232,48 +229,6 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
 
     [self sendUpdateNotificationForClass:[OCTDBChat class]];
     [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
-}
-
-#pragma mark - Calls
-- (RLMResults *)allCalls
-{
-    __block RLMResults *results;
-
-    dispatch_sync(self.queue, ^{
-        results = [OCTDBCall allObjectsInRealm:self.realm];
-    });
-
-    return results;
-}
-
-- (OCTDBCall *)callWithChat:(OCTDBChat *)chat
-{
-    __block RLMResults *results;
-
-    dispatch_sync(self.queue, ^{
-        results = [OCTDBCall objectsInRealm:self.realm where:@"chat == %@", chat];
-    });
-
-    return results.lastObject;
-}
-
-- (OCTDBCall *)getOrCreateCallWithFriendNumber:(NSInteger)friendNumber
-{
-    OCTDBChat *chat = [self getOrCreateChatWithFriendNumber:friendNumber];
-    __block OCTDBCall *call = [self callWithChat:chat];
-
-    if (! call) {
-        dispatch_sync(self.queue, ^{
-            call = [OCTDBCall new];
-            call.chat = chat;
-
-            [self.realm beginWriteTransaction];
-            [self.realm addObject:call];
-            [self.realm commitWriteTransaction];
-        });
-    }
-
-    return call;
 }
 
 #pragma mark -  Messages
