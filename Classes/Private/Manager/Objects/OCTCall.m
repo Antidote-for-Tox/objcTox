@@ -32,4 +32,31 @@
     return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+
+    if (! [object isKindOfClass:[OCTCall class]]) {
+        return NO;
+    }
+
+    OCTCall *otherCall = object;
+
+    return (self.chat.uniqueIdentifier == otherCall.chat.uniqueIdentifier);
+}
+
+- (NSUInteger)hash
+{
+    return [self.chat.uniqueIdentifier hash];
+}
+
+- (void)startTimer
+{  }
+
+- (NSTimeInterval)stopTimer
+{
+    return 0;
+}
 @end

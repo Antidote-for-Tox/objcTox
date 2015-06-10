@@ -7,10 +7,19 @@
 //
 
 #import "OCTSubmanagerCalls.h"
+#import "OCTDBManager.h"
+#import "OCTSubmanagerDataSource.h"
+#import "OCTToxAV.h"
+#import "OCTAudioEngine.h"
+#import "OCTConverterChat.h"
+#import "OCTCall+Private.h"
+#import "OCTArray+Private.h"
 
 @class OCTTox;
 
 @interface OCTSubmanagerCalls (Private)
+
+@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 /**
  * Initialize the OCTSubmanagerCall

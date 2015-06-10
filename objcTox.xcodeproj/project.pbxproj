@@ -124,6 +124,8 @@
 		F03FA9511B26807300930CF1 /* OCTDBCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA9501B26807300930CF1 /* OCTDBCall.m */; };
 		F03FA9551B26840D00930CF1 /* OCTConverterCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA9541B26840D00930CF1 /* OCTConverterCall.m */; };
 		F03FA9571B26915200930CF1 /* OCTConverterCallTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA9561B26915200930CF1 /* OCTConverterCallTests.m */; };
+		F06673F31B27BA5F00CBEC25 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
+		F06673F41B27BA6200CBEC25 /* OCTConverterCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA9541B26840D00930CF1 /* OCTConverterCall.m */; };
 		F06C3D391B26AA440023C384 /* OCTDBCall.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA9501B26807300930CF1 /* OCTDBCall.m */; };
 		F07C8F991B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
@@ -863,6 +865,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F06673F41B27BA6200CBEC25 /* OCTConverterCall.m in Sources */,
+				F06673F31B27BA5F00CBEC25 /* OCTAudioEngine.m in Sources */,
 				F06C3D391B26AA440023C384 /* OCTDBCall.m in Sources */,
 				F0CAD9A91B220EB9008FAA62 /* OCTSubmanagerCalls.m in Sources */,
 				4CD198EE0026B99EA22137D5D0B3B7E3 /* AppDelegate.m in Sources */,

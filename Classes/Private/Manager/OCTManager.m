@@ -102,6 +102,7 @@
     _avatars = avatars;
 
     OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
+    calls.dataSource = self;
     _calls = calls;
 
     _toxSaveFileLock = [NSObject new];

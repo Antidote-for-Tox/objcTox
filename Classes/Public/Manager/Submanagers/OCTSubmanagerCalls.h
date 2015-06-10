@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "OCTChat.h"
-#include "OCTCall.h"
-#include "OCTArray.h"
-
+#import <UIKit/UIKit.h>
+#import "OCTChat.h"
+#import "OCTArray.h"
 @class OCTSubmanagerCalls;
 @class OCTToxAV;
+@class OCTCall;
 
 @protocol OCTSubmanagerCallDelegate <NSObject>
 
@@ -25,10 +25,13 @@
 
 @interface OCTSubmanagerCalls : NSObject
 
+@property (weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
+
 /**
  * Call sessions that are active.
  */
-@property (strong, nonatomic, readonly) OCTArray *calls;
+- (NSSet *)calls;
+
 /**
  * This class is responsible for telling the end-user what calls we have available.
  * We can also initialize a call session from here.

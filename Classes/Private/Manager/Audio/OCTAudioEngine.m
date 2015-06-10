@@ -13,6 +13,7 @@
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
 static const int kBufferLength = 1024;
+static const int kNumberOfChannels = 2;
 
 OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 OSStatus (*_AUGraphAddNode)(
@@ -54,6 +55,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) AudioUnit ioUnit;
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
 @property (nonatomic, assign) TPCircularBuffer buffer;
+@property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
 
 @end
 
@@ -246,7 +248,13 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        inBusNumber,
                                        inNumberFrames,
                                        &bufferList);
-    // To Do: Call [OCTToxAV sendAudioFrames...]
+
+    [engine.toxav sendAudioFrame:bufferList.mBuffers[1].mData
+                     sampleCount:bufferList.mNumberBuffers
+                        channels:kNumberOfChannels
+                      sampleRate:engine.currentAudioSampleRate
+                        toFriend:engine.friendNumber
+                           error:nil];
     return status;
 }
 
@@ -302,6 +310,8 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 {
     UInt32 bytesPerSample = sizeof(SInt32);
     double sampleRate = [AVAudioSession sharedInstance].sampleRate;
+
+    self.currentAudioSampleRate = sampleRate;
 
     AudioStreamBasicDescription asbd = {0};
     asbd.mSampleRate = sampleRate;
