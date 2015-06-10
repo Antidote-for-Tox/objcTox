@@ -8,6 +8,7 @@
 
 #import "OCTConverterProtocol.h"
 #import "OCTTox.h"
+#import "OCTDBManager.h"
 #import "OCTFriend.h"
 
 @class OCTConverterFriend;
@@ -15,6 +16,8 @@
 @protocol OCTConverterFriendDataSource <NSObject>
 
 - (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend;
+- (OCTDBManager *)converterFriendGetDBManager:(OCTConverterFriend *)converterFriend;
+- (void)converterFriend:(OCTConverterFriend *)converter updateDBFriendWithBlock:(void (^)())block;
 
 @end
 

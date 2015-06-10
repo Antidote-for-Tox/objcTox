@@ -18,7 +18,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeCount,
 };
 
-@interface OCTFriendsViewController () <OCTArrayDelegate>
+@interface OCTFriendsViewController () <OCTFriendsContainerDelegate, OCTArrayDelegate>
 
 @property (strong, nonatomic) OCTFriendsContainer *friendsContainer;
 @property (strong, nonatomic) OCTArray *allFriendRequests;
@@ -38,15 +38,11 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     }
 
     _friendsContainer = self.manager.friends.friendsContainer;
+    _friendsContainer.delegate = self;
     _allFriendRequests = self.manager.friends.allFriendRequests;
     _allFriendRequests.delegate = self;
 
     self.title = @"Friends";
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(friendUpdateNotification)
-                                                 name:kOCTFriendsContainerUpdateNotification
-                                               object:nil];
 
     return self;
 }
@@ -133,16 +129,19 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     }
 }
 
-#pragma mark -  OCTArrayDelegate
+#pragma mark -  OCTFriendsContainerDelegate
 
-- (void)OCTArrayWasUpdated:(OCTArray *)array
+- (void)friendsContainerUpdate:(OCTFriendsContainer *)container
+                   insertedSet:(NSIndexSet *)inserted
+                    removedSet:(NSIndexSet *)removed
+                    updatedSet:(NSIndexSet *)updated
 {
     [self.tableView reloadData];
 }
 
-#pragma mark -  NSNotification
+#pragma mark -  OCTArrayDelegate
 
-- (void)friendUpdateNotification
+- (void)OCTArrayWasUpdated:(OCTArray *)array
 {
     [self.tableView reloadData];
 }

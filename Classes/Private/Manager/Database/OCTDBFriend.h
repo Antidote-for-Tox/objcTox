@@ -14,6 +14,7 @@
 @interface OCTDBFriend : RLMObject
 
 @property NSInteger friendNumber;
+@property NSString *nickname;
 
 @end
 

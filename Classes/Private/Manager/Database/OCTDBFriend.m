@@ -16,4 +16,11 @@
     return @"friendNumber";
 }
 
++ (NSDictionary *)defaultPropertyValues
+{
+    return @{
+               @"nickname" : @"",
+    };
+}
+
 @end

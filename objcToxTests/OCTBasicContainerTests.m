@@ -15,7 +15,6 @@
 
 @interface OCTBasicContainer (Tests)
 @property (strong, nonatomic) NSMutableArray *array;
-@property (strong, nonatomic) NSString *updateNotificationName;
 @end
 
 @interface OCTBasicContainerTests : XCTestCase
@@ -31,7 +30,7 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
-    self.container = [[OCTBasicContainer alloc] initWithObjects:nil updateNotificationName:nil];
+    self.container = [[OCTBasicContainer alloc] initWithObjects:nil];
 }
 
 - (void)tearDown
@@ -44,16 +43,13 @@
 - (void)testInit
 {
     id object = @1;
-    NSString *notification = @"notification";
 
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ object ]
-                                                       updateNotificationName      :notification];
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ object ]];
 
     XCTAssertTrue(container.array.count == 1);
 
     id theFriend = [container.array lastObject];
     XCTAssertEqual(object, theFriend);
-    XCTAssertEqual(notification, container.updateNotificationName);
 }
 
 - (void)testSetComparator
@@ -67,7 +63,7 @@
 
     [self.container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
-    } sendNotification:NO];
+    }];
 
     XCTAssertEqual([self.container objectAtIndex:0], @0);
     XCTAssertEqual([self.container objectAtIndex:1], @1);
@@ -96,153 +92,114 @@
     XCTAssertNil([self.container objectAtIndex:2]);
 }
 
-- (void)testUpdateNotificationForSetComparator
+- (void)testDelegateForSetComparator
 {
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1, @0 ]];
 
-        NSIndexSet *set = userInfo[kOCTContainerUpdateKeyUpdatedSet];
-        XCTAssertEqual(set.count, 2);
-        XCTAssertTrue([set containsIndex:0]);
-        XCTAssertTrue([set containsIndex:1]);
+    id delegate = OCMProtocolMock(@protocol(OCTBasicContainerDelegate));
+    container.delegate = delegate;
+    [delegate basicContainerUpdate:container
+                       insertedSet:nil
+                        removedSet:nil
+                        updatedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *updated)
+    {
+        XCTAssertEqual(updated.count, 2);
+        XCTAssertTrue([updated containsIndex:0]);
+        XCTAssertTrue([updated containsIndex:1]);
 
         return YES;
-    };
+    }]];
 
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
-
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1, @0 ]
-                                                       updateNotificationName      :@"notification"];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
-    } sendNotification:YES];
+    }];
 
-    OCMVerifyAll(center);
+    OCMVerifyAll(delegate);
 }
 
-- (void)testUpdateNotificationForSetComparatorNoNotification
+- (void)testDelegateForAddObject
 {
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    [[center reject] postNotificationName:@"notification" object:nil userInfo:[OCMArg any]];
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0 ]];
 
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1, @0 ]
-                                                       updateNotificationName      :@"notification"];
-    [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
-        return [first compare:second];
-    } sendNotification:NO];
-
-    OCMVerifyAll(center);
-}
-
-- (void)testUpdateNotificationForAddObject
-{
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0 ]
-                                                       updateNotificationName      :@"notification"];
-
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTContainerUpdateKeyInsertedSet];
+    id delegate = OCMProtocolMock(@protocol(OCTBasicContainerDelegate));
+    container.delegate = delegate;
+    OCMExpect([delegate basicContainerUpdate:container insertedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *set) {
         XCTAssertEqual(set.count, 1);
         XCTAssertTrue([set containsIndex:1]);
 
         return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
+    }] removedSet:nil updatedSet:nil]);
 
     [container addObject:@1];
 
-    OCMVerifyAll(center);
+    OCMVerifyAll(delegate);
 }
 
-- (void)testUpdateNotificationForAddObjectWithSort
+- (void)testDelegateForAddObjectWithSort
 {
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1 ]
-                                                       updateNotificationName      :@"notification"];
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @1 ]];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return [first compare:second];
-    } sendNotification:NO];
+    }];
 
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTContainerUpdateKeyInsertedSet];
+    id delegate = OCMProtocolMock(@protocol(OCTBasicContainerDelegate));
+    container.delegate = delegate;
+    OCMExpect([delegate basicContainerUpdate:container insertedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *set) {
         XCTAssertEqual(set.count, 1);
         XCTAssertTrue([set containsIndex:0]);
 
         return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
+    }] removedSet:nil updatedSet:nil]);
 
     [container addObject:@0];
 
-    OCMVerifyAll(center);
+    OCMVerifyAll(delegate);
 }
 
-- (void)testUpdateNotificationForRemoveObject
+- (void)testDelegateForRemoveObject
 {
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]
-                                                       updateNotificationName      :@"notification"];
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]];
 
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 1);
-
-        NSIndexSet *set = userInfo[kOCTContainerUpdateKeyRemovedSet];
+    id delegate = OCMProtocolMock(@protocol(OCTBasicContainerDelegate));
+    container.delegate = delegate;
+    OCMExpect([delegate basicContainerUpdate:container
+                                 insertedSet:nil
+                                  removedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *set)
+    {
         XCTAssertEqual(set.count, 1);
         XCTAssertTrue([set containsIndex:1]);
 
         return YES;
-    };
-
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
+    }] updatedSet:nil]);
 
     [container removeObject:@1];
 
-    OCMVerifyAll(center);
+    OCMVerifyAll(delegate);
 }
 
-- (void)testUpdateFriendsNotificationForUpdateFriend
+- (void)testUpdateFriendsCallbackForUpdateFriend
 {
     __block BOOL reverseSort = NO;
-    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]
-                                                       updateNotificationName      :@"notification"];
+    OCTBasicContainer *container = [[OCTBasicContainer alloc] initWithObjects:@[ @0, @1 ]];
     [container setComparatorForCurrentSort:^NSComparisonResult (NSNumber *first, NSNumber *second) {
         return reverseSort ? [second compare : first] :[first compare:second];
-    } sendNotification:NO];
+    }];
 
-    BOOL (^checkBlock)(NSDictionary *) = ^BOOL (NSDictionary *userInfo) {
-        XCTAssertTrue([userInfo isKindOfClass:[NSDictionary class]]);
-        XCTAssertEqual(userInfo.count, 2);
-
-        NSIndexSet *set = userInfo[kOCTContainerUpdateKeyRemovedSet];
-        XCTAssertEqual(set.count, 1);
-        XCTAssertTrue([set containsIndex:0]);
-
-        set = userInfo[kOCTContainerUpdateKeyInsertedSet];
+    id delegate = OCMProtocolMock(@protocol(OCTBasicContainerDelegate));
+    container.delegate = delegate;
+    OCMExpect([delegate basicContainerUpdate:container insertedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *set) {
         XCTAssertEqual(set.count, 1);
         XCTAssertTrue([set containsIndex:1]);
 
         return YES;
-    };
 
-    id center = OCMClassMock([NSNotificationCenter class]);
-    OCMStub([center defaultCenter]).andReturn(center);
-    OCMExpect([center postNotificationName:@"notification" object:nil userInfo:[OCMArg checkWithBlock:checkBlock]]);
+    }] removedSet:[OCMArg checkWithBlock:^BOOL (NSIndexSet *set) {
+        XCTAssertEqual(set.count, 1);
+        XCTAssertTrue([set containsIndex:0]);
+
+        return YES;
+    }] updatedSet:nil]);
+    OCMExpect([delegate basicContainer:container objectUpdated:@0]);
 
     [container updateObjectPassingTest:^BOOL (NSNumber *obj, NSUInteger idx, BOOL *stop) {
         return [obj isEqualToNumber:@0];
@@ -250,7 +207,7 @@
         reverseSort = YES;
     }];
 
-    OCMVerifyAll(center);
+    OCMVerifyAll(delegate);
 }
 
 - (void)testAddObject

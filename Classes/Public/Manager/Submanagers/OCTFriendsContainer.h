@@ -11,10 +11,37 @@
 #import "OCTFriend.h"
 #import "OCTManagerConstants.h"
 
+@class OCTFriendsContainer;
+@protocol OCTFriendsContainerDelegate <NSObject>
+
+@optional
+
 /**
- * On adding/removing/updating friend posts kOCTFriendsContainerUpdateNotification notification.
+ * Method called on any friend updates (friend added, removed, or some of friend properties updated).
+ *
+ * @param container Container that was updated.
+ * @param inserted NSIndexSet with indexes of friends that were inserted;
+ * @param removed NSIndexSet with indexes of friends that were removed;
+ * @param updated NSIndexSet with indexes of friends that were updated.
  */
+- (void)friendsContainerUpdate:(OCTFriendsContainer *)container
+                   insertedSet:(NSIndexSet *)inserted
+                    removedSet:(NSIndexSet *)removed
+                    updatedSet:(NSIndexSet *)updated;
+
+/**
+ * Method call when friend gets updated.
+ *
+ * @param container Container that was updated.
+ * @param friend Friend that was updated.
+ */
+- (void)friendsContainer:(OCTFriendsContainer *)container friendUpdated:(OCTFriend *)friend;
+
+@end
+
 @interface OCTFriendsContainer : NSObject
+
+@property (weak, nonatomic) id<OCTFriendsContainerDelegate> delegate;
 
 /**
  * The sort to be used for friends. Sort is saved in settings and remains same after relaunch.

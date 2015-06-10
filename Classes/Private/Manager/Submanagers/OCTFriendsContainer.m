@@ -12,7 +12,7 @@
 
 static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
-@interface OCTFriendsContainer ()
+@interface OCTFriendsContainer () <OCTBasicContainerDelegate>
 
 @property (weak, nonatomic) id<OCTFriendsContainerDataSource> dataSource;
 
@@ -34,8 +34,8 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
         return nil;
     }
 
-    self.container = [[OCTBasicContainer alloc] initWithObjects:friends
-                                         updateNotificationName      :kOCTFriendsContainerUpdateNotification];
+    self.container = [[OCTBasicContainer alloc] initWithObjects:friends];
+    self.container.delegate = self;
 
     return self;
 }
@@ -45,7 +45,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 - (void)setFriendsSort:(OCTFriendsSort)sort
 {
     _friendsSort = sort;
-    [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort] sendNotification:YES];
+    [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort]];
 }
 
 - (NSUInteger)friendsCount
@@ -65,7 +65,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     dispatch_once(&_configureOnceToken, ^{
         NSNumber *sort = [self.dataSource.friendsContainerGetSettingsStorage objectForKey:kSortStorageKey];
         self.friendsSort = [sort unsignedIntegerValue];
-        [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort] sendNotification:NO];
+        [self.container setComparatorForCurrentSort:[self comparatorForCurrentSort]];
     });
 }
 
@@ -86,6 +86,25 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 - (void)removeFriend:(OCTFriend *)friend
 {
     [self.container removeObject:friend];
+}
+
+#pragma mark -  OCTBasicContainerDelegate
+
+- (void)basicContainerUpdate:(OCTBasicContainer *)container
+                 insertedSet:(NSIndexSet *)inserted
+                  removedSet:(NSIndexSet *)removed
+                  updatedSet:(NSIndexSet *)updated
+{
+    if ([self.delegate respondsToSelector:@selector(friendsContainerUpdate:insertedSet:removedSet:updatedSet:)]) {
+        [self.delegate friendsContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
+    }
+}
+
+- (void)basicContainer:(OCTBasicContainer *)container objectUpdated:(id)object
+{
+    if ([self.delegate respondsToSelector:@selector(friendsContainer:friendUpdated:)]) {
+        [self.delegate friendsContainer:self friendUpdated:object];
+    }
 }
 
 #pragma mark -  Private

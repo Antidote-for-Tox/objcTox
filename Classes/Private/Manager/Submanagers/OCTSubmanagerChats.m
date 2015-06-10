@@ -154,6 +154,18 @@
     return [self.dataSource managerGetTox];
 }
 
+- (OCTDBManager *)converterFriendGetDBManager:(OCTConverterFriend *)converterFriend
+{
+    return [self.dataSource managerGetDBManager];
+}
+
+- (void)converterFriend:(OCTConverterFriend *)converter updateDBFriendWithBlock:(void (^)())block
+{
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBFriend class]];
+}
+
 #pragma mark -  OCTToxDelegate
 
 - (void)tox:(OCTTox *)tox friendMessage:(NSString *)message type:(OCTToxMessageType)type friendNumber:(OCTToxFriendNumber)friendNumber

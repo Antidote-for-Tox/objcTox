@@ -33,6 +33,15 @@
 @property (copy, nonatomic, readonly) NSString *name;
 
 /**
+ * Nickname of friend.
+ *
+ * When friend is created it is set to the publicKey.
+ * It is set to name when obtaining name for the first time.
+ * After that name is unchanged (unless it is changed explicitly).
+ */
+@property (copy, nonatomic) NSString *nickname;
+
+/**
  * Status message of a friend.
  */
 @property (copy, nonatomic, readonly) NSString *statusMessage;

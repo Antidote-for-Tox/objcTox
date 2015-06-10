@@ -19,6 +19,7 @@
     NSParameterAssert(self.dataSource);
 
     OCTTox *tox = [self.dataSource converterFriendGetTox:self];
+    OCTDBManager *dbManager = [self.dataSource converterFriendGetDBManager:self];
 
     if (! [tox friendExistsWithFriendNumber:friendNumber]) {
         return nil;
@@ -33,6 +34,21 @@
     friend.connectionStatus = [tox friendConnectionStatusWithFriendNumber:friendNumber error:nil];
     friend.lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:nil];
     friend.isTyping = [tox isFriendTypingWithFriendNumber:friendNumber error:nil];
+
+    OCTDBFriend *dbFriend = [dbManager getOrCreateFriendWithFriendNumber:friendNumber];
+
+    friend.nickname = dbFriend.nickname ?: friend.name ?: friend.publicKey;
+
+    friend.nickname = dbFriend.nickname.length ? dbFriend.nickname :
+                      friend.name.length ? friend.name :
+                      friend.publicKey;
+
+    __weak OCTConverterFriend *weakSelf = self;
+    friend.nicknameUpdateBlock = ^(NSString *nickname) {
+        [weakSelf.dataSource converterFriend:weakSelf updateDBFriendWithBlock:^{
+            dbFriend.nickname = nickname;
+        }];
+    };
 
     return friend;
 }
@@ -64,6 +80,7 @@
 
     NSDictionary *mapping = @{
         NSStringFromSelector(@selector(friendNumber)) : NSStringFromSelector(@selector(friendNumber)),
+        NSStringFromSelector(@selector(nickname)) : NSStringFromSelector(@selector(nickname)),
     };
 
     NSString *rlmProperty = mapping[descriptor.property];

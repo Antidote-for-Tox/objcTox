@@ -59,6 +59,20 @@
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration;
 
 /**
+ * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
+ * change it you have to recreate OCTManager.
+ *
+ * Replaces current tox save file with new one from toxSaveFilePath. Save file will be copied to appropriate directory.
+ *
+ * @param configuration Configuration to be used.
+ * @param toxSaveFilePath Path to load tox save file from. If file does not exist parameter is ignored.
+ *
+ * @return Initialized OCTManager.
+ */
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath;
+
+/**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and
  * public key to setup connections.
  *
@@ -96,5 +110,14 @@
  * @return YES on success, NO on failure.
  */
 - (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
+
+/**
+ * Copies tox save file to temporary directory and return path to it.
+ *
+ * @param error NSFileManager error in case if file cannot be copied.
+ *
+ * @return Temporary path of current tox save file.
+ */
+- (NSString *)exportToxSaveFile:(NSError **)error;
 
 @end

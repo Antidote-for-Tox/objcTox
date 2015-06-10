@@ -15,16 +15,13 @@
 
 @property (copy, nonatomic) NSComparator comparator;
 
-@property (copy, nonatomic) NSString *updateNotificationName;
-
-
 @end
 
 @implementation OCTBasicContainer
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithObjects:(NSArray *)objects updateNotificationName:(NSString *)updateNotificationName
+- (instancetype)initWithObjects:(NSArray *)objects
 {
     self = [super init];
 
@@ -33,14 +30,13 @@
     }
 
     self.array = [NSMutableArray arrayWithArray:objects];
-    self.updateNotificationName = updateNotificationName;
 
     return self;
 }
 
 #pragma mark -  Public
 
-- (void)setComparatorForCurrentSort:(NSComparator)comparator sendNotification:(BOOL)sendNotification
+- (void)setComparatorForCurrentSort:(NSComparator)comparator
 {
     self.comparator = comparator;
 
@@ -55,12 +51,11 @@
 
         [self.array sortUsingComparator:self.comparator];
 
-        if (sendNotification) {
-            NSRange range = NSMakeRange(0, self.array.count);
-            [self sendUpdateNotificationWithInsertedSet:nil
-                                             removedSet:nil
-                                             updatedSet:[NSIndexSet indexSetWithIndexesInRange:range]];
-        }
+        NSRange range = NSMakeRange(0, self.array.count);
+        [self.delegate basicContainerUpdate:self
+                                insertedSet:nil
+                                 removedSet:nil
+                                 updatedSet:[NSIndexSet indexSetWithIndexesInRange:range]];
     }
 }
 
@@ -111,9 +106,10 @@
             [self.array addObject:object];
         }
 
-        [self sendUpdateNotificationWithInsertedSet:[NSIndexSet indexSetWithIndex:index]
-                                         removedSet:nil
-                                         updatedSet:nil];
+        [self.delegate basicContainerUpdate:self
+                                insertedSet:[NSIndexSet indexSetWithIndex:index]
+                                 removedSet:nil
+                                 updatedSet:nil];
     }
 }
 
@@ -135,9 +131,10 @@
 
         [self.array removeObjectAtIndex:index];
 
-        [self sendUpdateNotificationWithInsertedSet:nil
-                                         removedSet:[NSIndexSet indexSetWithIndex:index]
-                                         updatedSet:nil];
+        [self.delegate basicContainerUpdate:self
+                                insertedSet:nil
+                                 removedSet:[NSIndexSet indexSetWithIndex:index]
+                                 updatedSet:nil];
     }
 }
 
@@ -189,41 +186,8 @@
             removed = [NSIndexSet indexSetWithIndex:index];
         }
 
-        [self sendUpdateNotificationWithInsertedSet:inserted removedSet:removed updatedSet:updated];
-    }
-}
-
-#pragma mark -  Private
-
-- (void)sendUpdateNotificationWithInsertedSet:(NSIndexSet *)inserted
-                                   removedSet:(NSIndexSet *)removed
-                                   updatedSet:(NSIndexSet *)updated
-{
-    if (! self.updateNotificationName) {
-        return;
-    }
-
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-
-    if (inserted.count) {
-        userInfo[kOCTContainerUpdateKeyInsertedSet] = inserted;
-    }
-    if (removed.count) {
-        userInfo[kOCTContainerUpdateKeyRemovedSet] = removed;
-    }
-    if (updated.count) {
-        userInfo[kOCTContainerUpdateKeyUpdatedSet] = updated;
-    }
-
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-
-    if ([NSThread isMainThread]) {
-        [center postNotificationName:self.updateNotificationName object:nil userInfo:userInfo];
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [center postNotificationName:self.updateNotificationName object:nil userInfo:userInfo];
-        });
+        [self.delegate basicContainerUpdate:self insertedSet:inserted removedSet:removed updatedSet:updated];
+        [self.delegate basicContainer:self objectUpdated:object];
     }
 }
 

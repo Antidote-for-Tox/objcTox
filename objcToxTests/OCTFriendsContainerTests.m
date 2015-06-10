@@ -57,7 +57,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMExpect([bs initWithObjects:friends updateNotificationName:kOCTFriendsContainerUpdateNotification]);
+    OCMExpect([(OCTBasicContainer *)bs initWithObjects:friends]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:friends];
 
@@ -162,7 +162,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 {
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMStub([bs count]).andReturn(5);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -176,7 +176,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 {
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMStub([bs objectAtIndex:3]).andReturn(@4);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -214,13 +214,34 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
     XCTAssertEqual(self.container.friendsSort, OCTFriendsSortByStatus);
 }
 
+- (void)testDelegate
+{
+    id delegate = OCMProtocolMock(@protocol(OCTFriendsContainerDelegate));
+
+    OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
+    container.delegate = delegate;
+
+    [(id)container basicContainerUpdate:nil insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3];
+    [(id)container basicContainer:nil objectUpdated:(id)@4];
+
+    OCMVerify([delegate friendsContainerUpdate:container insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3]);
+    OCMVerify([delegate friendsContainer:container friendUpdated:(id)@4]);
+
+    id badDelegate = OCMClassMock([NSObject class]);
+
+    container.delegate = badDelegate;
+
+    [(id)container basicContainerUpdate:nil insertedSet:(id)@1 removedSet:(id)@2 updatedSet:(id)@3];
+    [(id)container basicContainer:nil objectUpdated:(id)@4];
+}
+
 - (void)testAddFriend
 {
     id friend = @1;
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs addObject:friend]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -244,7 +265,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs updateObjectPassingTest:[OCMArg checkWithBlock:checkTestBlock] updateBlock:updateBlock]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
@@ -261,7 +282,7 @@ static NSString *const kSortStorageKey = @"OCTFriendsContainer.sortStorageKey";
 
     id bs = OCMClassMock([OCTBasicContainer class]);
     OCMStub([bs alloc]).andReturn(bs);
-    OCMStub([bs initWithObjects:[OCMArg any] updateNotificationName:[OCMArg any]]).andReturn(bs);
+    OCMStub([(OCTBasicContainer *)bs initWithObjects:[OCMArg any]]).andReturn(bs);
     OCMExpect([bs removeObject:friend]);
 
     OCTFriendsContainer *container = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
