@@ -24,6 +24,7 @@ extern void (*_toxav_iterate)(ToxAV *toxAV);
 extern void (*_toxav_kill)(ToxAV *toxAV);
 
 extern bool (*_toxav_call)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_CALL *error);
+extern bool (*_toxav_answer)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_ANSWER *error);
 extern bool (*_toxav_call_control)(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
 
 extern bool (*_toxav_audio_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
@@ -49,6 +50,7 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 - (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError;
 - (void)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError;
+- (void)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError;
 - (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError;
 - (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError;
 - (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError;

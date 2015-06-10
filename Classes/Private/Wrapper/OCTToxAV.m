@@ -25,6 +25,7 @@ void (*_toxav_iterate)(ToxAV *toxAV);
 void (*_toxav_kill)(ToxAV *toxAV);
 
 bool (*_toxav_call)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_CALL *error);
+bool (*_toxav_answer)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_ANSWER *error);
 bool (*_toxav_call_control)(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
 
 bool (*_toxav_audio_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
@@ -161,6 +162,16 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     return status;
 }
 
+- (BOOL)answerIncomingCallFromFriend:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitrate error:(NSError **)error
+{
+    TOXAV_ERR_ANSWER cError;
+    BOOL status = _toxav_answer(self.toxAV, friendNumber, audioBitRate, videoBitrate, &cError);
+
+    [self fillError:error withCErrorAnswer:cError];
+
+    return status;
+}
+
 - (BOOL)sendCallControl:(OCTToxAVCallControl)control toFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
     TOXAV_CALL_CONTROL cControl;
@@ -268,6 +279,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     _toxav_kill = toxav_kill;
 
     _toxav_call = toxav_call;
+    _toxav_answer = toxav_answer;
     _toxav_call_control = toxav_call_control;
 
     _toxav_audio_bit_rate_set = toxav_audio_bit_rate_set;
@@ -350,6 +362,37 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         case TOXAV_ERR_CALL_INVALID_BIT_RATE:
             code = OCTToxAVErrorCallInvalidBitRate;
             failureReason = @"Audio or video bit rate is invalid";
+            break;
+    }
+
+    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+}
+
+- (void)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError
+{
+    if (! error || (cError == TOXAV_ERR_ANSWER_OK)) {
+        return;
+    }
+
+    OCTToxAVErrorAnswer code = OCTToxAVErrorAnswerUnknown;
+    NSString *description = @"Could not answer call";
+    NSString *failureReason = nil;
+
+    switch (cError) {
+        case TOXAV_ERR_ANSWER_OK:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case TOXAV_ERR_ANSWER_CODEC_INITIALIZATION:
+            code = OCTToxAVErrorAnswerCodecInitialization;
+            break;
+        case TOXAV_ERR_ANSWER_FRIEND_NOT_CALLING:
+            code = OCTToxAVErrorAnswerFriendNotCalling;
+            break;
+        case TOXAV_ERR_ANSWER_FRIEND_NOT_FOUND:
+            code = OCTToxAVErrorAnswerFriendNotFound;
+            break;
+        case TOXAV_ERR_ANSWER_INVALID_BIT_RATE:
+            code = OCTToxAVErrorAnswerInvalidBitRate;
             break;
     }
 

@@ -89,6 +89,20 @@
 - (BOOL)callFriendNumber:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitRate error:(NSError **)error;
 
 /**
+ * Accept an incoming call.
+ *
+ * If answering fails for any reason, the call will still be pending and it is
+ * possible to try and answer it later.
+ *
+ * @param friendNumber The friend number of the friend that is calling.
+ * @param audioBitRate Audio bit rate in Kb/sec. Set this to kOCTToxAVAudioBitRateDisable to disable
+ * audio sending.
+ * @param videoBitRate Video bit rate in Kb/sec. Set this to kOCTToxAVVideoBitRateDisable to disable
+ * video sending.
+ */
+- (BOOL)answerIncomingCallFromFriend:(OCTToxFriendNumber)friendNumber audioBitRate:(OCTToxAVAudioBitRate)audioBitRate videoBitRate:(OCTToxAVVideoBitRate)videoBitrate error:(NSError **)error;
+
+/**
  * Send a call control to a friend
  * @param control The control command to send.
  * @param friendNumber The friend number of the friend this client is in a call with.
