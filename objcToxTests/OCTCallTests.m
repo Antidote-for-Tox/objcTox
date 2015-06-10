@@ -47,14 +47,4 @@
     XCTAssertFalse(call3 == call);
 }
 
-- (void)testTimer
-{
-    OCTChat *chat = [OCTChat new];
-    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-
-    XCTAssertNil(call.callStartTime);
-    [call startTimer];
-    XCTAssertNotNil(call.callStartTime);
-}
-
 @end

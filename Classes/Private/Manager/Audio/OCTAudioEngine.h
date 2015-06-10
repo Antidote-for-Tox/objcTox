@@ -17,7 +17,6 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
 @interface OCTAudioEngine : NSObject
 
 @property (weak, nonatomic) OCTToxAV *toxav;
-@property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 
 /**

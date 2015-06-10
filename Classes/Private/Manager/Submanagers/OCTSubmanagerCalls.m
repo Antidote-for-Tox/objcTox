@@ -8,6 +8,9 @@
 
 #import "OCTSubmanagerCalls+Private.h"
 
+const OCTToxAVAudioBitRate kDefaultAudioBitRate = 24000;
+const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
+
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
@@ -49,23 +52,28 @@
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
 {
-    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? 24000 : kOCTToxAVAudioBitRateDisable;
-    OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? 400 : kOCTToxAVVideoBitRateDisable;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
-    OCTFriend *friend = chat.friends.lastObject;
-    self.audioEngine.friendNumber = friend.friendNumber;
+    if (chat.friends.count == 1) {
+        OCTFriend *friend = chat.friends.lastObject;
+        self.audioEngine.friendNumber = friend.friendNumber;
 
-    [self.toxAV callFriendNumber:(OCTToxFriendNumber)friend
-                    audioBitRate:audioBitRate
-                    videoBitRate:videoBitRate
-                           error:nil];
+        [self.toxAV callFriendNumber:(OCTToxFriendNumber)friend
+                        audioBitRate:audioBitRate
+                        videoBitRate:videoBitRate
+                               error:nil];
 
-    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-    call.status = OCTCallStatusDialing;
+        OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
+        call.status = OCTCallStatusDialing;
 
-    [self.mutableCalls addObject:call];
-
-    return call;
+        [self.mutableCalls addObject:call];
+        return call;
+    }
+    else {
+        // TO DO: Group Calls
+        return nil;
+    }
 }
 
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
@@ -78,16 +86,28 @@
     OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlPause : OCTToxAVCallControlResume;
     call.status = (pause) ? OCTCallStatusPaused : OCTCallStatusActive;
 
-    OCTFriend *friend = call.chat.friends.firstObject;
-    return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 - (BOOL)endCall:(OCTCall *)call error:(NSError **)error
 {
-    OCTFriend *friend = call.chat.friends.firstObject;
-    [self.mutableCalls removeObject:call];
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        [self.mutableCalls removeObject:call];
 
-    return [self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error];
+        return [self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 - (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error

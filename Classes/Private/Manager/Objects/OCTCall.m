@@ -14,7 +14,6 @@
 
 @property (strong, nonatomic, readwrite) OCTChat *chat;
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
-@property (strong, nonatomic) NSDate *callStartTime;
 
 @end
 
@@ -54,12 +53,10 @@
 }
 
 - (void)startTimer
-{
-    self.callStartTime = [[NSDate alloc] init];
-}
+{  }
 
 - (NSTimeInterval)stopTimer
 {
-    return [self.callStartTime timeIntervalSinceNow];
+    return 0;
 }
 @end
