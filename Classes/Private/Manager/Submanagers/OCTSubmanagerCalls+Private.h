@@ -14,6 +14,7 @@
 #import "OCTConverterChat.h"
 #import "OCTCall+Private.h"
 #import "OCTArray+Private.h"
+#import "OCTCallsContainer+Private.h"
 
 @class OCTTox;
 

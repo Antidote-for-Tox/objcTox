@@ -8,12 +8,13 @@
 
 #import "OCTCall.h"
 #import "OCTAudioEngine.h"
-#import "OCTToxAV.h"
+#import "OCTToxAVConstants.h"
 
 @interface OCTCall ()
 
 @property (strong, nonatomic, readwrite) OCTChat *chat;
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
+@property (nonatomic, assign, readwrite) OCTToxAVCallState state;
 @property (nonatomic, assign, readwrite) NSTimeInterval callDuration;
 @property (strong, nonatomic) dispatch_source_t timer;
 

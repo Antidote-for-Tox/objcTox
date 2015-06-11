@@ -18,7 +18,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
 @property (strong, nonatomic) OCTConverterChat *chatConverter;
-@property (strong, nonatomic) NSMutableSet *mutableCalls;
+@property (strong, nonatomic, readwrite) OCTCallsContainer *calls;
 
 @end
 
@@ -34,20 +34,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     _toxAV = [[OCTToxAV alloc] initWithTox:tox error:nil];
     _toxAV.delegate = self;
+    [_toxAV start];
 
     _audioEngine = [OCTAudioEngine new];
     _audioEngine.toxav = self.toxAV;
 
     _chatConverter = [OCTConverterChat new];
 
-    _mutableCalls = [NSMutableSet new];
+    _calls = [OCTCallsContainer new];
 
     return self;
-}
-
-- (NSSet *)calls
-{
-    return [self.mutableCalls copy];
 }
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
@@ -59,16 +55,17 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         OCTFriend *friend = chat.friends.lastObject;
         self.audioEngine.friendNumber = friend.friendNumber;
 
-        [self.toxAV callFriendNumber:(OCTToxFriendNumber)friend
-                        audioBitRate:audioBitRate
-                        videoBitRate:videoBitRate
-                               error:nil];
+        if ([self.toxAV callFriendNumber:(OCTToxFriendNumber)friend
+                            audioBitRate:audioBitRate
+                            videoBitRate:videoBitRate
+                                   error:nil]) {
+            OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
+            call.status = OCTCallStatusDialing;
 
-        OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-        call.status = OCTCallStatusDialing;
-
-        [self.mutableCalls addObject:call];
-        return call;
+            [self.calls addCall:call];
+            return call;
+        }
+        return nil;
     }
     else {
         // TO DO: Group Calls
@@ -78,17 +75,53 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
-    return NO;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
+
+    if (call.chat.friends.count == 1) {
+
+        OCTFriend *friend = call.chat.friends.firstObject;
+
+        BOOL status = [self.toxAV answerIncomingCallFromFriend:friend.friendNumber audioBitRate:audioBitRate videoBitRate:videoBitRate error:error];
+
+        [self.calls updateCallWithChat:call.chat updateBlock:^(OCTCall *call) {
+            call.status = (status) ? OCTCallStatusActive : OCTCallStatusInactive;
+        }];
+
+        if (status) {
+            self.audioEngine.friendNumber = friend.friendNumber;
+            [self.audioEngine startAudioFlow:error];
+        }
+
+        return status;
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 - (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
 {
     OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlPause : OCTToxAVCallControlResume;
-    call.status = (pause) ? OCTCallStatusPaused : OCTCallStatusActive;
 
     if (call.chat.friends.count == 1) {
+
         OCTFriend *friend = call.chat.friends.firstObject;
-        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+
+        BOOL status =  [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+
+        if (status) {
+            [self.calls updateCallWithChat:call.chat updateBlock:^(OCTCall *call) {
+                if (control == OCTToxAVCallControlPause) {
+                    call.status = OCTCallStatusPaused;
+                }
+                else {
+                    call.status = OCTCallStatusActive;
+                }
+            }];
+        }
+        return status;
     }
     else {
         // TO DO: Group Calls
@@ -100,9 +133,11 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
-        [self.mutableCalls removeObject:call];
+        [self.calls removeCall:call];
+        // TO DO: Add OCTMessageCall to db
 
-        return [self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error];
+        return ([self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error] &&
+                [self.audioEngine stopAudioFlow:error]);
     }
     else {
         // TO DO: Group Calls
@@ -112,12 +147,30 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error
 {
-    return NO;
+    OCTToxAVCallControl control = (mute) ? OCTToxAVCallControlMuteAudio : OCTToxAVCallControlUnmuteAudio;
+
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 - (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
 {
-    return NO;
+    OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlHideVideo : OCTToxAVCallControlShowVideo;
+
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 - (UIView *)videoFeedForCall:(OCTCall *)call
@@ -125,18 +178,31 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return nil;
 }
 
-- (void)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
+- (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
 {
-    // To Do
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        return [self.toxAV setAudioBitRate:bitrate force:NO forFriend:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
-- (void)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
+- (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
 {
-    // To Do
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        return [self.toxAV setVideoBitRate:bitrate force:NO forFriend:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 #pragma mark Private methods
-
 
 #pragma mark OCTToxAV delegate methods
 
@@ -149,16 +215,38 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     call.status = OCTCallStatusIncoming;
 
-    [self.mutableCalls addObject:call];
+    [self.calls addCall:call];
 
-    [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];
+    if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
+        [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];
+    }
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber
-{}
+{
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+    OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
+    OCTChat *chat = [self.chatConverter objectFromRLMObject:dbChat];
+
+    [self.calls updateCallWithChat:chat updateBlock:^(OCTCall *call) {
+        call.state = state;
+        if (((state & OCTToxAVCallStateError) != 0) || ((state & OCTToxAVCallStateFinished) != 0)) {
+            call.status = OCTCallStatusInactive;
+        }
+    }];
+}
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
-{}
+{
+    if ([self.delegate respondsToSelector:@selector(callSubmanager:audioBitRateChanged:stable:forCall:)]) {
+        OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+        OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
+        OCTChat *chat = [self.chatConverter objectFromRLMObject:dbChat];
+
+        OCTCall *call = [self.calls callWithFriend:chat.friends.firstObject];
+        [self.delegate callSubmanager:self audioBitRateChanged:bitrate stable:stable forCall:call];
+    }
+}
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
 {}

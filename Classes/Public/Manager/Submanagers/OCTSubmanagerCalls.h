@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "OCTChat.h"
 #import "OCTArray.h"
+#import "OCTCallsContainer.h"
 @class OCTSubmanagerCalls;
 @class OCTToxAV;
 @class OCTCall;
@@ -21,6 +22,11 @@
  **/
 - (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
 
+/**
+ * Audio bitrate has changed
+ **/
+- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager audioBitRateChanged:(OCTToxAVAudioBitRate)bitRate stable:(BOOL)stable forCall:(OCTCall *)call;
+
 @end
 
 @interface OCTSubmanagerCalls : NSObject
@@ -30,7 +36,7 @@
 /**
  * Call sessions that are active.
  */
-- (NSSet *)calls;
+@property (strong, nonatomic, readonly) OCTCallsContainer *calls;
 
 /**
  * This class is responsible for telling the end-user what calls we have available.
@@ -95,11 +101,17 @@
 
 /**
  * Set the Audio bit rate.
+ * @param bitrate The bitrate to change to.
+ * @param call The Call to set the bitrate for.
+ * @param error Pointer to error object if there's an issue setting the bitrate.
  */
-- (void)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
 
 /**
  * Set the Video bit rate.
+ * @param bitrate The bitrate to change to.
+ * @param call The call to set the bitrate for.
+ * @param error Pointer to error object if there's an issue setting the bitrate.
  */
-- (void)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
 @end

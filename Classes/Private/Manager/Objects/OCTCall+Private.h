@@ -13,6 +13,7 @@
 - (instancetype)initCallWithChat:(OCTChat *)chat;
 
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
+@property (nonatomic, assign, readwrite) OCTToxAVCallState state;
 
 - (void)startTimer;
 - (void)stopTimer;

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "OCTChat.h"
 #import "OCTFriend.h"
+#import "OCTToxAVConstants.h"
 
 typedef NS_ENUM(NSUInteger, OCTCallStatus) {
     OCTCallStatusInactive = 0,
@@ -29,6 +30,11 @@ typedef NS_ENUM(NSUInteger, OCTCallStatus) {
  * Call status
  **/
 @property (nonatomic, assign, readonly) OCTCallStatus status;
+
+/**
+ * Call state of friend.
+ **/
+@property (nonatomic, assign, readonly) OCTToxAVCallState state;
 
 /**
  * Call duration
