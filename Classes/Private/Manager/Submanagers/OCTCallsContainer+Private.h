@@ -13,5 +13,5 @@
 - (void)addCall:(OCTCall *)call;
 - (void)removeCall:(OCTCall *)call;
 - (void)updateCall:(OCTCall *)call
-       updateBlock:(void (^)(OCTCall *call))updateBlock;
+       updateBlock:(void (^)(OCTCall *callToUpdate))updateBlock;
 @end

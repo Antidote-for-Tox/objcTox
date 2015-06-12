@@ -49,7 +49,7 @@
 {
     NSUInteger index = [self.container indexOfObjectPassingTest:^BOOL (id obj, NSUInteger idx, BOOL *stop) {
         OCTCall *call = obj;
-        if (call.chat == chat) {
+        if ([call.chat isEqual:chat]) {
             *stop = YES;
             return YES;
         }
@@ -75,11 +75,11 @@
 }
 
 - (void)updateCall:(OCTCall *)call
-       updateBlock:(void (^)(OCTCall *call))updateBlock
+       updateBlock:(void (^)(OCTCall *callToUpdate))updateBlock
 {
     [self.container updateObjectPassingTest:^BOOL (id obj, NSUInteger idx, BOOL *stop) {
         OCTCall *otherCall = obj;
-        if (call.chat.uniqueIdentifier == otherCall.chat.uniqueIdentifier) {
+        if ([call isEqual:otherCall]) {
             *stop = YES;
             return YES;
         }

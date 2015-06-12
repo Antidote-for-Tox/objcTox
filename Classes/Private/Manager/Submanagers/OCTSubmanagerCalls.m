@@ -87,8 +87,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         if (status) {
             self.audioEngine.friendNumber = friend.friendNumber;
             [self.audioEngine startAudioFlow:error];
-            [self.calls updateCall:call updateBlock:^(OCTCall *call) {
-                call.status = OCTCallStatusActive;
+            [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+                callToUpdate.status = OCTCallStatusActive;
             }];
         }
         return status;
@@ -226,10 +226,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTCall *call = [self callFromFriend:friendNumber];
 
-    [self.calls updateCall:call updateBlock:^(OCTCall *call) {
-        call.state = state;
+    [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.state = state;
         if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
-            call.status = OCTCallStatusInactive;
+            callToUpdate.status = OCTCallStatusInactive;
         }
     }];
 }
