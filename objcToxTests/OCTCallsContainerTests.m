@@ -77,19 +77,18 @@
     OCMVerify([mockedContainer objectAtIndex:5]);
 }
 
-- (void)testCallWithFriend
+- (void)testCallWithChat
 {
-    OCTFriend *friend = [OCTFriend new];
     OCTChat *chat = [OCTChat new];
-    chat.friends = @[friend];
+    chat.uniqueIdentifier = @"Test";
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
 
     [self.container addCall:call];
 
-    OCTCall *foundCall = [self.container callWithFriend:friend];
+    OCTCall *foundCall = [self.container callWithChat:chat];
 
     XCTAssertNotNil(foundCall);
-    XCTAssertEqualObjects(foundCall.chat.friends.firstObject, call.chat.friends.firstObject);
+    XCTAssertEqualObjects(foundCall.chat, chat);
 }
 
 #pragma mark - Delegate
@@ -108,7 +107,7 @@
     NSIndexSet *set = [[NSIndexSet alloc] initWithIndex:0];
     OCMVerify([delegate callsContainerUpdate:self.container insertedSet:set removedSet:nil updatedSet:nil]);
 
-    [self.container updateCallWithChat:chat updateBlock:^(OCTCall *call) {}];
+    [self.container updateCall:call updateBlock:^(OCTCall *call) {}];
     OCMVerify([delegate callsContainer:self.container callUpdated:call]);
 }
 
@@ -164,7 +163,7 @@
 
     [self.container addCall:call];
 
-    [self.container updateCallWithChat:chat updateBlock:^(OCTCall *call) {
+    [self.container updateCall:call updateBlock:^(OCTCall *call) {
         call.chat.uniqueIdentifier = @"pass";
     }];
 

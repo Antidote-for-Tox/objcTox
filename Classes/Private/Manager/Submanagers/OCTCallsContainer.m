@@ -35,34 +35,21 @@
 }
 #pragma Public Methods
 
-/**
- * @return Number of calls
- */
 - (NSUInteger)numberOfCalls
 {
     return self.container.count;
 }
 
-/**
- * Returns call at specified index.
- * @param index Index to get call.
- * @return Call object at index. Nil if out of bounds.
- */
 - (OCTCall *)callAtIndex:(NSUInteger)index
 {
     return [self.container objectAtIndex:index];
 }
 
-/**
- * Returns call for specified friend.
- * @param friend Friend to look for call
- * @return Call object of that contains friend. Nil if not found.
- */
-- (OCTCall *)callWithFriend:(OCTFriend *)friend
+- (OCTCall *)callWithChat:(OCTChat *)chat
 {
     NSUInteger index = [self.container indexOfObjectPassingTest:^BOOL (id obj, NSUInteger idx, BOOL *stop) {
         OCTCall *call = obj;
-        if ([call.chat.friends containsObject:friend]) {
+        if (call.chat == chat) {
             *stop = YES;
             return YES;
         }
@@ -87,12 +74,12 @@
     [self.container removeObject:call];
 }
 
-- (void)updateCallWithChat:(OCTChat *)chat
-               updateBlock:(void (^)(OCTCall *call))updateBlock
+- (void)updateCall:(OCTCall *)call
+       updateBlock:(void (^)(OCTCall *call))updateBlock
 {
     [self.container updateObjectPassingTest:^BOOL (id obj, NSUInteger idx, BOOL *stop) {
-        OCTCall *call = obj;
-        if (call.chat.uniqueIdentifier == chat.uniqueIdentifier) {
+        OCTCall *otherCall = obj;
+        if (call.chat.uniqueIdentifier == otherCall.chat.uniqueIdentifier) {
             *stop = YES;
             return YES;
         }

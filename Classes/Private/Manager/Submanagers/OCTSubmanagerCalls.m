@@ -84,15 +84,13 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         BOOL status = [self.toxAV answerIncomingCallFromFriend:friend.friendNumber audioBitRate:audioBitRate videoBitRate:videoBitRate error:error];
 
-        [self.calls updateCallWithChat:call.chat updateBlock:^(OCTCall *call) {
-            call.status = (status) ? OCTCallStatusActive : OCTCallStatusInactive;
-        }];
-
         if (status) {
             self.audioEngine.friendNumber = friend.friendNumber;
             [self.audioEngine startAudioFlow:error];
+            [self.calls updateCall:call updateBlock:^(OCTCall *call) {
+                call.status = OCTCallStatusActive;
+            }];
         }
-
         return status;
     }
     else {
@@ -109,19 +107,15 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTFriend *friend = call.chat.friends.firstObject;
 
-        BOOL status =  [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
-
-        if (status) {
-            [self.calls updateCallWithChat:call.chat updateBlock:^(OCTCall *call) {
-                if (control == OCTToxAVCallControlPause) {
-                    call.status = OCTCallStatusPaused;
-                }
-                else {
-                    call.status = OCTCallStatusActive;
-                }
-            }];
+        if (! [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error]) {
+            return NO;
         }
-        return status;
+
+        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            callToUpdate.status = pause ? OCTCallStatusPaused : OCTCallStatusActive;
+        }];
+
+        return YES;
     }
     else {
         // TO DO: Group Calls
@@ -203,16 +197,22 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 }
 
 #pragma mark Private methods
-
-#pragma mark OCTToxAV delegate methods
-
-- (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTCall *)callFromFriend:(OCTToxFriendNumber)friendNumber
 {
     OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
     OCTDBChat *chatDB = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
     OCTChat *chat = [self.chatConverter objectFromRLMObject:chatDB];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
+
+    return call;
+}
+
+#pragma mark OCTToxAV delegate methods
+
+- (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTCall *call = [self callFromFriend:friendNumber];
     call.status = OCTCallStatusIncoming;
 
     [self.calls addCall:call];
@@ -224,13 +224,11 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-    OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
-    OCTChat *chat = [self.chatConverter objectFromRLMObject:dbChat];
+    OCTCall *call = [self callFromFriend:friendNumber];
 
-    [self.calls updateCallWithChat:chat updateBlock:^(OCTCall *call) {
+    [self.calls updateCall:call updateBlock:^(OCTCall *call) {
         call.state = state;
-        if (((state & OCTToxAVCallStateError) != 0) || ((state & OCTToxAVCallStateFinished) != 0)) {
+        if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
             call.status = OCTCallStatusInactive;
         }
     }];
@@ -239,11 +237,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
     if ([self.delegate respondsToSelector:@selector(callSubmanager:audioBitRateChanged:stable:forCall:)]) {
-        OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-        OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
-        OCTChat *chat = [self.chatConverter objectFromRLMObject:dbChat];
 
-        OCTCall *call = [self.calls callWithFriend:chat.friends.firstObject];
+        OCTCall *call = [self callFromFriend:friendNumber];
+
         [self.delegate callSubmanager:self audioBitRateChanged:bitrate stable:stable forCall:call];
     }
 }

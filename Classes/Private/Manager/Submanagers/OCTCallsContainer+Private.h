@@ -12,6 +12,6 @@
 
 - (void)addCall:(OCTCall *)call;
 - (void)removeCall:(OCTCall *)call;
-- (void)updateCallWithChat:(OCTChat *)chat
-               updateBlock:(void (^)(OCTCall *call))updateBlock;
+- (void)updateCall:(OCTCall *)call
+       updateBlock:(void (^)(OCTCall *call))updateBlock;
 @end

@@ -26,6 +26,8 @@
 @property (strong, nonatomic, readwrite) OCTCallsContainer *calls;
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
+- (OCTCall *)callFromFriend:(OCTToxFriendNumber)friendNumber;
+
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber;
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber;
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber;
@@ -131,7 +133,6 @@
     [self.callManager.calls addCall:call];
 
     XCTAssertFalse([self.callManager answerCall:call enableAudio:YES enableVideo:YES error:nil]);
-    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusInactive);
     [OCMExpect([toxAV answerIncomingCallFromFriend:1234 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]) ignoringNonObjectArgs];
 }
 
@@ -268,27 +269,26 @@
 
 - (void)testAudioBitRateChanged
 {
+    id callManager = OCMPartialMock(self.callManager);
+    self.callManager = callManager;
+
     id delegate = OCMProtocolMock(@protocol(OCTSubmanagerCallDelegate));
     OCMStub([delegate respondsToSelector:[OCMArg anySelector]]).andReturn(YES);
     self.callManager.delegate = delegate;
 
-    id chatConverter = OCMClassMock([OCTConverterChat class]);
-    self.callManager.chatConverter = chatConverter;
-
     OCTChat *chat = [OCTChat new];
+    chat.uniqueIdentifier = @"test";
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 123;
     chat.friends = @[friend];
-    OCMStub([chatConverter objectFromRLMObject:[OCMArg any]]).andReturn(chat);
 
-    id calls = OCMClassMock([OCTCallsContainer class]);
-    self.callManager.calls = calls;
-    OCTCall *call = [OCTCall new];
-    OCMStub([calls callWithFriend:[OCMArg any]]).andReturn(call);
+    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
+    [self.callManager.calls addCall:call];
+
+    OCMStub([callManager callFromFriend:123]).andReturn(call);
 
     [self.callManager toxAV:nil audioBitRateChanged:999 stable:NO friendNumber:123];
-
-    OCMVerify([delegate callSubmanager:self.callManager audioBitRateChanged:999 stable:NO forCall:call]);
+    OCMVerify([delegate callSubmanager:[OCMArg any] audioBitRateChanged:999 stable:NO forCall:call]);
 }
 
 - (void)testReceiveAudio

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTCall.h"
-#import "OCTFriend.h"
+
 
 @class OCTCallsContainer;
 @protocol OCTCallsContainerDelegate <NSObject>
@@ -61,6 +61,6 @@
  * @param friend Friend to look for call
  * @return Call object of that contains friend. Nil if not found.
  */
-- (OCTCall *)callWithFriend:(OCTFriend *)friend;
+- (OCTCall *)callWithChat:(OCTChat *)chat;
 
 @end
