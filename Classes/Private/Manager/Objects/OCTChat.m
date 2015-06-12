@@ -74,4 +74,26 @@
     return [NSString stringWithFormat:@"OCTChat with identifier %@", self.uniqueIdentifier];
 }
 
+#pragma mark - Private
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+
+    if (! [object isKindOfClass:[OCTChat class]]) {
+        return NO;
+    }
+
+    OCTChat *otherChat = object;
+
+    return [self.uniqueIdentifier isEqual:otherChat.uniqueIdentifier];
+}
+
+- (NSUInteger)hash
+{
+    return [self.uniqueIdentifier hash];
+}
+
 @end

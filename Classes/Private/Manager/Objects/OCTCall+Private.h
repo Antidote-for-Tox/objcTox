@@ -13,9 +13,9 @@
 - (instancetype)initCallWithChat:(OCTChat *)chat;
 
 @property (nonatomic, assign, readwrite) OCTCallStatus status;
-@property (strong, nonatomic) NSDate *callStartTime;
+@property (nonatomic, assign, readwrite) OCTToxAVCallState state;
 
 - (void)startTimer;
-- (NSTimeInterval)stopTimer;
+- (void)stopTimer;
 
 @end
