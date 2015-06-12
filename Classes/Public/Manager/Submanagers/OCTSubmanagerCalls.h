@@ -34,7 +34,7 @@
 @property (weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
 
 /**
- * Call sessions that are active.
+ * All call sessions.
  */
 @property (strong, nonatomic, readonly) OCTCallsContainer *calls;
 
@@ -44,9 +44,10 @@
  * @param chat The chat for which we would like to initiate a call.
  * @param enableAudio YES for Audio, otherwise NO.
  * @param enableVideo YES for Video, otherwise NO.
+ * @param error Pointer to an error when attempting to answer a call
  * @return OCTCall session
  */
-- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo;
+- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
 /**
  * Answer a call

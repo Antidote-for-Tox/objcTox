@@ -86,7 +86,7 @@
     chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-    OCTCall *callResult = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO];
+    OCTCall *callResult = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO error:nil];
 
     XCTAssertEqualObjects(call, callResult);
     XCTAssertEqual(self.callManager.calls.numberOfCalls, 1);
@@ -108,7 +108,7 @@
     friend.friendNumber = 1234;
     chat.friends = @[friend];
 
-    OCTCall *call = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO];
+    OCTCall *call = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO error:nil];
 
     XCTAssertEqual(self.callManager.calls.numberOfCalls, 1);
 
@@ -140,6 +140,9 @@
 {
     id toxAV = OCMClassMock([OCTToxAV class]);
     self.callManager.toxAV = toxAV;
+
+    id audioEngine = OCMPartialMock(self.callManager.audioEngine);
+    OCMStub([audioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];

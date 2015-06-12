@@ -88,7 +88,7 @@
 
     OCTChat *otherChat = object;
 
-    return (self.uniqueIdentifier == otherChat.uniqueIdentifier);
+    return [self.uniqueIdentifier isEqual:otherChat.uniqueIdentifier];
 }
 
 - (NSUInteger)hash

@@ -46,7 +46,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return self;
 }
 
-- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo
+- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
@@ -55,17 +55,18 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         OCTFriend *friend = chat.friends.lastObject;
         self.audioEngine.friendNumber = friend.friendNumber;
 
-        if ([self.toxAV callFriendNumber:(OCTToxFriendNumber)friend
-                            audioBitRate:audioBitRate
-                            videoBitRate:videoBitRate
-                                   error:nil]) {
-            OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-            call.status = OCTCallStatusDialing;
-
-            [self.calls addCall:call];
-            return call;
+        if (! [self.toxAV callFriendNumber:friend.friendNumber
+                              audioBitRate:audioBitRate
+                              videoBitRate:videoBitRate
+                                     error:error]) {
+            return nil;
         }
-        return nil;
+
+        OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
+        call.status = OCTCallStatusDialing;
+
+        [self.calls addCall:call];
+        return call;
     }
     else {
         // TO DO: Group Calls
@@ -82,16 +83,17 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTFriend *friend = call.chat.friends.firstObject;
 
-        BOOL status = [self.toxAV answerIncomingCallFromFriend:friend.friendNumber audioBitRate:audioBitRate videoBitRate:videoBitRate error:error];
-
-        if (status) {
-            self.audioEngine.friendNumber = friend.friendNumber;
-            [self.audioEngine startAudioFlow:error];
-            [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-                callToUpdate.status = OCTCallStatusActive;
-            }];
+        if (! ([self.toxAV answerIncomingCallFromFriend:friend.friendNumber audioBitRate:audioBitRate videoBitRate:videoBitRate error:error] &&
+               [self.audioEngine startAudioFlow:error])) {
+            return NO;
         }
-        return status;
+
+        self.audioEngine.friendNumber = friend.friendNumber;
+        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            callToUpdate.status = OCTCallStatusActive;
+        }];
+
+        return YES;
     }
     else {
         // TO DO: Group Calls
