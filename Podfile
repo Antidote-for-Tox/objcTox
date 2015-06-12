@@ -5,7 +5,7 @@ platform :ios, '7.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-pod 'toxcore-ios', '~> 0.1.6'
+pod 'toxcore-ios', '~> 0.1.7'
 pod 'CocoaLumberjack', '~> 1.9.2'
 
 target :objcToxTests do
