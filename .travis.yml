@@ -1,5 +1,11 @@
 language: objective-c
 
+notifications:
+    email:
+        - d@dvor.me
+        - chuongv@gmail.com
+
+
 before_install:
     - gem install slather -N
     - gem install cocoapods
