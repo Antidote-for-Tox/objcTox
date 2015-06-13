@@ -53,3 +53,20 @@ typedef NS_ENUM(NSUInteger, OCTMessageFileType) {
      */
     OCTMessageFileTypeReady,
 };
+
+typedef NS_ENUM(NSInteger, OCTMessageCallType) {
+    /**
+     * Call dialing
+     */
+    OCTMessageCallTypeDial,
+
+    /**
+     * Call was missed.
+     */
+    OCTMessageCallTypeMissed,
+
+    /**
+     * Call has ended.
+     */
+    OCTMessageCallTypeEnd,
+};

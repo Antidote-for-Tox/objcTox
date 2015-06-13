@@ -12,6 +12,7 @@
 @interface OCTDBMessageCall : RLMObject
 
 @property NSTimeInterval callDuration;
+@property OCTMessageCallType callType;
 
 - (instancetype)initWithMessageCall:(OCTMessageCall *)call;
 
