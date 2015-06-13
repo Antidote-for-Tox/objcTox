@@ -7,11 +7,13 @@
 //
 
 #import "OCTSubmanagerCalls+Private.h"
+#import "OCTConverterFriend.h"
+#import "OCTConverterMessage.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = 24000;
 const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
-@interface OCTSubmanagerCalls () <OCTToxAVDelegate>
+@interface OCTSubmanagerCalls () <OCTToxAVDelegate, OCTConverterChatDelegate, OCTConverterFriendDataSource>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
@@ -39,7 +41,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     _audioEngine = [OCTAudioEngine new];
     _audioEngine.toxav = self.toxAV;
 
+    OCTConverterFriend *friendConverter = [OCTConverterFriend new];
+    friendConverter.dataSource = self;
+
+    OCTConverterMessage *messageConverter = [OCTConverterMessage new];
+    messageConverter.converterFriend = friendConverter;
+
     _chatConverter = [OCTConverterChat new];
+    _chatConverter.delegate = self;
+    _chatConverter.converterFriend = friendConverter;
+    _chatConverter.converterMessage = messageConverter;
 
     _calls = [OCTCallsContainer new];
 
@@ -268,5 +279,31 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                   friendNumber:(OCTToxFriendNumber)friendNumber
 {}
 
+#pragma mark -  OCTConverterFriendDataSource
 
+- (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend
+{
+    return [self.dataSource managerGetTox];
+}
+
+- (OCTDBManager *)converterFriendGetDBManager:(OCTConverterFriend *)converterFriend
+{
+    return [self.dataSource managerGetDBManager];
+}
+
+- (void)converterFriend:(OCTConverterFriend *)converter updateDBFriendWithBlock:(void (^)())block
+{
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBFriend class]];
+}
+
+#pragma mark -  OCTConverterChatDelegate
+
+- (void)converterChat:(OCTConverterChat *)converter updateDBChatWithBlock:(void (^)())block
+{
+    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBChat class]];
+}
 @end
