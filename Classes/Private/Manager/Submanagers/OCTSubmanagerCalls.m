@@ -140,8 +140,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
+
+        [self logCall:call type:OCTMessageCallTypeEnd];
         [self.calls removeCall:call];
-        // TO DO: Add OCTMessageCall to db
 
         return ([self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error] &&
                 [self.audioEngine stopAudioFlow:error]);
@@ -221,6 +222,27 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return call;
 }
 
+- (void)logCall:(OCTCall *)call type:(OCTMessageCallType)type
+{
+    if (call.chat.friends.count == 1) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+
+
+        OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+
+        OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
+        OCTDBFriend *dbFriend = [dbManager getOrCreateFriendWithFriendNumber:friend.friendNumber];
+
+        OCTDBMessageAbstract *messageAbstract = [dbManager addMessageCallWithChat:dbChat
+                                                                         callType:type
+                                                                         duration:call.callDuration
+                                                                           sender:dbFriend];
+        [dbManager updateDBObjectInBlock:^{
+            dbChat.lastMessage = messageAbstract;
+        } objectClass:[OCTDBChat class]];
+    }
+}
+
 #pragma mark OCTToxAV delegate methods
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
@@ -239,12 +261,15 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTCall *call = [self callFromFriend:friendNumber];
 
-    [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-        callToUpdate.state = state;
-        if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
-            callToUpdate.status = OCTCallStatusInactive;
-        }
-    }];
+    if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
+        [self logCall:call type:OCTMessageCallTypeEnd];
+        [self.calls removeCall:call];
+    }
+    else {
+        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            callToUpdate.state = state;
+        }];
+    }
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
