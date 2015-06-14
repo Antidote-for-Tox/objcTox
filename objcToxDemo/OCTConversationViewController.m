@@ -136,7 +136,7 @@
 {
     NSError *error;
 
-    OCTCall *call = [self.manager.calls.calls callAtIndex:0];
+    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
 
     if (! [self.manager.calls endCall:call error:&error]) {
         NSLog(@"%@ Error %@", self, error.localizedDescription);

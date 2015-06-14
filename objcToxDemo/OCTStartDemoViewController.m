@@ -12,6 +12,7 @@
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
 #import "OCTChatsViewController.h"
+#import "OCTTabBarControllerViewController.h"
 #import "AppDelegate.h"
 
 #define NAVIGATION_WITH_CONTROLLER(class) \
@@ -55,7 +56,7 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 
     [self bootstrap:manager];
 
-    UITabBarController *tabBar = [UITabBarController new];
+    OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
     tabBar.viewControllers = @[
         NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
         NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
@@ -64,6 +65,7 @@ static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.window.rootViewController = tabBar;
+    manager.calls.delegate = tabBar;
 }
 
 #pragma mark -  UITableViewDataSource
