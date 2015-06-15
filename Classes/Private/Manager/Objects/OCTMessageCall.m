@@ -36,12 +36,10 @@
             description = @"Call dial";
             break;
         case OCTMessageCallTypeEnd:
-            description = [[NSString alloc] initWithFormat:@"Call ended %f seconds", self.callDuration];
+            description = [[NSString alloc] initWithFormat:@"Call lasted %f seconds", self.callDuration];
             break;
         case OCTMessageCallTypeMissed:
             description = @"Call missed";
-            break;
-        default:
             break;
     }
     return description;
