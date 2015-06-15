@@ -58,7 +58,7 @@
                                                          handler:^(UIAlertAction *action) {
         NSError *error;
         BOOL status = [callSubmanager answerCall:call
-                                     enableAudio:NO
+                                     enableAudio:YES
                                      enableVideo:NO
                                            error:&error];
         if (! status) {

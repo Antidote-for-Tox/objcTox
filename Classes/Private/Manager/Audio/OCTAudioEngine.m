@@ -241,6 +241,10 @@ static OSStatus inputRenderCallBack(void *inRefCon,
 {
 
     AudioBufferList bufferList;
+    bufferList.mNumberBuffers = 1;
+    bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
+    bufferList.mBuffers[0].mData = NULL;
+    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfChannels;
 
     OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
     OSStatus status = _AudioUnitRender(engine.ioUnit,
@@ -249,13 +253,13 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        inBusNumber,
                                        inNumberFrames,
                                        &bufferList);
-
-    [engine.toxav sendAudioFrame:bufferList.mBuffers[1].mData
-                     sampleCount:bufferList.mNumberBuffers
+    NSError *error;
+    [engine.toxav sendAudioFrame:bufferList.mBuffers[0].mData
+                     sampleCount:inNumberFrames
                         channels:kNumberOfChannels
-                      sampleRate:engine.currentAudioSampleRate
+                      sampleRate:[engine currentAudioSampleRate] / 1000
                         toFriend:engine.friendNumber
-                           error:nil];
+                           error:&error];
     return status;
 }
 
@@ -274,6 +278,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     int32_t availableBytes;
     SInt16 *buffer = TPCircularBufferTail(&myEngine->_buffer, &availableBytes);
     int32_t sampleCount = MIN(bytesToCopy, availableBytes);
+
     memcpy(targetBuffer, buffer, sampleCount);
     TPCircularBufferConsume(&myEngine->_buffer, sampleCount);
 
@@ -319,10 +324,10 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     asbd.mChannelsPerFrame = 2;
-    asbd.mBytesPerFrame = bytesPerSample;
+    asbd.mBytesPerFrame = bytesPerSample * 2;
     asbd.mBitsPerChannel = 8 * bytesPerSample;
     asbd.mFramesPerPacket = 1;
-    asbd.mBytesPerPacket = bytesPerSample;
+    asbd.mBytesPerPacket = bytesPerSample * 2;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -334,7 +339,21 @@ static OSStatus outputRenderCallBack(void *inRefCon,
         [self fillError:error
                withCode:status
             description:@"Stream Format"
-          failureReason:@"Failed to setup stream format"];
+          failureReason:@"Failed to setup output stream format"];
+        return NO;
+    }
+
+    status = _AudioUnitSetProperty(self.ioUnit,
+                                   kAudioUnitProperty_StreamFormat,
+                                   kAudioUnitScope_Input,
+                                   kOutputBus,
+                                   &asbd,
+                                   sizeof(asbd));
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Stream Format"
+          failureReason:@"Failed to setup input stream format"];
         return NO;
     }
     return YES;

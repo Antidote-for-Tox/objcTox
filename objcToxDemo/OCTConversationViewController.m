@@ -126,7 +126,7 @@
 - (void)callFriend
 {
     NSError *error;
-    [self.manager.calls callToChat:self.chat enableAudio:NO enableVideo:NO error:&error];
+    [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
 
     NSLog(@"%@ Error %@", self, error.localizedDescription);
     NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
