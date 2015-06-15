@@ -1,4 +1,4 @@
-[![Build Status](http://img.shields.io/travis/dvor/objcTox/master.svg?style=flat)](https://travis-ci.org/dvor/objcTox) [![Coverage Status](https://coveralls.io/repos/dvor/objcTox/badge.svg)](https://coveralls.io/r/dvor/objcTox)
+[![Build Status](https://img.shields.io/travis/Antidote-for-Tox/objcTox/master.svg?style=flat)](https://travis-ci.org/Antidote-for-Tox/objcTox) [![Coverage Status](https://coveralls.io/repos/Antidote-for-Tox/objcTox/badge.svg)](https://coveralls.io/r/Antidote-for-Tox/objcTox)
 
 # objcTox
 
@@ -8,7 +8,7 @@ Description will be here soon. :)
 
 ## Downloads
 
-1. Clone repo `git clone --recursive https://github.com/dvor/objcTox.git`
+1. Clone repo `git clone --recursive https://github.com/Antidote-for-Tox/objcTox.git`
 2. Install CocoaPods `pod install`
 3. Open `objcTox.xcworkspace` file with Xcode 5+.
 
