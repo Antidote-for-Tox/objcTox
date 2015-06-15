@@ -139,12 +139,13 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 {
     UInt32 enableInput = (enable) ? 1 : 0;
     AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
+    AudioUnitElement bus = (scope == OCTInput) ? kInputBus : kOutputBus;
 
     OSStatus status = _AudioUnitSetProperty(
         self.ioUnit,
         kAudioOutputUnitProperty_EnableIO,
         unitScope,
-        kOutputBus,
+        bus,
         &enableInput,
         sizeof(enableInput)
                       );
