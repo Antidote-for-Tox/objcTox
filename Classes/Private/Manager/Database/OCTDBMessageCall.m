@@ -19,6 +19,8 @@
     }
 
     self.callDuration = call.callDuration;
+    self.callType = call.callType;
+
     return self;
 }
 

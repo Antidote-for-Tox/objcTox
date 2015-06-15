@@ -11,5 +11,6 @@
 @interface OCTMessageCall (Private)
 
 @property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
+@property (assign, nonatomic, readwrite) OCTMessageCallType callType;
 
 @end

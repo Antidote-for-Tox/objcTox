@@ -283,6 +283,31 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
     return message;
 }
 
+- (OCTDBMessageAbstract *)addMessageCallWithChat:(OCTDBChat *)chat
+                                        callType:(OCTMessageCallType)callType
+                                        duration:(NSTimeInterval)duration
+                                          sender:(OCTDBFriend *)sender
+{
+    __block OCTDBMessageAbstract *message;
+
+    dispatch_sync(self.queue, ^{
+        message = [OCTDBMessageAbstract new];
+        message.dateInterval = [[NSDate date] timeIntervalSince1970];
+        message.sender = sender;
+        message.chat = chat;
+        message.callMessage = [OCTDBMessageCall new];
+        message.callMessage.callType = callType;
+        message.callMessage.callDuration = duration;
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:message];
+        [self.realm commitWriteTransaction];
+    });
+
+    [self sendUpdateNotificationForClass:[OCTDBMessageAbstract class]];
+
+    return message;
+}
+
 - (OCTDBMessageAbstract *)textMessageInChat:(OCTDBChat *)chat withMessageId:(int)messageId
 {
     NSParameterAssert(chat);

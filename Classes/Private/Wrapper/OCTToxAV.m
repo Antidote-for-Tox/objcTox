@@ -529,7 +529,7 @@ void callIncomingCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: callIncomingCallback from friend %lu with audio:%d with video:%d", cToxAV, (unsigned long)friendNumber, audioEnabled, videoEnabled);
+        DDLogCInfo(@"%@: callIncomingCallback from friend %lu with audio:%d with video:%d", toxAV, (unsigned long)friendNumber, audioEnabled, videoEnabled);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveCallAudioEnabled:videoEnabled:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV receiveCallAudioEnabled:audioEnabled videoEnabled:videoEnabled friendNumber:friendNumber];
         }
@@ -545,7 +545,7 @@ void callStateCallback(ToxAV *cToxAV,
 
     dispatch_async(dispatch_get_main_queue(), ^{
 
-        DDLogCInfo(@"%@: callStateCallback from friend %d with state: %d", cToxAV, friendNumber, cState);
+        DDLogCInfo(@"%@: callStateCallback from friend %d with state: %d", toxAV, friendNumber, cState);
 
         OCTToxAVCallState state = 0;
 
@@ -583,7 +583,7 @@ void audioBitRateStatusCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: audioBitRateStatusCallback from friend %d stable: %d bitRate: %d", cToxAV, friendNumber, stable, bitRate);
+        DDLogCInfo(@"%@: audioBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:audioBitRateChanged:stable:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV audioBitRateChanged:bitRate stable:stable friendNumber:friendNumber];
         }
@@ -599,7 +599,7 @@ void videoBitRateStatusCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: videoBitRateStatusCallback from friend %d stable: %d bitRate: %d", cToxAV, friendNumber, stable, bitRate);
+        DDLogCInfo(@"%@: videoBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:videoBitRateChanged:friendNumber:stable:)]) {
             [toxAV.delegate toxAV:toxAV videoBitRateChanged:bitRate friendNumber:friendNumber stable:stable];
         }
@@ -617,7 +617,7 @@ void receiveAudioFrameCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d", cToxAV, friendNumber, sampleCount, channels);
+        DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d", toxAV, friendNumber, sampleCount, channels);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
         }
@@ -635,7 +635,7 @@ void receiveVideoFrameCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: receiveVideoFrameCallback from friend %d width: %d height: %d", cToxAV, friendNumber, width, height);
+        DDLogCInfo(@"%@: receiveVideoFrameCallback from friend %d width: %d height: %d", toxAV, friendNumber, width, height);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:aPlane:yStride:uStride:vStride:aStride:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV
              receiveVideoFrameWithWidth:width height:height

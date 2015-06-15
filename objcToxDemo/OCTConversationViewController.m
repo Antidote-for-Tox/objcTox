@@ -93,12 +93,20 @@
         [sheet bk_addButtonWithTitle:@"Send message" handler:^{
             [weakSelf sendMessage];
         }];
+
+        [sheet bk_addButtonWithTitle:@"Call friend" handler:^{
+            [weakSelf callFriend];
+        }];
+
+        [sheet bk_addButtonWithTitle:@"End call" handler:^{
+            [weakSelf endCall];
+        }];
     }];
 }
 
 - (void)sendMessage
 {
-    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"Send friend request" message:nil];
+    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"Send message" message:nil];
 
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     UITextField *messageField = [alert textFieldAtIndex:0];
@@ -113,6 +121,27 @@
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
 
     [alert show];
+}
+
+- (void)callFriend
+{
+    NSError *error;
+    [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
+
+    NSLog(@"%@ Error %@", self, error.localizedDescription);
+    NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
+}
+
+- (void)endCall
+{
+    NSError *error;
+
+    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+
+    if (! [self.manager.calls endCall:call error:&error]) {
+        NSLog(@"%@ Error %@", self, error.localizedDescription);
+        NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
+    }
 }
 
 @end
