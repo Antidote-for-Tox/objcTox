@@ -617,7 +617,7 @@ void receiveAudioFrameCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        //DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d samplerate: %d", toxAV, friendNumber, sampleCount, channels, sampleRate);
+        // DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d samplerate: %d", toxAV, friendNumber, sampleCount, channels, sampleRate);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
         }
