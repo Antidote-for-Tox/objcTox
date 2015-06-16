@@ -182,6 +182,6 @@
 - (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
                          width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
                         yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
-                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
                          error:(NSError **)error;
 @end

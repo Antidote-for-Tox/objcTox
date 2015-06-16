@@ -32,7 +32,8 @@ bool (*_toxav_audio_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t
 bool (*_toxav_video_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
 
 bool (*_toxav_audio_send_frame)(ToxAV *toxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error);
-bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, const uint8_t *a, TOXAV_ERR_SEND_FRAME *error);
+bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, TOXAV_ERR_SEND_FRAME *error);
+
 
 @interface OCTToxAV ()
 
@@ -252,11 +253,11 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 - (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
                          width:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
                         yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
-                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
                          error:(NSError **)error
 {
     TOXAV_ERR_SEND_FRAME cError;
-    BOOL status = _toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, aPlane, &cError);
+    BOOL status = _toxav_video_send_frame(self.toxAV, friendNumber, width, height, yPlane, uPlane, vPlane, &cError);
 
     [self fillError:error withCErrorSendFrame:cError];
 
@@ -628,19 +629,19 @@ void receiveVideoFrameCallback(ToxAV *cToxAV,
                                OCTToxFriendNumber friendNumber,
                                OCTToxAVVideoWidth width,
                                OCTToxAVVideoHeight height,
-                               OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane, OCTToxAVPlaneData *aPlane,
-                               OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride, OCTToxAVStrideData aStride,
+                               OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane,
+                               OCTToxAVStrideData yStride, OCTToxAVStrideData uStride, OCTToxAVStrideData vStride,
                                void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: receiveVideoFrameCallback from friend %d width: %d height: %d", toxAV, friendNumber, width, height);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:aPlane:yStride:uStride:vStride:aStride:friendNumber:)]) {
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:yStride:uStride:vStride:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV
              receiveVideoFrameWithWidth:width height:height
-                                 yPlane:yPlane uPlane:uPlane vPlane:vPlane aPlane:aPlane
-                                yStride:yStride uStride:uStride vStride:vStride aStride:aStride
+                                 yPlane:yPlane uPlane:uPlane vPlane:vPlane
+                                yStride:yStride uStride:uStride vStride:vStride
                            friendNumber:friendNumber];
         }
     });

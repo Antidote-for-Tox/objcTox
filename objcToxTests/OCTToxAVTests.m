@@ -36,7 +36,7 @@ bool mocked_toxav_audio_bit_rate_set(ToxAV *toxAV, uint32_t friend_number, uint3
 bool mocked_toxav_video_bit_rate_set(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
 
 bool mocked_toxav_audio_send_frame(ToxAV *toxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error);
-bool mocked_toxav_video_send_frame(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, const uint8_t *a, TOXAV_ERR_SEND_FRAME *error);
+bool mocked_toxav_video_send_frame(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, TOXAV_ERR_SEND_FRAME *error);
 
 OCTToxAVPCMData pcmTestData [] = { 5, 6, 7, 8};
 OCTToxAVPCMData *pcmPointer = pcmTestData;
@@ -166,7 +166,6 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
                                                yPlane:yPlanePointer
                                                uPlane:uPlanePointer
                                                vPlane:vPlanePointer
-                                               aPlane:aPlanePointer
                                                 error:nil]);
 }
 
@@ -418,20 +417,18 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     const OCTToxAVPlaneData *uPointer = uPlane;
     const OCTToxAVPlaneData vPlane[] = {1, 2, 5, 4, 5};
     const OCTToxAVPlaneData *vPointer = vPlane;
-    const OCTToxAVPlaneData aPlane[] = {1, 2, 11, 4, 5};
-    const OCTToxAVPlaneData *aPointer = aPlane;
 
     [self makeTestCallbackWithCallBlock:^{
         receiveVideoFrameCallback(NULL, 123,
                                   999, 888,
-                                  yPointer, uPointer, vPointer, aPointer,
-                                  1, 2, 3, 4,
+                                  yPointer, uPointer, vPointer,
+                                  1, 2, 3,
                                   (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
                    receiveVideoFrameWithWidth:999 height:888
-                                       yPlane:yPointer uPlane:uPointer vPlane:vPointer aPlane:aPointer
-                                      yStride:1 uStride:2 vStride:3 aStride:4 friendNumber:123]);
+                                       yPlane:yPointer uPlane:uPointer vPlane:vPointer
+                                      yStride:1 uStride:2 vStride:3 friendNumber:123]);
     }];
 }
 
@@ -611,7 +608,7 @@ bool mocked_toxav_audio_send_frame(ToxAV *cToxAV, uint32_t friend_number, const 
     return true;
 }
 
-bool mocked_toxav_video_send_frame(ToxAV *cToxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, const uint8_t *a, TOXAV_ERR_SEND_FRAME *error)
+bool mocked_toxav_video_send_frame(ToxAV *cToxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, TOXAV_ERR_SEND_FRAME *error)
 {
     OCTToxAV *toxAV = [(__bridge OCTToxAVTests *)refToSelf toxAV];
 
@@ -622,7 +619,6 @@ bool mocked_toxav_video_send_frame(ToxAV *cToxAV, uint32_t friend_number, uint16
     CCCAssertEqual(yPlanePointer, y);
     CCCAssertEqual(uPlanePointer, u);
     CCCAssertEqual(vPlanePointer, v);
-    CCCAssertEqual(aPlanePointer, a);
     CCCAssertEqual(7, friend_number);
 
     return false;
