@@ -47,6 +47,7 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     self.audioSession = OCMClassMock([AVAudioSession class]);
     OCMStub([self.audioSession sharedInstance]).andReturn(self.audioSession);
     OCMStub([self.audioSession sampleRate]).andReturn(44100.00);
+    [OCMStub([self.audioSession setPreferredSampleRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     OCMStub([self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -77,9 +78,9 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
 {
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     _AUGraphStart = mocked_success_inGraph;
-    XCTAssertTrue([self.audioEngine startAudioFlow:nil]);
-
     NSError *error;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+
     _AUGraphInitialize = mocked_fail_inGraph;
     XCTAssertFalse([self.audioEngine startAudioFlow:&error]);
     XCTAssertNotNil(error);
@@ -94,7 +95,7 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     XCTAssertTrue([self.audioEngine stopAudioFlow:nil]);
 
     NSError *error;
-    _AUGraphUninitialize = mocked_fail_inGraph;
+    _AUGraphStop = mocked_fail_inGraph;
     XCTAssertFalse([self.audioEngine stopAudioFlow:&error]);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, 1);

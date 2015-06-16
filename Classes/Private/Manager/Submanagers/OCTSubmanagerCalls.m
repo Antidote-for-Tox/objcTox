@@ -94,7 +94,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTFriend *friend = call.chat.friends.firstObject;
 
-        if (! ([self.toxAV answerIncomingCallFromFriend:friend.friendNumber audioBitRate:audioBitRate videoBitRate:videoBitRate error:error] &&
+        if (! ([self.toxAV answerIncomingCallFromFriend:friend.friendNumber
+                                           audioBitRate:audioBitRate
+                                           videoBitRate:videoBitRate
+                                                  error:error] &&
                [self.audioEngine startAudioFlow:error])) {
             return NO;
         }
@@ -102,6 +105,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         self.audioEngine.friendNumber = friend.friendNumber;
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
             callToUpdate.status = OCTCallStatusActive;
+            [callToUpdate startTimer];
         }];
 
         return YES;
@@ -141,7 +145,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
 
-        [self logCall:call type:OCTMessageCallTypeEnd];
+        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
         [self.calls removeCall:call];
 
         return ([self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error] &&
@@ -222,11 +226,19 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return call;
 }
 
-- (void)logCall:(OCTCall *)call type:(OCTMessageCallType)type
+- (void)setCallActiveAndStartTimer:(OCTCall *)call
+{
+    [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.status = OCTCallStatusActive;
+        [callToUpdate startTimer];
+    }];
+}
+
+- (void)logCallAndStopTimer:(OCTCall *)call type:(OCTMessageCallType)type
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
-
+        [call stopTimer];
 
         OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
 
@@ -262,12 +274,17 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTCall *call = [self callFromFriend:friendNumber];
 
     if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
-        [self logCall:call type:OCTMessageCallTypeEnd];
+        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
+        [self.audioEngine stopAudioFlow:nil];
         [self.calls removeCall:call];
     }
     else {
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            if (callToUpdate.status == OCTCallStatusDialing) {
+                [self.audioEngine startAudioFlow:nil];
+            }
             callToUpdate.state = state;
+            callToUpdate.status = OCTCallStatusActive;
         }];
     }
 }

@@ -12,8 +12,10 @@
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
-static const int kBufferLength = 1024;
+static const int kBufferLength = 4096;
 static const int kNumberOfChannels = 2;
+static const int kDefaultSampleRate = 24000;
+static const int kSampleCount = 960;
 
 OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 OSStatus (*_AUGraphAddNode)(
@@ -56,6 +58,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
 @property (nonatomic, assign) TPCircularBuffer buffer;
 @property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
+@property (nonatomic, assign) OCTToxAVSampleRate playbackSampleRate;
 
 @end
 
@@ -88,6 +91,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     _AUGraphOpen(_processingGraph);
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
+
     return self;
 }
 
@@ -100,8 +104,10 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
+
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
+            [self setupMaximumFramesPerSlice:error] &&
             [self setUpStreamFormat:error] &&
             [self registerInputCallBack:error] &&
             [self registerOutputCallBack:error] &&
@@ -120,20 +126,10 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         return NO;
     }
 
-    status = _AUGraphUninitialize(self.processingGraph);
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"AUGraphUninitialize"
-          failureReason:@"Failed to uninitialize graph"];
-        return NO;
-    }
-
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
     return [session setActive:NO error:error];
 }
-
-
 
 - (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
 {
@@ -147,8 +143,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         unitScope,
         bus,
         &enableInput,
-        sizeof(enableInput)
-                      );
+        sizeof(enableInput));
+
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -158,7 +154,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     }
 
     return YES;
-
 }
 
 
@@ -182,7 +177,13 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 - (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
 {
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
+
     TPCircularBufferProduceBytes(&_buffer, pcm, len);
+
+    if (self.playbackSampleRate != sampleRate) {
+        [self updatePlaybackSampleRate:sampleRate error:nil];
+        self.playbackSampleRate = sampleRate;
+    }
 }
 
 #pragma mark - Call Backs
@@ -239,7 +240,6 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData)
 {
-
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
     bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
@@ -255,11 +255,12 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        &bufferList);
     NSError *error;
     [engine.toxav sendAudioFrame:bufferList.mBuffers[0].mData
-                     sampleCount:inNumberFrames
+                     sampleCount:kSampleCount
                         channels:kNumberOfChannels
-                      sampleRate:[engine currentAudioSampleRate] / 1000
+                      sampleRate:[engine currentAudioSampleRate]
                         toFriend:engine.friendNumber
                            error:&error];
+
     return status;
 }
 
@@ -308,19 +309,22 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)startAudioSession:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+            [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
             [session setActive:YES error:error]);
 }
 
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
-    UInt32 bytesPerSample = sizeof(SInt32);
-    double sampleRate = [AVAudioSession sharedInstance].sampleRate;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    self.currentAudioSampleRate = session.sampleRate;
+    self.playbackSampleRate = session.sampleRate;
 
-    self.currentAudioSampleRate = sampleRate;
+    UInt32 bytesPerSample = sizeof(SInt16);
 
     AudioStreamBasicDescription asbd = {0};
-    asbd.mSampleRate = sampleRate;
+    asbd.mSampleRate = self.currentAudioSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     asbd.mChannelsPerFrame = 2;
@@ -382,6 +386,58 @@ static OSStatus outputRenderCallBack(void *inRefCon,
           failureReason:@"Failed to start Graph"];
         return NO;
     }
+    return YES;
+}
+
+- (BOOL)setupMaximumFramesPerSlice:(NSError **)error
+{
+
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
+                                            kAudioUnitProperty_MaximumFramesPerSlice,
+                                            kAudioUnitScope_Output,
+                                            kInputBus,
+                                            &kSampleCount,
+                                            sizeof(kSampleCount));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Setup max frames per slice"
+          failureReason:@"Failed to set max frames per slice"];
+        return NO;
+    }
+    return YES;
+}
+
+
+- (BOOL)updatePlaybackSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+{
+    UInt32 bytesPerSample = sizeof(SInt16);
+
+    AudioStreamBasicDescription asbd = {0};
+    asbd.mSampleRate = rate;
+    asbd.mFormatID = kAudioFormatLinearPCM;
+    asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    asbd.mChannelsPerFrame = 2;
+    asbd.mBytesPerFrame = bytesPerSample * 2;
+    asbd.mBitsPerChannel = 8 * bytesPerSample;
+    asbd.mFramesPerPacket = 1;
+    asbd.mBytesPerPacket = bytesPerSample * 2;
+
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
+                                            kAudioUnitProperty_StreamFormat,
+                                            kAudioUnitScope_Output,
+                                            kInputBus,
+                                            &asbd,
+                                            sizeof(asbd));
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Stream Format"
+          failureReason:@"Failed to setup output stream format"];
+        return NO;
+    }
+
     return YES;
 }
 
