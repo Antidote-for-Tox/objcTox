@@ -291,18 +291,18 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 {
     OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
 
-    UInt32 bytesToCopy = ioData->mBuffers[0].mDataByteSize;
+    UInt32 targetBufferSize = ioData->mBuffers[0].mDataByteSize;
     SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
 
     int32_t availableBytes;
     SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
 
-    if (bytesToCopy > availableBytes) {
-        memset(targetBuffer, 0, bytesToCopy);
+    if (availableBytes < targetBufferSize) {
+        memset(targetBuffer, 0, targetBufferSize);
         return noErr;
     }
-    memcpy(targetBuffer, buffer, bytesToCopy);
-    TPCircularBufferConsume(&myEngine->_outputBuffer, bytesToCopy);
+    memcpy(targetBuffer, buffer, targetBufferSize);
+    TPCircularBufferConsume(&myEngine->_outputBuffer, targetBufferSize);
 
     return noErr;
 }
