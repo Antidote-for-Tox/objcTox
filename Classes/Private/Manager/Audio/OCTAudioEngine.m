@@ -17,6 +17,8 @@ static const int kNumberOfChannels = 2;
 static const int kDefaultSampleRate = 48000;
 static const NSTimeInterval kPreferredBufferDuration = .04;
 static const int kSampleCount = 1920;
+static const int kBitsPerByte = 8;
+static const int kFramesPerPacket = 1;
 
 OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 OSStatus (*_AUGraphAddNode)(
@@ -57,8 +59,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) AUNode ioNode;
 @property (nonatomic, assign) AudioUnit ioUnit;
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
-@property (nonatomic, assign) TPCircularBuffer incomingBuffer;
-@property (nonatomic, assign) TPCircularBuffer outgoingBuffer;
+@property (nonatomic, assign) TPCircularBuffer outputBuffer;
+@property (nonatomic, assign) TPCircularBuffer inputBuffer;
 @property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate playbackSampleRate;
 
@@ -82,8 +84,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     _ioUnitDescription.componentFlags = 0;
     _ioUnitDescription.componentFlagsMask = 0;
 
-    TPCircularBufferInit(&_incomingBuffer, kBufferLength);
-    TPCircularBufferInit(&_outgoingBuffer, kBufferLength);
+    TPCircularBufferInit(&_outputBuffer, kBufferLength);
+    TPCircularBufferInit(&_inputBuffer, kBufferLength);
 
     _NewAUGraph(&_processingGraph);
 
@@ -100,8 +102,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
 - (void)dealloc
 {
-    TPCircularBufferCleanup(&_incomingBuffer);
-    TPCircularBufferCleanup(&_outgoingBuffer);
+    TPCircularBufferCleanup(&_outputBuffer);
+    TPCircularBufferCleanup(&_inputBuffer);
 
     _DisposeAUGraph(_processingGraph);
 }
@@ -112,7 +114,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
-            [self setupMaximumFramesPerSlice:error] &&
             [self setUpStreamFormat:error] &&
             [self registerInputCallBack:error] &&
             [self registerOutputCallBack:error] &&
@@ -183,7 +184,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 {
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
-    TPCircularBufferProduceBytes(&_incomingBuffer, pcm, len);
+    TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
     if ((self.playbackSampleRate != sampleRate) && [self updatePlaybackSampleRate:sampleRate error:nil]) {
         self.playbackSampleRate = sampleRate;
     }
@@ -257,12 +258,12 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        inNumberFrames,
                                        &bufferList);
 
-    TPCircularBufferProduceBytes(&engine->_outgoingBuffer,
+    TPCircularBufferProduceBytes(&engine->_inputBuffer,
                                  bufferList.mBuffers[0].mData,
                                  bufferList.mBuffers[0].mDataByteSize);
 
     int32_t availableBytesToConsume;
-    void *tail = TPCircularBufferTail(&engine->_outgoingBuffer, &availableBytesToConsume);
+    void *tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
     int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
 
     int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
@@ -275,8 +276,8 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                           sampleRate:engine.currentAudioSampleRate
                             toFriend:engine.friendNumber
                                error:&error];
-        TPCircularBufferConsume(&engine->_outgoingBuffer, minimalBytesToConsume);
-        tail = TPCircularBufferTail(&engine->_outgoingBuffer, &availableBytesToConsume);
+        TPCircularBufferConsume(&engine->_inputBuffer, minimalBytesToConsume);
+        tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
     }
     return status;
 }
@@ -294,15 +295,14 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
 
     int32_t availableBytes;
-    SInt16 *buffer = TPCircularBufferTail(&myEngine->_incomingBuffer, &availableBytes);
-    UInt32 sampleCount = MIN(bytesToCopy, availableBytes);
+    SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
 
     if (bytesToCopy > availableBytes) {
         memset(targetBuffer, 0, bytesToCopy);
         return noErr;
     }
-    memcpy(targetBuffer, buffer, sampleCount);
-    TPCircularBufferConsume(&myEngine->_incomingBuffer, sampleCount);
+    memcpy(targetBuffer, buffer, bytesToCopy);
+    TPCircularBufferConsume(&myEngine->_outputBuffer, bytesToCopy);
 
     return noErr;
 }
@@ -349,11 +349,11 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mSampleRate = self.currentAudioSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = 2;
-    asbd.mBytesPerFrame = bytesPerSample * 2;
-    asbd.mBitsPerChannel = 8 * bytesPerSample;
-    asbd.mFramesPerPacket = 1;
-    asbd.mBytesPerPacket = bytesPerSample * 2;
+    asbd.mChannelsPerFrame = kNumberOfChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    asbd.mFramesPerPacket = kFramesPerPacket;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -411,27 +411,6 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     return YES;
 }
 
-- (BOOL)setupMaximumFramesPerSlice:(NSError **)error
-{
-
-    uint32_t maxSampleCount = kSampleCount + 1;
-    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                            kAudioUnitProperty_MaximumFramesPerSlice,
-                                            kAudioUnitScope_Global,
-                                            kInputBus,
-                                            &maxSampleCount,
-                                            sizeof(maxSampleCount));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Setup max frames per slice"
-          failureReason:@"Failed to set max frames per slice"];
-        return NO;
-    }
-    return YES;
-}
-
 - (BOOL)updatePlaybackSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
 {
     UInt32 bytesPerSample = sizeof(SInt16);
@@ -440,11 +419,11 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mSampleRate = rate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = 2;
-    asbd.mBytesPerFrame = bytesPerSample * 2;
-    asbd.mBitsPerChannel = 8 * bytesPerSample;
-    asbd.mFramesPerPacket = 1;
-    asbd.mBytesPerPacket = bytesPerSample * 2;
+    asbd.mChannelsPerFrame = kNumberOfChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    asbd.mFramesPerPacket = kFramesPerPacket;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,

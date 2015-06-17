@@ -104,8 +104,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         self.audioEngine.friendNumber = friend.friendNumber;
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            callToUpdate.status = OCTCallStatusActive;
-            [callToUpdate startTimer];
+            [self setCallActiveAndStartTimer:callToUpdate];
         }];
 
         return YES;
