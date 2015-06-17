@@ -263,11 +263,11 @@ static OSStatus inputRenderCallBack(void *inRefCon,
 
     int32_t availableBytesToConsume;
     void *tail = TPCircularBufferTail(&engine->_outgoingBuffer, &availableBytesToConsume);
-    uint32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
+    int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
 
-    int16_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
+    int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
 
-    for (int i = 0; i < cyclesToConsume; i++) {
+    for (int32_t i = 0; i < cyclesToConsume; i++) {
         NSError *error;
         [engine.toxav sendAudioFrame:tail
                          sampleCount:kSampleCount
@@ -297,7 +297,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     SInt16 *buffer = TPCircularBufferTail(&myEngine->_incomingBuffer, &availableBytes);
     UInt32 sampleCount = MIN(bytesToCopy, availableBytes);
 
-    if (sampleCount == 0) {
+    if (bytesToCopy > availableBytes) {
         memset(targetBuffer, 0, bytesToCopy);
         return noErr;
     }

@@ -10,7 +10,7 @@
 #import "OCTConverterFriend.h"
 #import "OCTConverterMessage.h"
 
-const OCTToxAVAudioBitRate kDefaultAudioBitRate = 128;
+const OCTToxAVAudioBitRate kDefaultAudioBitRate = 48;
 const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate, OCTConverterChatDelegate, OCTConverterFriendDataSource>
