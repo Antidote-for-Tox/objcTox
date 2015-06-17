@@ -69,7 +69,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @implementation OCTAudioEngine
 
 #pragma mark - LifeCycle
-- (instancetype)init
+- (instancetype)init:(NSError **)error
 {
     self = [super init];
     if (! self) {
@@ -97,7 +97,19 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
 
+    if (! ([self enableInputScope:error] &&
+           [self registerInputCallBack:error] &&
+           [self registerOutputCallBack:error] &&
+           [self initializeGraph:error])) {
+        return nil;
+    }
+
     return self;
+}
+
+- (instancetype)init
+{
+    return [[OCTAudioEngine alloc] init:nil];
 }
 
 - (void)dealloc
@@ -113,11 +125,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 {
 
     return ([self startAudioSession:error] &&
-            [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
-            [self registerInputCallBack:error] &&
-            [self registerOutputCallBack:error] &&
-            [self initializeGraph:error] &&
             [self startGraph:error]);
 }
 
@@ -136,32 +144,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     return [session setActive:NO error:error];
 }
-
-- (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
-{
-    UInt32 enableInput = (enable) ? 1 : 0;
-    AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
-    AudioUnitElement bus = (scope == OCTInput) ? kInputBus : kOutputBus;
-
-    OSStatus status = _AudioUnitSetProperty(
-        self.ioUnit,
-        kAudioOutputUnitProperty_EnableIO,
-        unitScope,
-        bus,
-        &enableInput,
-        sizeof(enableInput));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Enable/Disable Scope"
-          failureReason:@"Unable to change enable output/input on scope"];
-        return NO;
-    }
-
-    return YES;
-}
-
 
 #pragma mark - Audio Status
 - (BOOL)isAudioRunning:(NSError **)error
@@ -340,6 +322,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
     self.currentAudioSampleRate = session.sampleRate;
     self.playbackSampleRate = session.sampleRate;
 
@@ -441,6 +424,29 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
     return YES;
 }
+
+- (BOOL)enableInputScope:(NSError **)error
+{
+    UInt32 enableInput = 1;
+    OSStatus status =  _AudioUnitSetProperty(
+        _ioUnit,
+        kAudioOutputUnitProperty_EnableIO,
+        kAudioUnitScope_Input,
+        kInputBus,
+        &enableInput,
+        sizeof(enableInput));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"EnableIO of input scope"
+          failureReason:@"Unable to enable input scope"];
+        return NO;
+    }
+
+    return YES;
+}
+
 
 - (void)fillError:(NSError **)error
          withCode:(NSUInteger)code

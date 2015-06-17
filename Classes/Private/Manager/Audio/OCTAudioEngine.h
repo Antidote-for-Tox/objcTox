@@ -20,6 +20,12 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 
 /**
+ * Default initializer.
+ * @param error Pointer to error object.
+ */
+- (instancetype)init:(NSError **)error;
+
+/**
  * Starts the Audio Processing Graph.
  * @param error Pointer to error object.
  * @return YES on success, otherwise NO.
@@ -32,15 +38,6 @@ typedef NS_ENUM(NSInteger, OCTAudioScope) {
  * @return YES on success, otherwise NO.
  */
 - (BOOL)stopAudioFlow:(NSError **)error;
-
-/**
- * Enable or disable either output (speaker) or input (microphone).
- * @param scope AudioUnitScope
- * @param enable YES to enable, NO otherwise.
- * @param error Pointer to error object
- * @return YES on success, no otherwise.
- */
-- (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error;
 
 /**
  * Checks if the Audio Graph is processing.
