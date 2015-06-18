@@ -40,6 +40,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     _audioEngine = [OCTAudioEngine new];
     _audioEngine.toxav = self.toxAV;
+    [_audioEngine setupWithError:nil];
 
     OCTConverterFriend *friendConverter = [OCTConverterFriend new];
     friendConverter.dataSource = self;

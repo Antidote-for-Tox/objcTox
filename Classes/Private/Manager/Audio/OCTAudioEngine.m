@@ -63,13 +63,14 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) TPCircularBuffer inputBuffer;
 @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
+@property (nonatomic, assign) dispatch_once_t setupOnceToken;
 
 @end
 
 @implementation OCTAudioEngine
 
 #pragma mark - LifeCycle
-- (instancetype)init:(NSError **)error
+- (instancetype)init
 {
     self = [super init];
     if (! self) {
@@ -99,19 +100,20 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     _enableMicrophone = YES;
 
-    if (! ([self enableInputScope:error] &&
-           [self registerInputCallBack:error] &&
-           [self registerOutputCallBack:error] &&
-           [self initializeGraph:error])) {
-        return nil;
-    }
-
     return self;
 }
 
-- (instancetype)init
+- (BOOL)setupWithError:(NSError **)error
 {
-    return [[OCTAudioEngine alloc] init:nil];
+    static BOOL status;
+    dispatch_once(&_setupOnceToken, ^{
+        status = ([self enableInputScope:error] &&
+                  [self registerInputCallBack:error] &&
+                  [self registerOutputCallBack:error] &&
+                  [self initializeGraph:error]);
+    });
+
+    return status;
 }
 
 - (void)dealloc
@@ -125,7 +127,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
-
     return ([self startAudioSession:error] &&
             [self setUpStreamFormat:error] &&
             [self startGraph:error]);

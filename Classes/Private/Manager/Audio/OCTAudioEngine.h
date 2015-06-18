@@ -15,15 +15,17 @@
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 
 /**
- * YES to not send audio frames over to tox, otherwise No.
+ * YES to send audio frames over to tox, otherwise NO.
+ * Default is YES.
  */
 @property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
- * Default initializer.
+ * Setup must be called once before using the audio engine.
  * @param error Pointer to error object.
- */
-- (instancetype)init:(NSError **)error;
+ * @return YES on success, otherwise NO.
+ **/
+- (BOOL)setupWithError:(NSError **)error;
 
 /**
  * Starts the Audio Processing Graph.

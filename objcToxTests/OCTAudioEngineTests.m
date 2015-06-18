@@ -53,7 +53,7 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     OCMStub([self.audioSession setActive:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    self.audioEngine = [[OCTAudioEngine alloc] init:nil];
+    self.audioEngine = [[OCTAudioEngine alloc] init];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 

@@ -34,7 +34,8 @@
 @property (weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
 
 /**
- * Set the property to YES to enable the microphone, otherwise YES.
+ * Set the property to YES to enable the microphone, otherwise NO.
+ * Default value is YES;
  **/
 @property (nonatomic, assign) BOOL enableMicrophone;
 
