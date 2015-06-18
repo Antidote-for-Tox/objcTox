@@ -34,6 +34,12 @@
 @property (weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
 
 /**
+ * Set the property to YES to enable the microphone, otherwise NO.
+ * Default value is YES;
+ **/
+@property (nonatomic, assign) BOOL enableMicrophone;
+
+/**
  * All call sessions.
  */
 @property (strong, nonatomic, readonly) OCTCallsContainer *calls;

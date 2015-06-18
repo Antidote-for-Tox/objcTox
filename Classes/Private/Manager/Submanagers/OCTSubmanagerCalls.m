@@ -40,6 +40,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     _audioEngine = [OCTAudioEngine new];
     _audioEngine.toxav = self.toxAV;
+    [_audioEngine setupWithError:nil];
 
     OCTConverterFriend *friendConverter = [OCTConverterFriend new];
     friendConverter.dataSource = self;
@@ -113,6 +114,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         // TO DO: Group Calls
         return NO;
     }
+}
+
+- (BOOL)enableMicrophone
+{
+    return self.audioEngine.enableMicrophone;
+}
+
+- (void)setEnableMicrophone:(BOOL)enableMicrophone
+{
+    self.audioEngine.enableMicrophone = enableMicrophone;
 }
 
 - (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error

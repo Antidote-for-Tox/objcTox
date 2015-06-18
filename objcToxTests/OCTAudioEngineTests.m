@@ -53,7 +53,7 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     OCMStub([self.audioSession setActive:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    self.audioEngine = [OCTAudioEngine new];
+    self.audioEngine = [[OCTAudioEngine alloc] init];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
@@ -81,11 +81,6 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     _AUGraphStart = mocked_success_inGraph;
     NSError *error;
     XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
-
-    _AUGraphInitialize = mocked_fail_inGraph;
-    XCTAssertFalse([self.audioEngine startAudioFlow:&error]);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 1);
 }
 
 - (void)testStopAudioFlow

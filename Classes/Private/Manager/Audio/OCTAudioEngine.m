@@ -63,6 +63,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) TPCircularBuffer inputBuffer;
 @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
+@property (nonatomic, assign) dispatch_once_t setupOnceToken;
 
 @end
 
@@ -97,7 +98,22 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
 
+    _enableMicrophone = YES;
+
     return self;
+}
+
+- (BOOL)setupWithError:(NSError **)error
+{
+    __block BOOL status = NO;
+    dispatch_once(&_setupOnceToken, ^{
+        status = ([self enableInputScope:error] &&
+                  [self registerInputCallBack:error] &&
+                  [self registerOutputCallBack:error] &&
+                  [self initializeGraph:error]);
+    });
+
+    return status;
 }
 
 - (void)dealloc
@@ -111,13 +127,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
-
     return ([self startAudioSession:error] &&
-            [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
-            [self registerInputCallBack:error] &&
-            [self registerOutputCallBack:error] &&
-            [self initializeGraph:error] &&
             [self startGraph:error]);
 }
 
@@ -136,32 +147,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     return [session setActive:NO error:error];
 }
-
-- (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
-{
-    UInt32 enableInput = (enable) ? 1 : 0;
-    AudioUnitScope unitScope = (scope == OCTInput) ? kAudioUnitScope_Input : kAudioUnitScope_Output;
-    AudioUnitElement bus = (scope == OCTInput) ? kInputBus : kOutputBus;
-
-    OSStatus status = _AudioUnitSetProperty(
-        self.ioUnit,
-        kAudioOutputUnitProperty_EnableIO,
-        unitScope,
-        bus,
-        &enableInput,
-        sizeof(enableInput));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Enable/Disable Scope"
-          failureReason:@"Unable to change enable output/input on scope"];
-        return NO;
-    }
-
-    return YES;
-}
-
 
 #pragma mark - Audio Status
 - (BOOL)isAudioRunning:(NSError **)error
@@ -185,7 +170,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
-    if ((self.outputSampleRate != sampleRate) && [self updateoutputSampleRate:sampleRate error:nil]) {
+    if ((self.outputSampleRate != sampleRate) && [self updateOutputSampleRate:sampleRate error:nil]) {
         self.outputSampleRate = sampleRate;
     }
 }
@@ -244,13 +229,18 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData)
 {
+    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
+
+    if (! engine.enableMicrophone) {
+        return noErr;
+    }
+
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
     bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
     bufferList.mBuffers[0].mData = NULL;
     bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfChannels;
 
-    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
     OSStatus status = _AudioUnitRender(engine.ioUnit,
                                        ioActionFlags,
                                        inTimeStamp,
@@ -411,7 +401,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     return YES;
 }
 
-- (BOOL)updateoutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
 {
     UInt32 bytesPerSample = sizeof(SInt16);
 
@@ -441,6 +431,29 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
     return YES;
 }
+
+- (BOOL)enableInputScope:(NSError **)error
+{
+    UInt32 enableInput = 1;
+    OSStatus status =  _AudioUnitSetProperty(
+        _ioUnit,
+        kAudioOutputUnitProperty_EnableIO,
+        kAudioUnitScope_Input,
+        kInputBus,
+        &enableInput,
+        sizeof(enableInput));
+
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"EnableIO of input scope"
+          failureReason:@"Unable to enable input scope"];
+        return NO;
+    }
+
+    return YES;
+}
+
 
 - (void)fillError:(NSError **)error
          withCode:(NSUInteger)code
