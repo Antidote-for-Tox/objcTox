@@ -97,6 +97,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
 
+    _enableMicrophone = YES;
+
     if (! ([self enableInputScope:error] &&
            [self registerInputCallBack:error] &&
            [self registerOutputCallBack:error] &&
@@ -226,13 +228,18 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData)
 {
+    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
+
+    if (! engine.enableMicrophone) {
+        return noErr;
+    }
+
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
     bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
     bufferList.mBuffers[0].mData = NULL;
     bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfChannels;
 
-    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
     OSStatus status = _AudioUnitRender(engine.ioUnit,
                                        ioActionFlags,
                                        inTimeStamp,

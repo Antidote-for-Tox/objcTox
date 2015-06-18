@@ -9,15 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "OCTToxAV.h"
 
-typedef NS_ENUM(NSInteger, OCTAudioScope) {
-    OCTInput,
-    OCTOutput,
-};
-
 @interface OCTAudioEngine : NSObject
 
 @property (weak, nonatomic) OCTToxAV *toxav;
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
+
+/**
+ * YES to not send audio frames over to tox, otherwise No.
+ */
+@property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
  * Default initializer.

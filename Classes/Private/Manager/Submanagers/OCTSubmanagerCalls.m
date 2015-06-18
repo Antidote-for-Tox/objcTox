@@ -115,6 +115,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }
 }
 
+- (BOOL)enableMicrophone
+{
+    return self.audioEngine.enableMicrophone;
+}
+
+- (void)setEnableMicrophone:(BOOL)enableMicrophone
+{
+    self.audioEngine.enableMicrophone = enableMicrophone;
+}
+
 - (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
 {
     OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlPause : OCTToxAVCallControlResume;

@@ -101,6 +101,10 @@
         [sheet bk_addButtonWithTitle:@"End call" handler:^{
             [weakSelf endCall];
         }];
+
+        [sheet bk_addButtonWithTitle:@"Mute/Unmute" handler:^{
+            [weakSelf toggleMuteMic];
+        }];
     }];
 }
 
@@ -142,6 +146,12 @@
         NSLog(@"%@ Error %@", self, error.localizedDescription);
         NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
     }
+}
+
+- (void)toggleMuteMic
+{
+    BOOL currentStatus = self.manager.calls.enableMicrophone;
+    self.manager.calls.enableMicrophone = ! currentStatus;
 }
 
 @end
