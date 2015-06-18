@@ -126,10 +126,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     self.audioEngine.enableMicrophone = enableMicrophone;
 }
 
-- (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toCall:(OCTCall *)call error:(NSError **)error
 {
-    OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlPause : OCTToxAVCallControlResume;
-
     if (call.chat.friends.count == 1) {
 
         OCTFriend *friend = call.chat.friends.firstObject;
@@ -138,59 +136,36 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return NO;
         }
 
-        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            callToUpdate.status = pause ? OCTCallStatusPaused : OCTCallStatusActive;
-        }];
-
+        switch (control) {
+            case OCTToxAVCallControlResume:
+                [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+                [callToUpdate startTimer];
+                callToUpdate.status = OCTCallStatusActive;
+            }];
+                break;
+            case OCTToxAVCallControlCancel:
+                [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
+                [self.calls removeCall:call];
+                return [self.audioEngine stopAudioFlow:error];
+                break;
+            case OCTToxAVCallControlPause:
+                [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+                [callToUpdate stopTimer];
+                callToUpdate.status = OCTCallStatusPaused;
+            }];
+                break;
+            case OCTToxAVCallControlUnmuteAudio:
+                break;
+            case OCTToxAVCallControlMuteAudio:
+                break;
+            case OCTToxAVCallControlHideVideo:
+                break;
+            case OCTToxAVCallControlShowVideo:
+                break;
+        }
         return YES;
     }
     else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)endCall:(OCTCall *)call error:(NSError **)error
-{
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-
-        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-        [self.calls removeCall:call];
-
-        return ([self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error] &&
-                [self.audioEngine stopAudioFlow:error]);
-    }
-    else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error
-{
-    OCTToxAVCallControl control = (mute) ? OCTToxAVCallControlMuteAudio : OCTToxAVCallControlUnmuteAudio;
-
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
-    }
-    else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
-{
-    OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlHideVideo : OCTToxAVCallControlShowVideo;
-
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
-    }
-    else {
-        // TO DO: Group Calls
         return NO;
     }
 }

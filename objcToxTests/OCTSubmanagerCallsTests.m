@@ -113,7 +113,7 @@
     XCTAssertEqual(self.callManager.calls.numberOfCalls, 1);
 
     NSError *error;
-    XCTAssertTrue([self.callManager endCall:call error:&error]);
+    XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error]);
 
     XCTAssertEqual(0, self.callManager.calls.numberOfCalls);
 }
@@ -173,11 +173,11 @@
     call.status = OCTCallStatusActive;
     [self.callManager.calls addCall:call];
 
-    XCTAssertTrue([self.callManager togglePause:YES forCall:call error:nil]);
+    XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
     XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusPaused);
 
     OCMStub([toxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:1234 error:nil]).andReturn(YES);
-    XCTAssertTrue([self.callManager togglePause:NO forCall:call error:nil]);
+    XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
     XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusActive);
 }
 

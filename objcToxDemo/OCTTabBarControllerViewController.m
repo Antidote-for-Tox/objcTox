@@ -24,12 +24,13 @@
                                                            style:UIAlertActionStyleCancel
                                                          handler:^(UIAlertAction *action) {
         NSError *error;
-        BOOL status = [callSubmanager endCall:call error:&error];
+        BOOL status = [callSubmanager sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error];
         if (! status) {
             NSLog(@"End call error: %@, %@", error.localizedDescription
                   , error.localizedFailureReason);
         }
     }];
+
     UIAlertAction *acceptAction = [UIAlertAction actionWithTitle:@"Accept"
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction *action) {
