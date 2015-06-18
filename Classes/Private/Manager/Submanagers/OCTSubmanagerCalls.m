@@ -259,14 +259,17 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTCall *call = [self callFromFriend:friendNumber];
 
     if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
-        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-        [self.audioEngine stopAudioFlow:nil];
+        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            [self logCallAndStopTimer:callToUpdate type:OCTMessageCallTypeEnd];
+        }];
         [self.calls removeCall:call];
+        [self.audioEngine stopAudioFlow:nil];
     }
     else {
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
             if (callToUpdate.status == OCTCallStatusDialing) {
                 [self.audioEngine startAudioFlow:nil];
+                [callToUpdate startTimer];
             }
             callToUpdate.state = state;
             callToUpdate.status = OCTCallStatusActive;
