@@ -169,7 +169,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
-    if ((self.outputSampleRate != sampleRate) && [self updateoutputSampleRate:sampleRate error:nil]) {
+    if ((self.outputSampleRate != sampleRate) && [self updateOutputSampleRate:sampleRate error:nil]) {
         self.outputSampleRate = sampleRate;
     }
 }
