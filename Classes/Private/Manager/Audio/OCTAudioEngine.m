@@ -61,8 +61,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
 @property (nonatomic, assign) TPCircularBuffer outputBuffer;
 @property (nonatomic, assign) TPCircularBuffer inputBuffer;
-@property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
-@property (nonatomic, assign) OCTToxAVSampleRate playbackSampleRate;
+@property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
+@property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 
 @end
 
@@ -169,8 +169,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
-    if ((self.playbackSampleRate != sampleRate) && [self updatePlaybackSampleRate:sampleRate error:nil]) {
-        self.playbackSampleRate = sampleRate;
+    if ((self.outputSampleRate != sampleRate) && [self updateoutputSampleRate:sampleRate error:nil]) {
+        self.outputSampleRate = sampleRate;
     }
 }
 
@@ -262,7 +262,7 @@ static OSStatus inputRenderCallBack(void *inRefCon,
         [engine.toxav sendAudioFrame:tail
                          sampleCount:kSampleCount
                             channels:kNumberOfChannels
-                          sampleRate:engine.currentAudioSampleRate
+                          sampleRate:engine.inputSampleRate
                             toFriend:engine.friendNumber
                                error:&error];
         TPCircularBufferConsume(&engine->_inputBuffer, minimalBytesToConsume);
@@ -329,14 +329,13 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    self.currentAudioSampleRate = session.sampleRate;
-    self.playbackSampleRate = session.sampleRate;
+    self.inputSampleRate = session.sampleRate;
+    self.outputSampleRate = session.sampleRate;
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
     AudioStreamBasicDescription asbd = {0};
-    asbd.mSampleRate = self.currentAudioSampleRate;
+    asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     asbd.mChannelsPerFrame = kNumberOfChannels;
@@ -401,7 +400,7 @@ static OSStatus outputRenderCallBack(void *inRefCon,
     return YES;
 }
 
-- (BOOL)updatePlaybackSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
 {
     UInt32 bytesPerSample = sizeof(SInt16);
 
