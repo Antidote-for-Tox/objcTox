@@ -105,7 +105,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
 - (BOOL)setupWithError:(NSError **)error
 {
-    static BOOL status;
+    __block BOOL status = NO;
     dispatch_once(&_setupOnceToken, ^{
         status = ([self enableInputScope:error] &&
                   [self registerInputCallBack:error] &&
