@@ -590,6 +590,7 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
     options.proxyType = OCTToxProxyTypeHTTP;
     options.proxyHost = @"host";
     options.proxyPort = 30;
+    options.tcpPort = 40;
 
     struct Tox_Options cOptions = [self.tox cToxOptionsFromOptions:options];
 
@@ -600,6 +601,7 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
     XCTAssertTrue(cOptions.proxy_type == TOX_PROXY_TYPE_HTTP);
     XCTAssertTrue(strcmp(cOptions.proxy_host, "host") == 0);
     XCTAssertTrue(cOptions.proxy_port == 30);
+    XCTAssertTrue(cOptions.tcp_port == 40);
 }
 
 - (void)testBinToHexString

@@ -60,8 +60,24 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     struct Tox_Options cOptions;
 
     if (options) {
-        DDLogVerbose(@"%@: init with options:\nIPv6Enabled %d\nUDPEnabled %d\nstartPort %u\nendPort %u\nproxyType %lu\nproxyHost %@\nproxyPort %d",
-                     self, options.IPv6Enabled, options.UDPEnabled, options.startPort, options.endPort, (unsigned long)options.proxyType, options.proxyHost, options.proxyPort);
+        DDLogVerbose(@"%@: init with options:\n"
+                     @"IPv6Enabled %d\n"
+                     @"UDPEnabled %d\n"
+                     @"startPort %u\n"
+                     @"endPort %u\n"
+                     @"proxyType %lu\n"
+                     @"proxyHost %@\n"
+                     @"proxyPort %d\n"
+                     @"tcpPort %d",
+                     self,
+                     options.IPv6Enabled,
+                     options.UDPEnabled,
+                     options.startPort,
+                     options.endPort,
+                     (unsigned long)options.proxyType,
+                     options.proxyHost,
+                     options.proxyPort,
+                     options.tcpPort);
 
         cOptions = [self cToxOptionsFromOptions:options];
     }
@@ -72,11 +88,17 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     if (data) {
         DDLogVerbose(@"%@: loading from data of length %lu", self, (unsigned long)data.length);
+        cOptions.savedata_type = TOX_SAVEDATA_TYPE_TOX_SAVE;
+        cOptions.savedata_data = data.bytes;
+        cOptions.savedata_length = data.length;
+    }
+    else {
+        cOptions.savedata_type = TOX_SAVEDATA_TYPE_NONE;
     }
 
     TOX_ERR_NEW cError;
 
-    _tox = tox_new(&cOptions, (uint8_t *)data.bytes, (uint32_t)data.length, &cError);
+    _tox = tox_new(&cOptions, &cError);
 
     [self fillError:error withCErrorInit:cError];
 
@@ -1316,6 +1338,9 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             code = OCTToxErrorFileGetNotFound;
             failureReason = @"No file transfer with given file number found";
             break;
+        case TOX_ERR_FILE_GET_NULL:
+            code = OCTToxErrorFileGetNULL;
+            failureReason = @"One of the arguments to the function was NULL when it was not expected.";
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
@@ -1454,6 +1479,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         cOptions.proxy_host = options.proxyHost.UTF8String;
     }
     cOptions.proxy_port = options.proxyPort;
+    cOptions.tcp_port = options.tcpPort;
 
     return cOptions;
 }

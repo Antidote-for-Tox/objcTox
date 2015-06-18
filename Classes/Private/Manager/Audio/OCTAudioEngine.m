@@ -12,8 +12,13 @@
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
-static const int kBufferLength = 1024;
+static const int kBufferLength = 122880;
 static const int kNumberOfChannels = 2;
+static const int kDefaultSampleRate = 48000;
+static const NSTimeInterval kPreferredBufferDuration = .04;
+static const int kSampleCount = 1920;
+static const int kBitsPerByte = 8;
+static const int kFramesPerPacket = 1;
 
 OSStatus (*_NewAUGraph)(AUGraph *outGraph);
 OSStatus (*_AUGraphAddNode)(
@@ -54,8 +59,10 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) AUNode ioNode;
 @property (nonatomic, assign) AudioUnit ioUnit;
 @property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
-@property (nonatomic, assign) TPCircularBuffer buffer;
-@property (nonatomic, assign) OCTToxAVSampleRate currentAudioSampleRate;
+@property (nonatomic, assign) TPCircularBuffer outputBuffer;
+@property (nonatomic, assign) TPCircularBuffer inputBuffer;
+@property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
+@property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 
 @end
 
@@ -77,7 +84,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     _ioUnitDescription.componentFlags = 0;
     _ioUnitDescription.componentFlagsMask = 0;
 
-    TPCircularBufferInit(&_buffer, kBufferLength);
+    TPCircularBufferInit(&_outputBuffer, kBufferLength);
+    TPCircularBufferInit(&_inputBuffer, kBufferLength);
 
     _NewAUGraph(&_processingGraph);
 
@@ -88,18 +96,22 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     _AUGraphOpen(_processingGraph);
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
+
     return self;
 }
 
 - (void)dealloc
 {
-    TPCircularBufferCleanup(&_buffer);
+    TPCircularBufferCleanup(&_outputBuffer);
+    TPCircularBufferCleanup(&_inputBuffer);
+
     _DisposeAUGraph(_processingGraph);
 }
 
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
+
     return ([self startAudioSession:error] &&
             [self changeScope:OCTInput enable:YES error:error] &&
             [self setUpStreamFormat:error] &&
@@ -120,20 +132,10 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         return NO;
     }
 
-    status = _AUGraphUninitialize(self.processingGraph);
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"AUGraphUninitialize"
-          failureReason:@"Failed to uninitialize graph"];
-        return NO;
-    }
-
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
     return [session setActive:NO error:error];
 }
-
-
 
 - (BOOL)changeScope:(OCTAudioScope)scope enable:(BOOL)enable error:(NSError **)error
 {
@@ -147,8 +149,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         unitScope,
         bus,
         &enableInput,
-        sizeof(enableInput)
-                      );
+        sizeof(enableInput));
+
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -158,7 +160,6 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     }
 
     return YES;
-
 }
 
 
@@ -182,7 +183,11 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 - (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
 {
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
-    TPCircularBufferProduceBytes(&_buffer, pcm, len);
+
+    TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
+    if ((self.outputSampleRate != sampleRate) && [self updateoutputSampleRate:sampleRate error:nil]) {
+        self.outputSampleRate = sampleRate;
+    }
 }
 
 #pragma mark - Call Backs
@@ -239,7 +244,6 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData)
 {
-
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
     bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
@@ -253,13 +257,28 @@ static OSStatus inputRenderCallBack(void *inRefCon,
                                        inBusNumber,
                                        inNumberFrames,
                                        &bufferList);
-    NSError *error;
-    [engine.toxav sendAudioFrame:bufferList.mBuffers[0].mData
-                     sampleCount:inNumberFrames
-                        channels:kNumberOfChannels
-                      sampleRate:[engine currentAudioSampleRate] / 1000
-                        toFriend:engine.friendNumber
-                           error:&error];
+
+    TPCircularBufferProduceBytes(&engine->_inputBuffer,
+                                 bufferList.mBuffers[0].mData,
+                                 bufferList.mBuffers[0].mDataByteSize);
+
+    int32_t availableBytesToConsume;
+    void *tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
+    int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
+
+    int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
+
+    for (int32_t i = 0; i < cyclesToConsume; i++) {
+        NSError *error;
+        [engine.toxav sendAudioFrame:tail
+                         sampleCount:kSampleCount
+                            channels:kNumberOfChannels
+                          sampleRate:engine.inputSampleRate
+                            toFriend:engine.friendNumber
+                               error:&error];
+        TPCircularBufferConsume(&engine->_inputBuffer, minimalBytesToConsume);
+        tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
+    }
     return status;
 }
 
@@ -272,15 +291,18 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 {
     OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
 
-    int bytesToCopy = ioData->mBuffers[0].mDataByteSize;
+    UInt32 targetBufferSize = ioData->mBuffers[0].mDataByteSize;
     SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
 
     int32_t availableBytes;
-    SInt16 *buffer = TPCircularBufferTail(&myEngine->_buffer, &availableBytes);
-    int32_t sampleCount = MIN(bytesToCopy, availableBytes);
+    SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
 
-    memcpy(targetBuffer, buffer, sampleCount);
-    TPCircularBufferConsume(&myEngine->_buffer, sampleCount);
+    if (availableBytes < targetBufferSize) {
+        memset(targetBuffer, 0, targetBufferSize);
+        return noErr;
+    }
+    memcpy(targetBuffer, buffer, targetBufferSize);
+    TPCircularBufferConsume(&myEngine->_outputBuffer, targetBufferSize);
 
     return noErr;
 }
@@ -308,26 +330,30 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)startAudioSession:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+            [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
+            [session setPreferredIOBufferDuration:kPreferredBufferDuration error:error] &&
             [session setActive:YES error:error]);
 }
 
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
-    UInt32 bytesPerSample = sizeof(SInt32);
-    double sampleRate = [AVAudioSession sharedInstance].sampleRate;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    self.inputSampleRate = session.sampleRate;
+    self.outputSampleRate = session.sampleRate;
 
-    self.currentAudioSampleRate = sampleRate;
+    UInt32 bytesPerSample = sizeof(SInt16);
 
     AudioStreamBasicDescription asbd = {0};
-    asbd.mSampleRate = sampleRate;
+    asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = 2;
-    asbd.mBytesPerFrame = bytesPerSample * 2;
-    asbd.mBitsPerChannel = 8 * bytesPerSample;
-    asbd.mFramesPerPacket = 1;
-    asbd.mBytesPerPacket = bytesPerSample * 2;
+    asbd.mChannelsPerFrame = kNumberOfChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    asbd.mFramesPerPacket = kFramesPerPacket;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -382,6 +408,37 @@ static OSStatus outputRenderCallBack(void *inRefCon,
           failureReason:@"Failed to start Graph"];
         return NO;
     }
+    return YES;
+}
+
+- (BOOL)updateoutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+{
+    UInt32 bytesPerSample = sizeof(SInt16);
+
+    AudioStreamBasicDescription asbd = {0};
+    asbd.mSampleRate = rate;
+    asbd.mFormatID = kAudioFormatLinearPCM;
+    asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    asbd.mChannelsPerFrame = kNumberOfChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    asbd.mFramesPerPacket = kFramesPerPacket;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
+
+    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
+                                            kAudioUnitProperty_StreamFormat,
+                                            kAudioUnitScope_Output,
+                                            kInputBus,
+                                            &asbd,
+                                            sizeof(asbd));
+    if (status != noErr) {
+        [self fillError:error
+               withCode:status
+            description:@"Stream Format"
+          failureReason:@"Failed to setup output stream format"];
+        return NO;
+    }
+
     return YES;
 }
 

@@ -66,4 +66,9 @@
  */
 @property (assign, nonatomic) uint16_t proxyPort;
 
+/**
+ * The port to use for the TCP server. If 0, the tcp server is disabled.
+ */
+@property (assign, nonatomic) uint16_t tcpPort;
+
 @end

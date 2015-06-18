@@ -46,6 +46,7 @@
     configuration.options.proxyType = OCTToxProxyTypeHTTP;
     configuration.options.proxyHost = @"proxy.address";
     configuration.options.proxyPort = 999;
+    configuration.options.tcpPort = 777;
 
     OCTManagerConfiguration *c2 = [configuration copy];
 
@@ -57,6 +58,7 @@
     XCTAssertEqual(configuration.options.proxyType, c2.options.proxyType);
     XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
     XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
+    XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
 }
 
 @end

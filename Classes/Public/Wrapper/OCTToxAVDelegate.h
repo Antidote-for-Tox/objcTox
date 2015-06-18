@@ -88,11 +88,9 @@
  *          Y = MAX(width, abs(ystride)) * height,
  *          U = MAX(width/2, abs(ustride)) * (height/2) and
  *          V = MAX(width/2, abs(vstride)) * (height/2).
- *          A = MAX(width, abs(astride)) * height.
  * @param yStride
  * @param uStride
- * @param vStride
- * @param aStride Strides data. Strides represent padding for each plane
+ * @param vStride Strides data. Strides represent padding for each plane
  *                that may or may not be present. You must handle strides in
  *                your image processing code. Strides are negative if the
  *                image is bottom-up hence why you MUST abs() it when
@@ -103,9 +101,9 @@
 - (void)                 toxAV:(OCTToxAV *)toxAV
     receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
                         yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
-                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
                        yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
-                       vStride:(OCTToxAVStrideData)vStride aStride:(OCTToxAVStrideData)aStride
+                       vStride:(OCTToxAVStrideData)vStride
                   friendNumber:(OCTToxFriendNumber)friendNumber;
 
 @end
