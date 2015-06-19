@@ -42,9 +42,17 @@
 - (BOOL)stopAudioFlow:(NSError **)error;
 
 /**
+ * Send the audio to the speaker
+ * @param speaker YES to send audio to speaker, NO to reset to default.
+ * @param error Pointer to error object.
+ * @return YES if successful override, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+
+/**
  * Checks if the Audio Graph is processing.
  * @param error Pointer to error object.
- * @return YES if Audio Graph is running, otherwise No.
+ * @return YES if Audio Graph is running, otherwise NO.
  */
 - (BOOL)isAudioRunning:(NSError **)error;
 

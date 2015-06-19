@@ -106,6 +106,14 @@
         [sheet bk_addButtonWithTitle:@"Mute/Unmute Mic" handler:^{
             [weakSelf toggleMuteMic];
         }];
+
+        [sheet bk_addButtonWithTitle:@"Use speaker phone" handler:^{
+            [weakSelf useSpeaker];
+        }];
+
+        [sheet bk_addButtonWithTitle:@"Use default speakers" handler:^{
+            [weakSelf useDefaultSpeaker];
+        }];
     }];
 }
 
@@ -169,6 +177,8 @@
     [alert show];
 }
 
+#pragma mark - Call methods
+
 - (void)callFriend
 {
     NSError *error;
@@ -177,8 +187,6 @@
     NSLog(@"%@ Error %@", self, error.localizedDescription);
     NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
 }
-
-#pragma mark - Call Controls
 
 - (void)cancel
 {
@@ -189,6 +197,16 @@
         NSLog(@"%@ Error %@", self, error.localizedDescription);
         NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
     }
+}
+
+- (void)useSpeaker
+{
+    [self.manager.calls routeAudioToSpeaker:YES error:nil];
+}
+
+- (void)useDefaultSpeaker
+{
+    [self.manager.calls routeAudioToSpeaker:NO error:nil];
 }
 
 - (void)toggleMuteMic

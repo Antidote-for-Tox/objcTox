@@ -148,6 +148,15 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     return [session setActive:NO error:error];
 }
 
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+{
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    AVAudioSessionPortOverride override = (speaker) ? AVAudioSessionPortOverrideSpeaker : AVAudioSessionPortOverrideNone;
+
+    return [session overrideOutputAudioPort:override error:error];
+}
+
 #pragma mark - Audio Status
 - (BOOL)isAudioRunning:(NSError **)error
 {

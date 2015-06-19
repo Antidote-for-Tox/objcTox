@@ -116,6 +116,11 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }
 }
 
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
+}
+
 - (BOOL)enableMicrophone
 {
     return self.audioEngine.enableMicrophone;

@@ -62,8 +62,16 @@
  * @param enableVideo YES for Video, otherwise NO.
  * @param error Pointer to an error when attempting to answer a call
  * @return YES if we were able to succesfully answer the call, otherwise NO.
- **/
+ */
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
+
+/**
+ * Send the audio to the speaker
+ * @param speaker YES to send audio to speaker, NO to reset to default.
+ * @param error Pointer to error object.
+ * @return YES if successful, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
 
 /**
  * Send call control to call.
@@ -71,14 +79,14 @@
  * @param call The appopriate call to send to.
  * @param error Pointer to error object if there's an issue muting the call.
  * @return YES if succesful, NO otherwise.
- **/
+ */
 - (BOOL)sendCallControl:(OCTToxAVCallControl)control toCall:(OCTCall *)call error:(NSError **)error;
 
 /**
  * The UIView that will have the video feed.
  * @param call The call that has the video feed.
  * @return UIView of the video feed. Nil if no video available.
- **/
+ */
 - (UIView *)videoFeedForCall:(OCTCall *)call;
 
 /**
