@@ -15,7 +15,6 @@ static const AudioUnitElement kOutputBus = 0;
 static const int kBufferLength = 122880;
 static const int kNumberOfChannels = 2;
 static const int kDefaultSampleRate = 48000;
-static const NSTimeInterval kPreferredBufferDuration = .04;
 static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
 static const int kFramesPerPacket = 1;
@@ -174,7 +173,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 }
 
 #pragma mark - Buffer Management
-- (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate
+- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
 {
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
@@ -332,7 +331,6 @@ static OSStatus outputRenderCallBack(void *inRefCon,
 
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
             [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
-            [session setPreferredIOBufferDuration:kPreferredBufferDuration error:error] &&
             [session setActive:YES error:error]);
 }
 
