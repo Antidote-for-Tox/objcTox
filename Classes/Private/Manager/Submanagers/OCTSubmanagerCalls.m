@@ -143,7 +143,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             case OCTToxAVCallControlResume:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate startTimer];
-                callToUpdate.status = OCTCallStatusActive;}];
+                callToUpdate.status = OCTCallStatusActive;
+            }];
                 break;
             case OCTToxAVCallControlCancel:
                 [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
@@ -152,7 +153,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             case OCTToxAVCallControlPause:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate stopTimer];
-                callToUpdate.status = OCTCallStatusPaused;}];
+                callToUpdate.status = OCTCallStatusPaused;
+            }];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
                 break;
