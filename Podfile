@@ -5,8 +5,13 @@ platform :ios, '7.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-pod 'toxcore-ios', '~> 0.1.7'
+# patched libopus should go before toxcore-ios
+pod 'libopus', :podspec => 'https://raw.githubusercontent.com/Antidote-for-Tox/libopus/1.1/libopus.podspec'
+pod 'toxcore-ios', '0.1.7'
+
 pod 'CocoaLumberjack', '~> 1.9.2'
+pod 'Realm', '0.93.2'
+pod 'RBQFetchedResultsController', '1.8.9.3'
 
 target :objcToxTests do
     pod 'OCMock', '~> 3.1.2'

@@ -90,7 +90,6 @@
 		C77B6C69F3D666A4ED5E48D20F8390CC /* OCTBasicContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A03ADCD33ECB560E8D29C543647E9E1 /* OCTBasicContainer.m */; };
 		C7C59445E2ED09BF57E01AE17C1758BE /* OCTSubmanagerFriendsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00599146A8F90E7F4C08E2580B614046 /* OCTSubmanagerFriendsTests.m */; };
 		C7D280C18EFDE9D97CC924B85420B2BE /* OCTMessageText.m in Sources */ = {isa = PBXBuildFile; fileRef = E02C2F73766CD67B62FDBB73841065AF /* OCTMessageText.m */; };
-		C88E502C5935F1EB67B8B7EEC0DB3384 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D194E6C3DF881FB789316F560E4B3A /* Realm.framework */; };
 		C8B86B51F8DD682C2F3FE9466D44B575 /* OCTBasicContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE21FCF7FF3FB4139FE3DCBD4A2535D9 /* OCTBasicContainerTests.m */; };
 		CBC380503575A8A40B9C1E7A1E5B2692 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 167DC0F4E4DED2EF002FCCFCBD1DB73C /* LaunchScreen.xib */; };
 		CD3DD976CC5FC19486C715D85FBC7207 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0276588953E97155FA667F37F3B3C5B5 /* libc++.dylib */; };
@@ -113,7 +112,6 @@
 		EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */; };
 		F7CE5F0C8796000D383A059517E7E00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2F6BF5A5E995453D311094E693CBC02 /* Images.xcassets */; };
 		F9A7007A32C59757AC4132DF656C5793 /* OCTStartDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 979E2EA3AF3406624C5F28600DB4F752 /* OCTStartDemoViewController.m */; };
-		FF63402FE274301CB3543CAB8FEE6152 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D194E6C3DF881FB789316F560E4B3A /* Realm.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -194,7 +192,6 @@
 		7FFF1E74EDC112F863260EE65D76822F /* OCTDefaultSettingsStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTDefaultSettingsStorage.h; sourceTree = "<group>"; };
 		82699646691E0EB65195981DDC6952A5 /* OCTMessageFile+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageFile+Private.h"; sourceTree = "<group>"; };
 		84A7F504CA4076392F9B43C4937DFA7D /* OCTDBFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBFriendRequest.m; sourceTree = "<group>"; };
-		86D194E6C3DF881FB789316F560E4B3A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxConstants.m; sourceTree = "<group>"; };
 		88CC5AD24A6497F03AEE98A2A98BDF9D /* OCTConverterFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTConverterFriendRequest.m; sourceTree = "<group>"; };
 		894610340B5469A3AD6D28C15962106D /* OCTConverterMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTConverterMessage.m; sourceTree = "<group>"; };
@@ -265,7 +262,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF63402FE274301CB3543CAB8FEE6152 /* Realm.framework in Frameworks */,
 				BF6CC64C3F26D6940C543F574927289E /* libPods-objcToxTests.a in Frameworks */,
 				7D3A12D68FD43A6157E02284AF0D2A43 /* libPods.a in Frameworks */,
 				CD3DD976CC5FC19486C715D85FBC7207 /* libc++.dylib in Frameworks */,
@@ -276,7 +272,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C88E502C5935F1EB67B8B7EEC0DB3384 /* Realm.framework in Frameworks */,
 				A3322DB70890EA179C3459EFB644F239 /* libPods-objcToxDemo.a in Frameworks */,
 				D9F96C7B5382E5831AE888B7AACB6110 /* libc++.dylib in Frameworks */,
 			);
@@ -571,7 +566,6 @@
 		D29005258A7D90733C79DDD0A57348E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				86D194E6C3DF881FB789316F560E4B3A /* Realm.framework */,
 				FE517D2AD019ACD3B88B8A455D827F22 /* libPods-objcToxDemo.a */,
 				3367A8D035C7B204B66D4EFD76EF05D2 /* libPods-objcToxTests.a */,
 				7BBA89896F49E2B57529897659F92AE8 /* libPods.a */,
