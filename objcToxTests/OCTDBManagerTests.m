@@ -70,6 +70,8 @@
     [fileManager removeItemAtPath:realmPath error:nil];
     [fileManager removeItemAtPath:lockPath error:nil];
 
+    [(id)self.mockedNotificationCenter stopMocking];
+
     self.manager = nil;
     self.mockedNotificationCenter = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
