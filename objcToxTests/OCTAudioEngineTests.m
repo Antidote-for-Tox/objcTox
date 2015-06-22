@@ -10,8 +10,8 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "OCTCAsserts.h"
-
 #import "OCTAudioEngine+Private.h"
+
 @import AVFoundation;
 
 void *refToSelf;
@@ -26,13 +26,23 @@ OSStatus mocked_AudioUnitSetProperty(AudioUnit inUnit,
                                      UInt32 inDataSize
 );
 
+OSStatus mocked_AudioUnitRender(AudioUnit inUnit,
+                                AudioUnitRenderActionFlags *ioActionFlags,
+                                const AudioTimeStamp *inTimeStamp,
+                                UInt32 inOutputBusNumber,
+                                UInt32 inNumberFrames,
+                                AudioBufferList *ioData);
+
 OSStatus mocked_success_inGraph(AUGraph inGraph);
 OSStatus mocked_fail_inGraph(AUGraph inGraph);
+
+const OCTToxAVPCMData pcm[8] = {2, 4, 6, 8, 10, 12, 14, 16};
+int16_t *pcmRender;
 
 @interface OCTAudioEngineTests : XCTestCase
 
 @property (strong, nonatomic) id audioSession;
-@property (strong, nonatomic) id audioEngine;
+@property (strong, nonatomic) OCTAudioEngine *audioEngine;
 
 @end
 
@@ -97,6 +107,15 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     XCTAssertEqual(error.code, 1);
 }
 
+- (void)testRouteAudioToSpeaker
+{
+    [self.audioEngine routeAudioToSpeaker:YES error:nil];
+    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
+
+    [self.audioEngine routeAudioToSpeaker:NO error:nil];
+    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:[OCMArg anyObjectRef]]);
+}
+
 - (void)testIsAudioRunning
 {
     _AUGraphIsRunning = mocked_AUGraphIsRunning;
@@ -107,6 +126,22 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
     XCTAssertFalse([self.audioEngine isAudioRunning:&error]);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, 1);
+}
+
+- (void)testProvideAudioFrames
+{
+    OCTToxAVSampleCount sampleCount = 4;
+    OCTToxAVChannels channelCount = 2;
+    OCTToxAVSampleRate sampleRate = 33333;
+
+    [self.audioEngine provideAudioFrames:pcm
+                             sampleCount:sampleCount
+                                channels:channelCount
+                              sampleRate:sampleRate];
+
+    _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
+    XCTAssertEqual((int)self.audioEngine.outputBuffer.fillCount, 16);
+    XCTAssertEqual(self.audioEngine.outputSampleRate, 33333);
 }
 
 - (void)testStartingGraph
@@ -121,6 +156,23 @@ OSStatus mocked_fail_inGraph(AUGraph inGraph);
 
     _AUGraphStart = mocked_success_inGraph;
     XCTAssertTrue([self.audioEngine startAudioFlow:nil]);
+}
+
+- (void)testInputRenderCallback
+{
+    id toxAV = OCMClassMock([OCTToxAV class]);
+    self.audioEngine.toxav = toxAV;
+    self.audioEngine.friendNumber = 1234;
+    self.audioEngine.inputSampleRate = 48000;
+    _AudioUnitRender = mocked_AudioUnitRender;
+
+    pcmRender = malloc(1920 * sizeof(SInt16));
+
+    inputRenderCallBack((__bridge void *)(self.audioEngine), 0, 0, 1, 1920, NULL);
+
+    OCMVerify([toxAV sendAudioFrame:[OCMArg anyPointer] sampleCount:1920 channels:2 sampleRate:48000 toFriend:1234 error:[OCMArg anyObjectRef]]);
+
+    free(pcmRender);
 }
 
 - (void)testFillError
@@ -187,5 +239,17 @@ OSStatus mocked_success_inGraph(AUGraph inGraph)
 {
     OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
     CCCAssertEqual(engine.processingGraph, inGraph);
+    return noErr;
+}
+
+OSStatus mocked_AudioUnitRender(AudioUnit inUnit,
+                                AudioUnitRenderActionFlags *ioActionFlags,
+                                const AudioTimeStamp *inTimeStamp,
+                                UInt32 inOutputBusNumber,
+                                UInt32 inNumberFrames,
+                                AudioBufferList *ioData)
+{
+    ioData->mBuffers[0].mData = pcmRender;
+
     return noErr;
 }
