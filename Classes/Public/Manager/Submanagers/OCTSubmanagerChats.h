@@ -8,26 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTArray.h"
-#import "OCTChat.h"
-#import "OCTFriend.h"
-#import "OCTMessageText.h"
+#import "OCTToxConstants.h"
+
+@class RBQFetchRequest;
+@class OCTChat;
+@class OCTFriend;
+@class OCTMessageAbstract;
 
 @interface OCTSubmanagerChats : NSObject
-
-/**
- * Returns OCTArray with all existing chats.
- *
- * @return Autoupdating array with all chats.
- */
-- (OCTArray *)allChats;
-
-/**
- * Returns OCTArray with all chats that has unread messages.
- *
- * @return Autoupdating array with chats.
- */
-- (OCTArray *)allChatsWithUnreadMessages;
 
 /**
  * Searches for a chat with specific friend. If chat is not found creates one and returns it.
@@ -39,29 +27,13 @@
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 
 /**
- * @param uniqueIdentifier Identifier string to search chat.
- *
- * @return Chat with uniqueIdentifier or nil, if chat does not exist.
- */
-- (OCTChat *)chatWithUniqueIdentifier:(NSString *)uniqueIdentifier;
-
-/**
- * Removes chat and all appropriate messages>
+ * Removes chat and all appropriate messages.
  *
  * @param chat Chat to remove.
  *
  * @warning Destructive operation! There is no way to restore chat or messages after removal.
  */
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
-
-/**
- * Returns OCTArray with all messages corresponding to chat.
- *
- * @prop chat Chat to get messages in.
- *
- * @return Autoupdating array with messages.
- */
-- (OCTArray *)allMessagesInChat:(OCTChat *)chat;
 
 /**
  * Send text message to specific chat
@@ -74,10 +46,10 @@
  *
  * @return Returns message, or nil if there was an error.
  */
-- (OCTMessageText *)sendMessageToChat:(OCTChat *)chat
-                                 text:(NSString *)text
-                                 type:(OCTToxMessageType)type
-                                error:(NSError **)error;
+- (OCTMessageAbstract *)sendMessageToChat:(OCTChat *)chat
+                                     text:(NSString *)text
+                                     type:(OCTToxMessageType)type
+                                    error:(NSError **)error;
 
 /**
  * Set our typing status for a chat. You are responsible for turning it on or off.

@@ -10,10 +10,6 @@
 
 @interface OCTMessageText ()
 
-@property (strong, nonatomic, readwrite) NSString *text;
-@property (assign, nonatomic, readwrite) BOOL isDelivered;
-@property (assign, nonatomic, readwrite) OCTToxMessageType type;
-
 @end
 
 @implementation OCTMessageText
@@ -22,7 +18,7 @@
 {
     NSString *description = [super description];
 
-    return [description stringByAppendingFormat:@"\ntext = %@", self.text];
+    return [description stringByAppendingFormat:@"OCTMessageText %@", self.text];
 }
 
 @end

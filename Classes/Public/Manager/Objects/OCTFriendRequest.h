@@ -6,28 +6,30 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OCTObject.h"
 
-@interface OCTFriendRequest : NSObject
+@interface OCTFriendRequest : OCTObject
 
 /**
  * Public key of a friend.
  */
-@property (strong, nonatomic) NSString *publicKey;
+@property NSString *publicKey;
 
 /**
  * Message that friend did send with friend request.
  */
-@property (strong, nonatomic) NSString *message;
+@property NSString *message;
 
 /**
- * Date when friend request was received
+ * Date interval when friend request was received (since 1970).
  */
-@property (strong, nonatomic) NSDate *date;
+@property NSTimeInterval dateInterval;
 
 /**
- * Returns a string that represents the contents of the receiving class.
+ * Date when friend request was received.
  */
-- (NSString *)description;
+- (NSDate *)date;
 
 @end
+
+RLM_ARRAY_TYPE(OCTFriendRequest)

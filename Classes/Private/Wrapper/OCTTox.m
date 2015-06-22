@@ -1532,7 +1532,7 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
     });
 }
 
-void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cName, size_t length, void *userData)
+void friendNameCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cName, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1547,7 +1547,7 @@ void friendNameCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_
     });
 }
 
-void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, const uint8_t *cMessage, size_t length, void *userData)
+void friendStatusMessageCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cMessage, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1562,7 +1562,7 @@ void friendStatusMessageCallback(Tox *cTox, OCTToxFriendNumber friendNumber, con
     });
 }
 
-void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_STATUS cStatus, void *userData)
+void friendStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_USER_STATUS cStatus, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1577,7 +1577,7 @@ void friendStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_USER_S
     });
 }
 
-void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, TOX_CONNECTION cStatus, void *userData)
+void friendConnectionStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_CONNECTION cStatus, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1592,7 +1592,7 @@ void friendConnectionStatusCallback(Tox *cTox, OCTToxFriendNumber friendNumber, 
     });
 }
 
-void friendTypingCallback(Tox *cTox, OCTToxFriendNumber friendNumber, bool isTyping, void *userData)
+void friendTypingCallback(Tox *cTox, uint32_t friendNumber, bool isTyping, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1605,7 +1605,7 @@ void friendTypingCallback(Tox *cTox, OCTToxFriendNumber friendNumber, bool isTyp
     });
 }
 
-void friendReadReceiptCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxMessageId messageId, void *userData)
+void friendReadReceiptCallback(Tox *cTox, uint32_t friendNumber, uint32_t messageId, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1636,7 +1636,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 
 void friendMessageCallback(
     Tox *cTox,
-    OCTToxFriendNumber friendNumber,
+    uint32_t friendNumber,
     TOX_MESSAGE_TYPE cType,
     const uint8_t *cMessage,
     size_t length,
@@ -1656,7 +1656,7 @@ void friendMessageCallback(
     });
 }
 
-void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, TOX_FILE_CONTROL cControl, void *userData)
+void fileReceiveControlCallback(Tox *cTox, uint32_t friendNumber, OCTToxFileNumber fileNumber, TOX_FILE_CONTROL cControl, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1672,7 +1672,7 @@ void fileReceiveControlCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTT
     });
 }
 
-void fileChunkRequestCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTToxFileNumber fileNumber, OCTToxFileSize position, size_t length, void *userData)
+void fileChunkRequestCallback(Tox *cTox, uint32_t friendNumber, OCTToxFileNumber fileNumber, uint64_t position, size_t length, void *userData)
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
@@ -1688,10 +1688,10 @@ void fileChunkRequestCallback(Tox *cTox, OCTToxFriendNumber friendNumber, OCTTox
 
 void fileReceiveCallback(
     Tox *cTox,
-    OCTToxFriendNumber friendNumber,
+    uint32_t friendNumber,
     OCTToxFileNumber fileNumber,
     enum TOX_FILE_KIND cKind,
-    OCTToxFileSize fileSize,
+    uint64_t fileSize,
     const uint8_t *cFileName,
     size_t fileNameLength,
     void *userData)
@@ -1724,9 +1724,9 @@ void fileReceiveCallback(
 
 void fileReceiveChunkCallback(
     Tox *cTox,
-    OCTToxFriendNumber friendNumber,
+    uint32_t friendNumber,
     OCTToxFileNumber fileNumber,
-    OCTToxFileSize position,
+    uint64_t position,
     const uint8_t *cData,
     size_t length,
     void *userData)

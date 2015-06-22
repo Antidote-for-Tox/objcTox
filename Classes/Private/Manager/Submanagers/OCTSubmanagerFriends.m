@@ -8,51 +8,21 @@
 
 #import "OCTSubmanagerFriends.h"
 #import "OCTSubmanagerFriends+Private.h"
-#import "OCTFriendsContainer.h"
-#import "OCTFriendsContainer+Private.h"
 #import "OCTTox.h"
-#import "OCTDBManager.h"
-#import "OCTConverterFriend.h"
-#import "OCTConverterFriendRequest.h"
-#import "OCTFriend+Private.h"
-#import "OCTArray+Private.h"
+#import "OCTFriend.h"
+#import "OCTFriendRequest.h"
+#import "OCTRealmManager.h"
+#import "RBQFetchRequest.h"
 
-@interface OCTSubmanagerFriends () <OCTFriendsContainerDataSource, OCTConverterFriendDataSource>
+@interface OCTSubmanagerFriends ()
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
-
-@property (strong, nonatomic, readwrite) OCTFriendsContainer *friendsContainer;
-
-@property (strong, nonatomic) OCTConverterFriend *converterFriend;
 
 @end
 
 @implementation OCTSubmanagerFriends
 
-- (instancetype)init
-{
-    self = [super init];
-
-    if (! self) {
-        return nil;
-    }
-
-    self.converterFriend = [OCTConverterFriend new];
-    self.converterFriend.dataSource = self;
-
-    return self;
-}
-
 #pragma mark -  Public
-
-- (OCTArray *)allFriendRequests
-{
-    OCTConverterFriendRequest *converter = [OCTConverterFriendRequest new];
-
-    RLMResults *results = [[self.dataSource managerGetDBManager] allFriendRequests];
-
-    return [[OCTArray alloc] initWithRLMResults:results converter:converter];
-}
 
 - (BOOL)sendFriendRequestToAddress:(NSString *)address message:(NSString *)message error:(NSError **)error
 {
@@ -69,10 +39,7 @@
 
     [self.dataSource managerSaveTox];
 
-    OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
-    [self.friendsContainer addFriend:friend];
-
-    return YES;
+    return [self createFriendWithFriendNumber:friendNumber error:error];
 }
 
 - (BOOL)approveFriendRequest:(OCTFriendRequest *)friendRequest error:(NSError **)error
@@ -89,19 +56,16 @@
 
     [self.dataSource managerSaveTox];
 
-    [[self.dataSource managerGetDBManager] removeFriendRequestWithPublicKey:friendRequest.publicKey];
+    [[self.dataSource managerGetRealmManager] deleteObject:friendRequest];
 
-    OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber];
-    [self.friendsContainer addFriend:friend];
-
-    return YES;
+    return [self createFriendWithFriendNumber:friendNumber error:error];
 }
 
 - (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest
 {
     NSParameterAssert(friendRequest);
 
-    [[self.dataSource managerGetDBManager] removeFriendRequestWithPublicKey:friendRequest.publicKey];
+    [[self.dataSource managerGetRealmManager] deleteObject:friendRequest];
 
     return YES;
 }
@@ -112,15 +76,13 @@
 
     OCTTox *tox = [self.dataSource managerGetTox];
 
-    BOOL result = [tox deleteFriendWithFriendNumber:friend.friendNumber error:error];
-
-    if (! result) {
+    if (! [tox deleteFriendWithFriendNumber:friend.friendNumber error:error]) {
         return NO;
     }
 
     [self.dataSource managerSaveTox];
 
-    [self.friendsContainer removeFriend:friend];
+    [[self.dataSource managerGetRealmManager] deleteObject:friend];
 
     return YES;
 }
@@ -129,47 +91,49 @@
 
 - (void)configure
 {
-    OCTTox *tox = [self.dataSource managerGetTox];
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    RBQFetchRequest *fetchResult = [realmManager fetchRequestForClass:[OCTFriend class] withPredicate:nil];
 
     NSMutableArray *friendsArray = [NSMutableArray new];
-    for (NSNumber *friendNumber in [tox friendsArray]) {
-        OCTFriend *friend = [self.converterFriend friendFromFriendNumber:friendNumber.unsignedIntValue];
 
-        if (friend) {
-            [friendsArray addObject:friend];
-        }
+    for (OCTFriend *friend in [fetchResult fetchObjects]) {
+        [friendsArray addObject:friend];
     }
 
-    self.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:[friendsArray copy]];
-    self.friendsContainer.dataSource = self;
-    [self.friendsContainer configure];
-}
-
-#pragma mark -  OCTFriendsContainerDataSource
-
-- (id<OCTSettingsStorageProtocol>)friendsContainerGetSettingsStorage
-{
-    return [self.dataSource managerGetSettingsStorage];
+    // reseting some of friend properties
+    [realmManager updateObjectsWithoutNotification:^{
+        for (OCTFriend *friend in friendsArray) {
+            friend.status = OCTToxUserStatusNone;
+            friend.connectionStatus = OCTToxConnectionStatusNone;
+            friend.isTyping = NO;
+        }
+    }];
 }
 
 #pragma mark -  OCTToxDelegate
 
 - (void)tox:(OCTTox *)tox friendRequestWithMessage:(NSString *)message publicKey:(NSString *)publicKey
 {
-    OCTDBFriendRequest *request = [OCTDBFriendRequest new];
-    request.message = message;
+    OCTFriendRequest *request = [OCTFriendRequest new];
     request.publicKey = publicKey;
+    request.message = message;
     request.dateInterval = [[NSDate date] timeIntervalSince1970];
 
-    [[self.dataSource managerGetDBManager] addFriendRequest:request];
+    [[self.dataSource managerGetRealmManager] addObject:request];
 }
 
 - (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber
 {
     [self.dataSource managerSaveTox];
 
-    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
-        friend.name = name;
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.name = name;
+
+        if ([theFriend.nickname isEqualToString:theFriend.publicKey]) {
+            theFriend.nickname = name;
+        }
     }];
 }
 
@@ -177,8 +141,10 @@
 {
     [self.dataSource managerSaveTox];
 
-    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
-        friend.statusMessage = statusMessage;
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.statusMessage = statusMessage;
     }];
 }
 
@@ -186,15 +152,19 @@
 {
     [self.dataSource managerSaveTox];
 
-    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
-        friend.status = status;
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.status = status;
     }];
 }
 
 - (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
-        friend.isTyping = isTyping;
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.isTyping = isTyping;
     }];
 }
 
@@ -202,28 +172,77 @@
 {
     [self.dataSource managerSaveTox];
 
-    [self.friendsContainer updateFriendWithFriendNumber:friendNumber updateBlock:^(OCTFriend *friend) {
-        friend.connectionStatus = status;
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.connectionStatus = status;
     }];
 }
 
-#pragma mark -  OCTConverterFriendDataSource
+#pragma mark -  Private
 
-- (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend
+- (BOOL)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)userError
 {
-    return [self.dataSource managerGetTox];
+    OCTTox *tox = [self.dataSource managerGetTox];
+    NSError *error;
+
+    OCTFriend *friend = [OCTFriend new];
+
+    friend.friendNumber = friendNumber;
+
+    friend.publicKey = [tox publicKeyFromFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.name = [tox friendNameWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.statusMessage = [tox friendStatusMessageWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.status = [tox friendStatusWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.connectionStatus = [tox friendConnectionStatusWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.isTyping = [tox isFriendTypingWithFriendNumber:friendNumber error:&error];
+    if ([self checkForError:error andAssignTo:userError]) {
+        return NO;
+    }
+
+    friend.nickname = friend.name ?: friend.publicKey;
+
+    [[self.dataSource managerGetRealmManager] addObject:friend];
+
+    return YES;
 }
 
-- (OCTDBManager *)converterFriendGetDBManager:(OCTConverterFriend *)converterFriend
+- (BOOL)checkForError:(NSError *)toCheck andAssignTo:(NSError **)toAssign
 {
-    return [self.dataSource managerGetDBManager];
-}
+    if (! toCheck) {
+        return YES;
+    }
 
-- (void)converterFriend:(OCTConverterFriend *)converter updateDBFriendWithBlock:(void (^)())block
-{
-    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+    if (toAssign) {
+        *toAssign = toCheck;
+    }
 
-    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBFriend class]];
+    return NO;
 }
 
 @end
