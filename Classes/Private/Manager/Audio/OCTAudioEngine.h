@@ -42,9 +42,17 @@
 - (BOOL)stopAudioFlow:(NSError **)error;
 
 /**
+ * Send the audio to the speaker
+ * @param speaker YES to send audio to speaker, NO to reset to default.
+ * @param error Pointer to error object.
+ * @return YES if successful override, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+
+/**
  * Checks if the Audio Graph is processing.
  * @param error Pointer to error object.
- * @return YES if Audio Graph is running, otherwise No.
+ * @return YES if Audio Graph is running, otherwise NO.
  */
 - (BOOL)isAudioRunning:(NSError **)error;
 
@@ -55,7 +63,7 @@
  * @param channels Number of audio channels.
  * @param sampleRate Sampling rate used in this frame.
  */
-- (void)provideAudioFrames:(const int16_t *)pcm sampleCount:(size_t)sampleCount channels:(uint8_t)channels sampleRate:(uint32_t)sampleRate;
+- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate;
 
 
 @end

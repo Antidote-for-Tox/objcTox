@@ -104,9 +104,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         }
 
         self.audioEngine.friendNumber = friend.friendNumber;
-        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            [self setCallActiveAndStartTimer:callToUpdate];
-        }];
+        [self setCallActiveAndStartTimer:call withStatus:OCTCallStatusActive];
 
         return YES;
     }
@@ -114,6 +112,11 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         // TO DO: Group Calls
         return NO;
     }
+}
+
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
 }
 
 - (BOOL)enableMicrophone
@@ -126,10 +129,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     self.audioEngine.enableMicrophone = enableMicrophone;
 }
 
-- (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toCall:(OCTCall *)call error:(NSError **)error
 {
-    OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlPause : OCTToxAVCallControlResume;
-
     if (call.chat.friends.count == 1) {
 
         OCTFriend *friend = call.chat.friends.firstObject;
@@ -138,59 +139,35 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return NO;
         }
 
-        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            callToUpdate.status = pause ? OCTCallStatusPaused : OCTCallStatusActive;
-        }];
-
+        switch (control) {
+            case OCTToxAVCallControlResume:
+                [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+                [callToUpdate startTimer];
+                callToUpdate.status = OCTCallStatusActive;
+            }];
+                break;
+            case OCTToxAVCallControlCancel:
+                [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
+                [self.calls removeCall:call];
+                return [self.audioEngine stopAudioFlow:error];
+            case OCTToxAVCallControlPause:
+                [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+                [callToUpdate stopTimer];
+                callToUpdate.status = OCTCallStatusPaused;
+            }];
+                break;
+            case OCTToxAVCallControlUnmuteAudio:
+                break;
+            case OCTToxAVCallControlMuteAudio:
+                break;
+            case OCTToxAVCallControlHideVideo:
+                break;
+            case OCTToxAVCallControlShowVideo:
+                break;
+        }
         return YES;
     }
     else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)endCall:(OCTCall *)call error:(NSError **)error
-{
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-
-        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-        [self.calls removeCall:call];
-
-        return ([self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:error] &&
-                [self.audioEngine stopAudioFlow:error]);
-    }
-    else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error
-{
-    OCTToxAVCallControl control = (mute) ? OCTToxAVCallControlMuteAudio : OCTToxAVCallControlUnmuteAudio;
-
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
-    }
-    else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error
-{
-    OCTToxAVCallControl control = (pause) ? OCTToxAVCallControlHideVideo : OCTToxAVCallControlShowVideo;
-
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-        return [self.toxAV sendCallControl:control toFriendNumber:friend.friendNumber error:error];
-    }
-    else {
-        // TO DO: Group Calls
         return NO;
     }
 }
@@ -236,10 +213,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return call;
 }
 
-- (void)setCallActiveAndStartTimer:(OCTCall *)call
+- (void)setCallActiveAndStartTimer:(OCTCall *)call withStatus:(OCTCallStatus)status
 {
     [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-        callToUpdate.status = OCTCallStatusActive;
+        callToUpdate.status = status;
         [callToUpdate startTimer];
     }];
 }
@@ -248,20 +225,26 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
-        [call stopTimer];
 
-        OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
+        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
+            [callToUpdate stopTimer];
 
-        OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
-        OCTDBFriend *dbFriend = [dbManager getOrCreateFriendWithFriendNumber:friend.friendNumber];
+            OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
 
-        OCTDBMessageAbstract *messageAbstract = [dbManager addMessageCallWithChat:dbChat
-                                                                         callType:type
-                                                                         duration:call.callDuration
-                                                                           sender:dbFriend];
-        [dbManager updateDBObjectInBlock:^{
-            dbChat.lastMessage = messageAbstract;
-        } objectClass:[OCTDBChat class]];
+            OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
+            OCTDBFriend *dbFriend = [dbManager getOrCreateFriendWithFriendNumber:friend.friendNumber];
+
+            OCTDBMessageAbstract *messageAbstract = [dbManager addMessageCallWithChat:dbChat
+                                                                             callType:type
+                                                                             duration:callToUpdate.callDuration
+                                                                               sender:dbFriend];
+            [dbManager updateDBObjectInBlock:^{
+                dbChat.lastMessage = messageAbstract;
+            } objectClass:[OCTDBChat class]];
+
+        }];
+
+
     }
 }
 
@@ -285,13 +268,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
         [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-        [self.audioEngine stopAudioFlow:nil];
         [self.calls removeCall:call];
+        [self.audioEngine stopAudioFlow:nil];
     }
     else {
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
             if (callToUpdate.status == OCTCallStatusDialing) {
                 [self.audioEngine startAudioFlow:nil];
+                [callToUpdate startTimer];
             }
             callToUpdate.state = state;
             callToUpdate.status = OCTCallStatusActive;

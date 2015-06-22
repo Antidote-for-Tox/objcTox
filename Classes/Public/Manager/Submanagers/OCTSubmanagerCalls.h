@@ -62,48 +62,31 @@
  * @param enableVideo YES for Video, otherwise NO.
  * @param error Pointer to an error when attempting to answer a call
  * @return YES if we were able to succesfully answer the call, otherwise NO.
- **/
+ */
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
 /**
- * Pause the call
- * @param pause YES to pause, NO otherwise.
- * @call The appropriate OCTCall to pause
- * @return YES if successful, NO otherwise.
- **/
-- (BOOL)togglePause:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error;
+ * Send the audio to the speaker
+ * @param speaker YES to send audio to speaker, NO to reset to default.
+ * @param error Pointer to error object.
+ * @return YES if successful, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
 
 /**
- * End the call. Call can be ringing or in session.
- * @call The call to end.
- * @param error Pointer to error object if there's an issue with ending the call.
- * @return YES if successful, no otherwise.
- **/
-- (BOOL)endCall:(OCTCall *)call error:(NSError **)error;
-
-/**
- * Mutes the call
- * @param mute YES to mute, NO otherwise.
- * @param call Call to mute.
+ * Send call control to call.
+ * @param control The control to send to call.
+ * @param call The appopriate call to send to.
  * @param error Pointer to error object if there's an issue muting the call.
- * @return YES if successful, NO otherwise.
- **/
-- (BOOL)toggleMute:(BOOL)mute forCall:(OCTCall *)call error:(NSError **)error;
-
-/**
- * Toggle turning off or on the video feed
- * @param pause YES to stop the video, NO otherwise to continue.
- * @call Call to pause video.
- * @param error Pointer to error object if there's an issue pausing the video.
- * @return YES if successful, NO otherwise.
- **/
-- (BOOL)togglePauseVideo:(BOOL)pause forCall:(OCTCall *)call error:(NSError **)error;
+ * @return YES if succesful, NO otherwise.
+ */
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control toCall:(OCTCall *)call error:(NSError **)error;
 
 /**
  * The UIView that will have the video feed.
  * @param call The call that has the video feed.
  * @return UIView of the video feed. Nil if no video available.
- **/
+ */
 - (UIView *)videoFeedForCall:(OCTCall *)call;
 
 /**
