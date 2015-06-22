@@ -268,6 +268,7 @@
     chat.uniqueIdentifier = @"test";
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
+    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     OCTToxAVCallState state;
@@ -288,6 +289,10 @@
     [self.callManager toxAV:nil callStateChanged:state friendNumber:1234];
 
     XCTAssertEqual(state, [self.callManager.calls callAtIndex:0].state);
+
+    state |= OCTToxAVCallStateError;
+    [self.callManager toxAV:nil callStateChanged:state friendNumber:1234];
+    XCTAssertEqual(self.callManager.calls.numberOfCalls, 0);
 }
 
 - (void)testAudioBitRateChanged
