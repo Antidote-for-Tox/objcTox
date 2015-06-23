@@ -109,6 +109,10 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTToxAVQueue", NULL);
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
+        /**
+         * Call quality is not great without dividing the interval by 1/4th. This can
+         * be removed once toxav fixes this issue.
+         */
         uint64_t interval = _toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000) / 4;
         dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, 0), interval, interval / 5);
 
