@@ -15,8 +15,7 @@ typedef NS_ENUM(NSUInteger, OCTCallStatus) {
     OCTCallStatusInactive = 0,
     OCTCallStatusDialing,
     OCTCallStatusIncoming,
-    OCTCallStatusPaused,
-    OCTCallStatusActive,
+    OCTCallStatusInSession,
 };
 
 @interface OCTCall : NSObject

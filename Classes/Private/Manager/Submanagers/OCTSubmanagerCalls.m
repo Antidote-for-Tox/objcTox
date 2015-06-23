@@ -143,7 +143,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             case OCTToxAVCallControlResume:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate startTimer];
-                callToUpdate.status = OCTCallStatusActive;
             }];
                 break;
             case OCTToxAVCallControlCancel:
@@ -152,7 +151,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             case OCTToxAVCallControlPause:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate stopTimer];
-                callToUpdate.status = OCTCallStatusPaused;
             }];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
@@ -215,7 +213,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 - (void)startTimerForCall:(OCTCall *)call
 {
     [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-        callToUpdate.status = OCTCallStatusActive;
+        callToUpdate.status = OCTCallStatusInSession;
         [callToUpdate startTimer];
     }];
 }
@@ -248,7 +246,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         }];
 
-        if (type == OCTMessageCallTypeEnd || type == OCTMessageCallTypeMissed) {
+        if ((type == OCTMessageCallTypeEnd) || (type == OCTMessageCallTypeMissed)) {
             [self.calls removeCall:call];
         }
     }
@@ -292,7 +290,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 [callToUpdate startTimer];
             }
             callToUpdate.state = state;
-            callToUpdate.status = OCTCallStatusActive;
+            callToUpdate.status = OCTCallStatusInSession;
         }];
     }
 }

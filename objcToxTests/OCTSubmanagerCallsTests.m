@@ -190,15 +190,14 @@
     chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-    call.status = OCTCallStatusActive;
+    call.status = OCTCallStatusInSession;
     [self.callManager.calls addCall:call];
 
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
-    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusPaused);
 
     OCMStub([toxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:1234 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
-    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusActive);
+    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusInSession);
 }
 
 - (void)testSetAudioBitRate
