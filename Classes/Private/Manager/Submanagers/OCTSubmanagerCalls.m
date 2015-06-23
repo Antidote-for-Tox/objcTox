@@ -146,7 +146,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             }];
                 break;
             case OCTToxAVCallControlCancel:
-                [self logCall:call setTimerActive:NO withType:OCTMessageCallTypeEnd];
+                [self logCall:call setTimerActive:NO withType:OCTMessageCallEventEnd];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
@@ -218,7 +218,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)logCall:(OCTCall *)call setTimerActive:(BOOL)active withType:(OCTMessageCallType)type
+- (void)logCall:(OCTCall *)call setTimerActive:(BOOL)active withType:(OCTMessageCallEvent)type
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
@@ -246,7 +246,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         }];
 
-        if ((type == OCTMessageCallTypeEnd) || (type == OCTMessageCallTypeMissed)) {
+        if ((type == OCTMessageCallEventEnd) || (type == OCTMessageCallEventMissed)) {
             [self.calls removeCall:call];
         }
     }
@@ -261,7 +261,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     [self.calls addCall:call];
 
-    [self logCall:call setTimerActive:NO withType:OCTMessageCallTypeDial];
+    [self logCall:call setTimerActive:NO withType:OCTMessageCallEventDial];
 
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
         [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];
@@ -275,10 +275,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
 
         if (call.status == OCTCallStatusIncoming) {
-            [self logCall:call setTimerActive:NO withType:OCTMessageCallTypeMissed];
+            [self logCall:call setTimerActive:NO withType:OCTMessageCallEventMissed];
         }
         else {
-            [self logCall:call setTimerActive:NO withType:OCTMessageCallTypeEnd];
+            [self logCall:call setTimerActive:NO withType:OCTMessageCallEventEnd];
         }
 
         [self.audioEngine stopAudioFlow:nil];

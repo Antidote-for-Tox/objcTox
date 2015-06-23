@@ -19,6 +19,6 @@
 /**
  * The type of message call.
  **/
-@property (assign, nonatomic, readonly) OCTMessageCallType callType;
+@property (assign, nonatomic, readonly) OCTMessageCallEvent callEvent;
 
 @end

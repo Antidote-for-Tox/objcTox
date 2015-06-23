@@ -114,7 +114,7 @@
 {
     OCTMessageCall *call = [OCTMessageCall new];
     call.callDuration = db.callDuration;
-    call.callType = db.callType;
+    call.callEvent = db.callEvent;
 
     return call;
 }

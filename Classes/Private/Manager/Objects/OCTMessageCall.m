@@ -11,7 +11,7 @@
 @interface OCTMessageCall ()
 
 @property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
-@property (assign, nonatomic, readwrite) OCTMessageCallType callType;
+@property (assign, nonatomic, readwrite) OCTMessageCallEvent callEvent;
 
 @end
 
@@ -31,14 +31,14 @@
 - (NSString *)typeDescription
 {
     NSString *description;
-    switch (self.callType) {
-        case OCTMessageCallTypeDial:
+    switch (self.callEvent) {
+        case OCTMessageCallEventDial:
             description = @"Call dial";
             break;
-        case OCTMessageCallTypeEnd:
+        case OCTMessageCallEventEnd:
             description = [[NSString alloc] initWithFormat:@"Call lasted %f seconds", self.callDuration];
             break;
-        case OCTMessageCallTypeMissed:
+        case OCTMessageCallEventMissed:
             description = @"Call missed";
             break;
     }

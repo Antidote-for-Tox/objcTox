@@ -34,7 +34,7 @@
     OCTMessageCall *message = [OCTMessageCall new];
 
     message.callDuration = 12345.05;
-    message.callType = OCTMessageCallTypeMissed;
+    message.callEvent = OCTMessageCallEventMissed;
 
     XCTAssertNotNil(message);
 
@@ -42,6 +42,6 @@
 
     XCTAssertNotNil(messageDB);
     XCTAssertEqual(messageDB.callDuration, message.callDuration);
-    XCTAssertEqual(messageDB.callType, message.callType);
+    XCTAssertEqual(messageDB.callEvent, message.callEvent);
 }
 @end
