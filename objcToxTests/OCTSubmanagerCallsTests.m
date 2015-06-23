@@ -159,6 +159,26 @@
     XCTAssertEqual(self.callManager.audioEngine.friendNumber, 1234);
 }
 
+- (void)testRouteAudioToSpeaker
+{
+    id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    self.callManager.audioEngine = audioEngine;
+
+    [self.callManager routeAudioToSpeaker:YES error:nil];
+
+    OCMVerify([audioEngine routeAudioToSpeaker:YES error:nil]);
+}
+
+- (void)testEnableMicrophone
+{
+    id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    self.callManager.audioEngine = audioEngine;
+
+    [self.callManager setEnableMicrophone:NO];
+
+    OCMVerify([audioEngine setEnableMicrophone:NO]);
+}
+
 - (void)testTogglePauseForCall
 {
     id toxAV = OCMClassMock([OCTToxAV class]);
@@ -170,15 +190,14 @@
     chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-    call.status = OCTCallStatusActive;
+    call.status = OCTCallStatusInSession;
     [self.callManager.calls addCall:call];
 
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
-    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusPaused);
 
     OCMStub([toxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:1234 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
-    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusActive);
+    XCTAssertEqual([self.callManager.calls callAtIndex:0].status, OCTCallStatusInSession);
 }
 
 - (void)testSetAudioBitRate
@@ -248,6 +267,7 @@
     chat.uniqueIdentifier = @"test";
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
+    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     OCTToxAVCallState state;
@@ -268,6 +288,10 @@
     [self.callManager toxAV:nil callStateChanged:state friendNumber:1234];
 
     XCTAssertEqual(state, [self.callManager.calls callAtIndex:0].state);
+
+    state |= OCTToxAVCallStateError;
+    [self.callManager toxAV:nil callStateChanged:state friendNumber:1234];
+    XCTAssertEqual(self.callManager.calls.numberOfCalls, 0);
 }
 
 - (void)testAudioBitRateChanged

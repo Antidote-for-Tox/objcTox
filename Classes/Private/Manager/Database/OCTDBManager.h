@@ -69,7 +69,7 @@ extern NSString *const kOCTDBManagerObjectClassKey;
 - (OCTDBMessageAbstract *)textMessageInChat:(OCTDBChat *)chat withMessageId:(int)messageId;
 
 - (OCTDBMessageAbstract *)addMessageCallWithChat:(OCTDBChat *)chat
-                                        callType:(OCTMessageCallType)callType
+                                        callType:(OCTMessageCallEvent)callType
                                         duration:(NSTimeInterval)duration
                                           sender:(OCTDBFriend *)sender;
 

@@ -19,7 +19,7 @@
     }
 
     self.callDuration = call.callDuration;
-    self.callType = call.callType;
+    self.callEvent = call.callEvent;
 
     return self;
 }

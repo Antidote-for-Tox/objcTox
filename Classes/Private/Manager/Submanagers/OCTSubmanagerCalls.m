@@ -104,7 +104,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         }
 
         self.audioEngine.friendNumber = friend.friendNumber;
-        [self setCallActiveAndStartTimer:call withStatus:OCTCallStatusActive];
+        [self startTimerForCall:call];
 
         return YES;
     }
@@ -143,17 +143,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             case OCTToxAVCallControlResume:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate startTimer];
-                callToUpdate.status = OCTCallStatusActive;
             }];
                 break;
             case OCTToxAVCallControlCancel:
-                [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-                [self.calls removeCall:call];
+                [self logCall:call setTimerActive:NO withType:OCTMessageCallEventEnd];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
                 [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
                 [callToUpdate stopTimer];
-                callToUpdate.status = OCTCallStatusPaused;
             }];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
@@ -213,21 +210,26 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     return call;
 }
 
-- (void)setCallActiveAndStartTimer:(OCTCall *)call withStatus:(OCTCallStatus)status
+- (void)startTimerForCall:(OCTCall *)call
 {
     [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-        callToUpdate.status = status;
+        callToUpdate.status = OCTCallStatusInSession;
         [callToUpdate startTimer];
     }];
 }
 
-- (void)logCallAndStopTimer:(OCTCall *)call type:(OCTMessageCallType)type
+- (void)logCall:(OCTCall *)call setTimerActive:(BOOL)active withType:(OCTMessageCallEvent)type
 {
     if (call.chat.friends.count == 1) {
         OCTFriend *friend = call.chat.friends.firstObject;
 
         [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            [callToUpdate stopTimer];
+            if (active) {
+                [callToUpdate startTimer];
+            }
+            else {
+                [callToUpdate stopTimer];
+            }
 
             OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
 
@@ -244,7 +246,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         }];
 
-
+        if ((type == OCTMessageCallEventEnd) || (type == OCTMessageCallEventMissed)) {
+            [self.calls removeCall:call];
+        }
     }
 }
 
@@ -257,6 +261,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     [self.calls addCall:call];
 
+    [self logCall:call setTimerActive:NO withType:OCTMessageCallEventDial];
+
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
         [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];
     }
@@ -267,8 +273,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTCall *call = [self callFromFriend:friendNumber];
 
     if ((state & OCTToxAVCallStateError) || (state & OCTToxAVCallStateFinished)) {
-        [self logCallAndStopTimer:call type:OCTMessageCallTypeEnd];
-        [self.calls removeCall:call];
+
+        if (call.status == OCTCallStatusIncoming) {
+            [self logCall:call setTimerActive:NO withType:OCTMessageCallEventMissed];
+        }
+        else {
+            [self logCall:call setTimerActive:NO withType:OCTMessageCallEventEnd];
+        }
+
         [self.audioEngine stopAudioFlow:nil];
     }
     else {
@@ -278,7 +290,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 [callToUpdate startTimer];
             }
             callToUpdate.state = state;
-            callToUpdate.status = OCTCallStatusActive;
+            callToUpdate.status = OCTCallStatusInSession;
         }];
     }
 }

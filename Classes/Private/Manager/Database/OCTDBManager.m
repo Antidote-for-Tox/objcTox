@@ -284,7 +284,7 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
 }
 
 - (OCTDBMessageAbstract *)addMessageCallWithChat:(OCTDBChat *)chat
-                                        callType:(OCTMessageCallType)callType
+                                        callType:(OCTMessageCallEvent)callEvent
                                         duration:(NSTimeInterval)duration
                                           sender:(OCTDBFriend *)sender
 {
@@ -296,7 +296,7 @@ NSString *const kOCTDBManagerObjectClassKey = @"kOCTDBManagerObjectClassKey";
         message.sender = sender;
         message.chat = chat;
         message.callMessage = [OCTDBMessageCall new];
-        message.callMessage.callType = callType;
+        message.callMessage.callEvent = callEvent;
         message.callMessage.callDuration = duration;
         [self.realm beginWriteTransaction];
         [self.realm addObject:message];

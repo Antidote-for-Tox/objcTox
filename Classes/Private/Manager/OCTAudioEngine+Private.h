@@ -7,6 +7,8 @@
 //
 
 #import "OCTAudioEngine.h"
+#import "TPCircularBuffer.h"
+
 @import AVFoundation;
 
 /**
@@ -49,10 +51,28 @@ extern OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 
 @property (nonatomic, assign) AUGraph processingGraph;
 @property (nonatomic, assign) AudioUnit ioUnit;
+@property (nonatomic, assign) TPCircularBuffer outputBuffer;
+@property (nonatomic, assign) TPCircularBuffer inputBuffer;
+@property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
+@property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 
 - (void)fillError:(NSError **)error
          withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason;
+
+OSStatus inputRenderCallBack(void *inRefCon,
+                             AudioUnitRenderActionFlags  *ioActionFlags,
+                             const AudioTimeStamp    *inTimeStamp,
+                             UInt32 inBusNumber,
+                             UInt32 inNumberFrames,
+                             AudioBufferList *ioData);
+
+OSStatus outputRenderCallBack(void *inRefCon,
+                              AudioUnitRenderActionFlags *ioActionFlags,
+                              const AudioTimeStamp *inTimeStamp,
+                              UInt32 inBusNumber,
+                              UInt32 inNumberFrames,
+                              AudioBufferList *ioData);
 
 @end

@@ -109,7 +109,11 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTToxAVQueue", NULL);
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
-        uint64_t interval = _toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000);
+        /**
+         * Call quality is not great without dividing the interval by 1/4th. This can
+         * be removed once toxav fixes this issue.
+         */
+        uint64_t interval = _toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000) / 4;
         dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, 0), interval, interval / 5);
 
         __weak OCTToxAV *weakSelf = self;
@@ -618,7 +622,6 @@ void receiveAudioFrameCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: receiveAudioFrameCallback from friend %d sampleCount: %lu channels: %d samplerate: %d", toxAV, friendNumber, sampleCount, channels, sampleRate);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
         }
