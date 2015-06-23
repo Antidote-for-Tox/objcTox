@@ -17,6 +17,10 @@
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
 
+#import "DDLog.h"
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+
 @interface OCTRealmManager ()
 
 @property (strong, nonatomic) dispatch_queue_t queue;
@@ -37,6 +41,8 @@
     if (! self) {
         return nil;
     }
+
+    DDLogInfo(@"OCTRealmManager: init with path %@", path);
 
     _queue = dispatch_queue_create("OCTRealmManager queue", NULL);
 
@@ -90,18 +96,23 @@
     NSParameterAssert(object);
     NSParameterAssert(updateBlock);
 
+    DDLogInfo(@"OCTRealmManager: updateObject %@", object);
+
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
-        updateBlock(object);
-        [self.realm commitWriteTransaction];
 
+        updateBlock(object);
         [[self logger] didChangeObject:object];
+
+        [self.realm commitWriteTransaction];
     });
 }
 
 - (void)updateObjectsWithoutNotification:(void (^)())updateBlock
 {
     NSParameterAssert(updateBlock);
+
+    DDLogInfo(@"OCTRealmManager: updating objects without notification");
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
@@ -114,12 +125,15 @@
 {
     NSParameterAssert(object);
 
+    DDLogInfo(@"OCTRealmManager: add object %@", object);
+
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
-        [self.realm addObject:object];
-        [self.realm commitWriteTransaction];
 
+        [self.realm addObject:object];
         [[self logger] didAddObject:object];
+
+        [self.realm commitWriteTransaction];
     });
 }
 
@@ -127,11 +141,14 @@
 {
     NSParameterAssert(object);
 
-    dispatch_sync(self.queue, ^{
-        [[self logger] willDeleteObject:object];
+    DDLogInfo(@"OCTRealmManager: delete object %@", object);
 
+    dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
+
+        [[self logger] willDeleteObject:object];
         [self.realm deleteObject:object];
+
         [self.realm commitWriteTransaction];
     });
 }
@@ -162,15 +179,18 @@
             return;
         }
 
+        DDLogInfo(@"OCTRealmManager: creating chat with friend %@", friend);
+
         chat = [OCTChat new];
         chat.enteredText = @"";
 
         [self.realm beginWriteTransaction];
+
         [self.realm addObject:chat];
         [chat.friends addObject:friend];
-        [self.realm commitWriteTransaction];
-
         [[self logger] didAddObject:chat];
+
+        [self.realm commitWriteTransaction];
     });
 
     return chat;
@@ -179,6 +199,8 @@
 - (void)removeChatWithAllMessages:(OCTChat *)chat
 {
     NSParameterAssert(chat);
+
+    DDLogInfo(@"OCTRealmManager: removing chat with all messages %@", chat);
 
     dispatch_sync(self.queue, ^{
         RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
@@ -214,6 +236,8 @@
 {
     NSParameterAssert(text);
     NSParameterAssert(chat);
+
+    DDLogInfo(@"OCTRealmManager: adding messageText to chat %@", chat);
 
     OCTMessageText *messageText = [OCTMessageText new];
     messageText.text = text;
