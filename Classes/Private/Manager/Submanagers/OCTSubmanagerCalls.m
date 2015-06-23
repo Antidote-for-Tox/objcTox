@@ -7,19 +7,16 @@
 //
 
 #import "OCTSubmanagerCalls+Private.h"
-#import "OCTConverterFriend.h"
-#import "OCTConverterMessage.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = 48;
 const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
-@interface OCTSubmanagerCalls () <OCTToxAVDelegate, OCTConverterChatDelegate, OCTConverterFriendDataSource>
+@interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
-@property (strong, nonatomic) OCTConverterChat *chatConverter;
 @property (strong, nonatomic, readwrite) OCTCallsContainer *calls;
 
 @end
@@ -41,17 +38,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     _audioEngine = [OCTAudioEngine new];
     _audioEngine.toxav = self.toxAV;
     [_audioEngine setupWithError:nil];
-
-    OCTConverterFriend *friendConverter = [OCTConverterFriend new];
-    friendConverter.dataSource = self;
-
-    OCTConverterMessage *messageConverter = [OCTConverterMessage new];
-    messageConverter.converterFriend = friendConverter;
-
-    _chatConverter = [OCTConverterChat new];
-    _chatConverter.delegate = self;
-    _chatConverter.converterFriend = friendConverter;
-    _chatConverter.converterMessage = messageConverter;
 
     _calls = [OCTCallsContainer new];
 
@@ -201,13 +187,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 #pragma mark Private methods
 - (OCTCall *)callFromFriend:(OCTToxFriendNumber)friendNumber
 {
-    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-    OCTDBChat *chatDB = [dbManager getOrCreateChatWithFriendNumber:friendNumber];
-    OCTChat *chat = [self.chatConverter objectFromRLMObject:chatDB];
+    //TO DO: FIX
 
-    OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
-
-    return call;
+    return nil;
 }
 
 - (void)startTimerForCall:(OCTCall *)call
@@ -220,36 +202,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)logCall:(OCTCall *)call setTimerActive:(BOOL)active withType:(OCTMessageCallEvent)type
 {
-    if (call.chat.friends.count == 1) {
-        OCTFriend *friend = call.chat.friends.firstObject;
-
-        [self.calls updateCall:call updateBlock:^(OCTCall *callToUpdate) {
-            if (active) {
-                [callToUpdate startTimer];
-            }
-            else {
-                [callToUpdate stopTimer];
-            }
-
-            OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-
-            OCTDBChat *dbChat = [dbManager getOrCreateChatWithFriendNumber:friend.friendNumber];
-            OCTDBFriend *dbFriend = [dbManager getOrCreateFriendWithFriendNumber:friend.friendNumber];
-
-            OCTDBMessageAbstract *messageAbstract = [dbManager addMessageCallWithChat:dbChat
-                                                                             callType:type
-                                                                             duration:callToUpdate.callDuration
-                                                                               sender:dbFriend];
-            [dbManager updateDBObjectInBlock:^{
-                dbChat.lastMessage = messageAbstract;
-            } objectClass:[OCTDBChat class]];
-
-        }];
-
-        if ((type == OCTMessageCallEventEnd) || (type == OCTMessageCallEventMissed)) {
-            [self.calls removeCall:call];
-        }
-    }
+    //TO DO: FIX
 }
 
 #pragma mark OCTToxAV delegate methods
@@ -327,31 +280,4 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                   friendNumber:(OCTToxFriendNumber)friendNumber
 {}
 
-#pragma mark -  OCTConverterFriendDataSource
-
-- (OCTTox *)converterFriendGetTox:(OCTConverterFriend *)converterFriend
-{
-    return [self.dataSource managerGetTox];
-}
-
-- (OCTDBManager *)converterFriendGetDBManager:(OCTConverterFriend *)converterFriend
-{
-    return [self.dataSource managerGetDBManager];
-}
-
-- (void)converterFriend:(OCTConverterFriend *)converter updateDBFriendWithBlock:(void (^)())block
-{
-    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-
-    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBFriend class]];
-}
-
-#pragma mark -  OCTConverterChatDelegate
-
-- (void)converterChat:(OCTConverterChat *)converter updateDBChatWithBlock:(void (^)())block
-{
-    OCTDBManager *dbManager = [self.dataSource managerGetDBManager];
-
-    [dbManager updateDBObjectInBlock:block objectClass:[OCTDBChat class]];
-}
 @end

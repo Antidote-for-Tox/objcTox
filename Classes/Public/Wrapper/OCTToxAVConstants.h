@@ -7,23 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "OCTToxAVConstants.h"
 
-typedef uint32_t OCTToxAVAudioBitRate;
+typedef int OCTToxAVAudioBitRate;
 typedef const int16_t OCTToxAVPCMData;
 typedef size_t OCTToxAVSampleCount;
 typedef uint8_t OCTToxAVChannels;
 typedef uint32_t OCTToxAVSampleRate;
 
-typedef uint32_t OCTToxAVVideoBitRate;
+typedef int OCTToxAVVideoBitRate;
 typedef uint16_t OCTToxAVVideoWidth;
 typedef uint16_t OCTToxAVVideoHeight;
 typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
-extern const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable;
-extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
-extern NSString *const kOCTToxAVErrorDomain;
+const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable;
+const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
+NSString *const kOCTToxAVErrorDomain;
 
 /*******************************************************************************
  *
@@ -31,7 +30,7 @@ extern NSString *const kOCTToxAVErrorDomain;
  *
  ******************************************************************************/
 
-typedef NS_OPTIONS(NSUInteger, OCTToxAVCallState) {
+typedef NS_OPTIONS(NSInteger, OCTToxAVCallState) {
     /**
      * Set by the AV core if an error occurred on the remote end or if friend
      * timed out. This is the final state after which no more state
@@ -77,7 +76,7 @@ typedef NS_OPTIONS(NSUInteger, OCTToxAVCallState) {
 /**
  * Error codes for init method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxAVErrorInitCode) {
+typedef NS_ENUM(NSInteger, OCTToxAVErrorInitCode) {
     OCTToxAVErrorInitCodeUnknown,
     /**
      * One of the arguments to the function was NULL when it was not expected.
@@ -99,7 +98,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorInitCode) {
 /**
  * Error codes for call setup.
  */
-typedef NS_ENUM(NSUInteger, OCTToxAVErrorCall) {
+typedef NS_ENUM(NSInteger, OCTToxAVErrorCall) {
     OCTToxAVErrorCallUnknown,
 
     /**
@@ -133,7 +132,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorCall) {
 /**
  * Error codes for answer calls.
  */
-typedef NS_ENUM(NSUInteger, OCTToxAVErrorAnswer) {
+typedef NS_ENUM(NSInteger, OCTToxAVErrorAnswer) {
     OCTToxAVErrorAnswerUnknown,
 
     /**
@@ -163,7 +162,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorAnswer) {
 /**
  * Error codes for when sending controls.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
+typedef NS_ENUM(NSInteger, OCTToxErrorCallControl) {
     OCTToxAVErrorControlUnknown,
 
     /**
@@ -188,7 +187,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorCallControl) {
 /**
  * Error codes for setting the bit rate.
  */
-typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
+typedef NS_ENUM(NSInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateUnknown,
 
     /**
@@ -210,7 +209,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorSetBitRate) {
 /**
  * Error codes for sending audio/video frames
  */
-typedef NS_ENUM(NSUInteger, OCTToxAVErrorSendFrame) {
+typedef NS_ENUM(NSInteger, OCTToxAVErrorSendFrame) {
     OCTToxAVErrorSendFrameUnknown,
 
     /**
@@ -246,7 +245,7 @@ typedef NS_ENUM(NSUInteger, OCTToxAVErrorSendFrame) {
  * Call control
  *
  ******************************************************************************/
-typedef NS_ENUM(NSUInteger, OCTToxAVCallControl) {
+typedef NS_ENUM(NSInteger, OCTToxAVCallControl) {
     /**
      * Resume a previously paused call. Only valid if the pause was caused by this
      * client, if not, this control is ignored. Not valid before the call is accepted.

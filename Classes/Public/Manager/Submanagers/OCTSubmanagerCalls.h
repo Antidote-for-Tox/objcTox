@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "OCTChat.h"
-#import "OCTArray.h"
 #import "OCTCallsContainer.h"
+#import "OCTToxAVConstants.h"
+
 @class OCTSubmanagerCalls;
 @class OCTToxAV;
 @class OCTCall;

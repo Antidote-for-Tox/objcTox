@@ -11,7 +11,6 @@
 #import "OCTCallsContainer+Private.h"
 #import "OCTBasicContainer.h"
 #import "OCTCall+Private.h"
-#import "OCTChat+Private.h"
 #import <OCMock/OCMock.h>
 
 @interface OCTCallsContainer (Testing)

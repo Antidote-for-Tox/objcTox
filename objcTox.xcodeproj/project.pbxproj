@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		04A944F5140E93E490C9F50611FD020F /* OCTDBMessageCallTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E5C3614E1C48E87CE976BBA2A61EA9F3 /* OCTDBMessageCallTests.m */; };
 		05B0A2612C8771F5F876B1901B983436 /* OCTDBMessageCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 883129D2F949E72CA91AB08DED6F5B7A /* OCTDBMessageCall.m */; };
 		0B8E8A0EB99B3637B2FDFDD28C33CB42 /* OCTManagerConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 48978D1D6099CCF1BA639D9159F7E0F0 /* OCTManagerConfigurationTests.m */; };
 		0DE4B4F9DEA2A6B0028871D2E12114AB /* OCTUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7218668C8B51B22E4E473DA9AF6979D1 /* OCTUserViewController.m */; };
@@ -210,7 +209,6 @@
 		D37DB991AC6E87170F1E49ACA119B33A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DC15169F1B57241E08B356608016D41A /* OCTSubmanagerUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerUser.h; sourceTree = "<group>"; };
 		E02C2F73766CD67B62FDBB73841065AF /* OCTMessageText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTMessageText.m; sourceTree = "<group>"; };
-		E5C3614E1C48E87CE976BBA2A61EA9F3 /* OCTDBMessageCallTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDBMessageCallTests.m; sourceTree = "<group>"; };
 		E81B002B36CF7385268F31A5263A10DF /* OCTFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendRequest.m; sourceTree = "<group>"; };
 		E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTDefaultFileStorage.m; sourceTree = "<group>"; };
 		EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxOptions.h; sourceTree = "<group>"; };
@@ -221,6 +219,8 @@
 		F0547D861B28D312006FD215 /* OCTCallsContainer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTCallsContainer+Private.h"; sourceTree = "<group>"; };
 		F0547D871B28F4A3006FD215 /* OCTCallsContainerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTCallsContainerTests.m; sourceTree = "<group>"; };
 		F056BC181B251AC2008D60B8 /* OCTAudioEngine+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTAudioEngine+Private.h"; sourceTree = "<group>"; };
+		F05BE25D1B3A139100C5795D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
+		F05BE25F1B3A13B100C5795D /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		F069EB901B240BB70084FB53 /* OCTCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTCall+Private.h"; sourceTree = "<group>"; };
 		F07C8F971B1E379D00E399F5 /* OCTToxAVConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAVConstants.h; sourceTree = "<group>"; };
 		F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVConstants.m; sourceTree = "<group>"; };
@@ -536,6 +536,8 @@
 		D29005258A7D90733C79DDD0A57348E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F05BE25F1B3A13B100C5795D /* libc++.dylib */,
+				F05BE25D1B3A139100C5795D /* libstdc++.dylib */,
 				FE517D2AD019ACD3B88B8A455D827F22 /* libPods-objcToxDemo.a */,
 				3367A8D035C7B204B66D4EFD76EF05D2 /* libPods-objcToxTests.a */,
 				7BBA89896F49E2B57529897659F92AE8 /* libPods.a */,
@@ -806,7 +808,6 @@
 				F0547D841B28CFC8006FD215 /* OCTCallsContainer.m in Sources */,
 				F02C04D11B20FB98001025D1 /* OCTSubmanagerCallsTests.m in Sources */,
 				05B0A2612C8771F5F876B1901B983436 /* OCTDBMessageCall.m in Sources */,
-				04A944F5140E93E490C9F50611FD020F /* OCTDBMessageCallTests.m in Sources */,
 				11CD5AE91B386A4D00585194 /* OCTObject.m in Sources */,
 				11B4BAF11B11E2800001A96A /* OCTSubmanagerFiles.m in Sources */,
 				3A74FCE2D1704C1086CBBA8CB9844CB9 /* OCTDefaultFileStorage.m in Sources */,

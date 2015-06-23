@@ -6,9 +6,8 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTToxAV+Private.h"
 #import "OCTTox+Private.h"
-#import "toxav.h"
+#import "OCTToxAV+Private.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -526,7 +525,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 #pragma Callbacks
 
 void callIncomingCallback(ToxAV *cToxAV,
-                          OCTToxFriendNumber friendNumber,
+                          uint32_t friendNumber,
                           bool audioEnabled,
                           bool videoEnabled,
                           void *userData)
@@ -542,7 +541,7 @@ void callIncomingCallback(ToxAV *cToxAV,
 }
 
 void callStateCallback(ToxAV *cToxAV,
-                       OCTToxFriendNumber friendNumber,
+                       uint32_t friendNumber,
                        enum TOXAV_CALL_STATE cState,
                        void *userData)
 {
@@ -580,9 +579,9 @@ void callStateCallback(ToxAV *cToxAV,
 }
 
 void audioBitRateStatusCallback(ToxAV *cToxAV,
-                                OCTToxFriendNumber friendNumber,
+                                uint32_t friendNumber,
                                 bool stable,
-                                OCTToxAVAudioBitRate bitRate,
+                                uint32_t bitRate,
                                 void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
@@ -596,9 +595,9 @@ void audioBitRateStatusCallback(ToxAV *cToxAV,
 }
 
 void videoBitRateStatusCallback(ToxAV *cToxAV,
-                                OCTToxFriendNumber friendNumber,
+                                uint32_t friendNumber,
                                 bool stable,
-                                OCTToxAVVideoBitRate bitRate,
+                                uint32_t bitRate,
                                 void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
@@ -612,7 +611,7 @@ void videoBitRateStatusCallback(ToxAV *cToxAV,
 }
 
 void receiveAudioFrameCallback(ToxAV *cToxAV,
-                               OCTToxFriendNumber friendNumber,
+                               uint32_t friendNumber,
                                OCTToxAVPCMData *pcm,
                                OCTToxAVSampleCount sampleCount,
                                OCTToxAVChannels channels,
@@ -629,7 +628,7 @@ void receiveAudioFrameCallback(ToxAV *cToxAV,
 }
 
 void receiveVideoFrameCallback(ToxAV *cToxAV,
-                               OCTToxFriendNumber friendNumber,
+                               uint32_t friendNumber,
                                OCTToxAVVideoWidth width,
                                OCTToxAVVideoHeight height,
                                OCTToxAVPlaneData *yPlane, OCTToxAVPlaneData *uPlane, OCTToxAVPlaneData *vPlane,

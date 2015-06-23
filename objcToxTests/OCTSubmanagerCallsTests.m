@@ -13,16 +13,12 @@
 #import "OCTToxAV.h"
 #import "OCTTox.h"
 #import "OCTCall+Private.h"
-#import "OCTFriend+Private.h"
-#import "OCTChat+Private.h"
-#import "OCTConverterChat.h"
 #import <OCMock/OCMock.h>
 
 @interface OCTSubmanagerCalls (Tests)
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
-@property (strong, nonatomic) OCTConverterChat *chatConverter;
 @property (strong, nonatomic, readwrite) OCTCallsContainer *calls;
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
@@ -83,7 +79,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     OCTCall *callResult = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO error:nil];
@@ -106,7 +101,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO error:nil];
 
@@ -126,7 +120,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     call.status = OCTCallStatusIncoming;
@@ -147,7 +140,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     call.status = OCTCallStatusIncoming;
@@ -187,7 +179,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     call.status = OCTCallStatusInSession;
@@ -205,7 +196,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
 
@@ -222,7 +212,6 @@
     OCTChat *chat = [OCTChat new];
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
 
@@ -248,10 +237,6 @@
     OCTChat *chat = [OCTChat new];
     chat.uniqueIdentifier = @"test";
 
-    id chatConverter = OCMClassMock([OCTConverterChat class]);
-    self.callManager.chatConverter = chatConverter;
-    OCMStub([chatConverter objectFromRLMObject:[OCMArg any]]).andReturn(chat);
-
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     id mockedCall = OCMClassMock([OCTCall class]);
     OCMStub([mockedCall alloc]).andReturn(call);
@@ -267,7 +252,6 @@
     chat.uniqueIdentifier = @"test";
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 1234;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     OCTToxAVCallState state;
@@ -280,9 +264,6 @@
     XCTAssertEqual(state, [self.callManager.calls callAtIndex:0].state);
 
     XCTAssertEqual(call.state, state);
-    id chatConverter = OCMClassMock([OCTConverterChat class]);
-    self.callManager.chatConverter = chatConverter;
-    OCMStub([chatConverter objectFromRLMObject:[OCMArg any]]).andReturn(chat);
 
     state |= OCTToxAVCallStateSendingAudio;
     [self.callManager toxAV:nil callStateChanged:state friendNumber:1234];
@@ -307,7 +288,6 @@
     chat.uniqueIdentifier = @"test";
     OCTFriend *friend = [OCTFriend new];
     friend.friendNumber = 123;
-    chat.friends = @[friend];
 
     OCTCall *call = [[OCTCall alloc] initCallWithChat:chat];
     [self.callManager.calls addCall:call];
