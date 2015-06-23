@@ -208,6 +208,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
                            @"friendNumber %u\n"
                            @"publicKey %@\n"
                            @"name %@\n"
+                           @"nickname %@\n"
                            @"statusMessage %@\n"
                            @"status %@\n"
                            @"connectionStatus %@\n"
@@ -216,6 +217,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
                            friend.friendNumber,
                            friend.publicKey,
                            friend.name,
+                           friend.nickname,
                            friend.statusMessage,
                            [self stringFromUserStatus:friend.status],
                            [self stringFromConnectionStatus:friend.connectionStatus],

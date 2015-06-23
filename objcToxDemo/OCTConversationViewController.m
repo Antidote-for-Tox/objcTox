@@ -34,7 +34,7 @@
 
     _chat = chat;
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat == %@", chat];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
     RBQFetchRequest *fetchRequest = [self.manager fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
 
     _resultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest

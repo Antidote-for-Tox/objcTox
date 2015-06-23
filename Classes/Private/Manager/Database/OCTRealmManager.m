@@ -251,7 +251,6 @@
     messageAbstract.chat = chat;
     messageAbstract.messageText = messageText;
 
-    [self addObject:messageText];
     [self addObject:messageAbstract];
 
     [self updateObject:chat withBlock:^(OCTChat *theChat) {

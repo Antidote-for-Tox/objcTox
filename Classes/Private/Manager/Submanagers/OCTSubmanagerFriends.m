@@ -131,7 +131,7 @@
     [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
         theFriend.name = name;
 
-        if ([theFriend.nickname isEqualToString:theFriend.publicKey]) {
+        if (name.length && [theFriend.nickname isEqualToString:theFriend.publicKey]) {
             theFriend.nickname = name;
         }
     }];
@@ -225,7 +225,7 @@
         return NO;
     }
 
-    friend.nickname = friend.name ?: friend.publicKey;
+    friend.nickname = friend.name.length ? friend.name : friend.publicKey;
 
     [[self.dataSource managerGetRealmManager] addObject:friend];
 
@@ -235,14 +235,14 @@
 - (BOOL)checkForError:(NSError *)toCheck andAssignTo:(NSError **)toAssign
 {
     if (! toCheck) {
-        return YES;
+        return NO;
     }
 
     if (toAssign) {
         *toAssign = toCheck;
     }
 
-    return NO;
+    return YES;
 }
 
 @end
