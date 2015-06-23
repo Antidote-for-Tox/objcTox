@@ -6,41 +6,43 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTMessageAbstract.h"
+#import "OCTObject.h"
 #import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
 
 /**
  * Message that contains file, that has been send/received. Represents pending, canceled and loaded files.
  */
-@interface OCTMessageFile : OCTMessageAbstract
+@interface OCTMessageFile : OCTObject
 
 /**
  * The current state of file. Only in case if it is OCTMessageFileTypeReady
  * the file can be shown to user.
  */
-@property (assign, nonatomic, readonly) OCTMessageFileType fileType;
+@property OCTMessageFileType fileType;
 
 /**
  * Size of file in bytes.
  */
-@property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
+@property OCTToxFileSize fileSize;
 
 /**
  * Name of the file as specified by sender. Note that actual fileName in path
  * may differ from this fileName.
  */
-@property (strong, nonatomic, readonly) NSString *fileName;
+@property NSString *fileName;
 
 /**
  * Path of file on disk. If you need fileName to show to user please use
  * `fileName` property. filePath has it's own random fileName.
  */
-@property (strong, nonatomic, readonly) NSString *filePath;
+@property NSString *filePath;
 
 /**
  * Uniform Type Identifier of file.
  */
-@property (strong, nonatomic, readonly) NSString *fileUTI;
+@property NSString *fileUTI;
 
 @end
+
+RLM_ARRAY_TYPE(OCTMessageFile)

@@ -6,27 +6,33 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTMessageAbstract.h"
+#import "OCTObject.h"
 #import "OCTToxConstants.h"
+
+@class OCTToxConstants;
 
 /**
  * Simple text message.
  */
-@interface OCTMessageText : OCTMessageAbstract
+@interface OCTMessageText : OCTObject
 
 /**
  * The text of the message.
  */
-@property (strong, nonatomic, readonly) NSString *text;
+@property NSString *text;
 
 /**
  * Indicate if message is delivered. Actual only for outgoing messages.
  */
-@property (assign, nonatomic, readonly) BOOL isDelivered;
+@property BOOL isDelivered;
 
 /**
  * Type of the message.
  */
-@property (assign, nonatomic, readonly) OCTToxMessageType type;
+@property OCTToxMessageType type;
+
+@property OCTToxMessageId messageId;
 
 @end
+
+RLM_ARRAY_TYPE(OCTMessageText)

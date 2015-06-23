@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class OCTTox;
-@class OCTDBManager;
+@class OCTRealmManager;
 @protocol OCTSettingsStorageProtocol;
 @protocol OCTFileStorageProtocol;
 
@@ -17,7 +17,7 @@
 
 - (OCTTox *)managerGetTox;
 - (void)managerSaveTox;
-- (OCTDBManager *)managerGetDBManager;
+- (OCTRealmManager *)managerGetRealmManager;
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;
 - (id<OCTFileStorageProtocol>)managerGetFileStorage;
 

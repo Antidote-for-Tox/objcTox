@@ -6,30 +6,43 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OCTObject.h"
 
-#import "OCTFriend.h"
-#import "OCTChat.h"
+@class OCTFriend;
+@class OCTChat;
+@class OCTMessageText;
+@class OCTMessageFile;
 
 /**
  * An abstract message that represents one chunk of chat history.
  */
-@interface OCTMessageAbstract : NSObject
+@interface OCTMessageAbstract : OCTObject
 
 /**
- * The date when message was send/received.
+ * The date interval when message was send/received.
  */
-@property (strong, nonatomic, readonly) NSDate *date;
+@property NSTimeInterval dateInterval;
 
 /**
  * The sender of the message. If the message if outgoing sender is nil.
  */
-@property (strong, nonatomic, readonly) OCTFriend *sender;
+@property OCTFriend *sender;
 
 /**
  * The chat message message belongs to.
  */
-@property (strong, nonatomic, readonly) OCTChat *chat;
+@property OCTChat *chat;
+
+/**
+ * Message has one of the following properties.
+ */
+@property OCTMessageText *messageText;
+@property OCTMessageFile *messageFile;
+
+/**
+ * The date when message was send/received.
+ */
+- (NSDate *)date;
 
 /**
  * Indicates if message is outgoing or incoming.
@@ -37,9 +50,6 @@
  */
 - (BOOL)isOutgoing;
 
-/**
- * Returns a string that represents the contents of the receiving class.
- */
-- (NSString *)description;
-
 @end
+
+RLM_ARRAY_TYPE(OCTMessageAbstract)

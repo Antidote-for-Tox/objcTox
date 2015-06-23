@@ -16,7 +16,11 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerCalls+Private.h"
-#import "OCTDBManager.h"
+#import "OCTRealmManager.h"
+#import "OCTFriend.h"
+#import "OCTFriendRequest.h"
+#import "OCTChat.h"
+#import "OCTMessageAbstract.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
@@ -30,7 +34,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 
-@property (strong, nonatomic) OCTDBManager *dbManager;
+@property (strong, nonatomic) OCTRealmManager *realmManager;
 
 @property (strong, nonatomic, readonly) NSObject *toxSaveFileLock;
 
@@ -78,7 +82,7 @@
         [self saveTox];
     }
 
-    _dbManager = [[OCTDBManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
+    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
     OCTSubmanagerUser *user = [OCTSubmanagerUser new];
     user.dataSource = self;
@@ -142,6 +146,16 @@
     }
 }
 
+- (RBQFetchRequest *)fetchRequestForType:(OCTFetchRequestType)type withPredicate:(NSPredicate *)predicate
+{
+    return [self.realmManager fetchRequestForClass:[self classForFetchRequestType:type] withPredicate:predicate];
+}
+
+- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier forType:(OCTFetchRequestType)type
+{
+    return [self.realmManager objectWithUniqueIdentifier:uniqueIdentifier class:[self classForFetchRequestType:type]];
+}
+
 #pragma mark -  OCTSubmanagerDataSource
 
 - (OCTTox *)managerGetTox
@@ -154,9 +168,9 @@
     return [self saveTox];
 }
 
-- (OCTDBManager *)managerGetDBManager
+- (OCTRealmManager *)managerGetRealmManager
 {
-    return self.dbManager;
+    return self.realmManager;
 }
 
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage
@@ -235,6 +249,20 @@
                                            reason:error.debugDescription
                                          userInfo:@{ @"NSError" : error }];
         }
+    }
+}
+
+- (Class)classForFetchRequestType:(OCTFetchRequestType)type
+{
+    switch (type) {
+        case OCTFetchRequestTypeFriend:
+            return [OCTFriend class];
+        case OCTFetchRequestTypeFriendRequest:
+            return [OCTFriendRequest class];
+        case OCTFetchRequestTypeChat:
+            return [OCTChat class];
+        case OCTFetchRequestTypeMessageAbstract:
+            return [OCTMessageAbstract class];
     }
 }
 

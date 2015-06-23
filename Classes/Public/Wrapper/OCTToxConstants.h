@@ -10,10 +10,10 @@
 
 typedef uint32_t OCTToxNoSpam;
 typedef uint16_t OCTToxPort;
-typedef uint32_t OCTToxFriendNumber;
-typedef uint32_t OCTToxMessageId;
+typedef int OCTToxFriendNumber;
+typedef int OCTToxMessageId;
 typedef uint32_t OCTToxFileNumber;
-typedef uint64_t OCTToxFileSize;
+typedef long long OCTToxFileSize;
 
 extern const OCTToxFriendNumber kOCTToxFriendNumberFailure;
 extern const OCTToxFileNumber kOCTToxFileNumberFailure;
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, OCTToxProxyType) {
     OCTToxProxyTypeHTTP,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxConnectionStatus) {
+typedef NS_ENUM(NSInteger, OCTToxConnectionStatus) {
     /**
      * There is no connection. This instance, or the friend the state change is about, is now offline.
      */
@@ -74,7 +74,7 @@ typedef NS_ENUM(NSUInteger, OCTToxConnectionStatus) {
     OCTToxConnectionStatusUDP,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxUserStatus) {
+typedef NS_ENUM(NSInteger, OCTToxUserStatus) {
     /**
      * User is online and available.
      */
@@ -91,7 +91,7 @@ typedef NS_ENUM(NSUInteger, OCTToxUserStatus) {
     OCTToxUserStatusBusy,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxMessageType) {
+typedef NS_ENUM(NSInteger, OCTToxMessageType) {
     /**
      * Normal text message. Similar to PRIVMSG on IRC.
      */

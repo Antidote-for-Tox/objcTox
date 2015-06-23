@@ -7,18 +7,21 @@
 //
 
 #import "OCTMessageAbstract.h"
+#import "OCTMessageText.h"
+#import "OCTMessageFile.h"
 
 @interface OCTMessageAbstract ()
-
-@property (strong, nonatomic, readwrite) NSDate *date;
-@property (strong, nonatomic, readwrite) OCTFriend *sender;
-@property (strong, nonatomic, readwrite) OCTChat *chat;
 
 @end
 
 @implementation OCTMessageAbstract
 
 #pragma mark -  Public
+
+- (NSDate *)date
+{
+    return [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
+}
 
 - (BOOL)isOutgoing
 {
@@ -27,7 +30,16 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ with date %@", NSStringFromClass([self class]), self.date];
+    NSString *string = nil;
+
+    if (self.messageText) {
+        string = [self.messageText description];
+    }
+    else if (self.messageFile) {
+        string = [self.messageFile description];
+    }
+
+    return [NSString stringWithFormat:@"OCTMessageAbstract with date %@, %@", self.date, string];
 }
 
 @end

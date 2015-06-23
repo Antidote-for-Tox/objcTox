@@ -18,7 +18,7 @@
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
-#import "OCTDBManager.h"
+#import "OCTRealmManager.h"
 
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
@@ -31,7 +31,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 
-@property (strong, nonatomic) OCTDBManager *dbManager;
+@property (strong, nonatomic) OCTRealmManager *realmManager;
 
 - (id)forwardingTargetForSelector:(SEL)aSelector;
 
@@ -85,8 +85,8 @@
     XCTAssertEqual(self.manager.avatars.dataSource, self.manager);
     XCTAssertNotNil(self.manager.tox);
     XCTAssertNotNil(self.manager.configuration);
-    XCTAssertNotNil(self.manager.dbManager);
-    XCTAssertEqualObjects(self.manager.dbManager.path, self.manager.configuration.fileStorage.pathForDatabase);
+    XCTAssertNotNil(self.manager.realmManager);
+    XCTAssertEqualObjects(self.manager.realmManager.path, self.manager.configuration.fileStorage.pathForDatabase);
 }
 
 - (void)testBootstrap
@@ -148,7 +148,7 @@
 - (void)testSubmanagerDataSource
 {
     XCTAssertEqual([self.manager managerGetTox], self.manager.tox);
-    XCTAssertEqual([self.manager managerGetDBManager], self.manager.dbManager);
+    XCTAssertEqual([self.manager managerGetRealmManager], self.manager.realmManager);
     XCTAssertEqual([self.manager managerGetSettingsStorage], self.manager.configuration.settingsStorage);
     XCTAssertEqual([self.manager managerGetFileStorage], self.manager.configuration.fileStorage);
 }

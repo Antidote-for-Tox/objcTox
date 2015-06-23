@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "OCTTableViewController.h"
 
-@interface OCTStartDemoViewController : UIViewController
+@interface OCTStartDemoViewController : OCTTableViewController
 
 @end

@@ -6,26 +6,14 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-/**
- * Sort type for FriendsContainer.
- */
-typedef NS_ENUM(NSUInteger, OCTFriendsSort) {
-    /**
-     * Sort by friend name. In case if name will be nil, friends will be sorted by publicKey.
-     */
-    OCTFriendsSortByName = 0,
-
-    /**
-     * Sort by status. Within groups friends will be sorted by name.
-     * - online
-     * - away
-     * - busy
-     * - offline
-     */
-    OCTFriendsSortByStatus,
+typedef NS_ENUM(NSUInteger, OCTFetchRequestType) {
+    OCTFetchRequestTypeFriend,
+    OCTFetchRequestTypeFriendRequest,
+    OCTFetchRequestTypeChat,
+    OCTFetchRequestTypeMessageAbstract,
 };
 
-typedef NS_ENUM(NSUInteger, OCTMessageFileType) {
+typedef NS_ENUM(NSInteger, OCTMessageFileType) {
     /**
      * File is incoming and is waiting confirmation of user to be downloaded.
      * Please start loading or cancel it with <<placeholder>> method.

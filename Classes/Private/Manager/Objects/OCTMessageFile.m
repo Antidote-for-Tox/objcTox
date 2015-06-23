@@ -10,12 +10,6 @@
 
 @interface OCTMessageFile ()
 
-@property (assign, nonatomic, readwrite) OCTMessageFileType fileType;
-@property (assign, nonatomic, readwrite) OCTToxFileSize fileSize;
-@property (strong, nonatomic, readwrite) NSString *fileName;
-@property (strong, nonatomic, readwrite) NSString *filePath;
-@property (strong, nonatomic, readwrite) NSString *fileUTI;
-
 @end
 
 @implementation OCTMessageFile
@@ -26,7 +20,7 @@
 {
     NSString *description = [super description];
 
-    return [description stringByAppendingFormat:@"\nfileName = %@\nfileSize = %llu", self.fileName, self.fileSize];
+    return [description stringByAppendingFormat:@"OCTMessageFile with fileName = %@, fileSize = %llu", self.fileName, self.fileSize];
 }
 
 @end
