@@ -11,11 +11,14 @@
 #import <BlocksKit/UIBarButtonItem+BlocksKit.h>
 
 #import "OCTConversationViewController.h"
+#import "RBQFetchedResultsController.h"
+#import "OCTChat.h"
+#import "OCTMessageAbstract.h"
 
-@interface OCTConversationViewController () <OCTArrayDelegate>
+@interface OCTConversationViewController () <RBQFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) OCTChat *chat;
-@property (strong, nonatomic) OCTArray *allMessages;
+@property (strong, nonatomic) RBQFetchedResultsController *resultsController;
 
 @end
 
@@ -31,8 +34,14 @@
 
     _chat = chat;
 
-    _allMessages = [manager.chats allMessagesInChat:chat];
-    _allMessages.delegate = self;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    RBQFetchRequest *fetchRequest = [self.manager fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
+
+    _resultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                                sectionNameKeyPath:nil
+                                                                         cacheName:nil];
+    _resultsController.delegate = self;
+    [_resultsController performFetch];
 
     self.title = [NSString stringWithFormat:@"%@", chat.uniqueIdentifier];
 
@@ -62,25 +71,59 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.allMessages.count;
+    return [self.resultsController numberOfRowsForSectionIndex:section];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
-    OCTMessageAbstract *message = [self.allMessages objectAtIndex:indexPath.row];
+    OCTMessageAbstract *message = [self.resultsController objectAtIndexPath:indexPath];
 
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", message];
+    cell.textLabel.text = [message description];
 
     return cell;
 }
 
-#pragma mark -  OCTArrayDelegate
+#pragma mark -  RBQFetchedResultsControllerDelegate
 
-- (void)OCTArrayWasUpdated:(OCTArray *)array
+- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
 {
-    [self.tableView reloadData];
+    [self.tableView beginUpdates];
+}
+
+- (void) controller:(RBQFetchedResultsController *)controller
+    didChangeObject:(RBQSafeRealmObject *)anObject
+        atIndexPath:(NSIndexPath *)indexPath
+      forChangeType:(NSFetchedResultsChangeType)type
+       newIndexPath:(NSIndexPath *)newIndexPath
+{
+    switch (type) {
+        case NSFetchedResultsChangeInsert:
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+        case NSFetchedResultsChangeDelete:
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+        case NSFetchedResultsChangeUpdate:
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+        case NSFetchedResultsChangeMove:
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+    }
+}
+
+- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
+{
+    @try {
+        [self.tableView endUpdates];
+    }
+    @catch (NSException *ex) {
+        [self.resultsController reset];
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark -  Private

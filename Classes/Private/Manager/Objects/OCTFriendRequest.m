@@ -12,6 +12,11 @@
 
 #pragma mark -  Public
 
+- (NSDate *)date
+{
+    return [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"OCTFriendRequest with publicKey %@\nmessage %@", self.publicKey, self.message];

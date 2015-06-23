@@ -6,31 +6,19 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
+#import "OCTObject.h"
 #import "OCTToxConstants.h"
 
 /**
  * Class that represents friend (or just simply contact).
  */
-@interface OCTFriend : NSObject
+@interface OCTFriend : OCTObject
 
 /**
  * Friend number that is unique for Tox.
  * In case if friend will be deleted, old id may be reused on new friend creation.
  */
-@property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
-
-/**
- * Public key of a friend, is kOCTToxPublicKeyLength length.
- * Is constant, cannot be changed.
- */
-@property (copy, nonatomic, readonly) NSString *publicKey;
-
-/**
- * Name of a friend.
- */
-@property (copy, nonatomic, readonly) NSString *name;
+@property OCTToxFriendNumber friendNumber;
 
 /**
  * Nickname of friend.
@@ -39,36 +27,44 @@
  * It is set to name when obtaining name for the first time.
  * After that name is unchanged (unless it is changed explicitly).
  */
-@property (copy, nonatomic) NSString *nickname;
+@property NSString *nickname;
+
+/**
+ * Public key of a friend, is kOCTToxPublicKeyLength length.
+ * Is constant, cannot be changed.
+ */
+@property NSString *publicKey;
+
+/**
+ * Name of a friend.
+ */
+@property NSString *name;
 
 /**
  * Status message of a friend.
  */
-@property (copy, nonatomic, readonly) NSString *statusMessage;
+@property NSString *statusMessage;
 
 /**
  * Status message of a friend.
  */
-@property (assign, nonatomic, readonly) OCTToxUserStatus status;
+@property OCTToxUserStatus status;
 
 /**
  * Connection status message of a friend.
  */
-@property (assign, nonatomic, readonly) OCTToxConnectionStatus connectionStatus;
+@property OCTToxConnectionStatus connectionStatus;
 
 /**
  * The date when friend was last seen online. Contains actual information in case if friend has connectionStatus offline.
  */
-@property (strong, nonatomic, readonly) NSDate *lastSeenOnline;
+@property NSDate *lastSeenOnline;
 
 /**
  * Whether friend is typing now in current chat.
  */
-@property (assign, nonatomic, readonly) BOOL isTyping;
-
-/**
- * Returns a string that represents the contents of the receiving class.
- */
-- (NSString *)description;
+@property BOOL isTyping;
 
 @end
+
+RLM_ARRAY_TYPE(OCTFriend)
