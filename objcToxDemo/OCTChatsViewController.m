@@ -29,7 +29,7 @@
         return nil;
     }
 
-    RBQFetchRequest *fetchRequest = [self.manager fetchRequestForType:OCTFetchRequestTypeChat withPredicate:nil];
+    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeChat withPredicate:nil];
 
     _resultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                 sectionNameKeyPath:nil

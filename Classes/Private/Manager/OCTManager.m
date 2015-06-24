@@ -16,11 +16,8 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerObjects+Private.h"
 #import "OCTRealmManager.h"
-#import "OCTFriend.h"
-#import "OCTFriendRequest.h"
-#import "OCTChat.h"
-#import "OCTMessageAbstract.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
@@ -30,9 +27,10 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 
@@ -109,6 +107,10 @@
     calls.dataSource = self;
     _calls = calls;
 
+    OCTSubmanagerObjects *objects = [OCTSubmanagerObjects new];
+    objects.dataSource = self;
+    _objects = objects;
+
     _toxSaveFileLock = [NSObject new];
 
     return self;
@@ -144,16 +146,6 @@
 
         return tempPath;
     }
-}
-
-- (RBQFetchRequest *)fetchRequestForType:(OCTFetchRequestType)type withPredicate:(NSPredicate *)predicate
-{
-    return [self.realmManager fetchRequestForClass:[self classForFetchRequestType:type] withPredicate:predicate];
-}
-
-- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier forType:(OCTFetchRequestType)type
-{
-    return [self.realmManager objectWithUniqueIdentifier:uniqueIdentifier class:[self classForFetchRequestType:type]];
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -224,6 +216,7 @@
         self.chats,
         self.files,
         self.avatars,
+        self.objects,
     ];
 
     for (id delegate in submanagers) {
@@ -249,20 +242,6 @@
                                            reason:error.debugDescription
                                          userInfo:@{ @"NSError" : error }];
         }
-    }
-}
-
-- (Class)classForFetchRequestType:(OCTFetchRequestType)type
-{
-    switch (type) {
-        case OCTFetchRequestTypeFriend:
-            return [OCTFriend class];
-        case OCTFetchRequestTypeFriendRequest:
-            return [OCTFriendRequest class];
-        case OCTFetchRequestTypeChat:
-            return [OCTChat class];
-        case OCTFetchRequestTypeMessageAbstract:
-            return [OCTMessageAbstract class];
     }
 }
 

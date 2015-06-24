@@ -16,8 +16,7 @@
 #import "OCTSubmanagerUser.h"
 #import "OCTSubmanagerFiles.h"
 #import "OCTSubmanagerCalls.h"
-
-@class OCTObject;
+#import "OCTSubmanagerObjects.h"
 
 @interface OCTManager : NSObject
 
@@ -50,6 +49,11 @@
  * Submanager with all video/calling methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerCalls *calls;
+
+/**
+ * Submanager with all objects methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
@@ -122,25 +126,5 @@
  * @return Temporary path of current tox save file.
  */
 - (NSString *)exportToxSaveFile:(NSError **)error;
-
-/**
- * Returns fetch request for specified type.
- *
- * @param type Type of fetch request.
- * @param predicate Predicate that represents search query.
- *
- * @return RBQFetchRequest for specified type.
- */
-- (RBQFetchRequest *)fetchRequestForType:(OCTFetchRequestType)type withPredicate:(NSPredicate *)predicate;
-
-/**
- * Returns object for specified type with uniqueIdentifier.
- *
- * @param uniqueIdentifier Unique identifier of object.
- * @param type Type of object.
- *
- * @return Object of specified type or nil, if object does not exist.
- */
-- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier forType:(OCTFetchRequestType)type;
 
 @end

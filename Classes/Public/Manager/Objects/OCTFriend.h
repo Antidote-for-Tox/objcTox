@@ -11,6 +11,9 @@
 
 /**
  * Class that represents friend (or just simply contact).
+ *
+ * Please note that all properties of this object are readonly.
+ * You can change some of them only with appropriate method in OCTSubmanagerObjects.
  */
 @interface OCTFriend : OCTObject
 
@@ -26,6 +29,8 @@
  * When friend is created it is set to the publicKey.
  * It is set to name when obtaining name for the first time.
  * After that name is unchanged (unless it is changed explicitly).
+ *
+ * To change please use OCTSubmanagerObjects method.
  */
 @property NSString *nickname;
 
