@@ -1330,6 +1330,10 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         case TOX_ERR_FILE_GET_OK:
             NSAssert(NO, @"We shouldn't be here");
             return;
+        case TOX_ERR_FILE_GET_NULL:
+            code = OCTToxErrorFileGetInternal;
+            failureReason = @"Interval error";
+            break;
         case TOX_ERR_FILE_GET_FRIEND_NOT_FOUND:
             code = OCTToxErrorFileGetFriendNotFound;
             failureReason = @"Friend not found";
