@@ -13,6 +13,9 @@
 
 /**
  * Simple text message.
+ *
+ * Please note that all properties of this object are readonly.
+ * You can change some of them only with appropriate method in submanagers.
  */
 @interface OCTMessageText : OCTObject
 

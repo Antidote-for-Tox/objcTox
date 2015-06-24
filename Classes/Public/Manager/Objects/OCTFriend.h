@@ -11,6 +11,9 @@
 
 /**
  * Class that represents friend (or just simply contact).
+ *
+ * Please note that all properties of this object are readonly.
+ * You can change some of them only with appropriate method in submanagers.
  */
 @interface OCTFriend : OCTObject
 
