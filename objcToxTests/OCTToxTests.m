@@ -485,6 +485,11 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
     XCTAssertNil(error);
 
     error = nil;
+    [self.tox fillError:&error withCErrorFileGet:TOX_ERR_FILE_GET_NULL];
+    XCTAssertNotNil(error);
+    XCTAssertTrue(error.code == OCTToxErrorFileGetInternal);
+
+    error = nil;
     [self.tox fillError:&error withCErrorFileGet:TOX_ERR_FILE_GET_FRIEND_NOT_FOUND];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxErrorFileGetFriendNotFound);

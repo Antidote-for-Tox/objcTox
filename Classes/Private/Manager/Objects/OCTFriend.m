@@ -14,7 +14,27 @@
 
 @implementation OCTFriend
 
+#pragma mark -  Class methods
+
++ (NSDictionary *)defaultPropertyValues
+{
+    NSMutableDictionary *values = [NSMutableDictionary dictionaryWithDictionary:[super defaultPropertyValues]];
+    values[@"name"] = @"";
+    values[@"statusMessage"] = @"";
+
+    return [values copy];
+}
+
 #pragma mark -  Public
+
+- (NSDate *)lastSeenOnline
+{
+    if (self.lastSeenOnlineInterval <= 0) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:self.lastSeenOnlineInterval];
+}
 
 - (NSString *)description
 {

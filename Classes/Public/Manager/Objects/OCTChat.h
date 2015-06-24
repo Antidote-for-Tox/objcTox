@@ -25,24 +25,46 @@
 
 /**
  * This property can be used for storing entered text that wasn't send yet.
+ *
+ * May be empty.
  */
 @property NSString *enteredText;
 
 /**
- * This property stores last date when chat was read.
- * `hasUnreadMessages` method use lastReadDate to determine if there are unread messages.
+ * This property stores last date interval when chat was read.
+ * `hasUnreadMessages` method use lastReadDateInterval to determine if there are unread messages.
  */
-@property NSDate *lastReadDate;
+@property NSTimeInterval lastReadDateInterval;
 
 /**
- * If there are unread messages in chat YES is returned. All messages that have date later than lastReadDate
+ * The date interval when chat was created.
+ */
+@property NSTimeInterval creationDateInterval;
+
+/**
+ * The date when chat was read last time.
+ */
+- (NSDate *)lastReadDate;
+
+/**
+ * The date when chat was created.
+ */
+- (NSDate *)creationDate;
+
+/**
+ * If there are unread messages in chat YES is returned. All messages that have date later than lastReadDateInterval
  * are considered as unread.
  *
- * Please note that you have to set lastReadDate to make this method work.
+ * Please note that you have to set lastReadDateInterval to make this method work.
  *
  * @return YES if there are unread messages, NO otherwise.
  */
 - (BOOL)hasUnreadMessages;
+
+/**
+ * Returns date of lastMessage or chat creationDate if there is no last message.
+ */
+- (NSDate *)lastActivityDate;
 
 @end
 

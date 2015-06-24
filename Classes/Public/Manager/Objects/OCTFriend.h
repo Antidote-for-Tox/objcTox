@@ -37,11 +37,15 @@
 
 /**
  * Name of a friend.
+ *
+ * May be empty.
  */
 @property NSString *name;
 
 /**
  * Status message of a friend.
+ *
+ * May be empty.
  */
 @property NSString *statusMessage;
 
@@ -56,14 +60,21 @@
 @property OCTToxConnectionStatus connectionStatus;
 
 /**
- * The date when friend was last seen online. Contains actual information in case if friend has connectionStatus offline.
+ * The date interval when friend was last seen online.
+ * Contains actual information in case if friend has connectionStatus offline.
  */
-@property NSDate *lastSeenOnline;
+@property NSTimeInterval lastSeenOnlineInterval;
 
 /**
  * Whether friend is typing now in current chat.
  */
 @property BOOL isTyping;
+
+/**
+ * The date when friend was last seen online.
+ * Contains actual information in case if friend has connectionStatus offline.
+ */
+- (NSDate *)lastSeenOnline;
 
 @end
 

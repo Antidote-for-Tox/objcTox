@@ -462,6 +462,11 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileSeek) {
  */
 typedef NS_ENUM(NSUInteger, OCTToxErrorFileGet) {
     /**
+     * Internal error.
+     **/
+    OCTToxErrorFileGetInternal,
+
+    /**
      * The friendNumber passed did not designate a valid friend.
      */
     OCTToxErrorFileGetFriendNotFound,
