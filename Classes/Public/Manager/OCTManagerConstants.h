@@ -10,6 +10,7 @@ typedef NS_ENUM(NSUInteger, OCTFetchRequestType) {
     OCTFetchRequestTypeFriend,
     OCTFetchRequestTypeFriendRequest,
     OCTFetchRequestTypeChat,
+    OCTFetchRequestTypeCall,
     OCTFetchRequestTypeMessageAbstract,
 };
 

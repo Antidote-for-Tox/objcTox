@@ -11,33 +11,33 @@
 #import "OCTFriend.h"
 #import "OCTToxAVConstants.h"
 
-typedef NS_ENUM(NSUInteger, OCTCallStatus) {
+typedef NS_ENUM(NSInteger, OCTCallStatus) {
     OCTCallStatusInactive = 0,
     OCTCallStatusDialing,
     OCTCallStatusIncoming,
     OCTCallStatusInSession,
 };
 
-@interface OCTCall : NSObject
+@interface OCTCall : OCTObject
 
 /**
  * OCTChat related session with the call.
  **/
-@property (strong, nonatomic, readonly) OCTChat *chat;
+@property OCTChat *chat;
 
 /**
  * Call status
  **/
-@property (nonatomic, assign, readonly) OCTCallStatus status;
+@property OCTCallStatus status;
 
 /**
  * Call state of friend.
  **/
-@property (nonatomic, assign, readonly) OCTToxAVCallState state;
+@property OCTToxAVCallState state;
 
 /**
  * Call duration
  **/
-@property (nonatomic, assign, readonly) NSTimeInterval callDuration;
+@property NSTimeInterval callDuration;
 
 @end

@@ -27,11 +27,6 @@
 @property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
- * All call sessions.
- */
-- (NSArray *)allCalls;
-
-/**
  * This class is responsible for telling the end-user what calls we have available.
  * We can also initialize a call session from here.
  * @param chat The chat for which we would like to initiate a call.

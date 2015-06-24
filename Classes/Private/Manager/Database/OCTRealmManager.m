@@ -13,6 +13,7 @@
 #import "RBQRealmNotificationManager.h"
 #import "OCTFriend.h"
 #import "OCTChat.h"
+#import "OCTCall.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
@@ -194,6 +195,36 @@
     });
 
     return chat;
+}
+
+- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTFriend *friend = [self friendWithFriendNumber:friendNumber];
+    OCTChat *chat = [self getOrCreateChatWithFriend:friend];
+
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
+
+        if (call) {
+            return;
+        }
+
+        DDLogInfo(@"OCTRealmManager: creating call with friend %@", friend);
+
+        call = [OCTCall new];
+
+        [self.realm beginWriteTransaction];
+
+        [self.realm addObject:call];
+        [call setChat:chat];
+        [[self logger] didAddObject:call];
+
+        [self.realm commitWriteTransaction];
+    });
+
+    return call;
 }
 
 - (void)removeChatWithAllMessages:(OCTChat *)chat
