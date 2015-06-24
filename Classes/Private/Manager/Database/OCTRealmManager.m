@@ -182,7 +182,7 @@
         DDLogInfo(@"OCTRealmManager: creating chat with friend %@", friend);
 
         chat = [OCTChat new];
-        chat.creationDate = [NSDate date];
+        chat.creationDateInterval = [[NSDate date] timeIntervalSince1970];
 
         [self.realm beginWriteTransaction];
 

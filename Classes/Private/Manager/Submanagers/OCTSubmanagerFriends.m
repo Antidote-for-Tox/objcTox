@@ -215,7 +215,8 @@
         return NO;
     }
 
-    friend.lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:&error];
+    NSDate *lastSeenOnline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:&error];
+    friend.lastSeenOnlineInterval = [lastSeenOnline timeIntervalSince1970];
     if ([self checkForError:error andAssignTo:userError]) {
         return NO;
     }

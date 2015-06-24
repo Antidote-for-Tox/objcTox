@@ -21,29 +21,33 @@
 {
     NSMutableDictionary *values = [NSMutableDictionary dictionaryWithDictionary:[super defaultPropertyValues]];
     values[@"enteredText"] = @"";
-    values[@"lastReadDate"] = [NSDate dateWithTimeIntervalSince1970:0];
 
     return [values copy];
 }
 
 #pragma mark -  Public
 
+- (NSDate *)lastReadDate
+{
+    if (self.lastReadDateInterval <= 0) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:self.lastReadDateInterval];
+}
+
+- (NSDate *)creationDate
+{
+    if (self.creationDateInterval <= 0) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:self.creationDateInterval];
+}
+
 - (BOOL)hasUnreadMessages
 {
-    NSDate *messageDate = self.lastMessage.date;
-
-    if (! messageDate) {
-        return NO;
-    }
-
-    if (! self.lastReadDate) {
-        // We have lastMessage but don't have lastReadDate
-        return YES;
-    }
-
-    NSComparisonResult result = [messageDate compare:self.lastReadDate];
-
-    return (result == NSOrderedDescending);
+    return (self.lastMessage.dateInterval > self.lastReadDateInterval);
 }
 
 - (NSDate *)lastActivityDate

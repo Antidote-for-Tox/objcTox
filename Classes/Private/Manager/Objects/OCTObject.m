@@ -33,7 +33,11 @@
 
 - (BOOL)isEqual:(id)object
 {
-    if (! [OCTObject isKindOfClass:[self class]]) {
+    if (object == self) {
+        return YES;
+    }
+
+    if (! [object isKindOfClass:[self class]]) {
         return NO;
     }
 

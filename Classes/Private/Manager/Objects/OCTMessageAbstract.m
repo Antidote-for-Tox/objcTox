@@ -20,6 +20,10 @@
 
 - (NSDate *)date
 {
+    if (self.dateInterval <= 0) {
+        return nil;
+    }
+
     return [NSDate dateWithTimeIntervalSince1970:self.dateInterval];
 }
 
