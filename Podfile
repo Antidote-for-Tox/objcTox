@@ -5,7 +5,7 @@ platform :ios, '7.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-pod 'toxcore-ios', :podspec => 'https://raw.githubusercontent.com/Chuongv/toxcore-ios/0.1.9-new-av/toxcore-ios.podspec' 
+pod 'toxcore-ios', :podspec => 'https://raw.githubusercontent.com/Chuongv/toxcore-ios/0.1.10-new-av/toxcore-ios.podspec'
 pod 'CocoaLumberjack', '~> 1.9.2'
 pod 'TPCircularBuffer', '~> 0.0.1'
 pod 'Realm', '0.93.2'
