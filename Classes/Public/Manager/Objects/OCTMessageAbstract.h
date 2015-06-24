@@ -17,7 +17,7 @@
  * An abstract message that represents one chunk of chat history.
  *
  * Please note that all properties of this object are readonly.
- * You can change some of them only with appropriate method in submanagers.
+ * You can change some of them only with appropriate method in OCTSubmanagerObjects.
  */
 @interface OCTMessageAbstract : OCTObject
 

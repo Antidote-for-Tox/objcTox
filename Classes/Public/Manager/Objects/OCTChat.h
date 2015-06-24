@@ -13,7 +13,7 @@
 
 /**
  * Please note that all properties of this object are readonly.
- * You can change some of them only with appropriate method in submanagers.
+ * You can change some of them only with appropriate method in OCTSubmanagerObjects.
  */
 @interface OCTChat : OCTObject
 
@@ -30,6 +30,8 @@
 /**
  * This property can be used for storing entered text that wasn't send yet.
  *
+ * To change please use OCTSubmanagerObjects method.
+ *
  * May be empty.
  */
 @property NSString *enteredText;
@@ -37,6 +39,8 @@
 /**
  * This property stores last date interval when chat was read.
  * `hasUnreadMessages` method use lastReadDateInterval to determine if there are unread messages.
+ *
+ * To change please use OCTSubmanagerObjects method.
  */
 @property NSTimeInterval lastReadDateInterval;
 

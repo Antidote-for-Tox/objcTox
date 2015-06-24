@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
         return nil;
     }
 
-    RBQFetchRequest *fetchRequest = [self.manager fetchRequestForType:OCTFetchRequestTypeFriend withPredicate:nil];
+    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeFriend withPredicate:nil];
 
     _friendResultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                       sectionNameKeyPath:nil
@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     _friendResultsController.delegate = self;
     [_friendResultsController performFetch];
 
-    fetchRequest = [self.manager fetchRequestForType:OCTFetchRequestTypeFriendRequest withPredicate:nil];
+    fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeFriendRequest withPredicate:nil];
 
     _friendRequestResultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                              sectionNameKeyPath:nil

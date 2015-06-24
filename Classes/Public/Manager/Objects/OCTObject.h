@@ -10,7 +10,7 @@
 
 /**
  * Please note that all properties of this object are readonly.
- * You can change some of them only with appropriate method in submanagers.
+ * You can change some of them only with appropriate method in OCTSubmanagerObjects.
  */
 @interface OCTObject : RLMObject
 

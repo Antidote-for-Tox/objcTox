@@ -14,7 +14,7 @@
  * Message that contains file, that has been send/received. Represents pending, canceled and loaded files.
  *
  * Please note that all properties of this object are readonly.
- * You can change some of them only with appropriate method in submanagers.
+ * You can change some of them only with appropriate method in OCTSubmanagerObjects.
  */
 @interface OCTMessageFile : OCTObject
 
