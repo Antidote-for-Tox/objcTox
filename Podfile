@@ -5,10 +5,7 @@ platform :ios, '7.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-# patched libopus should go before toxcore-ios
-pod 'libopus', :podspec => 'https://raw.githubusercontent.com/Antidote-for-Tox/libopus/1.1/libopus.podspec'
 pod 'toxcore-ios', :podspec => 'https://raw.githubusercontent.com/Chuongv/toxcore-ios/0.1.9-new-av/toxcore-ios.podspec' 
-
 pod 'CocoaLumberjack', '~> 1.9.2'
 pod 'TPCircularBuffer', '~> 0.0.1'
 pod 'Realm', '0.93.2'
