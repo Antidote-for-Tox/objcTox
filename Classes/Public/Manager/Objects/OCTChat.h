@@ -35,6 +35,11 @@
 @property NSDate *lastReadDate;
 
 /**
+ * The date when chat was created.
+ */
+@property NSDate *creationDate;
+
+/**
  * If there are unread messages in chat YES is returned. All messages that have date later than lastReadDate
  * are considered as unread.
  *
@@ -43,6 +48,11 @@
  * @return YES if there are unread messages, NO otherwise.
  */
 - (BOOL)hasUnreadMessages;
+
+/**
+ * Returns date of lastMessage or chat creationDate if there is no last message.
+ */
+- (NSDate *)lastActivityDate;
 
 @end
 

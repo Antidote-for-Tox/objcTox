@@ -182,7 +182,7 @@
         DDLogInfo(@"OCTRealmManager: creating chat with friend %@", friend);
 
         chat = [OCTChat new];
-        chat.enteredText = @"";
+        chat.creationDate = [NSDate date];
 
         [self.realm beginWriteTransaction];
 

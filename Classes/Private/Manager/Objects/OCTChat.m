@@ -46,4 +46,13 @@
     return (result == NSOrderedDescending);
 }
 
+- (NSDate *)lastActivityDate
+{
+    if (self.lastMessage) {
+        return [self.lastMessage date];
+    }
+
+    return self.creationDate;
+}
+
 @end
