@@ -10,4 +10,5 @@
 
 const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable = 0;
 const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable = 0;
+
 NSString *const kOCTToxAVErrorDomain = @"me.dvor.objcTox.ErrorDomain";

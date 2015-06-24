@@ -47,7 +47,7 @@
 
     OCTCall *otherCall = object;
 
-    return ([self.chat isEqual:otherCall.chat]);
+    return (self.chat.uniqueIdentifier == otherCall.chat.uniqueIdentifier);
 }
 
 - (NSUInteger)hash

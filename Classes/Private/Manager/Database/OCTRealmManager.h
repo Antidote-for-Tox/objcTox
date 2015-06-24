@@ -15,6 +15,7 @@
 @class OCTFriendRequest;
 @class OCTFriend;
 @class OCTChat;
+@class OCTCall;
 @class OCTMessageAbstract;
 @class OCTMessageText;
 @class OCTMessageFile;

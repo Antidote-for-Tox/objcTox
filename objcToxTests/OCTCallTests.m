@@ -39,7 +39,7 @@
     XCTAssertEqual(call.status, OCTCallStatusInactive);
 
     OCTCall *call2 = [[OCTCall alloc] initCallWithChat:chat];
-    XCTAssertEqualObjects(call2, call);
+    XCTAssertTrue([call isEqual:call2]);
 
     OCTChat *chat2 = [OCTChat new];
     OCTCall *call3 = [[OCTCall alloc] initCallWithChat:chat2];

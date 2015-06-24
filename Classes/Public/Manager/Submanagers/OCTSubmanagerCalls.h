@@ -9,26 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "OCTChat.h"
-#import "OCTCallsContainer.h"
 #import "OCTToxAVConstants.h"
+#import "OCTSubmanagerCallsDelegate.h"
 
 @class OCTSubmanagerCalls;
 @class OCTToxAV;
 @class OCTCall;
-
-@protocol OCTSubmanagerCallDelegate <NSObject>
-
-/**
- * Delegate for when we receive a call.
- **/
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
-
-/**
- * Audio bitrate has changed
- **/
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager audioBitRateChanged:(OCTToxAVAudioBitRate)bitRate stable:(BOOL)stable forCall:(OCTCall *)call;
-
-@end
 
 @interface OCTSubmanagerCalls : NSObject
 
@@ -43,7 +29,7 @@
 /**
  * All call sessions.
  */
-@property (strong, nonatomic, readonly) OCTCallsContainer *calls;
+- (NSArray *)allCalls;
 
 /**
  * This class is responsible for telling the end-user what calls we have available.

@@ -12,7 +12,8 @@
 #import "OCTManagerConstants.h"
 #import "OCTAudioEngine.h"
 #import "OCTCall+Private.h"
-#import "OCTCallsContainer+Private.h"
+#import "OCTRealmManager.h"
+#import "RBQFetchRequest.h"
 
 @class OCTTox;
 
