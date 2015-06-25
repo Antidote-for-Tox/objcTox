@@ -8,13 +8,6 @@
 
 #import "OCTMessageCall.h"
 
-@interface OCTMessageCall ()
-
-@property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
-@property (assign, nonatomic, readwrite) OCTMessageCallEvent callEvent;
-
-@end
-
 @implementation OCTMessageCall
 
 #pragma mark -  Public
@@ -40,6 +33,9 @@
             break;
         case OCTMessageCallEventMissed:
             description = @"Call missed";
+            break;
+        case OCTMessageCallEventStarted:
+            description = @"Call started";
             break;
     }
     return description;

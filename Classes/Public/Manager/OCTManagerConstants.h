@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
     /**
      * Call dialing
      */
-    OCTMessageCallEventDial,
+    OCTMessageCallEventDial = 1,
 
     /**
      * Call was missed.
@@ -58,4 +58,9 @@ typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
      * Call has ended.
      */
     OCTMessageCallEventEnd,
+
+    /**
+     * Call started.
+     */
+    OCTMessageCallEventStarted,
 };

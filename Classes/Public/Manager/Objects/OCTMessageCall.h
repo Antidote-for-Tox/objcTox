@@ -6,19 +6,19 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTMessageAbstract.h"
+#import "OCTObject.h"
 #import "OCTManagerConstants.h"
 
-@interface OCTMessageCall : OCTMessageAbstract
+@interface OCTMessageCall : OCTObject
 
 /**
  * The length of the call in seconds.
  **/
-@property (assign, nonatomic, readonly) NSTimeInterval callDuration;
+@property  NSTimeInterval callDuration;
 
 /**
  * The type of message call.
  **/
-@property (assign, nonatomic, readonly) OCTMessageCallEvent callEvent;
+@property  OCTMessageCallEvent callEvent;
 
 @end

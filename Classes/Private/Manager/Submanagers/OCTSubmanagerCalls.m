@@ -63,6 +63,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTCall *call = [self getOrCreateCallWithFriend:friend.friendNumber];
         [self updateCall:call withStatus:OCTCallStatusDialing];
+        [self addMessageCall:OCTMessageCallEventDial forCall:call withDuration:0];
 
         return call;
     }
@@ -92,6 +93,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         self.audioEngine.friendNumber = friend.friendNumber;
         [self updateCall:call withStatus:OCTCallStatusInSession];
+        [self addMessageCall:OCTMessageCallEventStarted forCall:call withDuration:0];
 
         return YES;
     }
@@ -128,11 +130,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         switch (control) {
             case OCTToxAVCallControlResume:
-
+                [self updateCall:call withStatus:OCTCallStatusInSession];
                 break;
             case OCTToxAVCallControlCancel:
-
-                // log message here.
+                [self addMessageCall:OCTMessageCallEventEnd forCall:call withDuration:call.callDuration];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
 
@@ -210,8 +211,15 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)logEvent:(OCTMessageCallEvent)event forCall:(OCTCall *)call
-{}
+- (void)addMessageCall:(OCTMessageCallEvent)event forCall:(OCTCall *)call withDuration:(NSTimeInterval)duration
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    [realmManager addMessageCall:event call:call callDuration:duration];
+
+    if (event == OCTMessageCallEventEnd) {
+        [realmManager deleteObject:call];
+    }
+}
 
 #pragma mark OCTToxAV delegate methods
 
@@ -219,6 +227,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTCall *call = [self getOrCreateCallWithFriend:friendNumber];
     [self updateCall:call withStatus:OCTCallStatusIncoming];
+
+    if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
+        [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];
+    }
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber
@@ -228,10 +240,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     if ((state & OCTToxAVCallStateFinished) || (state & OCTToxAVCallStateError)) {
 
         if (call.status == OCTCallStatusIncoming) {
-            [self logEvent:OCTMessageCallEventMissed forCall:call];
+            [self addMessageCall:OCTMessageCallEventDial forCall:call withDuration:0];
         }
         else {
-            [self logEvent:OCTMessageCallEventEnd forCall:call];
+            [self addMessageCall:OCTMessageCallEventEnd forCall:call withDuration:call.callDuration];
         }
 
         [self.audioEngine stopAudioFlow:nil];

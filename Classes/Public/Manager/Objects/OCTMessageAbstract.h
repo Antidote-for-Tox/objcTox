@@ -12,6 +12,7 @@
 @class OCTChat;
 @class OCTMessageText;
 @class OCTMessageFile;
+@class OCTMessageCall;
 
 /**
  * An abstract message that represents one chunk of chat history.
@@ -41,6 +42,7 @@
  */
 @property OCTMessageText *messageText;
 @property OCTMessageFile *messageFile;
+@property OCTMessageCall *messageCall;
 
 /**
  * The date when message was send/received.

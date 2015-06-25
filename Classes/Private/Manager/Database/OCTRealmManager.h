@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTToxConstants.h"
+#import "OCTManagerConstants.h"
 
 @class RBQFetchRequest;
 @class OCTObject;
@@ -61,4 +62,7 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
+- (void)addMessageCall:(OCTMessageCallEvent)event
+                  call:(OCTCall *)call
+          callDuration:(NSTimeInterval)duration;
 @end

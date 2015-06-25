@@ -229,7 +229,6 @@
 		F0CAD9A81B220810008FAA62 /* OCTToxAV+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTToxAV+Private.h"; sourceTree = "<group>"; };
 		F0E77FC01B154F6000434A96 /* OCTAudioEngineTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTAudioEngineTests.m; sourceTree = "<group>"; };
 		F5174E797B52B59C74ABA4D0D9A95A4A /* OCTConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTConversationViewController.h; sourceTree = "<group>"; };
-		F696BD36965BB82325B3CB931EEB9826 /* OCTMessageCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTMessageCall+Private.h"; sourceTree = "<group>"; };
 		F72F87B591B90C0EBDD24423BB7AFA79 /* OCTMessageCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTMessageCall.h; sourceTree = "<group>"; };
 		F82F69945781A14E76974FA7A2B9220C /* OCTToxTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxTests.m; sourceTree = "<group>"; };
 		F967399BFF7F28425C5194F0E5552BCA /* OCTManagerConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerConfiguration.h; sourceTree = "<group>"; };
@@ -399,7 +398,6 @@
 				ACBB7FE1C1F9FD951C5A5D6DFA12C7FC /* OCTFriend.m */,
 				E81B002B36CF7385268F31A5263A10DF /* OCTFriendRequest.m */,
 				5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */,
-				F696BD36965BB82325B3CB931EEB9826 /* OCTMessageCall+Private.h */,
 				42530834005656D2D509F2C623D93A3B /* OCTMessageCall.m */,
 				65A7B20C506A85C1668D26921218DFA5 /* OCTMessageFile.m */,
 				E02C2F73766CD67B62FDBB73841065AF /* OCTMessageText.m */,
@@ -426,11 +424,11 @@
 			isa = PBXGroup;
 			children = (
 				5039F758BB74F9056CCA5EA356E41DAF /* OCTCall.h */,
-				F72F87B591B90C0EBDD24423BB7AFA79 /* OCTMessageCall.h */,
 				9CB71FBC1B386B2F00E3C1EF /* OCTChat.h */,
 				9CB71FBD1B386B2F00E3C1EF /* OCTFriend.h */,
 				9CB71FBE1B386B2F00E3C1EF /* OCTFriendRequest.h */,
 				9CB71FBF1B386B2F00E3C1EF /* OCTMessageAbstract.h */,
+				F72F87B591B90C0EBDD24423BB7AFA79 /* OCTMessageCall.h */,
 				9CB71FC01B386B2F00E3C1EF /* OCTMessageFile.h */,
 				9CB71FC11B386B2F00E3C1EF /* OCTMessageText.h */,
 				11CD5AE51B386A3A00585194 /* OCTObject.h */,

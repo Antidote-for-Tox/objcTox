@@ -17,6 +17,7 @@
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
+#import "OCTMessageCall.h"
 
 #import "DDLog.h"
 #undef LOG_LEVEL_DEF
@@ -289,6 +290,31 @@
     }];
 
     return messageAbstract;
+}
+
+- (void)addMessageCall:(OCTMessageCallEvent)event
+                  call:(OCTCall *)call
+          callDuration:(NSTimeInterval)duration
+{
+    NSParameterAssert(event);
+    NSParameterAssert(call);
+    DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
+
+    OCTMessageCall *messageCall = [OCTMessageCall new];
+    messageCall.callDuration = duration;
+    messageCall.callEvent = event;
+
+    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
+    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
+    messageAbstract.sender = call.chat.friends.firstObject;
+    messageAbstract.chat = call.chat;
+    messageAbstract.messageCall = messageCall;
+
+    [self addObject:messageAbstract];
+
+    [self updateObject:call.chat withBlock:^(OCTChat *theChat) {
+        theChat.lastMessage = messageAbstract;
+    }];
 }
 
 #pragma mark -  Private
