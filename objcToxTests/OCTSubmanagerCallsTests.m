@@ -279,15 +279,15 @@
     self.callManager.delegate = delegate;
 
     OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 222;
+    friend.friendNumber = 221;
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.realmManager getOrCreateCallWithFriendNumber:222];
+    OCTCall *call = [self.realmManager getOrCreateCallWithFriendNumber:221];
 
-    [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:222];
+    [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
     OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
 }
 
@@ -316,21 +316,21 @@
 
 - (void)testAudioBitRateChanged
 {
-    //    id delegate = OCMProtocolMock(@protocol(OCTSubmanagerCallDelegate));
-    //    OCMStub([delegate respondsToSelector:[OCMArg anySelector]]).andReturn(YES);
-    //    self.callManager.delegate = delegate;
-    //
-    //    OCTFriend *friend = [self createFriend];
-    //    friend.friendNumber = 1234;
-    //
-    //    [self.realmManager.realm beginWriteTransaction];
-    //    [self.realmManager.realm addObject:friend];
-    //    [self.realmManager.realm commitWriteTransaction];
-    //
-    //    OCTCall *call = [self.realmManager getOrCreateCallWithFriendNumber:1234];
-    //
-    //    [self.callManager toxAV:nil audioBitRateChanged:999 stable:NO friendNumber:123];
-    //    OCMVerify([delegate callSubmanager:[OCMArg any] audioBitRateChanged:999 stable:NO forCall:call]);
+    id delegate = OCMProtocolMock(@protocol(OCTSubmanagerCallDelegate));
+    OCMStub([delegate respondsToSelector:[OCMArg anySelector]]).andReturn(YES);
+    self.callManager.delegate = delegate;
+
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = 777;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    OCTCall *call = [self.realmManager getOrCreateCallWithFriendNumber:777];
+
+    [self.callManager toxAV:nil audioBitRateChanged:999 stable:NO friendNumber:777];
+    OCMVerify([delegate callSubmanager:[OCMArg any] audioBitRateChanged:999 stable:NO forCall:call]);
 }
 
 - (void)testReceiveAudio
