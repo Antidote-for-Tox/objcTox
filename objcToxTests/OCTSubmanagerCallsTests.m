@@ -6,16 +6,16 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
- #import <XCTest/XCTest.h>
+#import <XCTest/XCTest.h>
 
 #import "OCTRealmTests.h"
 
- #import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
- #import "OCTAudioEngine.h"
- #import "OCTToxAV.h"
- #import "OCTTox.h"
- #import <OCMock/OCMock.h>
+#import "OCTAudioEngine.h"
+#import "OCTToxAV.h"
+#import "OCTTox.h"
+#import <OCMock/OCMock.h>
 
 @interface OCTSubmanagerCalls (Tests)
 

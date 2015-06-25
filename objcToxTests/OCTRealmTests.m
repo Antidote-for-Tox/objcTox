@@ -40,11 +40,15 @@
 
 - (void)tearDown
 {
-    NSString *realmPath = [self realmPath];
-    NSString *lockPath = [realmPath stringByAppendingString:@".lock"];
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm deleteAllObjects];
+    [self.realmManager.realm commitWriteTransaction];
 
     [(id)self.realmManager stopMocking];
     self.realmManager = nil;
+
+    NSString *realmPath = [self realmPath];
+    NSString *lockPath = [realmPath stringByAppendingString:@".lock"];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     [fileManager removeItemAtPath:realmPath error:nil];
