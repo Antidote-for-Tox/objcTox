@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
     /**
      * Call dialing
      */
-    OCTMessageCallEventDial = 1,
+    OCTMessageCallEventDial,
 
     /**
      * Call was missed.

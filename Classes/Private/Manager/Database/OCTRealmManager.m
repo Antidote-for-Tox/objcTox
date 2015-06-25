@@ -198,21 +198,19 @@
     return chat;
 }
 
-- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat
 {
-    OCTFriend *friend = [self friendWithFriendNumber:friendNumber];
-    OCTChat *chat = [self getOrCreateChatWithFriend:friend];
-
     __block OCTCall *call = nil;
 
     dispatch_sync(self.queue, ^{
+
         call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
 
         if (call) {
             return;
         }
 
-        DDLogInfo(@"OCTRealmManager: creating call with friend %@", friend);
+        DDLogInfo(@"OCTRealmManager: creating call with chat %@", chat);
 
         call = [OCTCall new];
 
@@ -296,7 +294,6 @@
                   call:(OCTCall *)call
           callDuration:(NSTimeInterval)duration
 {
-    NSParameterAssert(event);
     NSParameterAssert(call);
     DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
 
@@ -306,7 +303,6 @@
 
     OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
     messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
-    messageAbstract.sender = call.chat.friends.firstObject;
     messageAbstract.chat = call.chat;
     messageAbstract.messageCall = messageCall;
 

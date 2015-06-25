@@ -190,7 +190,12 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 #pragma mark Private methods
 - (OCTCall *)getOrCreateCallWithFriend:(OCTToxFriendNumber)friendNumber
 {
-    return [[self.dataSource managerGetRealmManager] getOrCreateCallWithFriendNumber:friendNumber];
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
+
+    return [realmManager getOrCreateCallWithChat:chat];
 }
 
 - (void)updateCall:(OCTCall *)call withStatus:(OCTCallStatus)status
@@ -256,20 +261,12 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self getOrCreateCallWithFriend:friendNumber];
-
-    if ([self.delegate respondsToSelector:@selector(callSubmanager:audioBitRateChanged:stable:forCall:)]) {
-        [self.delegate callSubmanager:self audioBitRateChanged:bitrate stable:stable forCall:call];
-    }
+    // Lower bitrate if unstable?
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
 {
-    OCTCall *call = [self getOrCreateCallWithFriend:friendNumber];
-
-    if ([self.delegate respondsToSelector:@selector(callSubmanager:audioBitRateChanged:stable:forCall:)]) {
-        [self.delegate callSubmanager:self videoBitRateChanged:bitrate stable:stable forCall:call];
-    }
+    // Lower bitrate if unstable?
 }
 
 - (void)   toxAV:(OCTToxAV *)toxAV

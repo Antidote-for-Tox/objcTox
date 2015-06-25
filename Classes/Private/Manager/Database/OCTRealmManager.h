@@ -53,7 +53,7 @@
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
-- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber;
+- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
