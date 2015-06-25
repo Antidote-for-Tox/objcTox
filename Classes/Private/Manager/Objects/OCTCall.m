@@ -15,24 +15,4 @@
 
 @implementation OCTCall
 
-- (BOOL)isEqual:(id)object
-{
-    if (self == object) {
-        return YES;
-    }
-
-    if (! [object isKindOfClass:[OCTCall class]]) {
-        return NO;
-    }
-
-    OCTCall *otherCall = object;
-
-    return ([self.chat isEqual:otherCall.chat]);
-}
-
-- (NSUInteger)hash
-{
-    return [self.chat.uniqueIdentifier hash];
-}
-
 @end
