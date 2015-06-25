@@ -43,11 +43,14 @@
     NSString *realmPath = [self realmPath];
     NSString *lockPath = [realmPath stringByAppendingString:@".lock"];
 
+    [(id)self.realmManager stopMocking];
+    self.realmManager = nil;
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     [fileManager removeItemAtPath:realmPath error:nil];
     [fileManager removeItemAtPath:lockPath error:nil];
 
-    self.realmManager = nil;
+
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
