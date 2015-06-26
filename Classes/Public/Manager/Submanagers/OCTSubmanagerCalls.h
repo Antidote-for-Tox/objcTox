@@ -28,7 +28,7 @@
 
 /**
  * This must be called once after initialization.
- * @param error Pointe rto an error when setting up.
+ * @param error Pointer to an error when setting up.
  * @return YES on success, otherwise NO.
  */
 - (BOOL)setupWithError:(NSError **)error;

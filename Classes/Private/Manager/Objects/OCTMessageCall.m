@@ -29,7 +29,7 @@
             description = [[NSString alloc] initWithFormat:@"Call lasted %f seconds", self.callDuration];
             break;
         case OCTMessageCallEventUnanswered:
-            description = @"Call missed";
+            description = @"Call unanswered";
             break;
     }
     return description;

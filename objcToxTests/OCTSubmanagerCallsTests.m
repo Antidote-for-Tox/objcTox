@@ -13,6 +13,8 @@
 #import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
 #import "OCTAudioEngine.h"
+#import "OCTMessageCall.h"
+#import "OCTMessageAbstract.h"
 #import "OCTToxAV.h"
 #import "OCTTox.h"
 #import <OCMock/OCMock.h>
@@ -23,7 +25,7 @@
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 
-- (OCTCall *)getOrCreateCallWithFriend:(OCTToxFriendNumber)friendNumber;
+- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber;
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber;
@@ -126,6 +128,9 @@
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error]);
 
     OCMVerify([self.realmManager deleteObject:call]);
+
+    XCTAssertNotNil(chat.lastMessage.messageCall);
+    XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventUnanswered);
 }
 
 - (void)testAnswerCallFail
@@ -140,7 +145,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:123];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123];
 
     XCTAssertFalse([self.callManager answerCall:call enableAudio:YES enableVideo:YES error:nil]);
     [OCMExpect([toxAV answerIncomingCallFromFriend:123 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]) ignoringNonObjectArgs];
@@ -161,7 +166,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:1234];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:1234];
 
     OCMStub([toxAV answerIncomingCallFromFriend:1234 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
 
@@ -202,7 +207,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:12345];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:12345];
 
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
@@ -219,7 +224,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:123456];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123456];
 
     id toxAV = OCMClassMock([OCTToxAV class]);
     OCMStub([toxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]).andReturn(YES);
@@ -238,7 +243,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:321];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:321];
 
     id toxAV = OCMClassMock([OCTToxAV class]);
     OCMStub([toxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
@@ -260,8 +265,8 @@
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:222];
-    OCTCall *sameCall = [self.callManager getOrCreateCallWithFriend:222];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:222];
+    OCTCall *sameCall = [self.callManager getOrCreateCallWithFriendNumber:222];
 
     XCTAssertNotNil(call.chat);
     XCTAssertEqualObjects(call.chat, chat);
@@ -283,7 +288,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:221];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:221];
 
     [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
     OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
@@ -298,7 +303,7 @@
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriend:111];
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:111];
 
     OCTToxAVCallState state;
 
@@ -307,7 +312,7 @@
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:111];
 
-    call = [self.callManager getOrCreateCallWithFriend:111];
+    call = [self.callManager getOrCreateCallWithFriendNumber:111];
 
     XCTAssertTrue(call.receivingAudio);
     XCTAssertTrue(call.receivingVideo);

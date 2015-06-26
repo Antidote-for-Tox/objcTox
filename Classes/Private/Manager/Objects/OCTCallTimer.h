@@ -17,7 +17,7 @@
 /**
  * Starts the timer for the specified call.
  * Note that there can only be one active call.
- * @param Call duration to update for.
+ * @param call Call to update.
  */
 - (void)startTimerForCall:(OCTCall *)call;
 

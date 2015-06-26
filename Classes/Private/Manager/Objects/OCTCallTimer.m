@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) dispatch_source_t timer;
 @property (strong, nonatomic) OCTRealmManager *realmManager;
+@property (weak, nonatomic) OCTCall *call;
 
 @end
 
@@ -44,6 +45,8 @@
             NSAssert(! self.timer, @"There is already a timer in progress!");
         }
 
+        self.call = call;
+
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTCallQueue", DISPATCH_QUEUE_SERIAL);
 
         // Main queue is used temporarily for now since we are getting 'Realm accessed from incorrect thread'.
@@ -54,11 +57,12 @@
         dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, interval, leeway);
 
         __weak OCTCallTimer *weakSelf = self;
-        __weak OCTCall *weakCall = call;
+        __weak OCTCall *weakCall = self.call;
         dispatch_source_set_event_handler(self.timer, ^{
             OCTCallTimer *strongSelf = weakSelf;
             OCTCall *strongCall = weakCall;
             if ((! strongSelf) ||  (! strongCall)) {
+                [self stopTimer];
                 return;
             }
 
@@ -66,7 +70,7 @@
                 callToUpdate.callDuration += 1.0;
             }];
 
-            DDLogCInfo(@"%@: Call: %@ updated duration by 1 second", self, strongCall);
+            DDLogCInfo(@"%@: Call: %@ duration at %f seconds", self, strongCall, strongCall.callDuration);
         });
 
         dispatch_resume(self.timer);
@@ -80,8 +84,11 @@
             return;
         }
 
+        DDLogCInfo(@"%@: Timer for call %@ has stopped at duration %f", self, self.call, self.call.callDuration);
+
         dispatch_source_cancel(self.timer);
         self.timer = nil;
+        self.call = nil;
     }
 }
 

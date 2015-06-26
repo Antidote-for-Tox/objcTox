@@ -45,15 +45,15 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (BOOL)setupWithError:(NSError **)error
 {
-    NSAssert(self.delegate, @"dataSource is needed before setup of OCTSubmanagerCalls");
+    NSAssert(self.dataSource, @"dataSource is needed before setup of OCTSubmanagerCalls");
     __block BOOL status = NO;
     dispatch_once(&_setupOnceToken, ^{
         OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-        _timer = [[OCTCallTimer alloc] initWithRealmManager:realmManager];
+        self.timer = [[OCTCallTimer alloc] initWithRealmManager:realmManager];
 
-        _audioEngine = [OCTAudioEngine new];
-        _audioEngine.toxav = self.toxAV;
-        status = [_audioEngine setupWithError:error];
+        self.audioEngine = [OCTAudioEngine new];
+        self.audioEngine.toxav = self.toxAV;
+        status = [self.audioEngine setupWithError:error];
     });
 
     return status;
@@ -75,7 +75,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return nil;
         }
 
-        OCTCall *call = [self getOrCreateCallWithFriend:friend.friendNumber];
+        OCTCall *call = [self getOrCreateCallWithFriendNumber:friend.friendNumber];
         [self updateCall:call withStatus:OCTCallStatusDialing];
 
         return call;
@@ -148,6 +148,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 [self updateCall:call withStatus:OCTCallStatusActive];
                 break;
             case OCTToxAVCallControlCancel:
+                [self.timer stopTimer];
                 [self addMessageCall:event forCall:call withDuration:call.callDuration];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
@@ -202,7 +203,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 }
 
 #pragma mark Private methods
-- (OCTCall *)getOrCreateCallWithFriend:(OCTToxFriendNumber)friendNumber
+- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
@@ -249,18 +250,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         sendingVideo = YES;
     }
 
-    if (receivingAudio != call.receivingAudio) {
-        if ([self.delegate respondsToSelector:@selector(callSubmanager:call:incomingAudioEnabled:)]) {
-            [self.delegate callSubmanager:self call:call incomingAudioEnabled:receivingAudio];
-        }
-    }
-
-    if (receivingVideo != call.receivingVideo) {
-        if ([self.delegate respondsToSelector:@selector(callSubmanager:call:incomingVideoEnabled:)]) {
-            [self.delegate callSubmanager:self call:call incomingVideoEnabled:receivingVideo];
-        }
-    }
-
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         call.receivingAudio = receivingAudio;
@@ -274,7 +263,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self getOrCreateCallWithFriend:friendNumber];
+    OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
     [self updateCall:call withStatus:OCTCallStatusRinging];
 
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
@@ -284,7 +273,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self getOrCreateCallWithFriend:friendNumber];
+    OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
 
     OCTCallStatus status = call.status;
 
