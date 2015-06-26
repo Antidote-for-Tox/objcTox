@@ -19,14 +19,14 @@
 /**
  * Call audio status has changed.
  * @param call The call that has been updated.
- * @param enabled Call is now receiving video.
+ * @param enabled YES if the call is now receiving audio. Otherwise NO.
  **/
 - (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager call:(OCTCall *)call incomingAudioEnabled:(BOOL)enabled;
 
 /**
  * Call video status has changed.
  * @param call The call that has been updated.
- * @param enabled Call is now receiving video.
+ * @param enabled YES if the call is now receiving video. Otherwise NO.
  **/
 - (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager call:(OCTCall *)call incomingVideoEnabled:(BOOL)enabled;
 

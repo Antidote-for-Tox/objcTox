@@ -86,4 +86,5 @@
  * @param error Pointer to error object if there's an issue setting the bitrate.
  */
 - (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+
 @end

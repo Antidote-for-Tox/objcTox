@@ -231,6 +231,18 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         sendingVideo = YES;
     }
 
+    if (receivingAudio != call.receivingAudio) {
+        if ([self.delegate respondsToSelector:@selector(callSubmanager:call:incomingAudioEnabled:)]) {
+            [self.delegate callSubmanager:self call:call incomingAudioEnabled:receivingAudio];
+        }
+    }
+
+    if (receivingVideo != call.receivingVideo) {
+        if ([self.delegate respondsToSelector:@selector(callSubmanager:call:incomingVideoEnabled:)]) {
+            [self.delegate callSubmanager:self call:call incomingVideoEnabled:receivingVideo];
+        }
+    }
+
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         call.receivingAudio = receivingAudio;
