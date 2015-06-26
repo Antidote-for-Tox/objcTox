@@ -13,9 +13,11 @@
 #import "RBQRealmNotificationManager.h"
 #import "OCTFriend.h"
 #import "OCTChat.h"
+#import "OCTCall.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
+#import "OCTMessageCall.h"
 
 #import "DDLog.h"
 #undef LOG_LEVEL_DEF
@@ -196,6 +198,34 @@
     return chat;
 }
 
+- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat
+{
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
+
+        if (call) {
+            return;
+        }
+
+        DDLogInfo(@"OCTRealmManager: creating call with chat %@", chat);
+
+        call = [OCTCall new];
+
+        [self.realm beginWriteTransaction];
+
+        [self.realm addObject:call];
+        [call setChat:chat];
+        [[self logger] didAddObject:call];
+
+        [self.realm commitWriteTransaction];
+    });
+
+    return call;
+}
+
 - (void)removeChatWithAllMessages:(OCTChat *)chat
 {
     NSParameterAssert(chat);
@@ -258,6 +288,29 @@
     }];
 
     return messageAbstract;
+}
+
+- (void)addMessageCall:(OCTMessageCallEvent)event
+                  call:(OCTCall *)call
+          callDuration:(NSTimeInterval)duration
+{
+    NSParameterAssert(call);
+    DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
+
+    OCTMessageCall *messageCall = [OCTMessageCall new];
+    messageCall.callDuration = duration;
+    messageCall.callEvent = event;
+
+    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
+    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
+    messageAbstract.chat = call.chat;
+    messageAbstract.messageCall = messageCall;
+
+    [self addObject:messageAbstract];
+
+    [self updateObject:call.chat withBlock:^(OCTChat *theChat) {
+        theChat.lastMessage = messageAbstract;
+    }];
 }
 
 #pragma mark -  Private

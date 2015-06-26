@@ -233,13 +233,13 @@
 
 - (void)cancel
 {
-    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-
-    NSError *error;
-    if (! [self.manager.calls sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error]) {
-        NSLog(@"%@ Error %@", self, error.localizedDescription);
-        NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
-    }
+    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+    //
+    //    NSError *error;
+    //    if (! [self.manager.calls sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error]) {
+    //        NSLog(@"%@ Error %@", self, error.localizedDescription);
+    //        NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
+    //    }
 }
 
 - (void)useSpeaker
@@ -260,25 +260,25 @@
 
 - (void)pause
 {
-    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    [self.manager.calls sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
+    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+    //    [self.manager.calls sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
 }
 
 - (void)resume
 {
-    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    [self.manager.calls sendCallControl:OCTToxAVCallControlResume toCall:call error:nil];
+    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+    //    [self.manager.calls sendCallControl:OCTToxAVCallControlResume toCall:call error:nil];
 }
 
 - (void)muteFriend
 {
-    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    [self.manager.calls sendCallControl:OCTToxAVCallControlMuteAudio toCall:call error:nil];
+    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+    //    [self.manager.calls sendCallControl:OCTToxAVCallControlMuteAudio toCall:call error:nil];
 }
 
 - (void)unmuteFriend
 {
-    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    [self.manager.calls sendCallControl:OCTToxAVCallControlUnmuteAudio toCall:call error:nil];
+    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
+    //    [self.manager.calls sendCallControl:OCTToxAVCallControlUnmuteAudio toCall:call error:nil];
 }
 @end

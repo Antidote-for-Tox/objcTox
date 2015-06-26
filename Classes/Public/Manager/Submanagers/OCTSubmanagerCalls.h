@@ -9,25 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "OCTChat.h"
-#import "OCTArray.h"
-#import "OCTCallsContainer.h"
+#import "OCTToxAVConstants.h"
+#import "OCTSubmanagerCallsDelegate.h"
+
 @class OCTSubmanagerCalls;
 @class OCTToxAV;
 @class OCTCall;
-
-@protocol OCTSubmanagerCallDelegate <NSObject>
-
-/**
- * Delegate for when we receive a call.
- **/
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
-
-/**
- * Audio bitrate has changed
- **/
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager audioBitRateChanged:(OCTToxAVAudioBitRate)bitRate stable:(BOOL)stable forCall:(OCTCall *)call;
-
-@end
 
 @interface OCTSubmanagerCalls : NSObject
 
@@ -40,9 +27,11 @@
 @property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
- * All call sessions.
+ * This must be called once after initialization.
+ * @param error Pointer to an error when setting up.
+ * @return YES on success, otherwise NO.
  */
-@property (strong, nonatomic, readonly) OCTCallsContainer *calls;
+- (BOOL)setupWithError:(NSError **)error;
 
 /**
  * This class is responsible for telling the end-user what calls we have available.
@@ -104,4 +93,5 @@
  * @param error Pointer to error object if there's an issue setting the bitrate.
  */
 - (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+
 @end

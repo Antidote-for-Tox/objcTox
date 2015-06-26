@@ -1342,9 +1342,6 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             code = OCTToxErrorFileGetNotFound;
             failureReason = @"No file transfer with given file number found";
             break;
-        case TOX_ERR_FILE_GET_NULL:
-            code = OCTToxErrorFileGetNULL;
-            failureReason = @"One of the arguments to the function was NULL when it was not expected.";
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];

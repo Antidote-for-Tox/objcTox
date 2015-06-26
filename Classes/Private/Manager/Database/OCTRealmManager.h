@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTToxConstants.h"
+#import "OCTManagerConstants.h"
 
 @class RBQFetchRequest;
 @class OCTObject;
 @class OCTFriendRequest;
 @class OCTFriend;
 @class OCTChat;
+@class OCTCall;
 @class OCTMessageAbstract;
 @class OCTMessageText;
 @class OCTMessageFile;
@@ -51,6 +53,7 @@
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
+- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
@@ -59,4 +62,7 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
+- (void)addMessageCall:(OCTMessageCallEvent)event
+                  call:(OCTCall *)call
+          callDuration:(NSTimeInterval)duration;
 @end

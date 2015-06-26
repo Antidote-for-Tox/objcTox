@@ -9,35 +9,47 @@
 #import <Foundation/Foundation.h>
 #import "OCTChat.h"
 #import "OCTFriend.h"
-#import "OCTToxAVConstants.h"
+#import "OCTManagerConstants.h"
 
-typedef NS_ENUM(NSUInteger, OCTCallStatus) {
-    OCTCallStatusInactive = 0,
-    OCTCallStatusDialing,
-    OCTCallStatusIncoming,
-    OCTCallStatusInSession,
-};
-
-@interface OCTCall : NSObject
+/**
+ * Please note that all properties of this object are readonly.
+ * All management of calls are handeled through OCTCallSubmanagerCalls.
+ */
+@interface OCTCall : OCTObject
 
 /**
  * OCTChat related session with the call.
  **/
-@property (strong, nonatomic, readonly) OCTChat *chat;
+@property OCTChat *chat;
 
 /**
  * Call status
  **/
-@property (nonatomic, assign, readonly) OCTCallStatus status;
+@property OCTCallStatus status;
 
 /**
- * Call state of friend.
- **/
-@property (nonatomic, assign, readonly) OCTToxAVCallState state;
+ * We are sending audio to the other client.
+ */
+@property BOOL sendingAudio;
+
+/**
+ * We are sending video to the other client.
+ */
+@property BOOL sendingVideo;
+
+/**
+ * We are receiving audio to the other client.
+ */
+@property BOOL receivingAudio;
+
+/**
+ * We are receiving video to the other client.
+ */
+@property BOOL receivingVideo;
 
 /**
  * Call duration
  **/
-@property (nonatomic, assign, readonly) NSTimeInterval callDuration;
+@property NSTimeInterval callDuration;
 
 @end

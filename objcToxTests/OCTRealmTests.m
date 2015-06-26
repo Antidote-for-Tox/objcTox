@@ -40,6 +40,13 @@
 
 - (void)tearDown
 {
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm deleteAllObjects];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [(id)self.realmManager stopMocking];
+    self.realmManager = nil;
+
     NSString *realmPath = [self realmPath];
     NSString *lockPath = [realmPath stringByAppendingString:@".lock"];
 
@@ -47,7 +54,7 @@
     [fileManager removeItemAtPath:realmPath error:nil];
     [fileManager removeItemAtPath:lockPath error:nil];
 
-    self.realmManager = nil;
+
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }

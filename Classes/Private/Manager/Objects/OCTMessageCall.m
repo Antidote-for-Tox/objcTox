@@ -8,13 +8,6 @@
 
 #import "OCTMessageCall.h"
 
-@interface OCTMessageCall ()
-
-@property (assign, nonatomic, readwrite) NSTimeInterval callDuration;
-@property (assign, nonatomic, readwrite) OCTMessageCallEvent callEvent;
-
-@end
-
 @implementation OCTMessageCall
 
 #pragma mark -  Public
@@ -32,14 +25,11 @@
 {
     NSString *description;
     switch (self.callEvent) {
-        case OCTMessageCallEventDial:
-            description = @"Call dial";
-            break;
-        case OCTMessageCallEventEnd:
+        case OCTMessageCallEventAnswered:
             description = [[NSString alloc] initWithFormat:@"Call lasted %f seconds", self.callDuration];
             break;
-        case OCTMessageCallEventMissed:
-            description = @"Call missed";
+        case OCTMessageCallEventUnanswered:
+            description = @"Call unanswered";
             break;
     }
     return description;
