@@ -45,22 +45,29 @@ typedef NS_ENUM(NSInteger, OCTMessageFileType) {
 
 typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
     /**
-     * Call dialing
+     * Call was answered.
      */
-    OCTMessageCallEventDial,
+    OCTMessageCallEventAnswered,
 
     /**
-     * Call was missed.
+     * Call was unanswered.
      */
-    OCTMessageCallEventMissed,
+    OCTMessageCallEventUnanswered,
+};
+
+typedef NS_ENUM(NSInteger, OCTCallStatus) {
+    /**
+     * Call is currently ringing.
+     */
+    OCTCallStatusRinging,
 
     /**
-     * Call has ended.
+     * Call is currently dialing a chat.
      */
-    OCTMessageCallEventEnd,
+    OCTCallStatusDialing,
 
     /**
-     * Call started.
+     * Call is currently active in session.
      */
-    OCTMessageCallEventStarted,
+    OCTCallStatusActive,
 };

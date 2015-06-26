@@ -59,7 +59,7 @@
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
     OCTCall *call = [self.realmManager getOrCreateCallWithChat:chat];
 
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"Test Timer"];
+    //    XCTestExpectation *expectation = [self expectationWithDescription:@"Test Timer"];
 
     [self.callTimer startTimerForCall:call];
 

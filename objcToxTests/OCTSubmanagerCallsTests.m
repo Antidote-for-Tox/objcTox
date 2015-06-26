@@ -99,7 +99,6 @@
 
     XCTAssertEqualObjects(call.chat, chat);
     XCTAssertEqual(call.status, OCTCallStatusDialing);
-    XCTAssertEqual(call.state, 0);
 }
 
 - (void)testEndCall
@@ -247,7 +246,6 @@
 
     XCTAssertTrue([self.callManager setVideoBitrate:5555 forCall:call error:nil]);
     OCMVerify([toxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]);
-
 }
 
 #pragma mark - Private
@@ -311,7 +309,10 @@
 
     call = [self.callManager getOrCreateCallWithFriend:111];
 
-    XCTAssertEqual(call.state, state);
+    XCTAssertTrue(call.receivingAudio);
+    XCTAssertTrue(call.receivingVideo);
+    XCTAssertFalse(call.sendingAudio);
+    XCTAssertFalse(call.sendingVideo);
 }
 
 - (void)testReceiveAudio

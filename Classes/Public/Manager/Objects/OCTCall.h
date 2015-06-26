@@ -9,15 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "OCTChat.h"
 #import "OCTFriend.h"
-#import "OCTToxAVConstants.h"
+#import "OCTManagerConstants.h"
 
-typedef NS_ENUM(NSInteger, OCTCallStatus) {
-    OCTCallStatusInactive = 0,
-    OCTCallStatusDialing,
-    OCTCallStatusIncoming,
-    OCTCallStatusInSession,
-};
-
+/**
+ * Please note that all properties of this object are readonly.
+ * All management of calls are handeled through OCTCallSubmanagerCalls.
+ */
 @interface OCTCall : OCTObject
 
 /**
@@ -31,9 +28,24 @@ typedef NS_ENUM(NSInteger, OCTCallStatus) {
 @property OCTCallStatus status;
 
 /**
- * Call state of friend.
- **/
-@property OCTToxAVCallState state;
+ * We are sending audio to the other client.
+ */
+@property BOOL sendingAudio;
+
+/**
+ * We are sending video to the other client.
+ */
+@property BOOL sendingVideo;
+
+/**
+ * We are receiving audio to the other client.
+ */
+@property BOOL receivingAudio;
+
+/**
+ * We are receiving video to the other client.
+ */
+@property BOOL receivingVideo;
 
 /**
  * Call duration

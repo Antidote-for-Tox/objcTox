@@ -25,17 +25,11 @@
 {
     NSString *description;
     switch (self.callEvent) {
-        case OCTMessageCallEventDial:
-            description = @"Call dial";
-            break;
-        case OCTMessageCallEventEnd:
+        case OCTMessageCallEventAnswered:
             description = [[NSString alloc] initWithFormat:@"Call lasted %f seconds", self.callDuration];
             break;
-        case OCTMessageCallEventMissed:
+        case OCTMessageCallEventUnanswered:
             description = @"Call missed";
-            break;
-        case OCTMessageCallEventStarted:
-            description = @"Call started";
             break;
     }
     return description;
