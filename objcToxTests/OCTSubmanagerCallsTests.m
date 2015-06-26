@@ -75,7 +75,6 @@
 - (void)testInit
 {
     XCTAssertNotNil(self.callManager);
-    XCTAssertNotNil(self.callManager.audioEngine);
 }
 
 - (void)testSetup
@@ -157,6 +156,7 @@
     id toxAV = OCMClassMock([OCTToxAV class]);
     self.callManager.toxAV = toxAV;
 
+    self.callManager.audioEngine = [OCTAudioEngine new];
     id audioEngine = OCMPartialMock(self.callManager.audioEngine);
     OCMStub([audioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
@@ -228,6 +228,8 @@
     OCMVerify([timer startTimerForCall:call]);
 
     XCTAssertEqual(call.status, OCTCallStatusActive);
+    XCTAssertTrue(call.receivingVideo);
+
 }
 
 - (void)testRouteAudioToSpeaker

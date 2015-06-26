@@ -36,10 +36,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     _toxAV.delegate = self;
     [_toxAV start];
 
-    _audioEngine = [OCTAudioEngine new];
-    _audioEngine.toxav = self.toxAV;
-    [_audioEngine setupWithError:nil];
-
     return self;
 }
 
@@ -252,10 +248,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-        call.receivingAudio = receivingAudio;
-        call.receivingVideo = receivingVideo;
-        call.sendingAudio = sendingAudio;
-        call.sendingVideo = sendingVideo;
+        callToUpdate.receivingAudio = receivingAudio;
+        callToUpdate.receivingVideo = receivingVideo;
+        callToUpdate.sendingAudio = sendingAudio;
+        callToUpdate.sendingVideo = sendingVideo;
     }];
 }
 
