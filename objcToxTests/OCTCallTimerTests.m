@@ -59,21 +59,21 @@
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
     OCTCall *call = [self.realmManager getOrCreateCallWithChat:chat];
 
-    //    XCTestExpectation *expectation = [self expectationWithDescription:@"Test Timer"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Test Timer"];
 
     [self.callTimer startTimerForCall:call];
 
     NSInteger delayTime =  dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC);
 
-    //    dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-    //        if (call.callDuration > 1) {
-    //            [expectation fulfill];
-    //        }
-    //    });
+    dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+        if (call.callDuration > 1) {
+            [expectation fulfill];
+        }
+    });
 
-    //    [self waitForExpectationsWithTimeout:3.0 handler:^(NSError *error) {
-    //        [self.callTimer stopTimer];
-    //    }];
+    [self waitForExpectationsWithTimeout:3.0 handler:^(NSError *error) {
+        [self.callTimer stopTimer];
+    }];
 }
 
 @end
