@@ -27,6 +27,13 @@
 @property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
+ * This must be called once after initialization.
+ * @param error Pointe rto an error when setting up.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)setupWithError:(NSError **)error;
+
+/**
  * This class is responsible for telling the end-user what calls we have available.
  * We can also initialize a call session from here.
  * @param chat The chat for which we would like to initiate a call.
