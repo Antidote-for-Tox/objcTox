@@ -17,7 +17,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
-@property (strong, nonatomic) OCTTimer *timer;
+@property (strong, nonatomic) OCTCallTimer *timer;
 
 @end
 
@@ -39,8 +39,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     _audioEngine.toxav = self.toxAV;
     [_audioEngine setupWithError:nil];
 
-    _timer = [OCTTimer new];
-    _timer.dataSource = _dataSource;
+    _timer = [OCTCallTimer new];
 
     return self;
 }

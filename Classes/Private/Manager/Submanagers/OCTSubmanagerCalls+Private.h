@@ -14,7 +14,7 @@
 #import "OCTRealmManager.h"
 #import "RBQFetchRequest.h"
 #import "OCTCall.h"
-#import "OCTTimer.h"
+#import "OCTCallTimer.h"
 
 @class OCTTox;
 
