@@ -19,7 +19,7 @@
 
 @property (strong, nonatomic) dispatch_source_t timer;
 @property (strong, nonatomic) OCTRealmManager *realmManager;
-@property (weak, nonatomic) OCTCall *call;
+@property (strong, nonatomic) OCTCall *call;
 
 @end
 
@@ -57,20 +57,20 @@
         dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, interval, leeway);
 
         __weak OCTCallTimer *weakSelf = self;
-        __weak OCTCall *weakCall = self.call;
+
         dispatch_source_set_event_handler(self.timer, ^{
             OCTCallTimer *strongSelf = weakSelf;
-            OCTCall *strongCall = weakCall;
-            if ((! strongSelf) ||  (! strongCall)) {
-                [self stopTimer];
+            if (! strongSelf) {
+                dispatch_source_cancel(self.timer);
+                DDLogError(@"Error: Attempt to update timer with no strong pointer to OCTCallTimer");
                 return;
             }
 
-            [strongSelf.realmManager updateObject:strongCall withBlock:^(OCTCall *callToUpdate) {
+            [strongSelf.realmManager updateObject:strongSelf.call withBlock:^(OCTCall *callToUpdate) {
                 callToUpdate.callDuration += 1.0;
             }];
 
-            DDLogCInfo(@"%@: Call: %@ duration at %f seconds", self, strongCall, strongCall.callDuration);
+            DDLogInfo(@"%@: Call: %@ duration at %f seconds", self, strongSelf.call, strongSelf.call.callDuration);
         });
 
         dispatch_resume(self.timer);
@@ -84,7 +84,7 @@
             return;
         }
 
-        DDLogCInfo(@"%@: Timer for call %@ has stopped at duration %f", self, self.call, self.call.callDuration);
+        DDLogInfo(@"%@: Timer for call %@ has stopped at duration %f", self, self.call, self.call.callDuration);
 
         dispatch_source_cancel(self.timer);
         self.timer = nil;
