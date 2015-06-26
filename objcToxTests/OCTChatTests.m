@@ -43,18 +43,18 @@
     XCTAssertNil([chat lastReadDate]);
 }
 
-- (void)testCreationDate
+- (void)testLastActivityDate
 {
     OCTChat *chat = [OCTChat new];
 
-    chat.creationDateInterval = 0;
-    XCTAssertNil([chat creationDate]);
+    chat.lastActivityDateInterval = 0;
+    XCTAssertNil([chat lastActivityDate]);
 
-    chat.creationDateInterval = 12345;
-    XCTAssertEqual([[chat creationDate] timeIntervalSince1970], 12345);
+    chat.lastActivityDateInterval = 12345;
+    XCTAssertEqual([[chat lastActivityDate] timeIntervalSince1970], 12345);
 
-    chat.creationDateInterval = -12345;
-    XCTAssertNil([chat creationDate]);
+    chat.lastActivityDateInterval = -12345;
+    XCTAssertNil([chat lastActivityDate]);
 }
 
 - (void)testHasUnreadMessages
@@ -75,23 +75,6 @@
 
     chat.lastReadDateInterval = 30;
     XCTAssertFalse([chat hasUnreadMessages]);
-}
-
-- (void)testLastActivityDate
-{
-    OCTChat *chat = [OCTChat new];
-    chat.creationDateInterval = 10;
-
-    NSDate *date = [chat lastActivityDate];
-
-    XCTAssertEqual([date timeIntervalSince1970], 10);
-
-    chat.lastMessage = [OCTMessageAbstract new];
-    chat.lastMessage.dateInterval = 20;
-
-    date = [chat lastActivityDate];
-
-    XCTAssertEqual([date timeIntervalSince1970], 20);
 }
 
 @end
