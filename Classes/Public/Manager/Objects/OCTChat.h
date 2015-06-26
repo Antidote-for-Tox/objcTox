@@ -45,9 +45,13 @@
 @property NSTimeInterval lastReadDateInterval;
 
 /**
- * The date interval when chat was created.
+ * Date interval of lastMessage or chat creationDate if there is no last message.
+ *
+ * This property is workaround to support sorting. Should be replaced with keypath
+ * lastMessage.dateInterval sorting in future.
+ * See https://github.com/realm/realm-cocoa/issues/1277
  */
-@property NSTimeInterval creationDateInterval;
+@property NSTimeInterval lastActivityDateInterval;
 
 /**
  * The date when chat was read last time.
@@ -55,9 +59,9 @@
 - (NSDate *)lastReadDate;
 
 /**
- * The date when chat was created.
+ * Returns date of lastMessage or chat creationDate if there is no last message.
  */
-- (NSDate *)creationDate;
+- (NSDate *)lastActivityDate;
 
 /**
  * If there are unread messages in chat YES is returned. All messages that have date later than lastReadDateInterval
@@ -68,11 +72,6 @@
  * @return YES if there are unread messages, NO otherwise.
  */
 - (BOOL)hasUnreadMessages;
-
-/**
- * Returns date of lastMessage or chat creationDate if there is no last message.
- */
-- (NSDate *)lastActivityDate;
 
 @end
 
