@@ -60,6 +60,12 @@
 @property OCTToxUserStatus status;
 
 /**
+ * Property specifies if friend is connected. For type of connection you can check
+ * connectionStatus property.
+ */
+@property BOOL isConnected;
+
+/**
  * Connection status message of a friend.
  */
 @property OCTToxConnectionStatus connectionStatus;
