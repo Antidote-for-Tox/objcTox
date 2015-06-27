@@ -62,7 +62,7 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
-- (void)addMessageCall:(OCTMessageCallEvent)event
-                  call:(OCTCall *)call
-          callDuration:(NSTimeInterval)duration;
+- (void)addMessageCallEvent:(OCTMessageCallEvent)event
+                       call:(OCTCall *)call
+               callDuration:(NSTimeInterval)duration;
 @end

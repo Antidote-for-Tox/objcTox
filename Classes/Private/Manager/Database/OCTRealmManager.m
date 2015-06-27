@@ -52,6 +52,8 @@
         _realm = [RLMRealm realmWithPath:path];
     });
 
+    [self removeAllCalls];
+
     return self;
 }
 
@@ -258,6 +260,25 @@
     });
 }
 
+- (void)removeAllCalls
+{
+    RLMResults *calls = [OCTCall objectsInRealm:self.realm where:nil];
+
+    DDLogInfo(@"OCTRealmManager: removing %lu calls", calls.count);
+
+    RBQRealmChangeLogger *logger = [self logger];
+
+    for (OCTCall *call in calls) {
+        OCTMessageCallEvent event = (call.status != OCTCallStatusActive) ? OCTMessageCallEventUnanswered : OCTMessageCallEventAnswered;
+        [self addMessageCallEvent:event call:call callDuration:call.callDuration];
+    }
+
+    [self.realm beginWriteTransaction];
+    [logger willDeleteObjects:calls];
+    [self.realm deleteObjects:calls];
+    [self.realm commitWriteTransaction];
+}
+
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
                                       type:(OCTToxMessageType)type
                                       chat:(OCTChat *)chat
@@ -290,9 +311,9 @@
     return messageAbstract;
 }
 
-- (void)addMessageCall:(OCTMessageCallEvent)event
-                  call:(OCTCall *)call
-          callDuration:(NSTimeInterval)duration
+- (void)addMessageCallEvent:(OCTMessageCallEvent)event
+                       call:(OCTCall *)call
+               callDuration:(NSTimeInterval)duration
 {
     NSParameterAssert(call);
     DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);

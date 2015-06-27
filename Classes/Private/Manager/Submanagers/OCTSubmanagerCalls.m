@@ -220,7 +220,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 - (void)addMessageCall:(OCTMessageCallEvent)event forCall:(OCTCall *)call withDuration:(NSTimeInterval)duration
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    [realmManager addMessageCall:event call:call callDuration:duration];
+    [realmManager addMessageCallEvent:event call:call callDuration:duration];
 
     [self.timer stopTimer];
     [realmManager deleteObject:call];
