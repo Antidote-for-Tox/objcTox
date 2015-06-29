@@ -67,12 +67,12 @@
 
     cell.textLabel.text = [NSString stringWithFormat:@"Call\n"
                            @"Chat identifier %@\n"
-                           @"status: %ld\n"
+                           @"call status: %ld\n"
                            @"callDuration: %f\n"
-                           @"sending Audio: %d\n"
-                           @"receiving Audio: %d\n"
-                           @"sending Video: %d\n"
-                           @"receiving Video: %d\n",
+                           @"friend sending audio: %d\n"
+                           @"friend receiving audio: %d\n"
+                           @"friend sending video: %d\n"
+                           @"friend receiving Video: %d\n",
                            call.chat.uniqueIdentifier, call.status, call.callDuration, call.sendingAudio, call.receivingAudio,
                            call.sendingVideo, call.receivingVideo];
 

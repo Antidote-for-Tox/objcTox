@@ -18,7 +18,8 @@
 
 - (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled
 {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Receiving call" message:@"call" preferredStyle:UIAlertControllerStyleAlert];
+    NSString *title = [NSString stringWithFormat:@"audio: %d video: %d", audioEnabled, videoEnabled];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Receiving call" message:title preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction *rejectAction = [UIAlertAction actionWithTitle:@"Reject Call"
                                                            style:UIAlertActionStyleCancel
@@ -47,7 +48,7 @@
 
     [alertController addAction:rejectAction];
     [alertController addAction:acceptAction];
-    NSLog(@"Presented view controller");
+
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
