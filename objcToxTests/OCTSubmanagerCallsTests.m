@@ -183,7 +183,7 @@
     }];
 
     OCTToxAVCallState state;
-    state |= OCTToxAVCallStateFinished;
+    state |= OCTToxAVFriendCallStateFinished;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:89];
 
@@ -219,7 +219,7 @@
     }];
 
     OCTToxAVCallState state;
-    state |= OCTToxAVCallStateReceivingVideo;
+    state |= OCTToxAVFriendCallStateReceivingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:92];
 
@@ -337,8 +337,8 @@
 
     OCTToxAVCallState state;
 
-    state |= OCTToxAVCallStateReceivingAudio;
-    state |= OCTToxAVCallStateReceivingVideo;
+    state |= OCTToxAVFriendCallStateReceivingAudio;
+    state |= OCTToxAVFriendCallStateReceivingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:111];
 

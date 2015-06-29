@@ -494,6 +494,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             code = OCTToxAVErrorSendFrameInvalid;
             failureReason = @"One of the frame parameters was invalid. E.g. the resolution may be too small or too large, or the audio sampling rate may be unsupported";
             break;
+        case TOXAV_ERR_SEND_FRAME_BIT_RATE_NOT_SET:
+            code = OCTToxAVErrorFrameBitrateWasNotSet;
+            failureReason = @"Bit rate for this payload type was not set up.";
         case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
             code = OCTToxAVErrorSendFrameRTPFailed;
             failureReason = @"Failed to push frame through rtp interface";
@@ -542,7 +545,7 @@ void callIncomingCallback(ToxAV *cToxAV,
 
 void callStateCallback(ToxAV *cToxAV,
                        uint32_t friendNumber,
-                       enum TOXAV_CALL_STATE cState,
+                       enum TOXAV_FRIEND_CALL_STATE cState,
                        void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
@@ -553,23 +556,23 @@ void callStateCallback(ToxAV *cToxAV,
 
         OCTToxAVCallState state = 0;
 
-        if (cState & TOXAV_CALL_STATE_ERROR) {
-            state |= OCTToxAVCallStateError;
+        if (cState & TOXAV_FRIEND_CALL_STATE_ERROR) {
+            state |= OCTToxAVFriendCallStateError;
         }
-        if (cState & TOXAV_CALL_STATE_FINISHED) {
-            state |= OCTToxAVCallStateFinished;
+        if (cState & TOXAV_FRIEND_CALL_STATE_FINISHED) {
+            state |= OCTToxAVFriendCallStateFinished;
         }
-        if (cState & TOXAV_CALL_STATE_SENDING_A) {
-            state |= OCTToxAVCallStateSendingAudio;
+        if (cState & TOXAV_FRIEND_CALL_STATE_SENDING_A) {
+            state |= OCTToxAVFriendCallStateSendingAudio;
         }
-        if (cState & TOXAV_CALL_STATE_SENDING_V) {
-            state |= OCTToxAVCallStateSendingVideo;
+        if (cState & TOXAV_FRIEND_CALL_STATE_SENDING_V) {
+            state |= OCTToxAVFriendCallStateSendingVideo;
         }
-        if (cState & TOXAV_CALL_STATE_RECEIVING_A) {
-            state |= OCTToxAVCallStateReceivingAudio;
+        if (cState & TOXAV_FRIEND_CALL_STATE_RECEIVING_A) {
+            state |= OCTToxAVFriendCallStateReceivingAudio;
         }
-        if (cState & TOXAV_CALL_STATE_RECEIVING_V) {
-            state |= OCTToxAVCallStateReceivingVideo;
+        if (cState & TOXAV_FRIEND_CALL_STATE_RECEIVING_V) {
+            state |= OCTToxAVFriendCallStateReceivingVideo;
         }
 
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {

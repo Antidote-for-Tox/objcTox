@@ -230,19 +230,19 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     BOOL sendingAudio, sendingVideo, receivingAudio, receivingVideo;
 
-    if (state & OCTToxAVCallStateReceivingAudio) {
+    if (state & OCTToxAVFriendCallStateReceivingAudio) {
         receivingAudio = YES;
     }
 
-    if (state & OCTToxAVCallStateReceivingVideo) {
+    if (state & OCTToxAVFriendCallStateReceivingVideo) {
         receivingVideo = YES;
     }
 
-    if (state & OCTToxAVCallStateSendingAudio) {
+    if (state & OCTToxAVFriendCallStateSendingAudio) {
         sendingAudio = YES;
     }
 
-    if (state & OCTToxAVCallStateSendingVideo) {
+    if (state & OCTToxAVFriendCallStateSendingVideo) {
         sendingVideo = YES;
     }
 
@@ -273,7 +273,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     OCTCallStatus status = call.status;
 
-    if ((state & OCTToxAVCallStateFinished) || (state & OCTToxAVCallStateError)) {
+    if ((state & OCTToxAVFriendCallStateFinished) || (state & OCTToxAVFriendCallStateError)) {
 
         OCTMessageCallEvent event = (status != OCTCallStatusActive) ? OCTMessageCallEventUnanswered : OCTMessageCallEventAnswered;
 
@@ -296,12 +296,12 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    // Lower bitrate if unstable?
+    if (! stable) {}
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
 {
-    // Lower bitrate if unstable?
+    if (! stable) {}
 }
 
 - (void)   toxAV:(OCTToxAV *)toxAV

@@ -38,34 +38,34 @@ typedef NS_OPTIONS(NSInteger, OCTToxAVCallState) {
      * transitions can occur for the call. This call state will never be triggered
      * in combination with other call states.
      */
-    OCTToxAVCallStateError = 1 << 0,
+    OCTToxAVFriendCallStateError = 1 << 0,
 
         /**
          * The call has finished. This is the final state after which no more state
          * transitions can occur for the call. This call state will never be
          * triggered in combination with other call states.
          */
-        OCTToxAVCallStateFinished = 1 << 1,
+        OCTToxAVFriendCallStateFinished = 1 << 1,
 
         /**
          * The flag that marks that friend is sending audio.
          */
-        OCTToxAVCallStateSendingAudio = 1 << 2,
+        OCTToxAVFriendCallStateSendingAudio = 1 << 2,
 
         /**
          * The flag that marks that friend is sending video.
          */
-        OCTToxAVCallStateSendingVideo = 1 << 3,
+        OCTToxAVFriendCallStateSendingVideo = 1 << 3,
 
         /**
          * The flag that marks that friend is receiving audio.
          */
-        OCTToxAVCallStateReceivingAudio = 1 << 4,
+        OCTToxAVFriendCallStateReceivingAudio = 1 << 4,
 
         /**
          * The flag that marks that friend is receiving video.
          */
-        OCTToxAVCallStateReceivingVideo = 1 << 5,
+        OCTToxAVFriendCallStateReceivingVideo = 1 << 5,
 };
 
 /*******************************************************************************
@@ -234,6 +234,11 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSendFrame) {
      * small or too large, or the audio sampling rate may be unsupported.
      */
     OCTToxAVErrorSendFrameInvalid,
+
+    /**
+     * Bit rate for this payload type was not set up.
+     */
+    OCTToxAVErrorFrameBitrateWasNotSet,
 
     /**
      * Failed to push frame through rtp interface.
