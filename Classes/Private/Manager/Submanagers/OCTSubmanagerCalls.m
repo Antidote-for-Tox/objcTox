@@ -296,7 +296,19 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    if (! stable) {}
+    NSArray *validBitrates = @[@8, @16, @24, @32, @48];
+
+    if (! stable) {
+        NSUInteger currentIndexBitRate = [validBitrates indexOfObject:[NSNumber numberWithInt:bitrate]];
+
+        if (currentIndexBitRate == NSNotFound) {
+            return;
+        }
+
+        NSNumber *newBitrate = [validBitrates objectAtIndex:currentIndexBitRate - 1];
+
+        [self.toxAV setAudioBitRate:newBitrate.intValue force:NO forFriend:friendNumber error:nil];
+    }
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable

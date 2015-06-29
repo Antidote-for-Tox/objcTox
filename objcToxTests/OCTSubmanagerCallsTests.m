@@ -362,6 +362,24 @@
     OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55]);
 }
 
+- (void)testReceiveUnstableBitrate
+{
+    id toxAV = OCMClassMock([OCTToxAV class]);
+    self.callManager.toxAV = toxAV;
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:48 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:32 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:32 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:24 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:24 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:16 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:16 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:8 force:NO forFriend:1234 error:nil]);
+}
+
 #pragma mark Test helper methods
 - (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
