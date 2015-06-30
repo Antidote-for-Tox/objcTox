@@ -238,7 +238,7 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSendFrame) {
     /**
      * Bit rate for this payload type was not set up.
      */
-    OCTToxAVErrorFrameBitrateWasNotSet,
+    OCTToxAVErrorSendFramePayloadTypeDisabled,
 
     /**
      * Failed to push frame through rtp interface.

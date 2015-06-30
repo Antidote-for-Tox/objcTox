@@ -494,9 +494,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             code = OCTToxAVErrorSendFrameInvalid;
             failureReason = @"One of the frame parameters was invalid. E.g. the resolution may be too small or too large, or the audio sampling rate may be unsupported";
             break;
-        case TOXAV_ERR_SEND_FRAME_BIT_RATE_NOT_SET:
-            code = OCTToxAVErrorFrameBitrateWasNotSet;
-            failureReason = @"Bit rate for this payload type was not set up.";
+        case TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED:
+            code = OCTToxAVErrorSendFramePayloadTypeDisabled;
+            failureReason = @"Either friend turned off audio or video receiving or we turned off sending for the said payload.";
         case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
             code = OCTToxAVErrorSendFrameRTPFailed;
             failureReason = @"Failed to push frame through rtp interface";
