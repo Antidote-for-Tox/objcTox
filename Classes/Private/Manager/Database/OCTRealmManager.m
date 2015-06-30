@@ -342,6 +342,7 @@
 
     [self updateObject:call.chat withBlock:^(OCTChat *theChat) {
         theChat.lastMessage = messageAbstract;
+        theChat.lastActivityDateInterval = messageAbstract.dateInterval;
     }];
 }
 
