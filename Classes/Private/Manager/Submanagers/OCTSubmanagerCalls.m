@@ -297,11 +297,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTToxAVAudioBitRate newBitrate;
 
     switch (bitrate) {
-        case OCTToxAVAudioBitRateDisabled:
-            NSAssert(NO, @"We shouldn't be here!");
-            break;
-        case OCTToxAVAudioBitRate8:
-            return;
         case OCTToxAVAudioBitRate48:
             newBitrate = OCTToxAVAudioBitRate32;
             break;
@@ -313,6 +308,11 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             break;
         case OCTToxAVAudioBitRate16:
             newBitrate = OCTToxAVAudioBitRate8;
+            break;
+        case OCTToxAVAudioBitRate8:
+            return;
+        case OCTToxAVAudioBitRateDisabled:
+            NSAssert(NO, @"We shouldn't be here!");
             break;
     }
 
