@@ -36,27 +36,18 @@
     return [NSDate dateWithTimeIntervalSince1970:self.lastReadDateInterval];
 }
 
-- (NSDate *)creationDate
+- (NSDate *)lastActivityDate
 {
-    if (self.creationDateInterval <= 0) {
+    if (self.lastActivityDateInterval <= 0) {
         return nil;
     }
 
-    return [NSDate dateWithTimeIntervalSince1970:self.creationDateInterval];
+    return [NSDate dateWithTimeIntervalSince1970:self.lastActivityDateInterval];
 }
 
 - (BOOL)hasUnreadMessages
 {
     return (self.lastMessage.dateInterval > self.lastReadDateInterval);
-}
-
-- (NSDate *)lastActivityDate
-{
-    if (self.lastMessage) {
-        return [self.lastMessage date];
-    }
-
-    return self.creationDate;
 }
 
 @end

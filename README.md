@@ -4,11 +4,16 @@
 
 Objective-C wrapper for [Tox](https://tox.im/).
 
-Description will be here soon. :)
+## Installation
+
+objcTox is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+    pod "objcTox"
 
 ## Downloads
 
-1. Clone repo `git clone --recursive https://github.com/Antidote-for-Tox/objcTox.git`
+1. Clone repo `git clone https://github.com/Antidote-for-Tox/objcTox.git`
 2. Install CocoaPods `pod install`
 3. Open `objcTox.xcworkspace` file with Xcode 5+.
 

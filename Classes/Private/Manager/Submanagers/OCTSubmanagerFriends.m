@@ -104,6 +104,7 @@
     [realmManager updateObjectsWithoutNotification:^{
         for (OCTFriend *friend in friendsArray) {
             friend.status = OCTToxUserStatusNone;
+            friend.isConnected = NO;
             friend.connectionStatus = OCTToxConnectionStatusNone;
             friend.isTyping = NO;
         }
@@ -175,6 +176,7 @@
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+        theFriend.isConnected = (status != OCTToxConnectionStatusNone);
         theFriend.connectionStatus = status;
     }];
 }
@@ -226,6 +228,7 @@
         return NO;
     }
 
+    friend.isConnected = (friend.connectionStatus != OCTToxConnectionStatusNone);
     friend.nickname = friend.name.length ? friend.name : friend.publicKey;
 
     [[self.dataSource managerGetRealmManager] addObject:friend];
