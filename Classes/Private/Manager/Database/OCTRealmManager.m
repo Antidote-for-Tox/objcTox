@@ -323,6 +323,7 @@
             break;
         case OCTCallStatusActive:
             event = OCTMessageCallEventAnswered;
+            break;
     }
 
     OCTMessageCall *messageCall = [OCTMessageCall new];
