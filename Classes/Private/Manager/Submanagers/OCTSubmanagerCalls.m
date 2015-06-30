@@ -8,7 +8,7 @@
 
 #import "OCTSubmanagerCalls+Private.h"
 
-const OCTToxAVAudioBitRate kDefaultAudioBitRate = 48;
+const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
@@ -57,7 +57,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
-    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
     if (chat.friends.count == 1) {
@@ -85,7 +85,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
-    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
     if (call.chat.friends.count == 1) {
@@ -290,21 +290,33 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    NSArray *validBitrates = @[@8, @16, @24, @32, @48];
-
     if (stable) {
         return;
     }
 
-    NSUInteger currentIndexBitRate = [validBitrates indexOfObject:[NSNumber numberWithInt:bitrate]];
+    OCTToxAVAudioBitRate newBitrate;
 
-    if ((currentIndexBitRate == NSNotFound) || (currentIndexBitRate == 0)) {
-        return;
+    switch (bitrate) {
+        case OCTToxAVAudioBitRateDisabled:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+        case OCTToxAVAudioBitRate8:
+            return;
+        case OCTToxAVAudioBitRate48:
+            newBitrate = OCTToxAVAudioBitRate32;
+            break;
+        case OCTToxAVAudioBitRate32:
+            newBitrate = OCTToxAVAudioBitRate24;
+            break;
+        case OCTToxAVAudioBitRate24:
+            newBitrate = OCTToxAVAudioBitRate16;
+            break;
+        case OCTToxAVAudioBitRate16:
+            newBitrate = OCTToxAVAudioBitRate8;
+            break;
     }
 
-    NSNumber *newBitrate = [validBitrates objectAtIndex:currentIndexBitRate - 1];
-
-    [self.toxAV setAudioBitRate:newBitrate.intValue force:NO forFriend:friendNumber error:nil];
+    [self.toxAV setAudioBitRate:newBitrate force:NO forFriend:friendNumber error:nil];
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable

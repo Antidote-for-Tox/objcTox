@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef int OCTToxAVAudioBitRate;
 typedef const int16_t OCTToxAVPCMData;
 typedef size_t OCTToxAVSampleCount;
 typedef uint8_t OCTToxAVChannels;
@@ -20,7 +19,6 @@ typedef uint16_t OCTToxAVVideoHeight;
 typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
-extern const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable;
 extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
 
 extern NSString *const kOCTToxAVErrorDomain;
@@ -292,4 +290,23 @@ typedef NS_ENUM(NSInteger, OCTToxAVCallControl) {
      * Calling this control will notify client to start sending video again.
      */
     OCTToxAVCallControlShowVideo,
+};
+
+/*******************************************************************************
+ *
+ * Audio Bitrates. All bitrates are in kb/s.
+ *
+ ******************************************************************************/
+typedef NS_ENUM(NSInteger, OCTToxAVAudioBitRate) {
+    OCTToxAVAudioBitRateDisabled = 0,
+
+    OCTToxAVAudioBitRate8 = 8,
+
+    OCTToxAVAudioBitRate16 = 16,
+
+    OCTToxAVAudioBitRate24 = 24,
+
+    OCTToxAVAudioBitRate32 = 32,
+
+    OCTToxAVAudioBitRate48 = 48,
 };
