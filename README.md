@@ -6,7 +6,7 @@ Objective-C wrapper for [Tox](https://tox.im/).
 
 ## Installation
 
-toxcore-ios is available through [CocoaPods](http://cocoapods.org). To install
+objcTox is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
     pod "objcTox"
