@@ -74,10 +74,10 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 
-    refToSelf = NULL;
-
     self.tox = nil;
     self.toxAV = nil;
+
+    refToSelf = NULL;
 
     [super tearDown];
 }
@@ -332,38 +332,38 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 - (void)testCallStateCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_RECEIVING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVCallStateReceivingAudio | OCTToxAVCallStateSendingAudio
+                            callStateChanged:OCTToxAVFriendCallStateReceivingAudio | OCTToxAVFriendCallStateSendingAudio
                                 friendNumber:friendNumber]);
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVCallStateSendingAudio
+                            callStateChanged:OCTToxAVFriendCallStateSendingAudio
                                 friendNumber:friendNumber]);
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_CALL_STATE_ERROR, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_ERROR, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVCallStateError
+                            callStateChanged:OCTToxAVFriendCallStateError
                                 friendNumber:friendNumber]);
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_CALL_STATE_RECEIVING_A | TOXAV_CALL_STATE_SENDING_A | TOXAV_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_RECEIVING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A | TOXAV_FRIEND_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVCallStateReceivingAudio | OCTToxAVCallStateSendingAudio | OCTToxAVCallStateSendingVideo
+                            callStateChanged:OCTToxAVFriendCallStateReceivingAudio | OCTToxAVFriendCallStateSendingAudio | OCTToxAVFriendCallStateSendingVideo
                                 friendNumber:friendNumber]);
     }];
 }

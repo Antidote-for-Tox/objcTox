@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef int OCTToxAVAudioBitRate;
 typedef const int16_t OCTToxAVPCMData;
 typedef size_t OCTToxAVSampleCount;
 typedef uint8_t OCTToxAVChannels;
@@ -20,7 +19,6 @@ typedef uint16_t OCTToxAVVideoHeight;
 typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
-extern const OCTToxAVAudioBitRate kOCTToxAVAudioBitRateDisable;
 extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
 
 extern NSString *const kOCTToxAVErrorDomain;
@@ -38,34 +36,34 @@ typedef NS_OPTIONS(NSInteger, OCTToxAVCallState) {
      * transitions can occur for the call. This call state will never be triggered
      * in combination with other call states.
      */
-    OCTToxAVCallStateError = 1 << 0,
+    OCTToxAVFriendCallStateError = 1 << 0,
 
         /**
          * The call has finished. This is the final state after which no more state
          * transitions can occur for the call. This call state will never be
          * triggered in combination with other call states.
          */
-        OCTToxAVCallStateFinished = 1 << 1,
+        OCTToxAVFriendCallStateFinished = 1 << 1,
 
         /**
          * The flag that marks that friend is sending audio.
          */
-        OCTToxAVCallStateSendingAudio = 1 << 2,
+        OCTToxAVFriendCallStateSendingAudio = 1 << 2,
 
         /**
          * The flag that marks that friend is sending video.
          */
-        OCTToxAVCallStateSendingVideo = 1 << 3,
+        OCTToxAVFriendCallStateSendingVideo = 1 << 3,
 
         /**
          * The flag that marks that friend is receiving audio.
          */
-        OCTToxAVCallStateReceivingAudio = 1 << 4,
+        OCTToxAVFriendCallStateReceivingAudio = 1 << 4,
 
         /**
          * The flag that marks that friend is receiving video.
          */
-        OCTToxAVCallStateReceivingVideo = 1 << 5,
+        OCTToxAVFriendCallStateReceivingVideo = 1 << 5,
 };
 
 /*******************************************************************************
@@ -236,6 +234,11 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSendFrame) {
     OCTToxAVErrorSendFrameInvalid,
 
     /**
+     * Bit rate for this payload type was not set up.
+     */
+    OCTToxAVErrorSendFramePayloadTypeDisabled,
+
+    /**
      * Failed to push frame through rtp interface.
      */
     OCTToxAVErrorSendFrameRTPFailed,
@@ -287,4 +290,23 @@ typedef NS_ENUM(NSInteger, OCTToxAVCallControl) {
      * Calling this control will notify client to start sending video again.
      */
     OCTToxAVCallControlShowVideo,
+};
+
+/*******************************************************************************
+ *
+ * Audio Bitrates. All bitrates are in kb/s.
+ *
+ ******************************************************************************/
+typedef NS_ENUM(NSInteger, OCTToxAVAudioBitRate) {
+    OCTToxAVAudioBitRateDisabled = 0,
+
+    OCTToxAVAudioBitRate8 = 8,
+
+    OCTToxAVAudioBitRate16 = 16,
+
+    OCTToxAVAudioBitRate24 = 24,
+
+    OCTToxAVAudioBitRate32 = 32,
+
+    OCTToxAVAudioBitRate48 = 48,
 };

@@ -24,6 +24,7 @@
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+@property (strong, nonatomic) OCTCallTimer *timer;
 
 - (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 
@@ -74,7 +75,16 @@
 - (void)testInit
 {
     XCTAssertNotNil(self.callManager);
-    XCTAssertNotNil(self.callManager.audioEngine);
+}
+
+- (void)testSetup
+{
+    id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    OCMStub([audioEngine new]).andReturn(audioEngine);
+    OCMStub([audioEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
+    self.callManager.audioEngine = audioEngine;
+
+    XCTAssertTrue([self.callManager setupWithError:nil]);
 }
 
 - (void)testCallToChat
@@ -114,12 +124,7 @@
     OCMStub([audioEngine stopAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
     self.callManager.audioEngine = audioEngine;
 
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 12;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    OCTFriend *friend = [self createFriendWithFriendNumber:12];
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
     OCTCall *call = [self.callManager callToChat:chat enableAudio:YES enableVideo:NO error:nil];
@@ -138,12 +143,7 @@
     id toxAV = OCMClassMock([OCTToxAV class]);
     self.callManager.toxAV = toxAV;
 
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 123;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:123];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123];
 
@@ -156,15 +156,11 @@
     id toxAV = OCMClassMock([OCTToxAV class]);
     self.callManager.toxAV = toxAV;
 
+    self.callManager.audioEngine = [OCTAudioEngine new];
     id audioEngine = OCMPartialMock(self.callManager.audioEngine);
     OCMStub([audioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 1234;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:1234];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:1234];
 
@@ -172,6 +168,68 @@
 
     XCTAssertTrue([self.callManager answerCall:call enableAudio:NO enableVideo:NO error:nil]);
     XCTAssertEqual(self.callManager.audioEngine.friendNumber, 1234);
+}
+
+- (void)testCallStateReceiveFinished
+{
+    id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    self.callManager.audioEngine = audioEngine;
+
+    OCTFriend *friend = [self createFriendWithFriendNumber:89];
+
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:89];
+    [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.status = OCTCallStatusRinging;
+    }];
+
+    OCTToxAVCallState state;
+    state |= OCTToxAVFriendCallStateFinished;
+
+    [self.callManager toxAV:nil callStateChanged:state friendNumber:89];
+
+    OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
+
+    OCMVerify([audioEngine stopAudioFlow:nil]);
+    XCTAssertNotNil(chat.lastMessage.messageCall);
+    XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventUnanswered);
+
+    call = [self.callManager getOrCreateCallWithFriendNumber:89];
+    [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        call.status = OCTCallStatusActive;
+    }];
+
+    [self.callManager toxAV:nil callStateChanged:state friendNumber:89];
+
+    XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventAnswered);
+}
+
+- (void)testFriendAnsweredCall
+{
+    id timer = OCMClassMock([OCTCallTimer class]);
+    self.callManager.timer = timer;
+
+    id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    self.callManager.audioEngine = audioEngine;
+
+    [self createFriendWithFriendNumber:92];
+
+    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:92];
+    [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.status = OCTCallStatusDialing;
+    }];
+
+    OCTToxAVCallState state;
+    state |= OCTToxAVFriendCallStateReceivingVideo;
+
+    [self.callManager toxAV:nil callStateChanged:state friendNumber:92];
+
+    OCMVerify([audioEngine startAudioFlow:nil]);
+    OCMVerify([audioEngine setFriendNumber:92]);
+    OCMVerify([timer startTimerForCall:call]);
+
+    XCTAssertEqual(call.status, OCTCallStatusActive);
+    XCTAssertTrue(call.receivingVideo);
+
 }
 
 - (void)testRouteAudioToSpeaker
@@ -192,6 +250,8 @@
     [self.callManager setEnableMicrophone:NO];
 
     OCMVerify([audioEngine setEnableMicrophone:NO]);
+
+    XCTAssertFalse(self.callManager.enableMicrophone);
 }
 
 - (void)testTogglePauseForCall
@@ -200,12 +260,7 @@
     self.callManager.toxAV = toxAV;
     OCMStub([toxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:12345 error:nil]).andReturn(YES);
 
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 12345;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:12345];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:12345];
 
@@ -217,12 +272,7 @@
 
 - (void)testSetAudioBitRate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 123456;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:123456];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123456];
 
@@ -236,12 +286,7 @@
 
 - (void)testSetVideoBitRate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 321;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:321];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:321];
 
@@ -256,12 +301,7 @@
 #pragma mark - Private
 - (void)testGetOrCreateCallWithFriend
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 222;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    OCTFriend *friend = [self createFriendWithFriendNumber:222];
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
@@ -281,12 +321,7 @@
     OCMStub([delegate respondsToSelector:[OCMArg anySelector]]).andReturn(YES);
     self.callManager.delegate = delegate;
 
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 221;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:221];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:221];
 
@@ -296,19 +331,14 @@
 
 - (void)testCallStateChanged
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 111;
-
-    [self.realmManager.realm beginWriteTransaction];
-    [self.realmManager.realm addObject:friend];
-    [self.realmManager.realm commitWriteTransaction];
+    [self createFriendWithFriendNumber:111];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:111];
 
     OCTToxAVCallState state;
 
-    state |= OCTToxAVCallStateReceivingAudio;
-    state |= OCTToxAVCallStateReceivingVideo;
+    state |= OCTToxAVFriendCallStateReceivingAudio;
+    state |= OCTToxAVFriendCallStateReceivingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:111];
 
@@ -330,6 +360,37 @@
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
     OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55]);
+}
+
+- (void)testReceiveUnstableBitrate
+{
+    id toxAV = OCMClassMock([OCTToxAV class]);
+    self.callManager.toxAV = toxAV;
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:48 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:32 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:32 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:24 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:24 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:16 force:NO forFriend:1234 error:nil]);
+
+    [self.callManager toxAV:toxAV audioBitRateChanged:16 stable:NO friendNumber:1234];
+    OCMVerify([toxAV setAudioBitRate:8 force:NO forFriend:1234 error:nil]);
+}
+
+#pragma mark Test helper methods
+- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = friendNumber;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    return friend;
 }
 
 @end

@@ -52,6 +52,8 @@
         _realm = [RLMRealm realmWithPath:path];
     });
 
+    [self convertAllCallsToMessages];
+
     return self;
 }
 
@@ -258,6 +260,24 @@
     });
 }
 
+- (void)convertAllCallsToMessages
+{
+    RLMResults *calls = [OCTCall objectsInRealm:self.realm where:nil];
+
+    DDLogInfo(@"OCTRealmManager: removing %lu calls", calls.count);
+
+    RBQRealmChangeLogger *logger = [self logger];
+
+    for (OCTCall *call in calls) {
+        [self addMessageCall:call];
+    }
+
+    [self.realm beginWriteTransaction];
+    [logger willDeleteObjects:calls];
+    [self.realm deleteObjects:calls];
+    [self.realm commitWriteTransaction];
+}
+
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
                                       type:(OCTToxMessageType)type
                                       chat:(OCTChat *)chat
@@ -290,15 +310,24 @@
     return messageAbstract;
 }
 
-- (void)addMessageCall:(OCTMessageCallEvent)event
-                  call:(OCTCall *)call
-          callDuration:(NSTimeInterval)duration
+- (void)addMessageCall:(OCTCall *)call
 {
     NSParameterAssert(call);
     DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
 
+    OCTMessageCallEvent event;
+    switch (call.status) {
+        case OCTCallStatusDialing:
+        case OCTCallStatusRinging:
+            event = OCTMessageCallEventUnanswered;
+            break;
+        case OCTCallStatusActive:
+            event = OCTMessageCallEventAnswered;
+            break;
+    }
+
     OCTMessageCall *messageCall = [OCTMessageCall new];
-    messageCall.callDuration = duration;
+    messageCall.callDuration = call.callDuration;
     messageCall.callEvent = event;
 
     OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];

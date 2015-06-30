@@ -8,7 +8,7 @@
 
 #import "OCTSubmanagerCalls+Private.h"
 
-const OCTToxAVAudioBitRate kDefaultAudioBitRate = 48;
+const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
@@ -36,10 +36,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     _toxAV.delegate = self;
     [_toxAV start];
 
-    _audioEngine = [OCTAudioEngine new];
-    _audioEngine.toxav = self.toxAV;
-    [_audioEngine setupWithError:nil];
-
     return self;
 }
 
@@ -61,7 +57,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
-    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
     if (chat.friends.count == 1) {
@@ -89,7 +85,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
-    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : kOCTToxAVAudioBitRateDisable;
+    OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
     if (call.chat.friends.count == 1) {
@@ -141,15 +137,13 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return NO;
         }
 
-        OCTMessageCallEvent event = (call.status == OCTCallStatusActive) ? OCTMessageCallEventAnswered : OCTMessageCallEventUnanswered;
-
         switch (control) {
             case OCTToxAVCallControlResume:
                 [self updateCall:call withStatus:OCTCallStatusActive];
                 break;
             case OCTToxAVCallControlCancel:
                 [self.timer stopTimer];
-                [self addMessageCall:event forCall:call withDuration:call.callDuration];
+                [self addMessageCall:call];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
                 break;
@@ -221,10 +215,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)addMessageCall:(OCTMessageCallEvent)event forCall:(OCTCall *)call withDuration:(NSTimeInterval)duration
+- (void)addMessageCall:(OCTCall *)call
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    [realmManager addMessageCall:event call:call callDuration:duration];
+    [realmManager addMessageCall:call];
 
     [self.timer stopTimer];
     [realmManager deleteObject:call];
@@ -234,28 +228,28 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     BOOL sendingAudio, sendingVideo, receivingAudio, receivingVideo;
 
-    if (state & OCTToxAVCallStateReceivingAudio) {
+    if (state & OCTToxAVFriendCallStateReceivingAudio) {
         receivingAudio = YES;
     }
 
-    if (state & OCTToxAVCallStateReceivingVideo) {
+    if (state & OCTToxAVFriendCallStateReceivingVideo) {
         receivingVideo = YES;
     }
 
-    if (state & OCTToxAVCallStateSendingAudio) {
+    if (state & OCTToxAVFriendCallStateSendingAudio) {
         sendingAudio = YES;
     }
 
-    if (state & OCTToxAVCallStateSendingVideo) {
+    if (state & OCTToxAVFriendCallStateSendingVideo) {
         sendingVideo = YES;
     }
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-        call.receivingAudio = receivingAudio;
-        call.receivingVideo = receivingVideo;
-        call.sendingAudio = sendingAudio;
-        call.sendingVideo = sendingVideo;
+        callToUpdate.receivingAudio = receivingAudio;
+        callToUpdate.receivingVideo = receivingVideo;
+        callToUpdate.sendingAudio = sendingAudio;
+        callToUpdate.sendingVideo = sendingVideo;
     }];
 }
 
@@ -275,13 +269,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
 
-    OCTCallStatus status = call.status;
+    if ((state & OCTToxAVFriendCallStateFinished) || (state & OCTToxAVFriendCallStateError)) {
 
-    if ((state & OCTToxAVCallStateFinished) || (state & OCTToxAVCallStateError)) {
-
-        OCTMessageCallEvent event = (status = OCTCallStatusRinging) ? OCTMessageCallEventUnanswered : OCTMessageCallEventAnswered;
-
-        [self addMessageCall:event forCall:call withDuration:call.callDuration];
+        [self addMessageCall:call];
 
         [self.audioEngine stopAudioFlow:nil];
 
@@ -290,6 +280,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     if (call.status == OCTCallStatusDialing) {
         [self updateCall:call withStatus:OCTCallStatusActive];
+        self.audioEngine.friendNumber = friendNumber;
+        [self.audioEngine startAudioFlow:nil];
         [self.timer startTimerForCall:call];
     }
 
@@ -298,13 +290,37 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    // Lower bitrate if unstable?
+    if (stable) {
+        return;
+    }
+
+    OCTToxAVAudioBitRate newBitrate;
+
+    switch (bitrate) {
+        case OCTToxAVAudioBitRate48:
+            newBitrate = OCTToxAVAudioBitRate32;
+            break;
+        case OCTToxAVAudioBitRate32:
+            newBitrate = OCTToxAVAudioBitRate24;
+            break;
+        case OCTToxAVAudioBitRate24:
+            newBitrate = OCTToxAVAudioBitRate16;
+            break;
+        case OCTToxAVAudioBitRate16:
+            newBitrate = OCTToxAVAudioBitRate8;
+            break;
+        case OCTToxAVAudioBitRate8:
+            return;
+        case OCTToxAVAudioBitRateDisabled:
+            NSAssert(NO, @"We shouldn't be here!");
+            break;
+    }
+
+    [self.toxAV setAudioBitRate:newBitrate force:NO forFriend:friendNumber error:nil];
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
-{
-    // Lower bitrate if unstable?
-}
+{}
 
 - (void)   toxAV:(OCTToxAV *)toxAV
     receiveAudio:(OCTToxAVPCMData *)pcm

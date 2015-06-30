@@ -106,6 +106,7 @@
     OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
     calls.dataSource = self;
     _calls = calls;
+    [_calls setupWithError:nil];
 
     OCTSubmanagerObjects *objects = [OCTSubmanagerObjects new];
     objects.dataSource = self;

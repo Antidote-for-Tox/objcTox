@@ -140,66 +140,10 @@
         [sheet bk_addButtonWithTitle:@"Call friend" handler:^{
             [weakSelf callFriend];
         }];
-
-        [sheet bk_addButtonWithTitle:@"Send call controls"
-                             handler:^{
-            [weakSelf showSendControlDialog];
-        }];
-
-        [sheet bk_addButtonWithTitle:@"Mute/Unmute Mic" handler:^{
-            [weakSelf toggleMuteMic];
-        }];
-
-        [sheet bk_addButtonWithTitle:@"Use speaker phone" handler:^{
-            [weakSelf useSpeaker];
-        }];
-
-        [sheet bk_addButtonWithTitle:@"Use default speakers" handler:^{
-            [weakSelf useDefaultSpeaker];
-        }];
     }];
 }
 
-- (void)showSendControlDialog
-{
-    __weak OCTConversationViewController *weakSelf = self;
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Call control"
-                                                                             message:@"Pick call control to send to friend"
-                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
 
-    UIAlertAction *pauseAction = [UIAlertAction actionWithTitle:@"Pause"
-                                                          style:UIAlertActionStyleDefault
-                                                        handler:^(UIAlertAction *action) {[weakSelf pause];
-    }];
-
-    UIAlertAction *resumeAction = [UIAlertAction actionWithTitle:@"Resume"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action) {[weakSelf resume];
-    }];
-
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"End/Reject Call"
-                                                           style:UIAlertActionStyleDestructive
-                                                         handler:^(UIAlertAction *action) {[weakSelf cancel];
-    }];
-
-    UIAlertAction *muteAction = [UIAlertAction actionWithTitle:@"Mute Audio"
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction *action) {[weakSelf muteFriend];
-    }];
-
-    UIAlertAction *unmuteAction = [UIAlertAction actionWithTitle:@"Unmute Audio"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action) {[weakSelf unmuteFriend];
-    }];
-
-    [alertController addAction:pauseAction];
-    [alertController addAction:resumeAction];
-    [alertController addAction:cancelAction];
-    [alertController addAction:muteAction];
-    [alertController addAction:unmuteAction];
-
-    [self presentViewController:alertController animated:YES completion:nil];
-}
 
 - (void)sendMessage
 {
@@ -225,60 +169,11 @@
 - (void)callFriend
 {
     NSError *error;
-    [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
+    OCTCall *call = [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
 
-    NSLog(@"%@ Error %@", self, error.localizedDescription);
-    NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
+    if (! call) {
+        NSLog(@"Unable to create call, %@", error.localizedFailureReason);
+    }
 }
 
-- (void)cancel
-{
-    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    //
-    //    NSError *error;
-    //    if (! [self.manager.calls sendCallControl:OCTToxAVCallControlCancel toCall:call error:&error]) {
-    //        NSLog(@"%@ Error %@", self, error.localizedDescription);
-    //        NSLog(@"%@ Reason: %@", self, error.localizedFailureReason);
-    //    }
-}
-
-- (void)useSpeaker
-{
-    [self.manager.calls routeAudioToSpeaker:YES error:nil];
-}
-
-- (void)useDefaultSpeaker
-{
-    [self.manager.calls routeAudioToSpeaker:NO error:nil];
-}
-
-- (void)toggleMuteMic
-{
-    BOOL currentStatus = self.manager.calls.enableMicrophone;
-    self.manager.calls.enableMicrophone = ! currentStatus;
-}
-
-- (void)pause
-{
-    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    //    [self.manager.calls sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
-}
-
-- (void)resume
-{
-    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    //    [self.manager.calls sendCallControl:OCTToxAVCallControlResume toCall:call error:nil];
-}
-
-- (void)muteFriend
-{
-    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    //    [self.manager.calls sendCallControl:OCTToxAVCallControlMuteAudio toCall:call error:nil];
-}
-
-- (void)unmuteFriend
-{
-    //    OCTCall *call = [self.manager.calls.calls callWithChat:self.chat];
-    //    [self.manager.calls sendCallControl:OCTToxAVCallControlUnmuteAudio toCall:call error:nil];
-}
 @end

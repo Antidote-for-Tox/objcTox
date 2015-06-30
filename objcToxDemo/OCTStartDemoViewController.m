@@ -12,6 +12,7 @@
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
 #import "OCTChatsViewController.h"
+#import "OCTCallsViewController.h"
 #import "OCTTabBarControllerViewController.h"
 #import "AppDelegate.h"
 
@@ -116,6 +117,7 @@ typedef NS_ENUM(NSUInteger, Row) {
         NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
         NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
         NAVIGATION_WITH_CONTROLLER(OCTChatsViewController),
+        NAVIGATION_WITH_CONTROLLER(OCTCallsViewController),
     ];
 
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
