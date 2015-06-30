@@ -137,15 +137,13 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return NO;
         }
 
-        OCTMessageCallEvent event = (call.status == OCTCallStatusActive) ? OCTMessageCallEventAnswered : OCTMessageCallEventUnanswered;
-
         switch (control) {
             case OCTToxAVCallControlResume:
                 [self updateCall:call withStatus:OCTCallStatusActive];
                 break;
             case OCTToxAVCallControlCancel:
                 [self.timer stopTimer];
-                [self addMessageCall:event forCall:call withDuration:call.callDuration];
+                [self addMessageCall:call];
                 return [self.audioEngine stopAudioFlow:error];
             case OCTToxAVCallControlPause:
                 break;
@@ -217,10 +215,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)addMessageCall:(OCTMessageCallEvent)event forCall:(OCTCall *)call withDuration:(NSTimeInterval)duration
+- (void)addMessageCall:(OCTCall *)call
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    [realmManager addMessageCallEvent:event call:call callDuration:duration];
+    [realmManager addMessageCall:call];
 
     [self.timer stopTimer];
     [realmManager deleteObject:call];
@@ -271,13 +269,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
 
-    OCTCallStatus status = call.status;
-
     if ((state & OCTToxAVFriendCallStateFinished) || (state & OCTToxAVFriendCallStateError)) {
 
-        OCTMessageCallEvent event = (status != OCTCallStatusActive) ? OCTMessageCallEventUnanswered : OCTMessageCallEventAnswered;
-
-        [self addMessageCall:event forCall:call withDuration:call.callDuration];
+        [self addMessageCall:call];
 
         [self.audioEngine stopAudioFlow:nil];
 
@@ -298,23 +292,23 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     NSArray *validBitrates = @[@8, @16, @24, @32, @48];
 
-    if (! stable) {
-        NSUInteger currentIndexBitRate = [validBitrates indexOfObject:[NSNumber numberWithInt:bitrate]];
-
-        if (currentIndexBitRate == NSNotFound) {
-            return;
-        }
-
-        NSNumber *newBitrate = [validBitrates objectAtIndex:currentIndexBitRate - 1];
-
-        [self.toxAV setAudioBitRate:newBitrate.intValue force:NO forFriend:friendNumber error:nil];
+    if (stable) {
+        return;
     }
+
+    NSUInteger currentIndexBitRate = [validBitrates indexOfObject:[NSNumber numberWithInt:bitrate]];
+
+    if ((currentIndexBitRate == NSNotFound) || (currentIndexBitRate == 0)) {
+        return;
+    }
+
+    NSNumber *newBitrate = [validBitrates objectAtIndex:currentIndexBitRate - 1];
+
+    [self.toxAV setAudioBitRate:newBitrate.intValue force:NO forFriend:friendNumber error:nil];
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
-{
-    if (! stable) {}
-}
+{}
 
 - (void)   toxAV:(OCTToxAV *)toxAV
     receiveAudio:(OCTToxAVPCMData *)pcm

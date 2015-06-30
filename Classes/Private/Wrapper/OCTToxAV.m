@@ -496,7 +496,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             break;
         case TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED:
             code = OCTToxAVErrorSendFramePayloadTypeDisabled;
-            failureReason = @"Either friend turned off audio or video receiving or we turned off sending for the said payload.";
+            failureReason = @"Either friend turned off audio/video receiving or we turned off sending for the said payload.";
         case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
             code = OCTToxAVErrorSendFrameRTPFailed;
             failureReason = @"Failed to push frame through rtp interface";
