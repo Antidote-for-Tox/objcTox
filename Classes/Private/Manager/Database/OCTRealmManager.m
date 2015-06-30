@@ -82,6 +82,8 @@
 
     __block RBQFetchRequest *fetchRequest = nil;
 
+    DDLogVerbose(@"OCTRealmManager: fetchRequestForClass %@ withPredicate %@", class, predicate);
+
     dispatch_sync(self.queue, ^{
         fetchRequest = [RBQFetchRequest fetchRequestWithEntityName:NSStringFromClass(class)
                                                            inRealm:self.realm

@@ -195,6 +195,8 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)userAddress
 {
+    DDLogVerbose(@"%@: get userAddress", self);
+
     const NSUInteger length = TOX_ADDRESS_SIZE;
     uint8_t *cAddress = malloc(length);
 
@@ -208,13 +210,13 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     free(cAddress);
 
-    DDLogVerbose(@"%@: get address: %@", self, address);
-
     return address;
 }
 
 - (NSString *)publicKey
 {
+    DDLogVerbose(@"%@: get publicKey", self);
+
     uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
     _tox_self_get_public_key(self.tox, cPublicKey);
@@ -227,6 +229,8 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)secretKey
 {
+    DDLogVerbose(@"%@: get secretKey", self);
+
     uint8_t *cSecretKey = malloc(TOX_SECRET_KEY_SIZE);
 
     tox_self_get_secret_key(self.tox, cSecretKey);
@@ -239,11 +243,13 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (void)setNospam:(OCTToxNoSpam)nospam
 {
+    DDLogVerbose(@"%@: set nospam", self);
     tox_self_set_nospam(self.tox, nospam);
 }
 
 - (OCTToxNoSpam)nospam
 {
+    DDLogVerbose(@"%@: get nospam", self);
     return tox_self_get_nospam(self.tox);
 }
 
@@ -323,7 +329,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(message);
     NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
-    DDLogVerbose(@"%@: add friend with address %@, message %@", self, address, message);
+    DDLogVerbose(@"%@: add friend with address.length %d, message.length %d", self, address.length, message.length);
 
     uint8_t *cAddress = [self hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
@@ -345,7 +351,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: add friend with no request and public key %@", self, publicKey);
+    DDLogVerbose(@"%@: add friend with no request and publicKey.length %d", self, publicKey.length);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -378,7 +384,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: get friend number with public key %@", self, publicKey);
+    DDLogVerbose(@"%@: get friend number with publicKey.length %d", self, publicKey.length);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -412,14 +418,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     [self fillError:error withCErrorFriendGetPublicKey:cError];
 
-    DDLogInfo(@"%@: public key %@ from friend number %d", self, publicKey, friendNumber);
-
     return publicKey;
 }
 
 - (BOOL)friendExistsWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
     bool result = tox_friend_exists(self.tox, friendNumber);
+
+    DDLogVerbose(@"%@: friend exists with friendNumber %d, result %d", self, friendNumber, result);
 
     return (BOOL)result;
 }
