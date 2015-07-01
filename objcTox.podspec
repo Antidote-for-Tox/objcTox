@@ -26,6 +26,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*.{m,h}'
   s.public_header_files = 'Classes/Public/**/*.h'
   s.dependency 'toxcore-ios', '0.1.8'
+  s.dependency 'TPCircularBuffer', '~> 0.0.1'
   s.dependency 'CocoaLumberjack', '1.9.2'
   s.dependency 'Realm', '0.93.2'
   s.dependency 'RBQFetchedResultsController', '1.8.9.3'
