@@ -112,6 +112,7 @@
     XCTAssertEqualObjects(call.chat, chat);
     XCTAssertEqual(call.status, OCTCallStatusDialing);
     XCTAssertNil(call.caller);
+    XCTAssertTrue([call isOutgoing]);
 }
 
 - (void)testEndCall
@@ -203,7 +204,6 @@
     [self.callManager toxAV:nil callStateChanged:state friendNumber:89];
 
     XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventAnswered);
-    XCTAssertFalse(chat.lastMessage.messageCall.isOutgoing);
 }
 
 - (void)testFriendAnsweredCall
@@ -331,6 +331,7 @@
     [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
     OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
     XCTAssertEqualObjects(friend, call.caller);
+    XCTAssertFalse([call isOutgoing]);
 }
 
 - (void)testCallStateChanged

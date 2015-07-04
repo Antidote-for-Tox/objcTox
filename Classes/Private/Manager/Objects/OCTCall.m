@@ -15,4 +15,9 @@
 
 @implementation OCTCall
 
+- (BOOL)isOutgoing
+{
+    return (self.caller == nil);
+}
+
 @end

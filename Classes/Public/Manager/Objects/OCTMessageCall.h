@@ -21,9 +21,4 @@
  **/
 @property  OCTMessageCallEvent callEvent;
 
-/**
- * Indicates if the call was outgoing or incoming.
- **/
-@property BOOL isOutgoing;
-
 @end

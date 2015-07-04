@@ -58,4 +58,10 @@
  **/
 @property NSTimeInterval callDuration;
 
+/**
+ * Indicates if call is outgoing or incoming.
+ * In case if it is incoming you can check `caller` property for friend.
+ **/
+- (BOOL)isOutgoing;
+
 @end
