@@ -337,6 +337,7 @@
     messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
     messageAbstract.chat = call.chat;
     messageAbstract.messageCall = messageCall;
+    messageAbstract.sender = call.caller;
 
     [self addObject:messageAbstract];
 

@@ -28,6 +28,12 @@
 @property OCTCallStatus status;
 
 /**
+ * The friend who started the call.
+ * Nil if the you started the call yourself.
+ **/
+@property OCTFriend *caller;
+
+/**
  * We are sending audio to the other client.
  */
 @property BOOL sendingAudio;
@@ -51,5 +57,11 @@
  * Call duration
  **/
 @property NSTimeInterval callDuration;
+
+/**
+ * Indicates if call is outgoing or incoming.
+ * In case if it is incoming you can check `caller` property for friend.
+ **/
+- (BOOL)isOutgoing;
 
 @end
