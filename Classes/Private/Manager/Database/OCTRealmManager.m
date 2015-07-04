@@ -332,6 +332,7 @@
     OCTMessageCall *messageCall = [OCTMessageCall new];
     messageCall.callDuration = call.callDuration;
     messageCall.callEvent = event;
+    messageCall.isOutgoing = call.isOutgoing;
 
     OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
     messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];

@@ -28,6 +28,12 @@
 @property OCTCallStatus status;
 
 /**
+ * Determines if the call was initially made by
+ * the user or was received.
+ **/
+@property BOOL isOutgoing;
+
+/**
  * We are sending audio to the other client.
  */
 @property BOOL sendingAudio;
