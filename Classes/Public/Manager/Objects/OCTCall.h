@@ -28,10 +28,10 @@
 @property OCTCallStatus status;
 
 /**
- * Determines if the call was initially made by
- * the user or was received.
+ * The friend who started the call.
+ * Nil if the you started the call yourself.
  **/
-@property BOOL isOutgoing;
+@property OCTFriend *caller;
 
 /**
  * We are sending audio to the other client.

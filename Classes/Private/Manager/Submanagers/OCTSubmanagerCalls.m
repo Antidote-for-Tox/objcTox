@@ -73,12 +73,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTCall *call = [self getOrCreateCallWithFriendNumber:friend.friendNumber];
 
-        OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-
-        [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-            callToUpdate.status = OCTCallStatusDialing;
-            callToUpdate.isOutgoing = YES;
-        }];
+        [self updateCall:call withStatus:OCTCallStatusDialing];
 
         return call;
     }
@@ -265,7 +260,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
 {
     OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
-    [self updateCall:call withStatus:OCTCallStatusRinging];
+
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+
+    [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.status = OCTCallStatusRinging;
+        callToUpdate.caller = friend;
+    }];
 
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
         [self.delegate callSubmanager:self receiveCall:call audioEnabled:audio videoEnabled:video];

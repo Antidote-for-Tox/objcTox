@@ -111,7 +111,7 @@
 
     XCTAssertEqualObjects(call.chat, chat);
     XCTAssertEqual(call.status, OCTCallStatusDialing);
-    XCTAssertTrue(call.isOutgoing);
+    XCTAssertNil(call.caller);
 }
 
 - (void)testEndCall
@@ -324,13 +324,13 @@
     OCMStub([delegate respondsToSelector:[OCMArg anySelector]]).andReturn(YES);
     self.callManager.delegate = delegate;
 
-    [self createFriendWithFriendNumber:221];
+    OCTFriend *friend = [self createFriendWithFriendNumber:221];
 
     OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:221];
 
     [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
     OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
-    XCTAssertFalse(call.isOutgoing);
+    XCTAssertEqualObjects(friend, call.caller);
 }
 
 - (void)testCallStateChanged
