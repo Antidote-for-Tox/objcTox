@@ -135,10 +135,12 @@ int16_t *pcmRender;
     OCTToxAVChannels channelCount = 2;
     OCTToxAVSampleRate sampleRate = 33333;
 
+    self.audioEngine.friendNumber = 123;
     [self.audioEngine provideAudioFrames:pcm
                              sampleCount:sampleCount
                                 channels:channelCount
-                              sampleRate:sampleRate];
+                              sampleRate:sampleRate
+                              fromFriend:123];
 
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     XCTAssertEqual((int)self.audioEngine.outputBuffer.fillCount, 16);

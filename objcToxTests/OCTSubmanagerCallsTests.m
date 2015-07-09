@@ -176,6 +176,9 @@
 - (void)testCallStateReceiveFinished
 {
     id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    OCMStub([audioEngine isAudioRunning:nil]).andReturn(NO);
+    OCMStub([audioEngine friendNumber]).andReturn(89);
+
     self.callManager.audioEngine = audioEngine;
 
     OCTFriend *friend = [self createFriendWithFriendNumber:89];
@@ -192,7 +195,6 @@
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
-    OCMVerify([audioEngine stopAudioFlow:nil]);
     XCTAssertNotNil(chat.lastMessage.messageCall);
     XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventUnanswered);
 
@@ -364,7 +366,7 @@
 
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
-    OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55]);
+    OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
 }
 
 - (void)testReceiveUnstableBitrate

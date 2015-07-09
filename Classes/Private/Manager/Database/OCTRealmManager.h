@@ -54,6 +54,14 @@
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 - (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat;
+
+/**
+ * Gets the current call for the chat if and only if it exists.
+ * This will not create a call object.
+ * @param chat The call for the appopriate chat.
+ * @return A call object if it exists, nil if no call is session for this call.
+ */
+- (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text

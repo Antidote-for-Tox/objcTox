@@ -71,6 +71,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return nil;
         }
 
+        if ([self.audioEngine isAudioRunning:nil]) {
+            OCTCall *currentCall = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
+
+            if (currentCall) {
+                [self sendCallControl:OCTToxAVCallControlPause toCall:currentCall error:nil];
+            }
+        }
+
         OCTCall *call = [self getOrCreateCallWithFriendNumber:friend.friendNumber];
 
         [self updateCall:call withStatus:OCTCallStatusDialing];
@@ -93,15 +101,19 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         OCTFriend *friend = call.chat.friends.firstObject;
 
-        if (! ([self.toxAV answerIncomingCallFromFriend:friend.friendNumber
-                                           audioBitRate:audioBitRate
-                                           videoBitRate:videoBitRate
-                                                  error:error] &&
-               [self.audioEngine startAudioFlow:error])) {
+        if (! [self.toxAV answerIncomingCallFromFriend:friend.friendNumber
+                                          audioBitRate:audioBitRate
+                                          videoBitRate:videoBitRate
+                                                 error:error]) {
             return NO;
         }
 
+        if ([self.audioEngine isAudioRunning:error]) {
+            [self.toxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:self.audioEngine.friendNumber error:nil];
+        }
+
         self.audioEngine.friendNumber = friend.friendNumber;
+        [self.audioEngine startAudioFlow:nil];
         [self updateCall:call withStatus:OCTCallStatusActive];
         [self.timer startTimerForCall:call];
 
@@ -140,13 +152,27 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         switch (control) {
             case OCTToxAVCallControlResume:
+
                 [self updateCall:call withStatus:OCTCallStatusActive];
+                if (! [self.audioEngine isAudioRunning:nil]) {
+                    [self.audioEngine startAudioFlow:nil];
+                }
+                self.audioEngine.friendNumber = friend.friendNumber;
+
                 break;
             case OCTToxAVCallControlCancel:
                 [self.timer stopTimer];
                 [self addMessageCall:call];
-                return [self.audioEngine stopAudioFlow:error];
+
+                if ((self.audioEngine.friendNumber == friend.friendNumber) &&
+                    ([self.audioEngine isAudioRunning:nil])) {
+                    return [self.audioEngine stopAudioFlow:error];
+                }
+
+                break;
             case OCTToxAVCallControlPause:
+                [self updateCall:call withStatus:OCTCallStatusPaused];
+                [self.audioEngine stopAudioFlow:nil];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
                 break;
@@ -206,6 +232,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     return [realmManager getOrCreateCallWithChat:chat];
+}
+
+- (OCTCall *)getCurrentCallForFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
+
+    return [realmManager getCurrentCallForChat:chat];
 }
 
 - (void)updateCall:(OCTCall *)call withStatus:(OCTCallStatus)status
@@ -282,7 +318,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         [self addMessageCall:call];
 
-        [self.audioEngine stopAudioFlow:nil];
+        if ((self.audioEngine.friendNumber == friendNumber) && [self.audioEngine isAudioRunning:nil]) {
+            [self.audioEngine stopAudioFlow:nil];
+        }
 
         return;
     }
@@ -338,7 +376,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
       sampleRate:(OCTToxAVSampleRate)sampleRate
     friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    [self.audioEngine provideAudioFrames:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate];
+    [self.audioEngine provideAudioFrames:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate fromFriend:friendNumber];
 }
 
 - (void)                 toxAV:(OCTToxAV *)toxAV

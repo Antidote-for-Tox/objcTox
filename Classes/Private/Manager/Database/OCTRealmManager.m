@@ -230,6 +230,18 @@
     return call;
 }
 
+- (OCTCall *)getCurrentCallForChat:(OCTChat *)chat
+{
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
+    });
+
+    return call;
+}
+
 - (void)removeChatWithAllMessages:(OCTChat *)chat
 {
     NSParameterAssert(chat);
@@ -325,6 +337,7 @@
             event = OCTMessageCallEventUnanswered;
             break;
         case OCTCallStatusActive:
+        case OCTCallStatusPaused:
             event = OCTMessageCallEventAnswered;
             break;
     }

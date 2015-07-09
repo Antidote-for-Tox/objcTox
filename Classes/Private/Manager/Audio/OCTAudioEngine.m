@@ -173,8 +173,16 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 }
 
 #pragma mark - Buffer Management
-- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate
+- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm
+               sampleCount:(OCTToxAVSampleCount)sampleCount
+                  channels:(OCTToxAVChannels)channels
+                sampleRate:(OCTToxAVSampleRate)sampleRate
+                fromFriend:(OCTToxFriendNumber)friendNumber
 {
+    if (self.friendNumber != friendNumber) {
+        return;
+    }
+
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
@@ -382,6 +390,14 @@ OSStatus outputRenderCallBack(void *inRefCon,
         return NO;
     }
     return YES;
+}
+
+- (void)setFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    _friendNumber = friendNumber;
+
+    TPCircularBufferClear(&_inputBuffer);
+    TPCircularBufferClear(&_outputBuffer);
 }
 
 - (BOOL)initializeGraph:(NSError **)error
