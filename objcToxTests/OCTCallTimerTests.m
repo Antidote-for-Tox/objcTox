@@ -57,7 +57,7 @@
     [self.realmManager.realm commitWriteTransaction];
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
-    OCTCall *call = [self.realmManager getOrCreateCallWithChat:chat];
+    OCTCall *call = [self.realmManager createCallWithChat:chat status:OCTCallStatusActive];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Test Timer"];
 

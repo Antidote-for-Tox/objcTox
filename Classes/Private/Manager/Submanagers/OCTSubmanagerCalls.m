@@ -79,7 +79,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             }
         }
 
-        OCTCall *call = [self getOrCreateCallWithFriendNumber:friend.friendNumber];
+        OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
 
         [self updateCall:call withStatus:OCTCallStatusDialing];
 
@@ -224,14 +224,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 }
 
 #pragma mark Private methods
-- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
-    return [realmManager getOrCreateCallWithChat:chat];
+    return [realmManager createCallWithChat:chat status:status];
 }
 
 - (OCTCall *)getCurrentCallForFriendNumber:(OCTToxFriendNumber)friendNumber
@@ -295,7 +295,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
+    OCTCall *call = [self createCallWithFriendNumber:friendNumber status:OCTCallStatusRinging];
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
@@ -312,7 +312,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self getOrCreateCallWithFriendNumber:friendNumber];
+    OCTCall *call = [self getCurrentCallForFriendNumber:friendNumber];
 
     if ((state & OCTToxAVFriendCallStateFinished) || (state & OCTToxAVFriendCallStateError)) {
 

@@ -53,7 +53,7 @@
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
-- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat;
+- (OCTCall *)createCallWithChat:(OCTChat *)chat status:(OCTCallStatus)status;
 
 /**
  * Gets the current call for the chat if and only if it exists.
