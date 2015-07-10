@@ -58,7 +58,7 @@
 /**
  * Gets the current call for the chat if and only if it exists.
  * This will not create a call object.
- * @param chat The call for the appopriate chat.
+ * @param chat The chat that is related to the call.
  * @return A call object if it exists, nil if no call is session for this call.
  */
 - (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
