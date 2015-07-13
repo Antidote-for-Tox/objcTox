@@ -26,8 +26,6 @@
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 @property (strong, nonatomic) OCTCallTimer *timer;
 
-- (OCTCall *)getOrCreateCallWithFriendNumber:(OCTToxFriendNumber)friendNumber;
-
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber;
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber;
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber;
@@ -37,6 +35,9 @@
         channels:(OCTToxAVChannels)channels
       sampleRate:(OCTToxAVSampleRate)sampleRate
     friendNumber:(OCTToxFriendNumber)friendNumber;
+
+- (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status;
+- (OCTCall *)getCurrentCallForFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 @end
 
@@ -148,7 +149,7 @@
 
     [self createFriendWithFriendNumber:123];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:123 status:OCTCallStatusRinging];
 
     XCTAssertFalse([self.callManager answerCall:call enableAudio:YES enableVideo:YES error:nil]);
     [OCMExpect([toxAV answerIncomingCallFromFriend:123 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]) ignoringNonObjectArgs];
@@ -165,7 +166,7 @@
 
     [self createFriendWithFriendNumber:1234];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:1234];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:1234 status:OCTCallStatusRinging];
 
     OCMStub([toxAV answerIncomingCallFromFriend:1234 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
 
@@ -176,11 +177,14 @@
 - (void)testCallStateReceiveFinished
 {
     id audioEngine = OCMClassMock([OCTAudioEngine class]);
+    OCMStub([audioEngine isAudioRunning:nil]).andReturn(NO);
+    OCMStub([audioEngine friendNumber]).andReturn(89);
+
     self.callManager.audioEngine = audioEngine;
 
     OCTFriend *friend = [self createFriendWithFriendNumber:89];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:89];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:89 status:OCTCallStatusDialing];
     [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = OCTCallStatusRinging;
     }];
@@ -192,11 +196,10 @@
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
-    OCMVerify([audioEngine stopAudioFlow:nil]);
     XCTAssertNotNil(chat.lastMessage.messageCall);
     XCTAssertEqual(chat.lastMessage.messageCall.callEvent, OCTMessageCallEventUnanswered);
 
-    call = [self.callManager getOrCreateCallWithFriendNumber:89];
+    call = [self.callManager createCallWithFriendNumber:89 status:OCTCallStatusRinging];
     [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         call.status = OCTCallStatusActive;
     }];
@@ -216,7 +219,7 @@
 
     [self createFriendWithFriendNumber:92];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:92];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:92 status:OCTCallStatusRinging];
     [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = OCTCallStatusDialing;
     }];
@@ -265,7 +268,7 @@
 
     [self createFriendWithFriendNumber:12345];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:12345];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:12345 status:OCTCallStatusActive];
 
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
@@ -277,7 +280,7 @@
 {
     [self createFriendWithFriendNumber:123456];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:123456];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:123456 status:OCTCallStatusActive];
 
     id toxAV = OCMClassMock([OCTToxAV class]);
     OCMStub([toxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]).andReturn(YES);
@@ -291,7 +294,7 @@
 {
     [self createFriendWithFriendNumber:321];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:321];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:321 status:OCTCallStatusActive];
 
     id toxAV = OCMClassMock([OCTToxAV class]);
     OCMStub([toxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
@@ -308,8 +311,8 @@
 
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:222];
-    OCTCall *sameCall = [self.callManager getOrCreateCallWithFriendNumber:222];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:222 status:OCTCallStatusActive];
+    OCTCall *sameCall = [self.callManager getCurrentCallForFriendNumber:222];
 
     XCTAssertNotNil(call.chat);
     XCTAssertEqualObjects(call.chat, chat);
@@ -326,7 +329,7 @@
 
     OCTFriend *friend = [self createFriendWithFriendNumber:221];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:221];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:221 status:OCTCallStatusActive];
 
     [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
     OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
@@ -338,7 +341,7 @@
 {
     [self createFriendWithFriendNumber:111];
 
-    OCTCall *call = [self.callManager getOrCreateCallWithFriendNumber:111];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:111 status:OCTCallStatusActive];
 
     OCTToxAVCallState state;
 
@@ -347,7 +350,7 @@
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:111];
 
-    call = [self.callManager getOrCreateCallWithFriendNumber:111];
+    call = [self.callManager getCurrentCallForFriendNumber:111];
 
     XCTAssertTrue(call.receivingAudio);
     XCTAssertTrue(call.receivingVideo);
@@ -364,7 +367,7 @@
 
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
-    OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55]);
+    OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
 }
 
 - (void)testReceiveUnstableBitrate

@@ -202,7 +202,7 @@
     return chat;
 }
 
-- (OCTCall *)getOrCreateCallWithChat:(OCTChat *)chat
+- (OCTCall *)createCallWithChat:(OCTChat *)chat status:(OCTCallStatus)status
 {
     __block OCTCall *call = nil;
 
@@ -217,14 +217,25 @@
         DDLogInfo(@"OCTRealmManager: creating call with chat %@", chat);
 
         call = [OCTCall new];
+        call.status = status;
+        call.chat = chat;
 
         [self.realm beginWriteTransaction];
-
         [self.realm addObject:call];
-        [call setChat:chat];
         [[self logger] didAddObject:call];
-
         [self.realm commitWriteTransaction];
+    });
+
+    return call;
+}
+
+- (OCTCall *)getCurrentCallForChat:(OCTChat *)chat
+{
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
     });
 
     return call;
@@ -325,6 +336,7 @@
             event = OCTMessageCallEventUnanswered;
             break;
         case OCTCallStatusActive:
+        case OCTCallStatusPaused:
             event = OCTMessageCallEventAnswered;
             break;
     }

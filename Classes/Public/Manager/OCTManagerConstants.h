@@ -70,4 +70,9 @@ typedef NS_ENUM(NSInteger, OCTCallStatus) {
      * Call is currently active in session.
      */
     OCTCallStatusActive,
+
+    /**
+     * Call is currently on hold.
+     */
+    OCTCallStatusPaused,
 };
