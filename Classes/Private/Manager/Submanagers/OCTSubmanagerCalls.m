@@ -162,7 +162,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 break;
             case OCTToxAVCallControlCancel:
                 [self.timer stopTimer];
-                [self addMessageCall:call];
+                [self addMessageAndDeleteCall:call];
 
                 if ((self.audioEngine.friendNumber == friend.friendNumber) &&
                     ([self.audioEngine isAudioRunning:nil])) {
@@ -253,7 +253,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)addMessageCall:(OCTCall *)call
+- (void)addMessageAndDeleteCall:(OCTCall *)call
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager addMessageCall:call];
@@ -316,7 +316,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     if ((state & OCTToxAVFriendCallStateFinished) || (state & OCTToxAVFriendCallStateError)) {
 
-        [self addMessageCall:call];
+        [self addMessageAndDeleteCall:call];
 
         if ((self.audioEngine.friendNumber == friendNumber) && [self.audioEngine isAudioRunning:nil]) {
             [self.audioEngine stopAudioFlow:nil];
