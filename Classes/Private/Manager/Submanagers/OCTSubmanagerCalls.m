@@ -82,6 +82,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
 
         [self updateCall:call withStatus:OCTCallStatusDialing];
+        self.enableMicrophone = YES;
 
         return call;
     }
@@ -116,6 +117,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         [self.audioEngine startAudioFlow:nil];
         [self updateCall:call withStatus:OCTCallStatusActive];
         [self.timer startTimerForCall:call];
+        self.enableMicrophone = YES;
 
         return YES;
     }
