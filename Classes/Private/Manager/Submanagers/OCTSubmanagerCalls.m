@@ -110,7 +110,8 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         }
 
         if ([self.audioEngine isAudioRunning:error]) {
-            [self.toxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:self.audioEngine.friendNumber error:nil];
+            OCTCall *currentCall = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
+            [self sendCallControl:OCTToxAVCallControlPause toCall:currentCall error:nil];
         }
 
         self.audioEngine.friendNumber = friend.friendNumber;
@@ -158,12 +159,12 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 [self updateCall:call withStatus:OCTCallStatusActive];
                 if (! [self.audioEngine isAudioRunning:nil]) {
                     [self.audioEngine startAudioFlow:nil];
+                    [self.timer startTimerForCall:call];
                 }
                 self.audioEngine.friendNumber = friend.friendNumber;
 
                 break;
             case OCTToxAVCallControlCancel:
-                [self.timer stopTimer];
                 [self addMessageAndDeleteCall:call];
 
                 if ((self.audioEngine.friendNumber == friend.friendNumber) &&
@@ -174,6 +175,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
                 break;
             case OCTToxAVCallControlPause:
                 [self updateCall:call withStatus:OCTCallStatusPaused];
+                [self.timer stopTimer];
                 [self.audioEngine stopAudioFlow:nil];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
@@ -260,7 +262,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager addMessageCall:call];
 
-    [self.timer stopTimer];
+    if (call.status == OCTCallStatusActive) {
+        [self.timer stopTimer];
+    }
+
     [realmManager deleteObject:call];
 }
 
