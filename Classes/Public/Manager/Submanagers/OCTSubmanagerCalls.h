@@ -22,7 +22,7 @@
 
 /**
  * Set the property to YES to enable the microphone, otherwise NO.
- * Default value is YES;
+ * Default value is YES at the start of every call;
  **/
 @property (nonatomic, assign) BOOL enableMicrophone;
 
