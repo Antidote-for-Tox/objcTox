@@ -71,13 +71,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return nil;
         }
 
-        if ([self.audioEngine isAudioRunning:nil]) {
-            OCTCall *currentCall = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
-
-            if (currentCall) {
-                [self sendCallControl:OCTToxAVCallControlPause toCall:currentCall error:nil];
-            }
-        }
+        [self checkForCurrentActiveCallAndPause];
 
         OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
 
@@ -109,10 +103,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
             return NO;
         }
 
-        if ([self.audioEngine isAudioRunning:error]) {
-            OCTCall *currentCall = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
-            [self sendCallControl:OCTToxAVCallControlPause toCall:currentCall error:nil];
-        }
+        [self checkForCurrentActiveCallAndPause];
 
         self.audioEngine.friendNumber = friend.friendNumber;
         [self.audioEngine startAudioFlow:nil];
@@ -155,12 +146,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
         switch (control) {
             case OCTToxAVCallControlResume:
+                [self checkForCurrentActiveCallAndPause];
 
                 [self updateCall:call withStatus:OCTCallStatusActive];
                 if (! [self.audioEngine isAudioRunning:nil]) {
                     [self.audioEngine startAudioFlow:nil];
                     [self.timer startTimerForCall:call];
                 }
+
                 self.audioEngine.friendNumber = friend.friendNumber;
 
                 break;
@@ -296,6 +289,16 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         callToUpdate.sendingAudio = sendingAudio;
         callToUpdate.sendingVideo = sendingVideo;
     }];
+}
+
+- (void)checkForCurrentActiveCallAndPause
+{
+    if (! [self.audioEngine isAudioRunning:nil]) {
+        return;
+    }
+
+    OCTCall *call = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
+    [self sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
 }
 
 #pragma mark OCTToxAV delegate methods
