@@ -246,7 +246,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+
         callToUpdate.status = status;
+
+        callToUpdate.onHoldStartInterval = (status == OCTCallStatusPaused) ? [[NSDate date] timeIntervalSince1970] : 0;
     }];
 }
 

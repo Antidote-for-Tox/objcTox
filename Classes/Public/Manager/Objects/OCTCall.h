@@ -59,6 +59,16 @@
 @property NSTimeInterval callDuration;
 
 /**
+ * The on hold start interval when call was put on hold.
+ */
+@property NSTimeInterval onHoldStartInterval;
+
+/**
+ * The date when the call was put on hold.
+ */
+- (NSDate *)onHoldDate;
+
+/**
  * Indicates if call is outgoing or incoming.
  * In case if it is incoming you can check `caller` property for friend.
  **/
