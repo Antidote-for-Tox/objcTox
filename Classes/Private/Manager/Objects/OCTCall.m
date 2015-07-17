@@ -20,4 +20,13 @@
     return (self.caller == nil);
 }
 
+- (NSDate *)onHoldDate
+{
+    if (self.onHoldStartInterval <= 0) {
+        return nil;
+    }
+
+    return [NSDate dateWithTimeIntervalSince1970:self.onHoldStartInterval];
+}
+
 @end
