@@ -568,10 +568,10 @@ void callStateCallback(ToxAV *cToxAV,
         if (cState & TOXAV_FRIEND_CALL_STATE_SENDING_V) {
             state |= OCTToxAVFriendCallStateSendingVideo;
         }
-        if (cState & TOXAV_FRIEND_CALL_STATE_RECEIVING_A) {
+        if (cState & TOXAV_FRIEND_CALL_STATE_ACCEPTING_A) {
             state |= OCTToxAVFriendCallStateReceivingAudio;
         }
-        if (cState & TOXAV_FRIEND_CALL_STATE_RECEIVING_V) {
+        if (cState & TOXAV_FRIEND_CALL_STATE_ACCEPTING_V) {
             state |= OCTToxAVFriendCallStateReceivingVideo;
         }
 
