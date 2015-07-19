@@ -332,7 +332,7 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 - (void)testCallStateCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_RECEIVING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_ACCEPTING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
@@ -359,7 +359,7 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     }];
 
     [self makeTestCallbackWithCallBlock:^{
-        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_RECEIVING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A | TOXAV_FRIEND_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
+        callStateCallback(NULL, 1, TOXAV_FRIEND_CALL_STATE_ACCEPTING_A | TOXAV_FRIEND_CALL_STATE_SENDING_A | TOXAV_FRIEND_CALL_STATE_SENDING_V, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
