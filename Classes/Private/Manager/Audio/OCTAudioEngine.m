@@ -18,7 +18,7 @@
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
 static const int kBufferLength = 16384;
-static const int kNumberOfChannels = 2;
+static const int kNumberOfInputChannels = 2;
 static const int kDefaultSampleRate = 48000;
 static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
@@ -264,9 +264,9 @@ OSStatus inputRenderCallBack(void *inRefCon,
 
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
-    bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
+    bufferList.mBuffers[0].mNumberChannels = kNumberOfInputChannels;
     bufferList.mBuffers[0].mData = NULL;
-    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfChannels;
+    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfInputChannels;
 
     OSStatus status = _AudioUnitRender(engine.ioUnit,
                                        ioActionFlags,
@@ -281,7 +281,7 @@ OSStatus inputRenderCallBack(void *inRefCon,
 
     int32_t availableBytesToConsume;
     void *tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
-    int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
+    int32_t minimalBytesToConsume = kSampleCount * kNumberOfInputChannels * sizeof(SInt16);
 
     int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
 
@@ -289,7 +289,7 @@ OSStatus inputRenderCallBack(void *inRefCon,
         NSError *error;
         [engine.toxav sendAudioFrame:tail
                          sampleCount:kSampleCount
-                            channels:kNumberOfChannels
+                            channels:kNumberOfInputChannels
                           sampleRate:engine.inputSampleRate
                             toFriend:engine.friendNumber
                                error:&error];
@@ -366,11 +366,11 @@ OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = kNumberOfChannels;
-    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mChannelsPerFrame = kNumberOfInputChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfInputChannels;
     asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
     asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfInputChannels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
