@@ -7,13 +7,18 @@
 //
 
 #import "OCTAudioEngine+Private.h"
+#import "OCTToxAV+Private.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 @import AVFoundation;
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
 static const int kBufferLength = 16384;
-static const int kNumberOfChannels = 2;
+static const int kNumberOfInputChannels = 2;
 static const int kDefaultSampleRate = 48000;
 static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
@@ -63,6 +68,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 @property (nonatomic, assign) dispatch_once_t setupOnceToken;
+
+@property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
 
 @end
 
@@ -187,8 +194,11 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
 
-    if (self.outputSampleRate != sampleRate) {
-        [self updateOutputSampleRate:sampleRate error:nil];
+    if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
+        NSError *error;
+        if (! [self updateOutputSampleRate:sampleRate channels:channels error:&error]) {
+            DDLogWarn(@"%@, error updateOutputSampleRate:%@", self, error);
+        }
     }
 }
 
@@ -254,9 +264,9 @@ OSStatus inputRenderCallBack(void *inRefCon,
 
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
-    bufferList.mBuffers[0].mNumberChannels = kNumberOfChannels;
+    bufferList.mBuffers[0].mNumberChannels = kNumberOfInputChannels;
     bufferList.mBuffers[0].mData = NULL;
-    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfChannels;
+    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfInputChannels;
 
     OSStatus status = _AudioUnitRender(engine.ioUnit,
                                        ioActionFlags,
@@ -271,7 +281,7 @@ OSStatus inputRenderCallBack(void *inRefCon,
 
     int32_t availableBytesToConsume;
     void *tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
-    int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
+    int32_t minimalBytesToConsume = kSampleCount * kNumberOfInputChannels * sizeof(SInt16);
 
     int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
 
@@ -279,7 +289,7 @@ OSStatus inputRenderCallBack(void *inRefCon,
         NSError *error;
         [engine.toxav sendAudioFrame:tail
                          sampleCount:kSampleCount
-                            channels:kNumberOfChannels
+                            channels:kNumberOfInputChannels
                           sampleRate:engine.inputSampleRate
                             toFriend:engine.friendNumber
                                error:&error];
@@ -356,11 +366,11 @@ OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = kNumberOfChannels;
-    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mChannelsPerFrame = kNumberOfInputChannels;
+    asbd.mBytesPerFrame = bytesPerSample * kNumberOfInputChannels;
     asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
     asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
+    asbd.mBytesPerPacket = bytesPerSample * kNumberOfInputChannels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -426,19 +436,21 @@ OSStatus outputRenderCallBack(void *inRefCon,
     return YES;
 }
 
-- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate channels:(OCTToxAVChannels)channels error:(NSError **)error
 {
+    DDLogVerbose(@"%@ updateOutputSampleRate:%ul channels:%ul", self, rate, channels);
+
     UInt32 bytesPerSample = sizeof(SInt16);
 
     AudioStreamBasicDescription asbd = {0};
     asbd.mSampleRate = rate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = kNumberOfChannels;
-    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mChannelsPerFrame = channels;
+    asbd.mBytesPerFrame = bytesPerSample * channels;
     asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
     asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
+    asbd.mBytesPerPacket = bytesPerSample * channels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -455,6 +467,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
     }
 
     self.outputSampleRate = rate;
+    self.outputNumberOfChannels = channels;
 
     return YES;
 }
