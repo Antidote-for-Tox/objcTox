@@ -64,6 +64,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 @property (nonatomic, assign) dispatch_once_t setupOnceToken;
 
+@property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
+
 @end
 
 @implementation OCTAudioEngine
@@ -187,8 +189,8 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
 
-    if (self.outputSampleRate != sampleRate) {
-        [self updateOutputSampleRate:sampleRate error:nil];
+    if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
+        [self updateOutputSampleRate:sampleRate channels:channels error:nil];
     }
 }
 
@@ -426,7 +428,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
     return YES;
 }
 
-- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate error:(NSError **)error
+- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate channels:(OCTToxAVChannels)channels error:(NSError **)error
 {
     UInt32 bytesPerSample = sizeof(SInt16);
 
@@ -434,11 +436,11 @@ OSStatus outputRenderCallBack(void *inRefCon,
     asbd.mSampleRate = rate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = kNumberOfChannels;
-    asbd.mBytesPerFrame = bytesPerSample * kNumberOfChannels;
+    asbd.mChannelsPerFrame = channels;
+    asbd.mBytesPerFrame = bytesPerSample * channels;
     asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
     asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * kNumberOfChannels;
+    asbd.mBytesPerPacket = bytesPerSample * channels;
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
@@ -455,6 +457,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
     }
 
     self.outputSampleRate = rate;
+    self.outputNumberOfChannels = channels;
 
     return YES;
 }
