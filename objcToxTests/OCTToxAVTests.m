@@ -138,6 +138,9 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 
     [self.toxAV start];
     [self.toxAV stop];
+
+    _toxav_iterate = nil;
+    _toxav_iteration_interval = nil;
 }
 
 - (void)testSetAudioBitRate

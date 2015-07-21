@@ -316,6 +316,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = OCTCallStatusRinging;
         callToUpdate.caller = friend;
+        callToUpdate.sendingAudio = audio;
+        callToUpdate.receivingAudio = audio;
+        callToUpdate.sendingVideo = video;
+        callToUpdate.receivingVideo = video;
     }];
 
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {
