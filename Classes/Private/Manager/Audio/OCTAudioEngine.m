@@ -7,6 +7,11 @@
 //
 
 #import "OCTAudioEngine+Private.h"
+#import "OCTToxAV+Private.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 @import AVFoundation;
 
@@ -190,7 +195,10 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
-        [self updateOutputSampleRate:sampleRate channels:channels error:nil];
+        NSError *error;
+        if (! [self updateOutputSampleRate:sampleRate channels:channels error:&error]) {
+            DDLogWarn(@"%@, error updateOutputSampleRate:%@", self, error);
+        }
     }
 }
 
@@ -430,6 +438,8 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate channels:(OCTToxAVChannels)channels error:(NSError **)error
 {
+    DDLogVerbose(@"%@ updateOutputSampleRate:%ul channels:%ul", self, rate, channels);
+
     UInt32 bytesPerSample = sizeof(SInt16);
 
     AudioStreamBasicDescription asbd = {0};
