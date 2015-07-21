@@ -12,7 +12,7 @@
 
 static const AudioUnitElement kInputBus = 1;
 static const AudioUnitElement kOutputBus = 0;
-static const int kBufferLength = 122880;
+static const int kBufferLength = 16384;
 static const int kNumberOfChannels = 2;
 static const int kDefaultSampleRate = 48000;
 static const int kSampleCount = 1920;
