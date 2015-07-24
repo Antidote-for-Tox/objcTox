@@ -233,7 +233,6 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)updateCall:(OCTCall *)call withStatus:(OCTCallStatus)status
 {
-    NSAssert(status != OCTCallStatusPaused, @"Do not use this to update pause calls");
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
@@ -245,19 +244,21 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    BOOL wasPaused = call.status == OCTCallStatusPaused;
+    BOOL wasPaused = call.pausedStatus != OCTCallPausedStatusNone;
+    OCTCallPausedStatus previousPausedStatus = call.pausedStatus;
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-
 
         if (pause && ! wasPaused) {
             callToUpdate.onHoldStartInterval = [[NSDate date] timeIntervalSince1970];
         }
 
-        callToUpdate.pausedByYou = pause;
-
-        callToUpdate.status =  (callToUpdate.pausedByYou ||
-                                callToUpdate.pausedByFriend) ? OCTCallStatusPaused : OCTCallStatusActive;
+        if (pause) {
+            callToUpdate.pausedStatus |= OCTCallPausedStatusByUser;
+        }
+        else {
+            callToUpdate.pausedStatus &= ~OCTCallPausedStatusByUser;
+        }
     }];
 
     OCTFriend *friend = [call.chat.friends firstObject];
@@ -266,7 +267,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         [self.timer stopTimer];
         [self.audioEngine stopAudioFlow:nil];
     }
-    else if (! pause && ! call.pausedByFriend && wasPaused) {
+    else if (! pause &&  (previousPausedStatus == OCTCallPausedStatusByUser)) {
         [self.audioEngine startAudioFlow:nil];
         [self.timer startTimerForCall:call];
         self.audioEngine.friendNumber = friend.friendNumber;
@@ -281,14 +282,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager addMessageCall:call];
 
-    if (call.status == OCTCallStatusActive) {
+    if (call.pausedStatus == OCTCallPausedStatusNone) {
         [self.timer stopTimer];
     }
 
     [realmManager deleteObject:call];
 }
 
-- (void)updateCall:(OCTCall *)call withState:(OCTToxAVCallState)state
+- (void)updateCall:(OCTCall *)call withState:(OCTToxAVCallState)state pausedStatus:(OCTCallPausedStatus)pausedStatus
 {
     BOOL sendingAudio, sendingVideo, receivingAudio, receivingVideo;
 
@@ -308,15 +309,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         sendingVideo = YES;
     }
 
-    OCTCallStatus status = call.status;
-    BOOL wasPaused = call.status == OCTCallStatusPaused;
-
-    if (wasPaused &&
-        call.pausedByFriend &&
-        ! call.pausedByYou &&
-        (state != OCTToxAVFriendCallStatePaused) ) {
-        status = OCTCallStatusActive;
-    }
+    BOOL wasPaused = call.pausedStatus != OCTCallPausedStatusNone;
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
@@ -324,10 +317,9 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         callToUpdate.receivingVideo = receivingVideo;
         callToUpdate.sendingAudio = sendingAudio;
         callToUpdate.sendingVideo = sendingVideo;
-        callToUpdate.pausedByFriend = (state == OCTToxAVFriendCallStatePaused);
-        callToUpdate.status = status;
+        callToUpdate.pausedStatus = pausedStatus;
 
-        if (! wasPaused && (status == OCTToxAVFriendCallStatePaused)) {
+        if (! wasPaused && (state == OCTToxAVFriendCallStatePaused)) {
             callToUpdate.onHoldStartInterval = [[NSDate date] timeIntervalSince1970];
         }
     }];
@@ -388,17 +380,26 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
         [self.timer startTimerForCall:call];
     }
 
-    if ((call.status == OCTCallStatusActive) && (state == OCTToxAVFriendCallStatePaused)) {
+    OCTCallPausedStatus pauseStatus = call.pausedStatus;
+
+    if ((pauseStatus == OCTCallPausedStatusNone) && (state == OCTToxAVFriendCallStatePaused)) {
         [self.audioEngine stopAudioFlow:nil];
         [self.timer stopTimer];
     }
 
-    if (call.pausedByFriend && ! call.pausedByYou && (state != OCTToxAVFriendCallStatePaused)) {
+    if ((pauseStatus == OCTCallPausedStatusByFriend) && (state != OCTToxAVFriendCallStatePaused)) {
         [self.audioEngine startAudioFlow:nil];
         [self.timer startTimerForCall:call];
     }
 
-    [self updateCall:call withState:state];
+    if (state == OCTToxAVFriendCallStatePaused) {
+        pauseStatus |= OCTCallPausedStatusByFriend;
+    }
+    else {
+        pauseStatus &= ~OCTCallPausedStatusByFriend;
+    }
+
+    [self updateCall:call withState:state pausedStatus:pauseStatus];
 }
 
 - (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
