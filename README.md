@@ -2,7 +2,7 @@
 
 # objcTox
 
-Objective-C wrapper for [Tox](https://tox.im/).
+Objective-C wrapper for [Tox](https://tox.chat/).
 
 ## Installation
 
