@@ -46,6 +46,8 @@
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) OCTSubmanagerCalls *callManager;
 @property (strong, nonatomic) OCTTox *tox;
+@property (strong, nonatomic) id mockedAudioEngine;
+@property (strong, nonatomic) id mockedToxAV;
 
 @end
 
@@ -60,6 +62,13 @@
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
 
+    OCTAudioEngine *audioEngine = [OCTAudioEngine new];
+    self.mockedAudioEngine = OCMPartialMock(audioEngine);
+    self.callManager.audioEngine = self.mockedAudioEngine;
+
+    self.mockedToxAV = OCMClassMock([OCTToxAV class]);
+    self.callManager.toxAV = self.mockedToxAV;
+
     self.callManager.dataSource = self.dataSource;
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
@@ -67,9 +76,11 @@
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    self.dataSource = nil;
     self.callManager = nil;
     self.tox = nil;
-    self.dataSource = nil;
+    self.mockedAudioEngine = nil;
+    self.mockedToxAV = nil;
     [super tearDown];
 }
 
@@ -80,22 +91,18 @@
 
 - (void)testSetup
 {
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    OCMStub([audioEngine new]).andReturn(audioEngine);
-    OCMStub([audioEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
-    self.callManager.audioEngine = audioEngine;
+    OCMStub([self.mockedAudioEngine new]).andReturn(self.mockedAudioEngine);
+    OCMStub([self.mockedAudioEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
 
     XCTAssertTrue([self.callManager setupWithError:nil]);
 }
 
 - (void)testCallToChat
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    [OCMStub([toxAV callFriendNumber:1
-                        audioBitRate:0
-                        videoBitRate:0
-                               error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
-    self.callManager.toxAV = toxAV;
+    [OCMStub([self.mockedToxAV callFriendNumber:1
+                                   audioBitRate:0
+                                   videoBitRate:0
+                                          error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
 
     OCTFriend *friend = [self createFriend];
     friend.friendNumber = 1;
@@ -118,14 +125,9 @@
 
 - (void)testEndCall
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    [OCMStub([toxAV callFriendNumber:12 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
-    OCMStub([toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:12 error:[OCMArg anyObjectRef]]).andReturn(YES);
-    self.callManager.toxAV = toxAV;
-
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    OCMStub([audioEngine stopAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
-    self.callManager.audioEngine = audioEngine;
+    OCMStub([self.mockedToxAV callFriendNumber:12 audioBitRate:48 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:12 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.mockedAudioEngine stopAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
     OCTFriend *friend = [self createFriendWithFriendNumber:12];
     OCTChat *chat = [self.realmManager getOrCreateChatWithFriend:friend];
@@ -144,31 +146,25 @@
 
 - (void)testAnswerCallFail
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    self.callManager.toxAV = toxAV;
-
     [self createFriendWithFriendNumber:123];
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:123 status:OCTCallStatusRinging];
 
-    XCTAssertFalse([self.callManager answerCall:call enableAudio:YES enableVideo:YES error:nil]);
-    [OCMExpect([toxAV answerIncomingCallFromFriend:123 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]) ignoringNonObjectArgs];
+    XCTAssertFalse([self.callManager answerCall:call enableAudio:YES enableVideo:NO error:nil]);
+
+    OCMVerify([self.mockedToxAV answerIncomingCallFromFriend:123 audioBitRate:48 videoBitRate:0 error:[OCMArg anyObjectRef]]);
 }
 
 - (void)testAnswerCallSuccess
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    self.callManager.toxAV = toxAV;
-
     self.callManager.audioEngine = [OCTAudioEngine new];
-    id audioEngine = OCMPartialMock(self.callManager.audioEngine);
-    OCMStub([audioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.mockedAudioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
     [self createFriendWithFriendNumber:1234];
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:1234 status:OCTCallStatusRinging];
 
-    OCMStub([toxAV answerIncomingCallFromFriend:1234 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.mockedToxAV answerIncomingCallFromFriend:1234 audioBitRate:0 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
 
     XCTAssertTrue([self.callManager answerCall:call enableAudio:NO enableVideo:NO error:nil]);
     XCTAssertEqual(self.callManager.audioEngine.friendNumber, 1234);
@@ -176,11 +172,8 @@
 
 - (void)testCallStateReceiveFinished
 {
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    OCMStub([audioEngine isAudioRunning:nil]).andReturn(NO);
-    OCMStub([audioEngine friendNumber]).andReturn(89);
-
-    self.callManager.audioEngine = audioEngine;
+    OCMStub([self.mockedAudioEngine isAudioRunning:nil]).andReturn(NO);
+    OCMStub([self.mockedAudioEngine friendNumber]).andReturn(89);
 
     OCTFriend *friend = [self createFriendWithFriendNumber:89];
 
@@ -214,9 +207,6 @@
     id timer = OCMClassMock([OCTCallTimer class]);
     self.callManager.timer = timer;
 
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    self.callManager.audioEngine = audioEngine;
-
     [self createFriendWithFriendNumber:92];
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:92 status:OCTCallStatusRinging];
@@ -229,42 +219,33 @@
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:92];
 
-    OCMVerify([audioEngine startAudioFlow:nil]);
-    OCMVerify([audioEngine setFriendNumber:92]);
+    OCMVerify([self.mockedAudioEngine startAudioFlow:nil]);
+    OCMVerify([self.mockedAudioEngine setFriendNumber:92]);
     OCMVerify([timer startTimerForCall:call]);
 
     XCTAssertEqual(call.status, OCTCallStatusActive);
     XCTAssertTrue(call.receivingVideo);
-
 }
 
 - (void)testRouteAudioToSpeaker
 {
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    self.callManager.audioEngine = audioEngine;
-
     [self.callManager routeAudioToSpeaker:YES error:nil];
 
-    OCMVerify([audioEngine routeAudioToSpeaker:YES error:nil]);
+    OCMVerify([self.mockedAudioEngine routeAudioToSpeaker:YES error:nil]);
 }
 
 - (void)testEnableMicrophone
 {
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    self.callManager.audioEngine = audioEngine;
-
     [self.callManager setEnableMicrophone:NO];
 
-    OCMVerify([audioEngine setEnableMicrophone:NO]);
+    OCMVerify([self.mockedAudioEngine setEnableMicrophone:NO]);
 
     XCTAssertFalse(self.callManager.enableMicrophone);
 }
 
 - (void)testTogglePauseForCall
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    self.callManager.toxAV = toxAV;
-    OCMStub([toxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:12345 error:nil]).andReturn(YES);
+    OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:12345 error:nil]).andReturn(YES);
 
     [self createFriendWithFriendNumber:12345];
 
@@ -272,7 +253,9 @@
 
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
-    OCMStub([toxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:12345 error:nil]).andReturn(YES);
+    OCMStub([self.mockedAudioEngine isAudioRunning:nil]).andReturn(NO);
+
+    OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:12345 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
 }
 
@@ -282,12 +265,10 @@
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:123456 status:OCTCallStatusActive];
 
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    OCMStub([toxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]).andReturn(YES);
-    self.callManager.toxAV = toxAV;
+    OCMStub([self.mockedToxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]).andReturn(YES);
 
     XCTAssertTrue([self.callManager setAudioBitrate:5555 forCall:call error:nil]);
-    OCMVerify([toxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]);
+    OCMVerify([self.mockedToxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]);
 }
 
 - (void)testSetVideoBitRate
@@ -296,12 +277,92 @@
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:321 status:OCTCallStatusActive];
 
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    OCMStub([toxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
-    self.callManager.toxAV = toxAV;
+    OCMStub([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
 
     XCTAssertTrue([self.callManager setVideoBitrate:5555 forCall:call error:nil]);
-    OCMVerify([toxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]);
+    OCMVerify([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]);
+}
+
+#pragma mark - Pause Scenarios
+
+- (void)testAnsweringAnotherCallWhileActive
+{
+    [OCMStub([self.mockedToxAV sendCallControl:123 toFriendNumber:123 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [OCMStub([self.mockedToxAV answerIncomingCallFromFriend:123 audioBitRate:48 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [self.mockedToxAV setExpectationOrderMatters:YES];
+    OCMExpect([self.mockedToxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:4 error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.mockedToxAV answerIncomingCallFromFriend:5 audioBitRate:48 videoBitRate:0 error:[OCMArg anyObjectRef]]);
+
+    OCMStub([self.callManager.audioEngine isAudioRunning:nil]).andReturn(YES);
+    OCMStub([self.callManager.audioEngine stopAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    [self createFriendWithFriendNumber:4];
+    [self createFriendWithFriendNumber:5];
+    OCTCall *firstCall = [self.callManager createCallWithFriendNumber:4 status:OCTCallStatusActive];
+    self.callManager.audioEngine.friendNumber = 4;
+
+    // create incoming call
+    OCTCall *secondCall = [self.callManager createCallWithFriendNumber:5 status:OCTCallStatusRinging];
+
+    // mock call timer
+    id mockedTimer = OCMClassMock([OCTCallTimer class]);
+    [mockedTimer setExpectationOrderMatters:YES];
+    OCMExpect([mockedTimer stopTimer]);
+    OCMExpect([mockedTimer startTimerForCall:secondCall]);
+    self.callManager.timer = mockedTimer;
+
+    [self.callManager answerCall:secondCall enableAudio:YES enableVideo:NO error:nil];
+
+    XCTAssertEqual(secondCall.status, OCTCallStatusActive);
+    XCTAssertEqual(secondCall.pausedStatus, OCTCallPausedStatusNone);
+    XCTAssertEqual(self.callManager.audioEngine.friendNumber, 5);
+
+    XCTAssertEqual(firstCall.status, OCTCallStatusActive);
+    XCTAssertEqual(firstCall.pausedStatus, OCTCallPausedStatusByUser);
+
+    OCMVerifyAll(mockedTimer);
+    OCMVerifyAll(self.mockedAudioEngine);
+}
+
+- (void)testPauseControlPermissions
+{
+    [self createFriendWithFriendNumber:11];
+
+    OCTCall *call = [self.callManager createCallWithFriendNumber:11 status:OCTCallStatusActive];
+
+    id mockedTimer = OCMClassMock([OCTCallTimer class]);
+    [mockedTimer setExpectationOrderMatters:YES];
+    self.callManager.timer = mockedTimer;
+    OCMExpect([mockedTimer stopTimer]);
+    OCMExpect([mockedTimer startTimerForCall:call]);
+
+    [self.callManager toxAV:nil callStateChanged:OCTToxAVFriendCallStatePaused friendNumber:11];
+
+    XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByFriend);
+    XCTAssertEqual(call.status, OCTCallStatusActive);
+
+    id strictMockedTimer = OCMStrictClassMock([OCTCallTimer class]);
+    self.callManager.timer = strictMockedTimer;
+
+    OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:11 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    [self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil];
+
+    XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByFriend);
+
+    OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:11 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    [self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
+
+    XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByFriend | OCTCallPausedStatusByUser);
+
+    [self.callManager toxAV:nil callStateChanged:OCTToxAVFriendCallStateReceivingAudio friendNumber:11];
+    XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByUser);
+
+    self.callManager.timer = mockedTimer;
+
+    [self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil];
+    XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusNone);
+
+    OCMVerifyAll(mockedTimer);
 }
 
 #pragma mark - Private
@@ -360,32 +421,26 @@
 
 - (void)testReceiveAudio
 {
-    id audioEngine = OCMClassMock([OCTAudioEngine class]);
-    self.callManager.audioEngine = audioEngine;
-
     OCTToxAVPCMData pcm[] = { 1, 2, 3, 4};
 
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
-    OCMVerify([audioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
+    OCMVerify([self.mockedAudioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
 }
 
 - (void)testReceiveUnstableBitrate
 {
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    self.callManager.toxAV = toxAV;
+    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:48 stable:NO friendNumber:1234];
+    OCMVerify([self.mockedToxAV setAudioBitRate:32 force:NO forFriend:1234 error:nil]);
 
-    [self.callManager toxAV:toxAV audioBitRateChanged:48 stable:NO friendNumber:1234];
-    OCMVerify([toxAV setAudioBitRate:32 force:NO forFriend:1234 error:nil]);
+    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:32 stable:NO friendNumber:1234];
+    OCMVerify([self.mockedToxAV setAudioBitRate:24 force:NO forFriend:1234 error:nil]);
 
-    [self.callManager toxAV:toxAV audioBitRateChanged:32 stable:NO friendNumber:1234];
-    OCMVerify([toxAV setAudioBitRate:24 force:NO forFriend:1234 error:nil]);
+    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:24 stable:NO friendNumber:1234];
+    OCMVerify([self.mockedToxAV setAudioBitRate:16 force:NO forFriend:1234 error:nil]);
 
-    [self.callManager toxAV:toxAV audioBitRateChanged:24 stable:NO friendNumber:1234];
-    OCMVerify([toxAV setAudioBitRate:16 force:NO forFriend:1234 error:nil]);
-
-    [self.callManager toxAV:toxAV audioBitRateChanged:16 stable:NO friendNumber:1234];
-    OCMVerify([toxAV setAudioBitRate:8 force:NO forFriend:1234 error:nil]);
+    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:16 stable:NO friendNumber:1234];
+    OCMVerify([self.mockedToxAV setAudioBitRate:8 force:NO forFriend:1234 error:nil]);
 }
 
 #pragma mark Test helper methods
