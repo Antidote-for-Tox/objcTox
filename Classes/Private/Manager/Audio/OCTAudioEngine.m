@@ -350,7 +350,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
             [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
-            [session setMode:AVAudioSessionModeVideoChat error:error] &&
+            [session setMode:AVAudioSessionModeVoiceChat error:error] &&
             [session setActive:YES error:error]);
 }
 
