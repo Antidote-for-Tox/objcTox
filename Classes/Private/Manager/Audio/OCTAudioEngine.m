@@ -438,7 +438,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate channels:(OCTToxAVChannels)channels error:(NSError **)error
 {
-    DDLogVerbose(@"%@ updateOutputSampleRate:%ul channels:%ul", self, rate, channels);
+    DDLogVerbose(@"%@ updateOutputSampleRate:%u channels:%u", self, rate, channels);
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
@@ -454,8 +454,8 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
     OSStatus status = _AudioUnitSetProperty(self.ioUnit,
                                             kAudioUnitProperty_StreamFormat,
-                                            kAudioUnitScope_Output,
-                                            kInputBus,
+                                            kAudioUnitScope_Input,
+                                            kOutputBus,
                                             &asbd,
                                             sizeof(asbd));
     if (status != noErr) {

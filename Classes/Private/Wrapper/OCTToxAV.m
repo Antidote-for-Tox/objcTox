@@ -223,6 +223,8 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
     [self fillError:error withCErrorSetBitRate:cError];
 
+    DDLogVerbose(@"%@: setAudioBitRate:%lu, force:%d, friend:%d", self, bitRate, force, friendNumber);
+
     return status;
 }
 
