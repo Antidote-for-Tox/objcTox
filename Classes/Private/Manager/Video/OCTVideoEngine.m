@@ -44,7 +44,7 @@ static uint8_t *reusableVChromaPlane;
 
 - (BOOL)setupWithError:(NSError **)error
 {
-    AVCaptureDevice *videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDevice *videoCaptureDevice = [self frontCamera];
     AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:videoCaptureDevice error:error];
 
     if (! videoInput) {
@@ -76,6 +76,11 @@ static uint8_t *reusableVChromaPlane;
     dispatch_async(self.processingQueue, ^{
         [self.captureSession stopRunning];
     });
+}
+
+- (BOOL)isVideoSessionRunning
+{
+    return self.captureSession.isRunning;
 }
 
 - (CALayer *)videoCallPreview
@@ -140,6 +145,19 @@ static uint8_t *reusableVChromaPlane;
                                  error:nil];
 
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+}
+
+#pragma mark - Private
+
+- (AVCaptureDevice *)frontCamera
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if ([device position] == AVCaptureDevicePositionFront) {
+            return device;
+        }
+    }
+    return nil;
 }
 
 @end

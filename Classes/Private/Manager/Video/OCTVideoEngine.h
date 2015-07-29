@@ -35,6 +35,12 @@
 - (void)stopVideoSession;
 
 /**
+ * Indicates if the video session is running.
+ * @return YES if running, NO otherwise.
+ */
+- (BOOL)isVideoSessionRunning;
+
+/**
  * Layer of the preview video.
  */
 - (CALayer *)videoCallPreview;
