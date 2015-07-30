@@ -339,7 +339,7 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVFriendCallStateReceivingAudio | OCTToxAVFriendCallStateSendingAudio
+                            callStateChanged:OCTToxAVFriendCallStateAcceptingAudio | OCTToxAVFriendCallStateSendingAudio
                                 friendNumber:friendNumber]);
     }];
 
@@ -366,7 +366,7 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCTToxFriendNumber friendNumber = 1;
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                            callStateChanged:OCTToxAVFriendCallStateReceivingAudio | OCTToxAVFriendCallStateSendingAudio | OCTToxAVFriendCallStateSendingVideo
+                            callStateChanged:OCTToxAVFriendCallStateAcceptingAudio | OCTToxAVFriendCallStateSendingAudio | OCTToxAVFriendCallStateSendingVideo
                                 friendNumber:friendNumber]);
     }];
 }

@@ -571,10 +571,10 @@ void callStateCallback(ToxAV *cToxAV,
             state |= OCTToxAVFriendCallStateSendingVideo;
         }
         if (cState & TOXAV_FRIEND_CALL_STATE_ACCEPTING_A) {
-            state |= OCTToxAVFriendCallStateReceivingAudio;
+            state |= OCTToxAVFriendCallStateAcceptingAudio;
         }
         if (cState & TOXAV_FRIEND_CALL_STATE_ACCEPTING_V) {
-            state |= OCTToxAVFriendCallStateReceivingVideo;
+            state |= OCTToxAVFriendCallStateAcceptingVideo;
         }
 
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:callStateChanged:friendNumber:)]) {

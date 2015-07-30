@@ -215,7 +215,7 @@
     }];
 
     OCTToxAVCallState state = 0;
-    state |= OCTToxAVFriendCallStateReceivingVideo;
+    state |= OCTToxAVFriendCallStateAcceptingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:92];
 
@@ -224,7 +224,7 @@
     OCMVerify([timer startTimerForCall:call]);
 
     XCTAssertEqual(call.status, OCTCallStatusActive);
-    XCTAssertTrue(call.receivingVideo);
+    XCTAssertTrue(call.friendAcceptingVideo);
 }
 
 - (void)testRouteAudioToSpeaker
@@ -354,7 +354,7 @@
 
     XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByFriend | OCTCallPausedStatusByUser);
 
-    [self.callManager toxAV:nil callStateChanged:OCTToxAVFriendCallStateReceivingAudio friendNumber:11];
+    [self.callManager toxAV:nil callStateChanged:OCTToxAVFriendCallStateAcceptingAudio friendNumber:11];
     XCTAssertEqual(call.pausedStatus, OCTCallPausedStatusByUser);
 
     self.callManager.timer = mockedTimer;
@@ -406,17 +406,17 @@
 
     OCTToxAVCallState state = 0;
 
-    state |= OCTToxAVFriendCallStateReceivingAudio;
-    state |= OCTToxAVFriendCallStateReceivingVideo;
+    state |= OCTToxAVFriendCallStateAcceptingAudio;
+    state |= OCTToxAVFriendCallStateAcceptingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:111];
 
     call = [self.callManager getCurrentCallForFriendNumber:111];
 
-    XCTAssertTrue(call.receivingAudio);
-    XCTAssertTrue(call.receivingVideo);
-    XCTAssertFalse(call.sendingAudio);
-    XCTAssertFalse(call.sendingVideo);
+    XCTAssertTrue(call.friendAcceptingAudio);
+    XCTAssertTrue(call.friendAcceptingVideo);
+    XCTAssertFalse(call.friendSendingAudio);
+    XCTAssertFalse(call.friendSendingVideo);
 }
 
 - (void)testReceiveAudio
