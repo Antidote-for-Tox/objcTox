@@ -73,8 +73,8 @@
                            @"friend receiving audio: %d\n"
                            @"friend sending video: %d\n"
                            @"friend receiving Video: %d\n",
-                           call.chat.uniqueIdentifier, call.status, call.callDuration, call.sendingAudio, call.receivingAudio,
-                           call.sendingVideo, call.receivingVideo];
+                           call.chat.uniqueIdentifier, call.status, call.callDuration, call.friendSendingAudio, call.friendAcceptingAudio,
+                           call.friendSendingVideo, call.friendAcceptingVideo];
 
     return cell;
 }

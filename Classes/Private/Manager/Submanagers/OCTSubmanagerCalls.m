@@ -291,14 +291,14 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)updateCall:(OCTCall *)call withState:(OCTToxAVCallState)state pausedStatus:(OCTCallPausedStatus)pausedStatus
 {
-    BOOL sendingAudio, sendingVideo, receivingAudio, receivingVideo;
+    BOOL sendingAudio, sendingVideo, acceptingAudio, acceptingVideo;
 
-    if (state & OCTToxAVFriendCallStateReceivingAudio) {
-        receivingAudio = YES;
+    if (state & OCTToxAVFriendCallStateAcceptingAudio) {
+        acceptingAudio = YES;
     }
 
-    if (state & OCTToxAVFriendCallStateReceivingVideo) {
-        receivingVideo = YES;
+    if (state & OCTToxAVFriendCallStateAcceptingVideo) {
+        acceptingVideo = YES;
     }
 
     if (state & OCTToxAVFriendCallStateSendingAudio) {
@@ -313,10 +313,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-        callToUpdate.receivingAudio = receivingAudio;
-        callToUpdate.receivingVideo = receivingVideo;
-        callToUpdate.sendingAudio = sendingAudio;
-        callToUpdate.sendingVideo = sendingVideo;
+        callToUpdate.friendAcceptingAudio = acceptingAudio;
+        callToUpdate.friendAcceptingVideo = acceptingVideo;
+        callToUpdate.friendSendingAudio = sendingAudio;
+        callToUpdate.friendSendingVideo = sendingVideo;
         callToUpdate.pausedStatus = pausedStatus;
 
         if (! wasPaused && (state == OCTToxAVFriendCallStatePaused)) {
@@ -347,10 +347,10 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = OCTCallStatusRinging;
         callToUpdate.caller = friend;
-        callToUpdate.sendingAudio = audio;
-        callToUpdate.receivingAudio = audio;
-        callToUpdate.sendingVideo = video;
-        callToUpdate.receivingVideo = video;
+        callToUpdate.friendSendingAudio = audio;
+        callToUpdate.friendAcceptingAudio = audio;
+        callToUpdate.friendSendingVideo = video;
+        callToUpdate.friendAcceptingVideo = video;
     }];
 
     if ([self.delegate respondsToSelector:@selector(callSubmanager:receiveCall:audioEnabled:videoEnabled:)]) {

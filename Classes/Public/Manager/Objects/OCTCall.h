@@ -40,24 +40,24 @@
 @property OCTFriend *caller;
 
 /**
- * We are sending audio to the other client.
+ * Friend is sending audio.
  */
-@property BOOL sendingAudio;
+@property BOOL friendSendingAudio;
 
 /**
- * We are sending video to the other client.
+ * Friend is sending video.
  */
-@property BOOL sendingVideo;
+@property BOOL friendSendingVideo;
 
 /**
- * We are receiving audio to the other client.
+ * Friend is accepting audio.
  */
-@property BOOL receivingAudio;
+@property BOOL friendAcceptingAudio;
 
 /**
- * We are receiving video to the other client.
+ * Friend is accepting video.
  */
-@property BOOL receivingVideo;
+@property BOOL friendAcceptingVideo;
 
 /**
  * Call duration
