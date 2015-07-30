@@ -62,14 +62,14 @@ typedef NS_OPTIONS(NSInteger, OCTToxAVCallState) {
         OCTToxAVFriendCallStateSendingVideo = 1 << 3,
 
         /**
-         * The flag that marks that friend is receiving audio.
+         * The flag that marks that friend is accepting audio.
          */
-        OCTToxAVFriendCallStateReceivingAudio = 1 << 4,
+        OCTToxAVFriendCallStateAcceptingAudio = 1 << 4,
 
         /**
-         * The flag that marks that friend is receiving video.
+         * The flag that marks that friend is accepting video.
          */
-        OCTToxAVFriendCallStateReceivingVideo = 1 << 5,
+        OCTToxAVFriendCallStateAcceptingVideo = 1 << 5,
 };
 
 /*******************************************************************************
