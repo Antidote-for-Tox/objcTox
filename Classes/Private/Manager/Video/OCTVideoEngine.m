@@ -66,6 +66,10 @@ static uint8_t *reusableVChromaPlane;
 
 - (void)startVideoSession
 {
+    if ([self isVideoSessionRunning]) {
+        return;
+    }
+
     dispatch_async(self.processingQueue, ^{
         [self.captureSession startRunning];
     });
@@ -73,6 +77,10 @@ static uint8_t *reusableVChromaPlane;
 
 - (void)stopVideoSession
 {
+    if (! [self isVideoSessionRunning]) {
+        return;
+    }
+
     dispatch_async(self.processingQueue, ^{
         [self.captureSession stopRunning];
     });

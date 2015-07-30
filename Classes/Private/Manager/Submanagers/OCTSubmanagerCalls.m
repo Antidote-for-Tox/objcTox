@@ -100,7 +100,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         return NO;
     }
 
-    if (enable) {
+    if (enable && (call.pausedStatus == OCTCallPausedStatusNone)) {
         OCTFriend *friend = [call.chat.friends firstObject];
         self.videoEngine.friendNumber = friend.friendNumber;
         [self.videoEngine startVideoSession];
@@ -289,14 +289,18 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     if (pause && ! wasPaused) {
         [self.timer stopTimer];
         [self.audioEngine stopAudioFlow:nil];
+        [self.videoEngine stopVideoSession];
     }
     else if (! pause &&  (previousPausedStatus == OCTCallPausedStatusByUser)) {
         [self.audioEngine startAudioFlow:nil];
+        [self.videoEngine startVideoSession];
         [self.timer startTimerForCall:call];
         self.audioEngine.friendNumber = friend.friendNumber;
+        self.videoEngine.friendNumber = friend.friendNumber;
     }
     else if (! pause) {
         self.audioEngine.friendNumber = friend.friendNumber;
+        self.videoEngine.friendNumber = friend.friendNumber;
     }
 }
 
@@ -350,7 +354,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
 - (void)checkForCurrentActiveCallAndPause
 {
-    if (! [self.audioEngine isAudioRunning:nil]) {
+    if (! [self.audioEngine isAudioRunning:nil] && ! [self.videoEngine isVideoSessionRunning]) {
         return;
     }
 
