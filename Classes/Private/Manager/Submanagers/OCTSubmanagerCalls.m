@@ -92,6 +92,31 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     return nil;
 }
 
+- (BOOL)enable:(BOOL)enable videoForCall:(OCTCall *)call error:(NSError **)error
+{
+    BOOL success = [self setVideoBitrate:kDefaultVideoBitRate forCall:call error:error];
+
+    if (! success) {
+        return NO;
+    }
+
+    if (enable) {
+        OCTFriend *friend = [call.chat.friends firstObject];
+        self.videoEngine.friendNumber = friend.friendNumber;
+        [self.videoEngine startVideoSession];
+    }
+    else {
+        [self.videoEngine stopVideoSession];
+    }
+
+    OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+    [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        call.videoIsEnabled = enable;
+    }];
+
+    return success;
+}
+
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
@@ -201,20 +226,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         OCTFriend *friend = call.chat.friends.firstObject;
 
         return [self.toxAV setAudioBitRate:bitrate force:NO forFriend:friend.friendNumber error:error];
-    }
-    else {
-        // TO DO: Group Calls
-        return NO;
-    }
-}
-
-- (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
-{
-    if (call.chat.friends.count == 1) {
-
-        OCTFriend *friend = call.chat.friends.firstObject;
-
-        return [self.toxAV setVideoBitRate:bitrate force:NO forFriend:friend.friendNumber error:error];
     }
     else {
         // TO DO: Group Calls
@@ -345,6 +356,20 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
     OCTCall *call = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
     [self sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
+}
+
+- (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error
+{
+    if (call.chat.friends.count == 1) {
+
+        OCTFriend *friend = call.chat.friends.firstObject;
+
+        return [self.toxAV setVideoBitRate:bitrate force:NO forFriend:friend.friendNumber error:error];
+    }
+    else {
+        // TO DO: Group Calls
+        return NO;
+    }
 }
 
 #pragma mark OCTToxAV delegate methods

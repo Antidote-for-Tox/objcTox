@@ -133,6 +133,28 @@
     XCTAssertTrue([call isOutgoing]);
 }
 
+- (void)testEnableVideoForCall
+{
+    id partialMockedVideoEngine = OCMPartialMock([OCTVideoEngine new]);
+    self.callManager.videoEngine = partialMockedVideoEngine;
+    [self.mockedVideoEngine setExpectationOrderMatters:YES];
+    OCMExpect([partialMockedVideoEngine startVideoSession]);
+    OCMExpect([partialMockedVideoEngine stopVideoSession]);
+
+    [OCMStub([self.mockedToxAV setVideoBitRate:123 force:YES forFriend:987 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [self createFriendWithFriendNumber:987];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:987 status:OCTCallStatusActive];
+
+    XCTAssertTrue([self.callManager enable:YES videoForCall:call error:nil]);
+    XCTAssertTrue(call.videoIsEnabled);
+    XCTAssertEqual(self.callManager.videoEngine.friendNumber, 987);
+
+    XCTAssertTrue([self.callManager enable:NO videoForCall:call error:nil]);
+    XCTAssertFalse(call.videoIsEnabled);
+
+    OCMVerifyAll(partialMockedVideoEngine);
+}
+
 - (void)testEndCall
 {
     OCMStub([self.mockedToxAV callFriendNumber:12 audioBitRate:48 videoBitRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -278,18 +300,6 @@
 
     XCTAssertTrue([self.callManager setAudioBitrate:5555 forCall:call error:nil]);
     OCMVerify([self.mockedToxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]);
-}
-
-- (void)testSetVideoBitRate
-{
-    [self createFriendWithFriendNumber:321];
-
-    OCTCall *call = [self.callManager createCallWithFriendNumber:321 status:OCTCallStatusActive];
-
-    OCMStub([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
-
-    XCTAssertTrue([self.callManager setVideoBitrate:5555 forCall:call error:nil]);
-    OCMVerify([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]);
 }
 
 #pragma mark - Pause Scenarios
