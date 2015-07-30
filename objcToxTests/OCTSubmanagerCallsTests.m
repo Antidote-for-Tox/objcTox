@@ -182,7 +182,7 @@
         callToUpdate.status = OCTCallStatusRinging;
     }];
 
-    OCTToxAVCallState state;
+    OCTToxAVCallState state = 0;
     state |= OCTToxAVFriendCallStateFinished;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:89];
@@ -214,7 +214,7 @@
         callToUpdate.status = OCTCallStatusDialing;
     }];
 
-    OCTToxAVCallState state;
+    OCTToxAVCallState state = 0;
     state |= OCTToxAVFriendCallStateReceivingVideo;
 
     [self.callManager toxAV:nil callStateChanged:state friendNumber:92];
@@ -404,7 +404,7 @@
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:111 status:OCTCallStatusActive];
 
-    OCTToxAVCallState state;
+    OCTToxAVCallState state = 0;
 
     state |= OCTToxAVFriendCallStateReceivingAudio;
     state |= OCTToxAVFriendCallStateReceivingVideo;
