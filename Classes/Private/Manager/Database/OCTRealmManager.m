@@ -46,8 +46,10 @@
 
     _queue = dispatch_queue_create("OCTRealmManager queue", NULL);
 
+    __weak OCTRealmManager *weakSelf = self;
     dispatch_sync(_queue, ^{
-        _realm = [RLMRealm realmWithPath:path];
+        __strong OCTRealmManager *strongSelf = weakSelf;
+        strongSelf->_realm = [RLMRealm realmWithPath:path];
     });
 
     return self;

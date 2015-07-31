@@ -231,7 +231,7 @@
 
         NSError *error;
 
-        if (! [data writeToFile:savedDataPath options:0 error:&error]) {
+        if (! [data writeToFile:savedDataPath options:NSDataWritingAtomic error:&error]) {
             @throw [NSException exceptionWithName:@"saveToxException"
                                            reason:error.debugDescription
                                          userInfo:@{ @"NSError" : error }];
