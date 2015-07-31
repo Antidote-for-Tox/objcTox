@@ -490,10 +490,20 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 - (void)                 toxAV:(OCTToxAV *)toxAV
     receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
                         yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
-                        vPlane:(OCTToxAVPlaneData *)vPlane aPlane:(OCTToxAVPlaneData *)aPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
                        yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
-                       vStride:(OCTToxAVStrideData)vStride aStride:(OCTToxAVStrideData)aStride
+                       vStride:(OCTToxAVStrideData)vStride
                   friendNumber:(OCTToxFriendNumber)friendNumber
-{}
+{
+    [self.videoEngine receiveVideoFrameWithWidth:width
+                                          height:height
+                                          yPlane:yPlane
+                                          uPlane:uPlane
+                                          vPlane:vPlane
+                                         yStride:yStride
+                                         uStride:uStride
+                                         vStride:vStride
+                                    friendNumber:friendNumber];
+}
 
 @end

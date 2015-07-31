@@ -23,6 +23,12 @@
  */
 - (BOOL)setupWithError:(NSError **)error;
 
+/**
+ * Process incoming video frames.
+ * Set to YES to process video, otherwise NO
+ * to ignore the incoming frames in receiveVideoFrameWithWidth...
+ */
+@property (nonatomic, assign) BOOL processIncomingVideo;
 
 /**
  * Start the vidio session.
@@ -41,8 +47,42 @@
 - (BOOL)isVideoSessionRunning;
 
 /**
+ * View controller with video.
+ */
+
+/**
  * Layer of the preview video.
  */
 - (CALayer *)videoCallPreview;
 
+/**
+ * Provide video frames to video engine to process.
+ * @param width Width of the frame in pixels.
+ * @param height Height of the frame in pixels.
+ * @param yPlane
+ * @param uPlane
+ * @param vPlane Plane data.
+ *          The size of plane data is derived from width and height where
+ *          Y = MAX(width, abs(ystride)) * height,
+ *          U = MAX(width/2, abs(ustride)) * (height/2) and
+ *          V = MAX(width/2, abs(vstride)) * (height/2).
+ * @param yStride
+ * @param uStride
+ * @param vStride Strides data. Strides represent padding for each plane
+ *                that may or may not be present. You must handle strides in
+ *                your image processing code. Strides are negative if the
+ *                image is bottom-up hence why you MUST abs() it when
+ *                calculating plane buffer size.
+ * @param friendNumber The friend number of the friend who sent an audio frame.
+
+ */
+- (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
+                           height:(OCTToxAVVideoHeight)height
+                           yPlane:(OCTToxAVPlaneData *)yPlane
+                           uPlane:(OCTToxAVPlaneData *)uPlane
+                           vPlane:(OCTToxAVPlaneData *)vPlane
+                          yStride:(OCTToxAVStrideData)yStride
+                          uStride:(OCTToxAVStrideData)uStride
+                         vStride:(OCTToxAVStrideData)vStride
+                     friendNumber:(OCTToxFriendNumber)friendNumber;
 @end

@@ -37,6 +37,14 @@
       sampleRate:(OCTToxAVSampleRate)sampleRate
     friendNumber:(OCTToxFriendNumber)friendNumber;
 
+- (void)                 toxAV:(OCTToxAV *)toxAV
+    receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
+                       yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
+                       vStride:(OCTToxAVStrideData)vStride
+                  friendNumber:(OCTToxFriendNumber)friendNumber;
+
 - (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status;
 - (OCTCall *)getCurrentCallForFriendNumber:(OCTToxFriendNumber)friendNumber;
 
@@ -458,6 +466,39 @@
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
     OCMVerify([self.mockedAudioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
+}
+
+- (void)testReceiveVideo
+{
+    OCTToxAVVideoHeight height = 1920;
+    OCTToxAVVideoHeight width = 1080;
+    OCTToxAVPlaneData y[] = {5, 5, 6, 8};
+    OCTToxAVPlaneData u[] = {5, 5, 6, 8};
+    OCTToxAVPlaneData v[] = {5, 5, 6, 8};
+    OCTToxAVStrideData yStride = 44;
+    OCTToxAVStrideData uStride = 45;
+    OCTToxAVStrideData vStride = 46;
+
+    [self.callManager toxAV:nil
+ receiveVideoFrameWithWidth:width
+                     height:height
+                     yPlane:y
+                     uPlane:u
+                     vPlane:v
+                    yStride:yStride
+                    uStride:uStride
+                    vStride:vStride
+               friendNumber:444];
+
+    OCMVerify([self.mockedVideoEngine receiveVideoFrameWithWidth:width
+                                                          height:height
+                                                          yPlane:y
+                                                          uPlane:u
+                                                          vPlane:v
+                                                         yStride:yStride
+                                                         uStride:uStride
+                                                         vStride:vStride
+                                                    friendNumber:444]);
 }
 
 - (void)testReceiveUnstableBitrate
