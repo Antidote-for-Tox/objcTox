@@ -38,7 +38,7 @@
         NSError *error;
         BOOL status = [callSubmanager answerCall:call
                                      enableAudio:YES
-                                     enableVideo:NO
+                                     enableVideo:YES
                                            error:&error];
         if (! status) {
             NSLog(@"Accept call error: %@, %@", error.localizedDescription

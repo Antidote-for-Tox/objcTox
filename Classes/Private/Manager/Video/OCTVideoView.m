@@ -43,7 +43,7 @@
 - (void)setImage:(CIImage *)image
 {
     _image = image;
-    [self display];
+    [self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect

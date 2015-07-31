@@ -35,12 +35,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (instancetype)init
 {
+    DDLogVerbose(@"%@: init", self);
     self = [super init];
     if (! self) {
         return nil;
     }
 
     _captureSession = [AVCaptureSession new];
+    _captureSession.sessionPreset = AVCaptureSessionPreset640x480;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
 
@@ -51,6 +53,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)setupWithError:(NSError **)error
 {
+    DDLogVerbose(@"%@: setupWithError", self);
     AVCaptureDevice *videoCaptureDevice = [self frontCamera];
     AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:videoCaptureDevice error:error];
 
@@ -73,6 +76,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)startSendingVideo
 {
+    DDLogVerbose(@"%@: startSendingVideo", self);
     self.processIncomingVideo = YES;
     if ([self isVideoSessionRunning]) {
         return;
@@ -85,6 +89,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)stopSendingVideo
 {
+    DDLogVerbose(@"%@: stopSendingVideo", self);
     self.processIncomingVideo = NO;
 
     if (! [self isVideoSessionRunning]) {
@@ -98,11 +103,13 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)isVideoSessionRunning
 {
+    DDLogVerbose(@"%@: isVideoSessionRunning", self);
     return self.captureSession.isRunning;
 }
 
 - (CALayer *)videoCallPreview
 {
+    DDLogVerbose(@"%@: videoCallPreview", self);
     AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
 
     return previewLayer;
@@ -110,6 +117,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (UIView *)videoFeedWithRect:(CGRect)rect;
 {
+    DDLogVerbose(@"%@: videoFeedWithRect", self);
     if (! self.videoView) {
         self.videoView = [[OCTVideoView alloc] initWithFrame:rect];
     }
@@ -207,13 +215,16 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         reusableVChromaPlane[i / 2] = uvPlane[i+1];
     }
 
-    [self.toxav sendVideoFrametoFriend:self.friendNumber
-                                 width:width
-                                height:height
-                                yPlane:yPlane
-                                uPlane:reusableUChromaPlane
-                                vPlane:reusableVChromaPlane
-                                 error:nil];
+    NSError *error;
+    if (! [self.toxav sendVideoFrametoFriend:self.friendNumber
+                                       width:width
+                                      height:height
+                                      yPlane:yPlane
+                                      uPlane:reusableUChromaPlane
+                                      vPlane:reusableVChromaPlane
+                                       error:&error]) {
+        DDLogWarn(@"%@ error:%@", self, error);
+    }
 
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
 }
@@ -222,6 +233,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (AVCaptureDevice *)frontCamera
 {
+    DDLogVerbose(@"%@: frontCamera", self);
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice *device in devices) {
         if ([device position] == AVCaptureDevicePositionFront) {

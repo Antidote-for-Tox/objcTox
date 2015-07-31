@@ -18,7 +18,7 @@
 
 @property (strong, nonatomic) RBQFetchedResultsController *resultsController;
 @property (strong, nonatomic) OCTCall *selectedCall;
-@property (strong, nonatomic) UIView *previewVideoView;
+@property (strong, nonatomic) UIView *videoFeed;
 
 @end
 
@@ -45,6 +45,14 @@
     self.title = @"Calls";
 
     return self;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [self.videoFeed removeFromSuperview];
+    self.videoFeed = nil;
 }
 
 #pragma mark -  UITableViewDelegate
@@ -150,7 +158,7 @@
         }];
 
         [sheet bk_addButtonWithTitle:@"Video preview" handler:^{
-            [weakSelf showVideoPreview];
+            [weakSelf showVideo];
         }];
     }];
 
@@ -246,18 +254,13 @@
     [self.manager.calls sendCallControl:OCTToxAVCallControlUnmuteAudio toCall:self.selectedCall error:nil];
 }
 
-- (void)showVideoPreview
+- (void)showVideo
 {
-    CALayer *layer = [self.manager.calls videoCallPreview];
+    CGFloat midY = self.view.bounds.size.height / 2;
+    self.videoFeed = [self.manager.calls videoFeedWithRect:CGRectMake(0, midY, 300, 300)];
+    self.videoFeed.backgroundColor = [UIColor blackColor];
 
-    self.previewVideoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
-    self.previewVideoView.backgroundColor = [UIColor blackColor];
-
-    layer.frame = self.previewVideoView.bounds;
-
-    [self.previewVideoView.layer addSublayer:layer];
-
-    [self.view addSubview:self.previewVideoView];
+    [self.view addSubview:self.videoFeed];
 }
 
 @end

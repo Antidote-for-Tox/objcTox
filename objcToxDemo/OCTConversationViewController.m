@@ -169,7 +169,7 @@
 - (void)callFriend
 {
     NSError *error;
-    OCTCall *call = [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
+    OCTCall *call = [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:YES error:&error];
 
     if (! call) {
         NSLog(@"Unable to create call, %@", error.localizedFailureReason);

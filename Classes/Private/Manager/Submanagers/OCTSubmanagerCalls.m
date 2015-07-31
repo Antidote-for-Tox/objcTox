@@ -51,6 +51,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         self.audioEngine = [OCTAudioEngine new];
         self.audioEngine.toxav = self.toxAV;
         self.videoEngine = [OCTVideoEngine new];
+        self.videoEngine.toxav = self.toxAV;
 
 
         status = [self.audioEngine setupWithError:error] &&
@@ -64,6 +65,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
+
 
     if (chat.friends.count == 1) {
         OCTFriend *friend = chat.friends.lastObject;
@@ -80,7 +82,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
         OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
 
-        [self updateCall:call withStatus:OCTCallStatusDialing];
+        OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+        [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+            callToUpdate.status = OCTCallStatusDialing;
+            callToUpdate.videoIsEnabled = enableVideo;
+        }];
 
         self.enableMicrophone = YES;
 
@@ -102,7 +108,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         return NO;
     }
 
-    if (enable && (! call.isPaused)) {
+    if (enable && (! [call isPaused])) {
         OCTFriend *friend = [call.chat.friends firstObject];
         self.videoEngine.friendNumber = friend.friendNumber;
         [self.videoEngine startSendingVideo];
@@ -274,7 +280,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    BOOL wasPaused = call.isPaused;
+    BOOL wasPaused = [call isPaused];
     OCTCallPausedStatus previousPausedStatus = call.pausedStatus;
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
@@ -310,7 +316,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
     [realmManager addMessageCall:call];
 
-    if (! call.isPaused) {
+    if (! [call isPaused]) {
         [self.timer stopTimer];
     }
 
