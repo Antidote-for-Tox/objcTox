@@ -527,7 +527,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 @end
 
-#pragma Callbacks
+#pragma mark - Callbacks
 
 void callIncomingCallback(ToxAV *cToxAV,
                           uint32_t friendNumber,

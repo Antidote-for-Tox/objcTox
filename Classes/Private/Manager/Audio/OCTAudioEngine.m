@@ -314,7 +314,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
     int32_t availableBytes;
     SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
 
-    if (availableBytes < targetBufferSize) {
+    if (availableBytes < (int32_t)targetBufferSize) {
         memset(targetBuffer, 0, targetBufferSize);
         return noErr;
     }
@@ -357,12 +357,12 @@ OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    self.inputSampleRate = session.sampleRate;
-    self.outputSampleRate = session.sampleRate;
+    self.inputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
+    self.outputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
-    AudioStreamBasicDescription asbd = {0};
+    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
@@ -442,7 +442,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
-    AudioStreamBasicDescription asbd = {0};
+    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     asbd.mSampleRate = rate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
