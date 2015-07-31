@@ -63,7 +63,7 @@
 
     [self.callTimer startTimerForCall:call];
 
-    NSInteger delayTime =  dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC);
+    dispatch_time_t delayTime =  dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC);
 
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
         if (call.callDuration > 1) {
