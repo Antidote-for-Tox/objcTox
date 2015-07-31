@@ -329,7 +329,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(message);
     NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
-    DDLogVerbose(@"%@: add friend with address.length %d, message.length %d", self, address.length, message.length);
+    DDLogVerbose(@"%@: add friend with address.length %lu, message.length %lu", self, address.length, (unsigned long)message.length);
 
     uint8_t *cAddress = [self hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
@@ -351,7 +351,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: add friend with no request and publicKey.length %d", self, publicKey.length);
+    DDLogVerbose(@"%@: add friend with no request and publicKey.length %lu", self, (unsigned long)publicKey.length);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -384,7 +384,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: get friend number with publicKey.length %d", self, publicKey.length);
+    DDLogVerbose(@"%@: get friend number with publicKey.length %lu", self, (unsigned long)publicKey.length);
 
     uint8_t *cPublicKey = [self hexStringToBin:publicKey];
 
@@ -413,6 +413,9 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     if (result) {
         publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+    }
+
+    if (cPublicKey) {
         free(cPublicKey);
     }
 
@@ -550,7 +553,9 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     if (result) {
         name = [[NSString alloc] initWithBytes:cName length:size encoding:NSUTF8StringEncoding];
+    }
 
+    if (cName) {
         free(cName);
     }
 
@@ -615,6 +620,9 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     if (result) {
         message = [[NSString alloc] initWithBytes:cBuffer length:size encoding:NSUTF8StringEncoding];
+    }
+
+    if (cBuffer) {
         free(cBuffer);
     }
 
@@ -685,13 +693,15 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     const uint8_t *cData = [data bytes];
 
     bool result = tox_hash(cHash, cData, (uint32_t)data.length);
+    NSData *hash;
 
-    if (! result) {
-        return nil;
+    if (result) {
+        hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
     }
 
-    NSData *hash = [NSData dataWithBytes:cHash length:TOX_HASH_LENGTH];
-    free(cHash);
+    if (cHash) {
+        free(cHash);
+    }
 
     DDLogInfo(@"%@: hash data result %@", self, hash);
 
@@ -748,15 +758,17 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     TOX_ERR_FILE_GET cError;
 
     bool result = tox_file_get_file_id(self.tox, friendNumber, fileNumber, cFileId, &cError);
+    NSData *fileId;
 
     [self fillError:error withCErrorFileGet:cError];
 
-    if (! result) {
-        return nil;
+    if (result) {
+        fileId = [NSData dataWithBytes:cFileId length:kOCTToxFileIdLength];
     }
 
-    NSData *fileId = [NSData dataWithBytes:cFileId length:kOCTToxFileIdLength];
-    free(cFileId);
+    if (cFileId) {
+        free(cFileId);
+    }
 
     return fileId;
 }
@@ -883,10 +895,10 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 }
 
-- (void)fillError:(NSError **)error withCErrorInit:(TOX_ERR_NEW)cError
+- (BOOL)fillError:(NSError **)error withCErrorInit:(TOX_ERR_NEW)cError
 {
     if (! error || (cError == TOX_ERR_NEW_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorInitCode code = OCTToxErrorInitCodeUnknown;
@@ -896,7 +908,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_NEW_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_NEW_NULL:
             code = OCTToxErrorInitCodeUnknown;
             failureReason = @"Unknown error occured";
@@ -936,12 +948,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorBootstrap:(TOX_ERR_BOOTSTRAP)cError
+- (BOOL)fillError:(NSError **)error withCErrorBootstrap:(TOX_ERR_BOOTSTRAP)cError
 {
     if (! error || (cError == TOX_ERR_BOOTSTRAP_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorBootstrapCode code = OCTToxErrorBootstrapCodeUnknown;
@@ -951,7 +965,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_BOOTSTRAP_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_BOOTSTRAP_NULL:
             code = OCTToxErrorBootstrapCodeUnknown;
             failureReason = @"Unknown error occured";
@@ -967,12 +981,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendAdd:(TOX_ERR_FRIEND_ADD)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendAdd:(TOX_ERR_FRIEND_ADD)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_ADD_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendAdd code = OCTToxErrorFriendAddUnknown;
@@ -982,7 +998,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_ADD_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_ADD_NULL:
             code = OCTToxErrorFriendAddUnknown;
             failureReason = @"Unknown error occured";
@@ -1018,12 +1034,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendDelete:(TOX_ERR_FRIEND_DELETE)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendDelete:(TOX_ERR_FRIEND_DELETE)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_DELETE_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendDelete code = OCTToxErrorFriendDeleteNotFound;
@@ -1033,7 +1051,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_DELETE_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND:
             code = OCTToxErrorFriendDeleteNotFound;
             failureReason = @"Friend not found";
@@ -1041,12 +1059,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendByPublicKey:(TOX_ERR_FRIEND_BY_PUBLIC_KEY)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendByPublicKey:(TOX_ERR_FRIEND_BY_PUBLIC_KEY)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendByPublicKey code = OCTToxErrorFriendByPublicKeyUnknown;
@@ -1056,7 +1076,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL:
             code = OCTToxErrorFriendByPublicKeyUnknown;
             failureReason = @"Unknown error occured";
@@ -1068,12 +1088,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendGetPublicKey:(TOX_ERR_FRIEND_GET_PUBLIC_KEY)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendGetPublicKey:(TOX_ERR_FRIEND_GET_PUBLIC_KEY)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendGetPublicKey code = OCTToxErrorFriendGetPublicKeyFriendNotFound;
@@ -1083,7 +1105,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND:
             code = OCTToxErrorFriendGetPublicKeyFriendNotFound;
             failureReason = @"Friend not found";
@@ -1091,12 +1113,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorSetInfo:(TOX_ERR_SET_INFO)cError
+- (BOOL)fillError:(NSError **)error withCErrorSetInfo:(TOX_ERR_SET_INFO)cError
 {
     if (! error || (cError == TOX_ERR_SET_INFO_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorSetInfoCode code = OCTToxErrorSetInfoCodeUnknow;
@@ -1106,7 +1130,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_SET_INFO_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_SET_INFO_NULL:
             code = OCTToxErrorSetInfoCodeUnknow;
             failureReason = @"Unknown error occured";
@@ -1118,12 +1142,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendGetLastOnline:(TOX_ERR_FRIEND_GET_LAST_ONLINE)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_GET_LAST_ONLINE_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendGetLastOnline code;
@@ -1133,7 +1159,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_GET_LAST_ONLINE_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND:
             code = OCTToxErrorFriendGetLastOnlineFriendNotFound;
             failureReason = @"Friend not found";
@@ -1141,12 +1167,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendQuery:(TOX_ERR_FRIEND_QUERY)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendQuery:(TOX_ERR_FRIEND_QUERY)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_QUERY_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendQuery code = OCTToxErrorFriendQueryUnknown;
@@ -1156,7 +1184,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_QUERY_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_QUERY_NULL:
             code = OCTToxErrorFriendQueryUnknown;
             failureReason = @"Unknown error occured";
@@ -1168,12 +1196,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorSetTyping:(TOX_ERR_SET_TYPING)cError
+- (BOOL)fillError:(NSError **)error withCErrorSetTyping:(TOX_ERR_SET_TYPING)cError
 {
     if (! error || (cError == TOX_ERR_SET_TYPING_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorSetTyping code = OCTToxErrorSetTypingFriendNotFound;
@@ -1183,7 +1213,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_SET_TYPING_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND:
             code = OCTToxErrorSetTypingFriendNotFound;
             failureReason = @"Friend not found";
@@ -1191,12 +1221,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFriendSendMessage:(TOX_ERR_FRIEND_SEND_MESSAGE)cError
+- (BOOL)fillError:(NSError **)error withCErrorFriendSendMessage:(TOX_ERR_FRIEND_SEND_MESSAGE)cError
 {
     if (! error || (cError == TOX_ERR_FRIEND_SEND_MESSAGE_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFriendSendMessage code = OCTToxErrorFriendSendMessageUnknown;
@@ -1206,7 +1238,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FRIEND_SEND_MESSAGE_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FRIEND_SEND_MESSAGE_NULL:
             code = OCTToxErrorFriendSendMessageUnknown;
             failureReason = @"Unknown error occured";
@@ -1234,12 +1266,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFileControl:(TOX_ERR_FILE_CONTROL)cError
+- (BOOL)fillError:(NSError **)error withCErrorFileControl:(TOX_ERR_FILE_CONTROL)cError
 {
     if (! error || (cError == TOX_ERR_FILE_CONTROL_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFileControl code;
@@ -1249,7 +1283,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FILE_CONTROL_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND:
             code = OCTToxErrorFileControlFriendNotFound;
             failureReason = @"Friend not found";
@@ -1281,12 +1315,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFileSeek:(TOX_ERR_FILE_SEEK)cError
+- (BOOL)fillError:(NSError **)error withCErrorFileSeek:(TOX_ERR_FILE_SEEK)cError
 {
     if (! error || (cError == TOX_ERR_FILE_SEEK_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFileSeek code;
@@ -1296,7 +1332,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FILE_SEEK_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND:
             code = OCTToxErrorFileSeekFriendNotFound;
             failureReason = @"Friend not found";
@@ -1324,12 +1360,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFileGet:(TOX_ERR_FILE_GET)cError
+- (BOOL)fillError:(NSError **)error withCErrorFileGet:(TOX_ERR_FILE_GET)cError
 {
     if (! error || (cError == TOX_ERR_FILE_GET_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFileGet code;
@@ -1339,7 +1377,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FILE_GET_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FILE_GET_NULL:
             code = OCTToxErrorFileGetInternal;
             failureReason = @"Interval error";
@@ -1355,12 +1393,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFileSend:(TOX_ERR_FILE_SEND)cError
+- (BOOL)fillError:(NSError **)error withCErrorFileSend:(TOX_ERR_FILE_SEND)cError
 {
     if (! error || (cError == TOX_ERR_FILE_SEND_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFileSend code;
@@ -1370,7 +1410,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FILE_SEND_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FILE_SEND_NULL:
             code = OCTToxErrorFileSendUnknown;
             failureReason = @"Unknown error occured";
@@ -1394,12 +1434,14 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorFileSendChunk:(TOX_ERR_FILE_SEND_CHUNK)cError
+- (BOOL)fillError:(NSError **)error withCErrorFileSendChunk:(TOX_ERR_FILE_SEND_CHUNK)cError
 {
     if (! error || (cError == TOX_ERR_FILE_SEND_CHUNK_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorFileSendChunk code;
@@ -1409,7 +1451,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     switch (cError) {
         case TOX_ERR_FILE_SEND_CHUNK_OK:
             NSAssert(NO, @"We shouldn't be here");
-            return;
+            return NO;
         case TOX_ERR_FILE_SEND_CHUNK_NULL:
             code = OCTToxErrorFileSendChunkUnknown;
             failureReason = @"Unknown error occured";
@@ -1445,6 +1487,8 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
 - (NSError *)createErrorWithCode:(NSUInteger)code
