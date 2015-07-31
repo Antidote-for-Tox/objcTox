@@ -480,15 +480,15 @@
     OCTToxAVStrideData vStride = 46;
 
     [self.callManager toxAV:nil
- receiveVideoFrameWithWidth:width
-                     height:height
-                     yPlane:y
-                     uPlane:u
-                     vPlane:v
-                    yStride:yStride
-                    uStride:uStride
-                    vStride:vStride
-               friendNumber:444];
+     receiveVideoFrameWithWidth:width
+                         height:height
+                         yPlane:y
+                         uPlane:u
+                         vPlane:v
+                        yStride:yStride
+                        uStride:uStride
+                        vStride:vStride
+                   friendNumber:444];
 
     OCMVerify([self.mockedVideoEngine receiveVideoFrameWithWidth:width
                                                           height:height

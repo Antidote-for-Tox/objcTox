@@ -74,15 +74,15 @@
  *                image is bottom-up hence why you MUST abs() it when
  *                calculating plane buffer size.
  * @param friendNumber The friend number of the friend who sent an audio frame.
-
+ *
  */
 - (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
-                           height:(OCTToxAVVideoHeight)height
-                           yPlane:(OCTToxAVPlaneData *)yPlane
-                           uPlane:(OCTToxAVPlaneData *)uPlane
-                           vPlane:(OCTToxAVPlaneData *)vPlane
-                          yStride:(OCTToxAVStrideData)yStride
-                          uStride:(OCTToxAVStrideData)uStride
-                         vStride:(OCTToxAVStrideData)vStride
-                     friendNumber:(OCTToxFriendNumber)friendNumber;
+                            height:(OCTToxAVVideoHeight)height
+                            yPlane:(OCTToxAVPlaneData *)yPlane
+                            uPlane:(OCTToxAVPlaneData *)uPlane
+                            vPlane:(OCTToxAVPlaneData *)vPlane
+                           yStride:(OCTToxAVStrideData)yStride
+                           uStride:(OCTToxAVStrideData)uStride
+                           vStride:(OCTToxAVStrideData)vStride
+                      friendNumber:(OCTToxFriendNumber)friendNumber;
 @end
