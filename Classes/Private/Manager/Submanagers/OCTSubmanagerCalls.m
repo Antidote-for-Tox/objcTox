@@ -216,9 +216,9 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     }
 }
 
-- (UIView *)videoFeed
+- (UIView *)videoFeedWithRect:(CGRect)rect
 {
-    return [self.videoEngine videoFeed];
+    return [self.videoEngine videoFeedWithRect:rect];
 }
 
 - (CALayer *)videoCallPreview

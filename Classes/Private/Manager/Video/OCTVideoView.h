@@ -12,5 +12,6 @@
 
 @interface OCTVideoView : GLKView
 
+@property (strong, nonatomic) CIImage *image;
 
 @end

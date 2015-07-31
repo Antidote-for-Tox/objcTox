@@ -11,7 +11,6 @@
 
 @interface OCTVideoView ()
 
-@property (strong, nonatomic) CIImage *image;
 @property (strong, nonatomic) CIContext *coreImageContext;
 
 @end
@@ -38,6 +37,13 @@
     self.enableSetNeedsDisplay = NO;
 
     return self;
+}
+
+
+- (void)setImage:(CIImage *)image
+{
+    _image = image;
+    [self display];
 }
 
 - (void)drawRect:(CGRect)rect

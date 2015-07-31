@@ -85,7 +85,7 @@
  * The UIView that will have the video feed.
  * @return UIView of the video feed. Nil if no video available.
  */
-- (UIView *)videoFeed;
+- (UIView *)videoFeedWithRect:(CGRect)rect;
 
 /**
  * The preview video of the user.

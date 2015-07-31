@@ -7,18 +7,25 @@
 //
 
 #import "OCTVideoEngine.h"
+#import "OCTVideoView.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 @import AVFoundation;
 
 static uint8_t *reusableUChromaPlane;
 static uint8_t *reusableVChromaPlane;
 
+static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
 @interface OCTVideoEngine () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureVideoDataOutput *dataOutput;
 @property (nonatomic, strong) dispatch_queue_t processingQueue;
+@property (nonatomic, strong) OCTVideoView *videoView;
 
 @property (nonatomic, assign) NSUInteger sizeOfChromaPlanes;
 
@@ -101,6 +108,15 @@ static uint8_t *reusableVChromaPlane;
     return previewLayer;
 }
 
+- (UIView *)videoFeedWithRect:(CGRect)rect;
+{
+    if (! self.videoView) {
+        self.videoView = [[OCTVideoView alloc] initWithFrame:rect];
+    }
+
+    return self.videoView;
+}
+
 - (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
                             height:(OCTToxAVVideoHeight)height
                             yPlane:(OCTToxAVPlaneData *)yPlane
@@ -111,10 +127,38 @@ static uint8_t *reusableVChromaPlane;
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    if (! self.processIncomingVideo) {
+    if (! self.processIncomingVideo || ! self.videoView) {
         return;
     }
     // Create CVPixelBuffer -->CIImage --> OCTVideoView?
+    CVPixelBufferRef bufferRef = NULL;
+
+    void *planeBaseAddress[3] = {yPlane, uPlane, vPlane};
+    size_t planeWidths[3] = {(size_t)yStride, (size_t)uStride, (size_t)vStride};
+    size_t planeHeight[3] = {height, height / 4, height / 4};
+    size_t bytesPerRow[3] = {abs(yStride - width), (abs(uStride) - width) / 2, (abs(vStride) - width) / 4};
+
+    CVReturn success = CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault,
+                                                          width, height,
+                                                          kPixelFormat,
+                                                          NULL,
+                                                          0,
+                                                          2,
+                                                          planeBaseAddress,
+                                                          planeWidths, planeHeight, bytesPerRow,
+                                                          NULL,
+                                                          NULL,
+                                                          NULL,
+                                                          &bufferRef);
+
+    if (success != kCVReturnSuccess) {
+        DDLogWarn(@"Error:%d CVPixelBufferCreateWithPlanarBytes",  success);
+    }
+
+    CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
+    CVPixelBufferRelease(bufferRef);
+
+    self.videoView.image = coreImage;
 }
 
 #pragma mark - Buffer Delegate

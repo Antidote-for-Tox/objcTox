@@ -58,7 +58,7 @@
 /**
  * Current video feed.
  */
-- (UIView *)videoFeed;
+- (UIView *)videoFeedWithRect:(CGRect)rect;
 
 /**
  * Layer of the preview video.
