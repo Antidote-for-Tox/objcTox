@@ -14,6 +14,11 @@
 @interface OCTVideoEngine : NSObject
 
 @property (weak, nonatomic) OCTToxAV *toxav;
+
+/**
+ * Current friend number that video engine should
+ * process video data to and from.
+ */
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 
 /**
@@ -27,18 +32,22 @@
  * Process incoming video frames.
  * Set to YES to process video, otherwise NO
  * to ignore the incoming frames in receiveVideoFrameWithWidth...
+ * Will be set to YES automatically when calling startSendingVideo
+ * Will be set to NO after stopSendingVideo
  */
 @property (nonatomic, assign) BOOL processIncomingVideo;
 
 /**
- * Start the vidio session.
+ * Start sending video data.
+ * This will turn on processIncomingVideo to YES
  */
-- (void)startVideoSession;
+- (void)startSendingVideo;
 
 /**
- * Stop the video session.
+ * Stop sending video data.
+ * This will turn off processIncomingVideo to NO
  */
-- (void)stopVideoSession;
+- (void)stopSendingVideo;
 
 /**
  * Indicates if the video session is running.
@@ -47,11 +56,14 @@
 - (BOOL)isVideoSessionRunning;
 
 /**
- * View controller with video.
+ * Current video feed.
  */
+- (UIView *)videoFeed;
 
 /**
  * Layer of the preview video.
+ * @return CALayer that can be added to a UIView. Nil if
+ * OCTVideoEngine is not sending any video.
  */
 - (CALayer *)videoCallPreview;
 

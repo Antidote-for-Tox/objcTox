@@ -64,8 +64,9 @@ static uint8_t *reusableVChromaPlane;
     return YES;
 }
 
-- (void)startVideoSession
+- (void)startSendingVideo
 {
+    self.processIncomingVideo = YES;
     if ([self isVideoSessionRunning]) {
         return;
     }
@@ -75,8 +76,10 @@ static uint8_t *reusableVChromaPlane;
     });
 }
 
-- (void)stopVideoSession
+- (void)stopSendingVideo
 {
+    self.processIncomingVideo = NO;
+
     if (! [self isVideoSessionRunning]) {
         return;
     }

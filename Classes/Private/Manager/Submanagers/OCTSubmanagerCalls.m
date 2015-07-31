@@ -81,6 +81,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
 
         [self updateCall:call withStatus:OCTCallStatusDialing];
+
         self.enableMicrophone = YES;
 
         return call;
@@ -92,7 +93,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     return nil;
 }
 
-- (BOOL)enable:(BOOL)enable videoForCall:(OCTCall *)call error:(NSError **)error
+- (BOOL)enable:(BOOL)enable videoSendingForCall:(OCTCall *)call error:(NSError **)error
 {
     BOOL success = [self setVideoBitrate:kDefaultVideoBitRate forCall:call error:error];
 
@@ -103,10 +104,10 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     if (enable && (call.pausedStatus == OCTCallPausedStatusNone)) {
         OCTFriend *friend = [call.chat.friends firstObject];
         self.videoEngine.friendNumber = friend.friendNumber;
-        [self.videoEngine startVideoSession];
+        [self.videoEngine startSendingVideo];
     }
     else {
-        [self.videoEngine stopVideoSession];
+        [self.videoEngine stopSendingVideo];
     }
 
     OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
@@ -122,6 +123,13 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
 
+    if (enableVideo) {
+        OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+        [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+            callToUpdate.videoIsEnabled = YES;
+        }];
+    }
+
     if (call.chat.friends.count == 1) {
 
         OCTFriend *friend = call.chat.friends.firstObject;
@@ -135,10 +143,10 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
         [self checkForCurrentActiveCallAndPause];
 
-        self.audioEngine.friendNumber = friend.friendNumber;
-        [self.audioEngine startAudioFlow:nil];
+        [self start:YES enginesForCall:call];
+
         [self updateCall:call withStatus:OCTCallStatusActive];
-        [self.timer startTimerForCall:call];
+
         self.enableMicrophone = YES;
 
         return YES;
@@ -184,7 +192,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
                 if ((self.audioEngine.friendNumber == friend.friendNumber) &&
                     ([self.audioEngine isAudioRunning:nil])) {
-                    return [self.audioEngine stopAudioFlow:error];
+                    [self start:NO enginesForCall:call];
                 }
 
                 break;
@@ -207,15 +215,13 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     }
 }
 
-- (UIView *)videoFeedForCall:(OCTCall *)call
+- (UIView *)videoFeed
 {
-    return nil;
+    return [self.videoEngine videoFeed];
 }
 
 - (CALayer *)videoCallPreview
 {
-    [self.videoEngine startVideoSession];
-
     return [self.videoEngine videoCallPreview];
 }
 
@@ -287,16 +293,10 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     OCTFriend *friend = [call.chat.friends firstObject];
 
     if (pause && ! wasPaused) {
-        [self.timer stopTimer];
-        [self.audioEngine stopAudioFlow:nil];
-        [self.videoEngine stopVideoSession];
+        [self start:NO enginesForCall:call];
     }
     else if (! pause &&  (previousPausedStatus == OCTCallPausedStatusByUser)) {
-        [self.audioEngine startAudioFlow:nil];
-        [self.videoEngine startVideoSession];
-        [self.timer startTimerForCall:call];
-        self.audioEngine.friendNumber = friend.friendNumber;
-        self.videoEngine.friendNumber = friend.friendNumber;
+        [self start:YES enginesForCall:call];
     }
     else if (! pause) {
         self.audioEngine.friendNumber = friend.friendNumber;
@@ -376,6 +376,29 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     }
 }
 
+- (void)start:(BOOL)start enginesForCall:(OCTCall *)call
+{
+    if (start) {
+        OCTFriend *friend = [call.chat.friends firstObject];
+
+        [self.audioEngine startAudioFlow:nil];
+
+        if (call.videoIsEnabled) {
+            [self.videoEngine startSendingVideo];
+        }
+
+        self.audioEngine.friendNumber = friend.friendNumber;
+        self.videoEngine.friendNumber = friend.friendNumber;
+
+        [self.timer startTimerForCall:call];
+    }
+    else {
+        [self.audioEngine stopAudioFlow:nil];
+        [self.videoEngine stopSendingVideo];
+        [self.timer stopTimer];
+    }
+}
+
 #pragma mark OCTToxAV delegate methods
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
@@ -416,21 +439,17 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
     if (call.status == OCTCallStatusDialing) {
         [self updateCall:call withStatus:OCTCallStatusActive];
-        self.audioEngine.friendNumber = friendNumber;
-        [self.audioEngine startAudioFlow:nil];
-        [self.timer startTimerForCall:call];
+        [self start:YES enginesForCall:call];
     }
 
     OCTCallPausedStatus pauseStatus = call.pausedStatus;
 
     if ((pauseStatus == OCTCallPausedStatusNone) && (state == OCTToxAVFriendCallStatePaused)) {
-        [self.audioEngine stopAudioFlow:nil];
-        [self.timer stopTimer];
+        [self start:NO enginesForCall:call];
     }
 
     if ((pauseStatus == OCTCallPausedStatusByFriend) && (state != OCTToxAVFriendCallStatePaused)) {
-        [self.audioEngine startAudioFlow:nil];
-        [self.timer startTimerForCall:call];
+        [self start:YES enginesForCall:call];
     }
 
     if (state == OCTToxAVFriendCallStatePaused) {

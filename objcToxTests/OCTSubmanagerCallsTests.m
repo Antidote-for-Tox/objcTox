@@ -146,18 +146,18 @@
     id partialMockedVideoEngine = OCMPartialMock([OCTVideoEngine new]);
     self.callManager.videoEngine = partialMockedVideoEngine;
     [self.mockedVideoEngine setExpectationOrderMatters:YES];
-    OCMExpect([partialMockedVideoEngine startVideoSession]);
-    OCMExpect([partialMockedVideoEngine stopVideoSession]);
+    OCMExpect([partialMockedVideoEngine startSendingVideo]);
+    OCMExpect([partialMockedVideoEngine stopSendingVideo]);
 
     [OCMStub([self.mockedToxAV setVideoBitRate:123 force:YES forFriend:987 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     [self createFriendWithFriendNumber:987];
     OCTCall *call = [self.callManager createCallWithFriendNumber:987 status:OCTCallStatusActive];
 
-    XCTAssertTrue([self.callManager enable:YES videoForCall:call error:nil]);
+    XCTAssertTrue([self.callManager enable:YES videoSendingForCall:call error:nil]);
     XCTAssertTrue(call.videoIsEnabled);
     XCTAssertEqual(self.callManager.videoEngine.friendNumber, 987);
 
-    XCTAssertTrue([self.callManager enable:NO videoForCall:call error:nil]);
+    XCTAssertTrue([self.callManager enable:NO videoSendingForCall:call error:nil]);
     XCTAssertFalse(call.videoIsEnabled);
 
     OCMVerifyAll(partialMockedVideoEngine);
@@ -292,13 +292,16 @@
     [self createFriendWithFriendNumber:12345];
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:12345 status:OCTCallStatusActive];
+    [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.videoIsEnabled = YES;
+    }];
 
     OCMStub([self.mockedVideoEngine isVideoSessionRunning]).andReturn(YES);
     OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(YES);
-    OCMStub([self.mockedVideoEngine stopVideoSession]);
+    OCMStub([self.mockedVideoEngine stopSendingVideo]);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
-    OCMVerify([self.mockedVideoEngine stopVideoSession]);
+    OCMVerify([self.mockedVideoEngine stopSendingVideo]);
     OCMVerify([partialMockedAudioEngine stopAudioFlow:nil]);
 
     OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(NO);
@@ -307,7 +310,7 @@
     OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:12345 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
 
-    OCMVerify([self.mockedVideoEngine startVideoSession]);
+    OCMVerify([self.mockedVideoEngine startSendingVideo]);
     OCMVerify([partialMockedAudioEngine startAudioFlow:nil]);
 }
 
@@ -349,6 +352,7 @@
     [mockedTimer setExpectationOrderMatters:YES];
     OCMExpect([mockedTimer stopTimer]);
     OCMExpect([mockedTimer startTimerForCall:secondCall]);
+
     self.callManager.timer = mockedTimer;
 
     [self.callManager answerCall:secondCall enableAudio:YES enableVideo:NO error:nil];

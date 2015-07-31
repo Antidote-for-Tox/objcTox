@@ -52,7 +52,7 @@
  * @param error Pointer to an error object.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)enable:(BOOL)enable videoForCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)enable:(BOOL)enable videoSendingForCall:(OCTCall *)call error:(NSError **)error;
 
 /**
  * Answer a call
@@ -83,10 +83,9 @@
 
 /**
  * The UIView that will have the video feed.
- * @param call The call that has the video feed.
  * @return UIView of the video feed. Nil if no video available.
  */
-- (UIView *)videoFeedForCall:(OCTCall *)call;
+- (UIView *)videoFeed;
 
 /**
  * The preview video of the user.
