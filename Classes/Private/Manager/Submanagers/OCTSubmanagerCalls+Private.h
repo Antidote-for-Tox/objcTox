@@ -14,7 +14,7 @@
 #import "OCTVideoEngine.h"
 #import "OCTRealmManager.h"
 #import "RBQFetchRequest.h"
-#import "OCTCall.h"
+#import "OCTCall+Private.h"
 #import "OCTCallTimer.h"
 
 @class OCTTox;

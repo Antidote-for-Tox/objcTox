@@ -52,7 +52,7 @@
  * @param error Pointer to an error object.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)enable:(BOOL)enable videoSendingForCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)enableVideoSending:(BOOL)enable forCall:(OCTCall *)call error:(NSError **)error;
 
 /**
  * Answer a call

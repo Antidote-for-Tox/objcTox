@@ -153,11 +153,11 @@
     [self createFriendWithFriendNumber:987];
     OCTCall *call = [self.callManager createCallWithFriendNumber:987 status:OCTCallStatusActive];
 
-    XCTAssertTrue([self.callManager enable:YES videoSendingForCall:call error:nil]);
+    XCTAssertTrue([self.callManager enableVideoSending:YES forCall:call error:nil]);
     XCTAssertTrue(call.videoIsEnabled);
     XCTAssertEqual(self.callManager.videoEngine.friendNumber, 987);
 
-    XCTAssertTrue([self.callManager enable:NO videoSendingForCall:call error:nil]);
+    XCTAssertTrue([self.callManager enableVideoSending:NO forCall:call error:nil]);
     XCTAssertFalse(call.videoIsEnabled);
 
     OCMVerifyAll(partialMockedVideoEngine);

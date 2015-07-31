@@ -99,6 +99,7 @@
 		F0A6B9191B127EA700E48797 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F0B36B551B2CFE2200892E05 /* OCTTabBarControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B36B541B2CFE2200892E05 /* OCTTabBarControllerViewController.m */; };
 		F0B5FF351B3CCE01009796E9 /* OCTCallTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5FF341B3CCE01009796E9 /* OCTCallTimerTests.m */; };
+		F0C6D0DF1B6BE2F100BEFA18 /* OCTCall+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6D0DE1B6BE2F100BEFA18 /* OCTCall+Private.m */; };
 		F0CAD9A91B220EB9008FAA62 /* OCTSubmanagerCalls.m in Sources */ = {isa = PBXBuildFile; fileRef = F09E0C2E1B18475F00C25A24 /* OCTSubmanagerCalls.m */; };
 		F0DAA6431B369F3D00A55CB1 /* OCTVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DAA6421B369F3D00A55CB1 /* OCTVideoView.m */; };
 		F0E77FC11B154F6000434A96 /* OCTAudioEngineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E77FC01B154F6000434A96 /* OCTAudioEngineTests.m */; };
@@ -234,6 +235,8 @@
 		F0B36B531B2CFE2200892E05 /* OCTTabBarControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTTabBarControllerViewController.h; sourceTree = "<group>"; };
 		F0B36B541B2CFE2200892E05 /* OCTTabBarControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTTabBarControllerViewController.m; sourceTree = "<group>"; };
 		F0B5FF341B3CCE01009796E9 /* OCTCallTimerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTCallTimerTests.m; sourceTree = "<group>"; };
+		F0C6D0DD1B6BE2F100BEFA18 /* OCTCall+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTCall+Private.h"; sourceTree = "<group>"; };
+		F0C6D0DE1B6BE2F100BEFA18 /* OCTCall+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OCTCall+Private.m"; sourceTree = "<group>"; };
 		F0CAD9A81B220810008FAA62 /* OCTToxAV+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTToxAV+Private.h"; sourceTree = "<group>"; };
 		F0DAA6411B369F3D00A55CB1 /* OCTVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTVideoView.h; path = Video/OCTVideoView.h; sourceTree = "<group>"; };
 		F0DAA6421B369F3D00A55CB1 /* OCTVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTVideoView.m; path = Video/OCTVideoView.m; sourceTree = "<group>"; };
@@ -413,6 +416,8 @@
 				11CD5AE81B386A4D00585194 /* OCTObject.m */,
 				F041A4471B3B1BC7007A5AE8 /* OCTCallTimer.h */,
 				F041A4481B3B1BC7007A5AE8 /* OCTCallTimer.m */,
+				F0C6D0DD1B6BE2F100BEFA18 /* OCTCall+Private.h */,
+				F0C6D0DE1B6BE2F100BEFA18 /* OCTCall+Private.m */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -811,6 +816,7 @@
 				F05BE2681B3A6DF200C5795D /* OCTToxAVConstants.m in Sources */,
 				110EE0DA1B387C3D00CC347A /* OCTRealmManager.m in Sources */,
 				F041A4491B3B1BC7007A5AE8 /* OCTCallTimer.m in Sources */,
+				F0C6D0DF1B6BE2F100BEFA18 /* OCTCall+Private.m in Sources */,
 				11D6C9921B3B251000E21A35 /* OCTSubmanagerObjects.m in Sources */,
 				AE2776A39D9F4544CD765056987C22B9 /* OCTCall.m in Sources */,
 				70127B62E87BA470CAEDA23529AAD540 /* OCTChat.m in Sources */,
