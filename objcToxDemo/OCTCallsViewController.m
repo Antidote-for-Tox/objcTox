@@ -157,7 +157,7 @@
             [weakSelf useDefaultSpeaker];
         }];
 
-        [sheet bk_addButtonWithTitle:@"Video preview" handler:^{
+        [sheet bk_addButtonWithTitle:@"Show video" handler:^{
             [weakSelf showVideo];
         }];
     }];

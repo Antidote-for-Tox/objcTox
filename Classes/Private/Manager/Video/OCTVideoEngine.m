@@ -42,7 +42,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     }
 
     _captureSession = [AVCaptureSession new];
-    _captureSession.sessionPreset = AVCaptureSessionPreset640x480;
+    _captureSession.sessionPreset = AVCaptureSessionPreset1280x720;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
 
@@ -223,7 +223,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                       uPlane:reusableUChromaPlane
                                       vPlane:reusableVChromaPlane
                                        error:&error]) {
-        DDLogWarn(@"%@ error:%@", self, error);
+        DDLogWarn(@"%@ error:%@ width:%d height:%d", self, error, width, height);
     }
 
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
