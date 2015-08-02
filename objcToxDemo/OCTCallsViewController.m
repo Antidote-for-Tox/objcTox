@@ -13,12 +13,12 @@
 #import "RBQFetchedResultsController.h"
 #import "OCTSubmanagerCalls.h"
 #import "OCTCall.h"
+#import "OCTVideoViewController.h"
 
 @interface OCTCallsViewController () <RBQFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) RBQFetchedResultsController *resultsController;
 @property (strong, nonatomic) OCTCall *selectedCall;
-@property (strong, nonatomic) UIView *videoFeed;
 
 @end
 
@@ -45,14 +45,6 @@
     self.title = @"Calls";
 
     return self;
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-
-    [self.videoFeed removeFromSuperview];
-    self.videoFeed = nil;
 }
 
 #pragma mark -  UITableViewDelegate
@@ -256,11 +248,11 @@
 
 - (void)showVideo
 {
-    CGFloat midY = self.view.bounds.size.height / 2;
-    self.videoFeed = [self.manager.calls videoFeedWithRect:CGRectMake(0, midY, 300, 300)];
-    self.videoFeed.backgroundColor = [UIColor blackColor];
+    OCTVideoViewController *videoViewController = [[OCTVideoViewController alloc] initWithCallManager:self.manager.calls];
+    videoViewController.modalInPopover = YES;
+    videoViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
 
-    [self.view addSubview:self.videoFeed];
+    [self presentViewController:videoViewController animated:YES completion:nil];
 }
 
 @end

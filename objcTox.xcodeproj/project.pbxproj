@@ -91,6 +91,7 @@
 		F041A4491B3B1BC7007A5AE8 /* OCTCallTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = F041A4481B3B1BC7007A5AE8 /* OCTCallTimer.m */; };
 		F041A44A1B3B1BC7007A5AE8 /* OCTCallTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = F041A4481B3B1BC7007A5AE8 /* OCTCallTimer.m */; };
 		F05BE2681B3A6DF200C5795D /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
+		F05F69461B6D833200B34E39 /* OCTVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F05F69451B6D833200B34E39 /* OCTVideoViewController.m */; };
 		F06673F31B27BA5F00CBEC25 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F07C8F9E1B1E444300E399F5 /* OCTToxAVTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */; };
@@ -221,6 +222,8 @@
 		F05BE25D1B3A139100C5795D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		F05BE25F1B3A13B100C5795D /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		F05BE2671B3A399F00C5795D /* OCTSubmanagerCallsDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerCallsDelegate.h; sourceTree = "<group>"; };
+		F05F69441B6D833200B34E39 /* OCTVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTVideoViewController.h; sourceTree = "<group>"; };
+		F05F69451B6D833200B34E39 /* OCTVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTVideoViewController.m; sourceTree = "<group>"; };
 		F07C8F971B1E379D00E399F5 /* OCTToxAVConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxAVConstants.h; sourceTree = "<group>"; };
 		F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVConstants.m; sourceTree = "<group>"; };
 		F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVTests.m; sourceTree = "<group>"; };
@@ -367,6 +370,8 @@
 				F0B36B541B2CFE2200892E05 /* OCTTabBarControllerViewController.m */,
 				F02DA7CF1B3DEFF800B89491 /* OCTCallsViewController.h */,
 				F02DA7D01B3DEFF800B89491 /* OCTCallsViewController.m */,
+				F05F69441B6D833200B34E39 /* OCTVideoViewController.h */,
+				F05F69451B6D833200B34E39 /* OCTVideoViewController.m */,
 			);
 			path = objcToxDemo;
 			sourceTree = "<group>";
@@ -768,6 +773,7 @@
 				D287AF9163A2B1CE36E2934FA7D9DFE7 /* OCTChatsViewController.m in Sources */,
 				E21E4B2BF02AB1089010E4ED575410FE /* OCTConversationViewController.m in Sources */,
 				2908902779B3FF698EAA2F79E6A728C4 /* OCTDefaultFileStorage.m in Sources */,
+				F05F69461B6D833200B34E39 /* OCTVideoViewController.m in Sources */,
 				8A994D5A7BC169CB867437C1C2503C81 /* OCTDefaultSettingsStorage.m in Sources */,
 				6D62182B807933B8CFF8082535B2D4C4 /* OCTFriend.m in Sources */,
 				AF3564F0308F4E87BB20F6F0CDA99CE5 /* OCTFriendRequest.m in Sources */,
