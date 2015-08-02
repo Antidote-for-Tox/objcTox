@@ -16,6 +16,7 @@ static const CGFloat kEdgeInsets = 25.0;
 @property (nonatomic, strong) OCTSubmanagerCalls *manager;
 @property (nonatomic, strong) UIButton *dismissVCButton;
 @property (nonatomic, strong) UIView *previewView;
+@property (nonatomic, weak) CALayer *previewLayer;
 @property (nonatomic, strong) UIView *videoFeed;
 @end
 
@@ -38,10 +39,9 @@ static const CGFloat kEdgeInsets = 25.0;
 {
     [super viewDidLoad];
 
+    [self createDismissVCButton];
     [self createPreviewView];
     [self createVideoFeedView];
-    [self createDismissVCButton];
-
 
     [self createVideoViewConstraints];
     [self createPreviewViewConstraints];
@@ -137,15 +137,16 @@ static const CGFloat kEdgeInsets = 25.0;
 
 - (void)adjustPreviewLayer
 {
-    CALayer *layer = [self.manager videoCallPreview];
-    layer.frame = self.previewView.bounds;
-    [self.previewView.layer addSublayer:layer];
+    if (! self.previewLayer) {
+        self.previewLayer = [self.manager videoCallPreview];
+        [self.previewView.layer addSublayer:self.previewLayer];
+    }
+    self.previewLayer.frame = self.previewView.bounds;
 }
 
 - (void)createVideoFeedView
 {
     self.videoFeed = [self.manager videoFeedWithRect:CGRectZero];
-    self.videoFeed.backgroundColor = [UIColor blackColor];
     self.videoFeed.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.videoFeed];
 }
