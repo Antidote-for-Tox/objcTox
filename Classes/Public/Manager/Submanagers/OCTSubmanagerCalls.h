@@ -45,6 +45,16 @@
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
 /**
+ * Enable video calling for an active call.
+ * Use this when you started a call without video in the first place.
+ * @param enable YES to enable video, NO to stop video sending.
+ * @param call Call to enable video for.
+ * @param error Pointer to an error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)enableVideoSending:(BOOL)enable forCall:(OCTCall *)call error:(NSError **)error;
+
+/**
  * Answer a call
  * @param call The call session we would like to answer
  * @param enableAudio YES for Audio, otherwise NO.
@@ -73,10 +83,17 @@
 
 /**
  * The UIView that will have the video feed.
- * @param call The call that has the video feed.
  * @return UIView of the video feed. Nil if no video available.
  */
-- (UIView *)videoFeedForCall:(OCTCall *)call;
+- (UIView *)videoFeedWithRect:(CGRect)rect;
+
+/**
+ * The preview video of the user.
+ * You must be in a video call for this to show. Otherwise the layer will
+ * just be black.
+ * @return CALayer of the preview. Nil if not available.
+ */
+- (CALayer *)videoCallPreview;
 
 /**
  * Set the Audio bit rate.
@@ -85,13 +102,5 @@
  * @param error Pointer to error object if there's an issue setting the bitrate.
  */
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
-
-/**
- * Set the Video bit rate.
- * @param bitrate The bitrate to change to.
- * @param call The call to set the bitrate for.
- * @param error Pointer to error object if there's an issue setting the bitrate.
- */
-- (BOOL)setVideoBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
 
 @end

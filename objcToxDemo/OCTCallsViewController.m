@@ -13,6 +13,7 @@
 #import "RBQFetchedResultsController.h"
 #import "OCTSubmanagerCalls.h"
 #import "OCTCall.h"
+#import "OCTVideoViewController.h"
 
 @interface OCTCallsViewController () <RBQFetchedResultsControllerDelegate>
 
@@ -147,6 +148,10 @@
         [sheet bk_addButtonWithTitle:@"Use default speakers" handler:^{
             [weakSelf useDefaultSpeaker];
         }];
+
+        [sheet bk_addButtonWithTitle:@"Show video" handler:^{
+            [weakSelf showVideo];
+        }];
     }];
 
 }
@@ -239,6 +244,15 @@
 - (void)unmuteFriend
 {
     [self.manager.calls sendCallControl:OCTToxAVCallControlUnmuteAudio toCall:self.selectedCall error:nil];
+}
+
+- (void)showVideo
+{
+    OCTVideoViewController *videoViewController = [[OCTVideoViewController alloc] initWithCallManager:self.manager.calls];
+    videoViewController.modalInPopover = YES;
+    videoViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
+
+    [self presentViewController:videoViewController animated:YES completion:nil];
 }
 
 @end

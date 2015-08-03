@@ -40,6 +40,11 @@
 @property OCTFriend *caller;
 
 /**
+ * Video device is active for this call
+ */
+@property BOOL videoIsEnabled;
+
+/**
  * Friend is sending audio.
  */
 @property BOOL friendSendingAudio;

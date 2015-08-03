@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTCall.h"
+#import "OCTCall+Utilities.h"
 #import "OCTToxAVConstants.h"
 
 @interface OCTCall ()

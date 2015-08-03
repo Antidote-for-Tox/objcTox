@@ -23,6 +23,7 @@
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
+@property (strong, nonatomic) OCTVideoEngine *videoEngine;
 @property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
 @property (strong, nonatomic) OCTCallTimer *timer;
 
@@ -36,6 +37,14 @@
       sampleRate:(OCTToxAVSampleRate)sampleRate
     friendNumber:(OCTToxFriendNumber)friendNumber;
 
+- (void)                 toxAV:(OCTToxAV *)toxAV
+    receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
+                        yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
+                        vPlane:(OCTToxAVPlaneData *)vPlane
+                       yStride:(OCTToxAVStrideData)yStride uStride:(OCTToxAVStrideData)uStride
+                       vStride:(OCTToxAVStrideData)vStride
+                  friendNumber:(OCTToxFriendNumber)friendNumber;
+
 - (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status;
 - (OCTCall *)getCurrentCallForFriendNumber:(OCTToxFriendNumber)friendNumber;
 
@@ -47,6 +56,7 @@
 @property (strong, nonatomic) OCTSubmanagerCalls *callManager;
 @property (strong, nonatomic) OCTTox *tox;
 @property (strong, nonatomic) id mockedAudioEngine;
+@property (strong, nonatomic) id mockedVideoEngine;
 @property (strong, nonatomic) id mockedToxAV;
 
 @end
@@ -66,6 +76,10 @@
     self.mockedAudioEngine = OCMPartialMock(audioEngine);
     self.callManager.audioEngine = self.mockedAudioEngine;
 
+    OCTVideoEngine *videoEngine = [OCTVideoEngine new];
+    self.mockedVideoEngine = OCMPartialMock(videoEngine);
+    self.callManager.videoEngine = self.mockedVideoEngine;
+
     self.mockedToxAV = OCMClassMock([OCTToxAV class]);
     self.callManager.toxAV = self.mockedToxAV;
 
@@ -81,6 +95,7 @@
     self.tox = nil;
     self.mockedAudioEngine = nil;
     self.mockedToxAV = nil;
+    self.mockedVideoEngine = nil;
     [super tearDown];
 }
 
@@ -93,6 +108,9 @@
 {
     OCMStub([self.mockedAudioEngine new]).andReturn(self.mockedAudioEngine);
     OCMStub([self.mockedAudioEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    OCMStub([self.mockedVideoEngine new]).andReturn(self.mockedVideoEngine);
+    OCMStub([self.mockedVideoEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
 
     XCTAssertTrue([self.callManager setupWithError:nil]);
 }
@@ -121,6 +139,28 @@
     XCTAssertEqual(call.status, OCTCallStatusDialing);
     XCTAssertNil(call.caller);
     XCTAssertTrue([call isOutgoing]);
+}
+
+- (void)testEnableVideoForCall
+{
+    id partialMockedVideoEngine = OCMPartialMock([OCTVideoEngine new]);
+    self.callManager.videoEngine = partialMockedVideoEngine;
+    [self.mockedVideoEngine setExpectationOrderMatters:YES];
+    OCMExpect([partialMockedVideoEngine startSendingVideo]);
+    OCMExpect([partialMockedVideoEngine stopSendingVideo]);
+
+    [OCMStub([self.mockedToxAV setVideoBitRate:123 force:YES forFriend:987 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [self createFriendWithFriendNumber:987];
+    OCTCall *call = [self.callManager createCallWithFriendNumber:987 status:OCTCallStatusActive];
+
+    XCTAssertTrue([self.callManager enableVideoSending:YES forCall:call error:nil]);
+    XCTAssertTrue(call.videoIsEnabled);
+    XCTAssertEqual(self.callManager.videoEngine.friendNumber, 987);
+
+    XCTAssertTrue([self.callManager enableVideoSending:NO forCall:call error:nil]);
+    XCTAssertFalse(call.videoIsEnabled);
+
+    OCMVerifyAll(partialMockedVideoEngine);
 }
 
 - (void)testEndCall
@@ -157,7 +197,6 @@
 
 - (void)testAnswerCallSuccess
 {
-    self.callManager.audioEngine = [OCTAudioEngine new];
     OCMStub([self.mockedAudioEngine startAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
 
     [self createFriendWithFriendNumber:1234];
@@ -246,17 +285,33 @@
 - (void)testTogglePauseForCall
 {
     OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlPause toFriendNumber:12345 error:nil]).andReturn(YES);
+    id partialMockedAudioEngine = OCMPartialMock([OCTAudioEngine new]);
+    self.callManager.audioEngine = partialMockedAudioEngine;
+    self.callManager.audioEngine.friendNumber = 12345;
 
     [self createFriendWithFriendNumber:12345];
 
     OCTCall *call = [self.callManager createCallWithFriendNumber:12345 status:OCTCallStatusActive];
+    [self.realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+        callToUpdate.videoIsEnabled = YES;
+    }];
 
+    OCMStub([self.mockedVideoEngine isSendingVideo]).andReturn(YES);
+    OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(YES);
+    OCMStub([self.mockedVideoEngine stopSendingVideo]);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
-    OCMStub([self.mockedAudioEngine isAudioRunning:nil]).andReturn(NO);
+    OCMVerify([self.mockedVideoEngine stopSendingVideo]);
+    OCMVerify([partialMockedAudioEngine stopAudioFlow:nil]);
+
+    OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(NO);
+    OCMStub([self.mockedVideoEngine isSendingVideo]).andReturn(NO);
 
     OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:12345 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);
+
+    OCMVerify([self.mockedVideoEngine startSendingVideo]);
+    OCMVerify([partialMockedAudioEngine startAudioFlow:nil]);
 }
 
 - (void)testSetAudioBitRate
@@ -269,18 +324,6 @@
 
     XCTAssertTrue([self.callManager setAudioBitrate:5555 forCall:call error:nil]);
     OCMVerify([self.mockedToxAV setAudioBitRate:5555 force:NO forFriend:123456 error:nil]);
-}
-
-- (void)testSetVideoBitRate
-{
-    [self createFriendWithFriendNumber:321];
-
-    OCTCall *call = [self.callManager createCallWithFriendNumber:321 status:OCTCallStatusActive];
-
-    OCMStub([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]).andReturn(YES);
-
-    XCTAssertTrue([self.callManager setVideoBitrate:5555 forCall:call error:nil]);
-    OCMVerify([self.mockedToxAV setVideoBitRate:5555 force:NO forFriend:321 error:nil]);
 }
 
 #pragma mark - Pause Scenarios
@@ -309,6 +352,7 @@
     [mockedTimer setExpectationOrderMatters:YES];
     OCMExpect([mockedTimer stopTimer]);
     OCMExpect([mockedTimer startTimerForCall:secondCall]);
+
     self.callManager.timer = mockedTimer;
 
     [self.callManager answerCall:secondCall enableAudio:YES enableVideo:NO error:nil];
@@ -426,6 +470,39 @@
     [self.callManager toxAV:nil receiveAudio:pcm sampleCount:4 channels:2 sampleRate:55 friendNumber:123];
 
     OCMVerify([self.mockedAudioEngine provideAudioFrames:pcm sampleCount:4 channels:2 sampleRate:55 fromFriend:123]);
+}
+
+- (void)testReceiveVideo
+{
+    OCTToxAVVideoHeight height = 1920;
+    OCTToxAVVideoHeight width = 1080;
+    OCTToxAVPlaneData y[] = {5, 5, 6, 8};
+    OCTToxAVPlaneData u[] = {5, 5, 6, 8};
+    OCTToxAVPlaneData v[] = {5, 5, 6, 8};
+    OCTToxAVStrideData yStride = 44;
+    OCTToxAVStrideData uStride = 45;
+    OCTToxAVStrideData vStride = 46;
+
+    [self.callManager toxAV:nil
+     receiveVideoFrameWithWidth:width
+                         height:height
+                         yPlane:y
+                         uPlane:u
+                         vPlane:v
+                        yStride:yStride
+                        uStride:uStride
+                        vStride:vStride
+                   friendNumber:444];
+
+    OCMVerify([self.mockedVideoEngine receiveVideoFrameWithWidth:width
+                                                          height:height
+                                                          yPlane:y
+                                                          uPlane:u
+                                                          vPlane:v
+                                                         yStride:yStride
+                                                         uStride:uStride
+                                                         vStride:vStride
+                                                    friendNumber:444]);
 }
 
 - (void)testReceiveUnstableBitrate
