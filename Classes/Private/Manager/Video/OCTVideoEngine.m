@@ -15,9 +15,6 @@
 
 @import AVFoundation;
 
-static uint8_t *reusableUChromaPlane;
-static uint8_t *reusableVChromaPlane;
-
 static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
 @interface OCTVideoEngine () <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -26,6 +23,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) AVCaptureVideoDataOutput *dataOutput;
 @property (nonatomic, strong) dispatch_queue_t processingQueue;
 @property (nonatomic, strong) OCTVideoView *videoView;
+@property (nonatomic, assign) uint8_t *reusableUChromaPlane;
+@property (nonatomic, assign) uint8_t *reusableVChromaPlane;
 
 @property (nonatomic, assign) NSUInteger sizeOfChromaPlanes;
 
@@ -35,11 +34,12 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (instancetype)init
 {
-    DDLogVerbose(@"%@: init", self);
     self = [super init];
     if (! self) {
         return nil;
     }
+
+    DDLogVerbose(@"%@: init", self);
 
     _captureSession = [AVCaptureSession new];
     _captureSession.sessionPreset = AVCaptureSessionPreset1280x720;
@@ -63,10 +63,10 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     [self.captureSession addInput:videoInput];
 
-    [self.dataOutput setAlwaysDiscardsLateVideoFrames:YES];
-    NSNumber *value  = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange];
-    [self.dataOutput setVideoSettings:[NSDictionary dictionaryWithObject:value
-                                                                  forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
+    self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
+    self.dataOutput.videoSettings = @{
+        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+    };
     [self.dataOutput setSampleBufferDelegate:self queue:self.processingQueue];
 
     [self.captureSession addOutput:self.dataOutput];
@@ -78,11 +78,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 {
     DDLogVerbose(@"%@: startSendingVideo", self);
     self.processIncomingVideo = YES;
-    if ([self isVideoSessionRunning]) {
-        return;
-    }
 
     dispatch_async(self.processingQueue, ^{
+        if ([self isSendingVideo]) {
+            return;
+        }
         [self.captureSession startRunning];
     });
 }
@@ -92,16 +92,17 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     DDLogVerbose(@"%@: stopSendingVideo", self);
     self.processIncomingVideo = NO;
 
-    if (! [self isVideoSessionRunning]) {
-        return;
-    }
-
     dispatch_async(self.processingQueue, ^{
+
+        if (! [self isSendingVideo]) {
+            return;
+        }
+
         [self.captureSession stopRunning];
     });
 }
 
-- (BOOL)isVideoSessionRunning
+- (BOOL)isSendingVideo
 {
     DDLogVerbose(@"%@: isVideoSessionRunning", self);
     return self.captureSession.isRunning;
@@ -196,23 +197,23 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     if (numberOfElementsForChroma > self.sizeOfChromaPlanes) {
 
-        if (reusableUChromaPlane) {
-            free(reusableUChromaPlane);
+        if (self.reusableUChromaPlane) {
+            free(self.reusableUChromaPlane);
         }
 
-        if (reusableVChromaPlane) {
-            free(reusableVChromaPlane);
+        if (self.reusableVChromaPlane) {
+            free(self.reusableVChromaPlane);
         }
 
-        reusableUChromaPlane = malloc(numberOfElementsForChroma * sizeof(uint8_t));
-        reusableVChromaPlane = malloc(numberOfElementsForChroma * sizeof(uint8_t));
+        self.reusableUChromaPlane = malloc(numberOfElementsForChroma * sizeof(uint8_t));
+        self.reusableVChromaPlane = malloc(numberOfElementsForChroma * sizeof(uint8_t));
 
         self.sizeOfChromaPlanes = numberOfElementsForChroma;
     }
 
     for (int i = 0; i < (height * width / 4); i += 2) {
-        reusableUChromaPlane[i / 2] = uvPlane[i];
-        reusableVChromaPlane[i / 2] = uvPlane[i+1];
+        self.reusableUChromaPlane[i / 2] = uvPlane[i];
+        self.reusableVChromaPlane[i / 2] = uvPlane[i+1];
     }
 
     NSError *error;
@@ -220,8 +221,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                        width:width
                                       height:height
                                       yPlane:yPlane
-                                      uPlane:reusableUChromaPlane
-                                      vPlane:reusableVChromaPlane
+                                      uPlane:self.reusableUChromaPlane
+                                      vPlane:self.reusableVChromaPlane
                                        error:&error]) {
         DDLogWarn(@"%@ error:%@ width:%d height:%d", self, error, width, height);
     }

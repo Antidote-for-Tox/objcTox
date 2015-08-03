@@ -296,7 +296,7 @@
         callToUpdate.videoIsEnabled = YES;
     }];
 
-    OCMStub([self.mockedVideoEngine isVideoSessionRunning]).andReturn(YES);
+    OCMStub([self.mockedVideoEngine isSendingVideo]).andReturn(YES);
     OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(YES);
     OCMStub([self.mockedVideoEngine stopSendingVideo]);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
@@ -305,7 +305,7 @@
     OCMVerify([partialMockedAudioEngine stopAudioFlow:nil]);
 
     OCMStub([partialMockedAudioEngine isAudioRunning:nil]).andReturn(NO);
-    OCMStub([self.mockedVideoEngine isVideoSessionRunning]).andReturn(NO);
+    OCMStub([self.mockedVideoEngine isSendingVideo]).andReturn(NO);
 
     OCMStub([self.mockedToxAV sendCallControl:OCTToxAVCallControlResume toFriendNumber:12345 error:nil]).andReturn(YES);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlResume toCall:call error:nil]);

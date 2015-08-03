@@ -50,10 +50,10 @@
 - (void)stopSendingVideo;
 
 /**
- * Indicates if the video session is running.
+ * Indicates if the video engine is sending video.
  * @return YES if running, NO otherwise.
  */
-- (BOOL)isVideoSessionRunning;
+- (BOOL)isSendingVideo;
 
 /**
  * Current video feed.

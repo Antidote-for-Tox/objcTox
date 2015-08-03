@@ -361,7 +361,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
 - (void)checkForCurrentActiveCallAndPause
 {
-    if ([self.audioEngine isAudioRunning:nil] || [self.videoEngine isVideoSessionRunning]) {
+    if ([self.audioEngine isAudioRunning:nil] || [self.videoEngine isSendingVideo]) {
         OCTCall *call = [self getCurrentCallForFriendNumber:self.audioEngine.friendNumber];
         [self sendCallControl:OCTToxAVCallControlPause toCall:call error:nil];
     }
