@@ -308,13 +308,13 @@ OSStatus outputRenderCallBack(void *inRefCon,
 {
     OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
 
-    UInt32 targetBufferSize = ioData->mBuffers[0].mDataByteSize;
+    int32_t targetBufferSize = ioData->mBuffers[0].mDataByteSize;
     SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
 
     int32_t availableBytes;
     SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
 
-    if (availableBytes < (int32_t)targetBufferSize) {
+    if (availableBytes < targetBufferSize) {
         memset(targetBuffer, 0, targetBufferSize);
         return noErr;
     }

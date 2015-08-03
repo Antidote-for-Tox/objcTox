@@ -257,11 +257,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
             callToUpdate.pausedStatus |= OCTCallPausedStatusByUser;
         }
         else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wassign-enum"
             callToUpdate.pausedStatus &= ~OCTCallPausedStatusByUser;
-#pragma clang diagnostic pop
-
         }
     }];
 
@@ -400,10 +396,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         pauseStatus |= OCTCallPausedStatusByFriend;
     }
     else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wassign-enum"
         pauseStatus &= ~OCTCallPausedStatusByFriend;
-#pragma clang diagnostic pop
     }
 
     [self updateCall:call withState:state pausedStatus:pauseStatus];
