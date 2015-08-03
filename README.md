@@ -4,6 +4,27 @@
 
 Objective-C wrapper for [Tox](https://tox.chat/).
 
+## Features
+
+See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current and previous versions).
+
+- OCTTox wrapper for tox.h file.
+- OCTManager that provides high level API for Tox. Below are features for OCTManager.
+- Changing user name, status, status message, nospam.
+- Sending, receiving, removing and accepting friend requests.
+- Removing friends.
+- Auto updating and changeable nickname for friend.
+- Chat objects with various information.
+- Sending and receiving messages.
+
+#### What's next?
+
+- [**Now**](https://github.com/Antidote-for-Tox/objcTox/milestones/Now) - this milestone has issues that will go to the next release.
+- [**Next**](https://github.com/Antidote-for-Tox/objcTox/milestones/Next) - stuff we'll probably do soon.
+- [**Faraway**](https://github.com/Antidote-for-Tox/objcTox/milestones/Faraway) - stuff we'll probably *won't* do soon.
+
+Also there may be other [milestones](https://github.com/Antidote-for-Tox/objcTox/milestones) that represent long-running and big ongoing tasks.
+
 ## Installation
 
 objcTox is available through [CocoaPods](http://cocoapods.org). To install
