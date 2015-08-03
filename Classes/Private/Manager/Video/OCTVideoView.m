@@ -26,9 +26,9 @@
 
 - (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context
 {
-    _coreImageContext = [CIContext contextWithEAGLContext:context];
-
     self = [super initWithFrame:frame context:context];
+
+    _coreImageContext = [CIContext contextWithEAGLContext:context];
 
     if (! self) {
         return nil;

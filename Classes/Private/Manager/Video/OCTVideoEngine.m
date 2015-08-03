@@ -141,7 +141,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     // Create CVPixelBuffer -->CIImage --> OCTVideoView?
     CVPixelBufferRef bufferRef = NULL;
 
-    void *planeBaseAddress[3] = {yPlane, uPlane, vPlane};
+    void *planeBaseAddress[3] = {(void *)yPlane, (void *)uPlane, (void *)vPlane};
     size_t planeWidths[3] = {(size_t)yStride, (size_t)uStride, (size_t)vStride};
     size_t planeHeight[3] = {height, height / 4, height / 4};
     size_t bytesPerRow[3] = {abs(yStride - width), (abs(uStride) - width) / 2, (abs(vStride) - width) / 4};
@@ -186,8 +186,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
 
-    OCTToxAVVideoWidth width = CVPixelBufferGetWidth(imageBuffer);
-    OCTToxAVVideoHeight height = CVPixelBufferGetHeight(imageBuffer);
+    OCTToxAVVideoWidth width = (OCTToxAVVideoWidth)CVPixelBufferGetWidth(imageBuffer);
+    OCTToxAVVideoHeight height = (OCTToxAVVideoHeight)CVPixelBufferGetHeight(imageBuffer);
 
     uint8_t *yPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
     uint8_t *uvPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
