@@ -1,5 +1,5 @@
 //
-//  OCTCall+Private.h
+//  OCTCall+Utilities.h
 //  objcTox
 //
 //  Created by Chuong Vu on 7/31/15.
@@ -8,7 +8,7 @@
 
 #import "OCTCall.h"
 
-@interface OCTCall (Private)
+@interface OCTCall (Utilities)
 
 - (BOOL)isPaused;
 

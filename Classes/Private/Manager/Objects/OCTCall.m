@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import "OCTCall+Private.h"
+#import "OCTCall+Utilities.h"
 #import "OCTToxAVConstants.h"
 
 @interface OCTCall ()
@@ -27,11 +27,6 @@
     }
 
     return [NSDate dateWithTimeIntervalSince1970:self.onHoldStartInterval];
-}
-
-- (BOOL)isPaused
-{
-    return ! (self.pausedStatus == OCTCallPausedStatusNone);
 }
 
 @end
