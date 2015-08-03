@@ -329,7 +329,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(message);
     NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
-    DDLogVerbose(@"%@: add friend with address.length %lu, message.length %lu", self, address.length, (unsigned long)message.length);
+    DDLogVerbose(@"%@: add friend with address.length %lu, message.length %lu", self, (unsigned long)address.length, (unsigned long)message.length);
 
     uint8_t *cAddress = [self hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
