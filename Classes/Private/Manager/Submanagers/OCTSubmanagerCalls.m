@@ -9,7 +9,7 @@
 #import "OCTSubmanagerCalls+Private.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
-const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
+const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 
@@ -291,7 +291,7 @@ const OCTToxAVAudioBitRate kDefaultVideoBitRate = 400;
 
 - (void)updateCall:(OCTCall *)call withState:(OCTToxAVCallState)state pausedStatus:(OCTCallPausedStatus)pausedStatus
 {
-    BOOL sendingAudio, sendingVideo, acceptingAudio, acceptingVideo;
+    BOOL sendingAudio = NO, sendingVideo = NO, acceptingAudio = NO, acceptingVideo = NO;
 
     if (state & OCTToxAVFriendCallStateAcceptingAudio) {
         acceptingAudio = YES;

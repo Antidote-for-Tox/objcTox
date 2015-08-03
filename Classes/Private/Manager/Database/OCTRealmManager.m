@@ -279,7 +279,7 @@
 {
     RLMResults *calls = [OCTCall objectsInRealm:self.realm where:nil];
 
-    DDLogInfo(@"OCTRealmManager: removing %lu calls", calls.count);
+    DDLogInfo(@"OCTRealmManager: removing %lu calls", (unsigned long)calls.count);
 
     RBQRealmChangeLogger *logger = [self logger];
 

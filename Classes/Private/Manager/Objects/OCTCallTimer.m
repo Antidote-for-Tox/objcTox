@@ -47,10 +47,10 @@
 
         self.call = call;
 
-        dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTCallQueue", DISPATCH_QUEUE_SERIAL);
-
+        // dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTCallQueue", DISPATCH_QUEUE_SERIAL);
         // Main queue is used temporarily for now since we are getting 'Realm accessed from incorrect thread'.
         // Should really be using the queue above..
+
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
         uint64_t interval = NSEC_PER_SEC;
         uint64_t leeway = NSEC_PER_SEC / 1000;

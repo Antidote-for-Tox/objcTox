@@ -56,7 +56,7 @@ extern OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
 @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 
-- (void)fillError:(NSError **)error
+- (BOOL)fillError:(NSError **)error
          withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason;

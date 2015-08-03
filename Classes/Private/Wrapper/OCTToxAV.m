@@ -223,7 +223,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
     [self fillError:error withCErrorSetBitRate:cError];
 
-    DDLogVerbose(@"%@: setAudioBitRate:%lu, force:%d, friend:%d", self, bitRate, force, friendNumber);
+    DDLogVerbose(@"%@: setAudioBitRate:%lu, force:%d, friend:%d", self, (long)bitRate, force, friendNumber);
 
     return status;
 }
@@ -305,10 +305,10 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
 }
 
-- (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
+- (BOOL)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError
 {
     if (! error || (cError == TOXAV_ERR_NEW_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxAVErrorInitCode code = OCTToxAVErrorInitCodeUnknown;
@@ -333,12 +333,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             break;
     }
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError
+- (BOOL)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError
 {
     if (! error || (cError == TOXAV_ERR_CALL_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxAVErrorCall code = OCTToxAVErrorCallUnknown;
@@ -372,12 +374,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError
+- (BOOL)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError
 {
     if (! error || (cError == TOXAV_ERR_ANSWER_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxAVErrorAnswer code = OCTToxAVErrorAnswerUnknown;
@@ -403,12 +407,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError
+- (BOOL)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError
 {
     if (! error || (cError == TOXAV_ERR_CALL_CONTROL_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxErrorCallControl code = OCTToxAVErrorControlUnknown;
@@ -434,12 +440,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError
+- (BOOL)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError
 {
     if (! error || (cError == TOXAV_ERR_SET_BIT_RATE_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxAVErrorSetBitRate code = OCTToxAVErrorSetBitRateUnknown;
@@ -465,12 +473,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
-- (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError
+- (BOOL)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError
 {
     if (! error || (cError == TOXAV_ERR_SEND_FRAME_OK)) {
-        return;
+        return NO;
     }
 
     OCTToxAVErrorSendFrame code = OCTToxAVErrorSendFrameUnknown;
@@ -499,6 +509,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         case TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED:
             code = OCTToxAVErrorSendFramePayloadTypeDisabled;
             failureReason = @"Either friend turned off audio/video receiving or we turned off sending for the said payload.";
+            break;
         case TOXAV_ERR_SEND_FRAME_RTP_FAILED:
             code = OCTToxAVErrorSendFrameRTPFailed;
             failureReason = @"Failed to push frame through rtp interface";
@@ -506,6 +517,8 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     }
 
     *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+
+    return YES;
 }
 
 - (NSError *)createErrorWithCode:(NSUInteger)code
@@ -527,7 +540,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 @end
 
-#pragma Callbacks
+#pragma mark - Callbacks
 
 void callIncomingCallback(ToxAV *cToxAV,
                           uint32_t friendNumber,

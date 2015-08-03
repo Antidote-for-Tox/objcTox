@@ -308,7 +308,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 {
     OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
 
-    UInt32 targetBufferSize = ioData->mBuffers[0].mDataByteSize;
+    int32_t targetBufferSize = ioData->mBuffers[0].mDataByteSize;
     SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
 
     int32_t availableBytes;
@@ -357,12 +357,12 @@ OSStatus outputRenderCallBack(void *inRefCon,
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    self.inputSampleRate = session.sampleRate;
-    self.outputSampleRate = session.sampleRate;
+    self.inputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
+    self.outputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
-    AudioStreamBasicDescription asbd = {0};
+    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     asbd.mSampleRate = self.inputSampleRate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
@@ -442,7 +442,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
     UInt32 bytesPerSample = sizeof(SInt16);
 
-    AudioStreamBasicDescription asbd = {0};
+    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     asbd.mSampleRate = rate;
     asbd.mFormatID = kAudioFormatLinearPCM;
     asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
@@ -495,7 +495,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 }
 
 
-- (void)fillError:(NSError **)error
+- (BOOL)fillError:(NSError **)error
          withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason
@@ -512,6 +512,8 @@ OSStatus outputRenderCallBack(void *inRefCon,
         }
         *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
     }
+
+    return YES;
 }
 
 @end
