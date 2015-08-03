@@ -295,7 +295,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
 - (void)updateCall:(OCTCall *)call withState:(OCTToxAVCallState)state pausedStatus:(OCTCallPausedStatus)pausedStatus
 {
-    BOOL sendingAudio, sendingVideo, acceptingAudio, acceptingVideo;
+    BOOL sendingAudio = NO, sendingVideo = NO, acceptingAudio = NO, acceptingVideo = NO;
 
     if (state & OCTToxAVFriendCallStateAcceptingAudio) {
         acceptingAudio = YES;

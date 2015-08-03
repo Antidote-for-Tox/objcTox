@@ -495,7 +495,7 @@ OSStatus outputRenderCallBack(void *inRefCon,
 }
 
 
-- (void)fillError:(NSError **)error
+- (BOOL)fillError:(NSError **)error
          withCode:(NSUInteger)code
       description:(NSString *)description
     failureReason:(NSString *)failureReason
@@ -512,6 +512,8 @@ OSStatus outputRenderCallBack(void *inRefCon,
         }
         *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
     }
+
+    return YES;
 }
 
 @end

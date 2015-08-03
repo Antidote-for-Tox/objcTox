@@ -47,12 +47,12 @@ toxav_video_receive_frame_cb receiveVideoFrameCallback;
 
 @property (assign, nonatomic) ToxAV *toxAV;
 
-- (void)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError;
-- (void)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError;
-- (void)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError;
-- (void)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError;
-- (void)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError;
-- (void)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError;
+- (BOOL)fillError:(NSError **)error withCErrorInit:(TOXAV_ERR_NEW)cError;
+- (BOOL)fillError:(NSError **)error withCErrorCall:(TOXAV_ERR_CALL)cError;
+- (BOOL)fillError:(NSError **)error withCErrorAnswer:(TOXAV_ERR_ANSWER)cError;
+- (BOOL)fillError:(NSError **)error withCErrorControl:(TOXAV_ERR_CALL_CONTROL)cError;
+- (BOOL)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError;
+- (BOOL)fillError:(NSError **)error withCErrorSendFrame:(TOXAV_ERR_SEND_FRAME)cError;
 - (NSError *)createErrorWithCode:(NSUInteger)code
                      description:(NSString *)description
                    failureReason:(NSString *)failureReason;
