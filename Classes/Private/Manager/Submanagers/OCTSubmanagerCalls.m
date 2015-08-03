@@ -192,7 +192,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         switch (control) {
             case OCTToxAVCallControlResume:
                 [self checkForCurrentActiveCallAndPause];
-                [self pause:NO controlSentToCall:call];
+                [self putOnPause:NO call:call];
                 break;
             case OCTToxAVCallControlCancel:
                 [self addMessageAndDeleteCall:call];
@@ -204,7 +204,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
                 break;
             case OCTToxAVCallControlPause:
-                [self pause:YES controlSentToCall:call];
+                [self putOnPause:YES call:call];
                 break;
             case OCTToxAVCallControlUnmuteAudio:
                 break;
@@ -276,39 +276,35 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
     }];
 }
 
-- (void)pause:(BOOL)pause controlSentToCall:(OCTCall *)call
+- (void)putOnPause:(BOOL)pause call:(OCTCall *)call
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    BOOL wasPaused = call.pausedStatus != OCTCallPausedStatusNone;
 
-    BOOL wasPaused = [call isPaused];
-    OCTCallPausedStatus previousPausedStatus = call.pausedStatus;
+    if (pause) {
+        if (! wasPaused) {
+            [self startEnginesAndTimer:NO forCall:call];
+        }
+    }
+    else {
+        OCTFriend *friend = [call.chat.friends firstObject];
+        self.audioEngine.friendNumber = friend.friendNumber;
+
+        if (call.pausedStatus == OCTCallPausedStatusByUser) {
+            [self startEnginesAndTimer:YES forCall:call];
+        }
+    }
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-
-        if (pause && ! wasPaused) {
-            callToUpdate.onHoldStartInterval = [[NSDate date] timeIntervalSince1970];
-        }
-
         if (pause) {
             callToUpdate.pausedStatus |= OCTCallPausedStatusByUser;
+            callToUpdate.onHoldStartInterval = callToUpdate.onHoldStartInterval ?: [[NSDate date] timeIntervalSince1970];
         }
         else {
             callToUpdate.pausedStatus &= ~OCTCallPausedStatusByUser;
+            callToUpdate.onHoldStartInterval = 0;
         }
     }];
-
-    OCTFriend *friend = [call.chat.friends firstObject];
-
-    if (pause && ! wasPaused) {
-        [self startEnginesAndTimer:NO forCall:call];
-    }
-    else if (! pause &&  (previousPausedStatus == OCTCallPausedStatusByUser)) {
-        [self startEnginesAndTimer:YES forCall:call];
-    }
-    else if (! pause) {
-        self.audioEngine.friendNumber = friend.friendNumber;
-        self.videoEngine.friendNumber = friend.friendNumber;
-    }
 }
 
 - (void)addMessageAndDeleteCall:(OCTCall *)call
