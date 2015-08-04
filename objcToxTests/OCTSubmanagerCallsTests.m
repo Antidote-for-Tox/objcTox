@@ -113,6 +113,8 @@
     OCMStub([self.mockedVideoEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
 
     XCTAssertTrue([self.callManager setupWithError:nil]);
+    OCMVerify([self.mockedAudioEngine setupWithError:[OCMArg anyObjectRef]]);
+    OCMVerify([self.mockedVideoEngine setupWithError:[OCMArg anyObjectRef]]);
 }
 
 - (void)testCallToChat
@@ -301,6 +303,7 @@
     OCMStub([self.mockedVideoEngine stopSendingVideo]);
     XCTAssertTrue([self.callManager sendCallControl:OCTToxAVCallControlPause toCall:call error:nil]);
 
+    OCMStub([self.mockedVideoEngine startSendingVideo]);
     OCMVerify([self.mockedVideoEngine stopSendingVideo]);
     OCMVerify([partialMockedAudioEngine stopAudioFlow:nil]);
 
