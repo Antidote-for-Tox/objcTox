@@ -90,6 +90,7 @@
 		F02DA7D11B3DEFF800B89491 /* OCTCallsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02DA7D01B3DEFF800B89491 /* OCTCallsViewController.m */; };
 		F041A4491B3B1BC7007A5AE8 /* OCTCallTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = F041A4481B3B1BC7007A5AE8 /* OCTCallTimer.m */; };
 		F041A44A1B3B1BC7007A5AE8 /* OCTCallTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = F041A4481B3B1BC7007A5AE8 /* OCTCallTimer.m */; };
+		F044A43A1B712E70008ABA48 /* OCTCall+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F06163091B6FD62A0007F372 /* OCTCall+Utilities.m */; };
 		F05BE2681B3A6DF200C5795D /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F05F69461B6D833200B34E39 /* OCTVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F05F69451B6D833200B34E39 /* OCTVideoViewController.m */; };
 		F061630A1B6FD62A0007F372 /* OCTCall+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F06163091B6FD62A0007F372 /* OCTCall+Utilities.m */; };
@@ -767,6 +768,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F044A43A1B712E70008ABA48 /* OCTCall+Utilities.m in Sources */,
 				F0C155BF1B6C1E9600C68533 /* OCTVideoView.m in Sources */,
 				F06673F31B27BA5F00CBEC25 /* OCTAudioEngine.m in Sources */,
 				F0CAD9A91B220EB9008FAA62 /* OCTSubmanagerCalls.m in Sources */,
