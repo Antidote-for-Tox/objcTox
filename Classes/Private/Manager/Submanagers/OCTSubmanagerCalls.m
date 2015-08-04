@@ -102,9 +102,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 - (BOOL)enableVideoSending:(BOOL)enable forCall:(OCTCall *)call error:(NSError **)error
 {
     OCTToxAVVideoBitRate bitrate = (enable) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
-    BOOL success = [self setVideoBitrate:bitrate forCall:call error:error];
-
-    if (! success) {
+    if (! [self setVideoBitrate:bitrate forCall:call error:error]) {
         return NO;
     }
 
@@ -122,20 +120,13 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
         callToUpdate.videoIsEnabled = enable;
     }];
 
-    return success;
+    return YES;
 }
 
 - (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
     OCTToxAVVideoBitRate videoBitRate = (enableVideo) ? kDefaultVideoBitRate : kOCTToxAVVideoBitRateDisable;
-
-    if (enableVideo) {
-        OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
-        [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
-            callToUpdate.videoIsEnabled = YES;
-        }];
-    }
 
     if (call.chat.friends.count == 1) {
 
@@ -152,7 +143,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
 
         [self startEnginesAndTimer:YES forCall:call];
 
-        [self updateCall:call withStatus:OCTCallStatusActive];
+        OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+        [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
+            call.status = OCTCallStatusActive;
+            callToUpdate.videoIsEnabled = enableVideo;
+        }];
 
         self.enableMicrophone = YES;
 
