@@ -151,7 +151,7 @@ static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarV
     if (! self.processIncomingVideo || ! self.videoView) {
         return;
     }
-    
+
     CVPixelBufferRef bufferRef = NULL;
 
     void *planeBaseAddress[3] = {(void *)yPlane, (void *)uPlane, (void *)vPlane};
