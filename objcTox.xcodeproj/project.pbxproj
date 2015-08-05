@@ -96,6 +96,7 @@
 		110EE0E11B3AFD5200CC347A /* OCTRealmTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTRealmTests.m; sourceTree = "<group>"; };
 		111395D41B217AFE00429CEC /* OCTCAsserts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTCAsserts.h; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
+		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		11B4BAEF1B11E2530001A96A /* OCTSubmanagerFiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFiles.h; sourceTree = "<group>"; };
 		11B4BAF01B11E2800001A96A /* OCTSubmanagerFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerFiles.m; sourceTree = "<group>"; };
 		11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerFiles+Private.h"; sourceTree = "<group>"; };
@@ -258,6 +259,7 @@
 				1F210739EBF632594BBF9C51E585A589 /* OCTSubmanagerFriends+Private.h */,
 				11D6C9911B3B251000E21A35 /* OCTSubmanagerObjects.m */,
 				11D6C9941B3B252300E21A35 /* OCTSubmanagerObjects+Private.h */,
+				117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */,
 				C2F358725E9EF3F392D73A1ABBDD3DAB /* OCTSubmanagerUser.m */,
 				A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */,
 			);

@@ -81,30 +81,12 @@
 
     _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
-    OCTSubmanagerUser *user = [OCTSubmanagerUser new];
-    user.dataSource = self;
-    _user = user;
-
-    OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
-    friends.dataSource = self;
-    [friends configure];
-    _friends = friends;
-
-    OCTSubmanagerChats *chats = [OCTSubmanagerChats new];
-    chats.dataSource = self;
-    _chats = chats;
-
-    OCTSubmanagerFiles *files = [OCTSubmanagerFiles new];
-    files.dataSource = self;
-    _files = files;
-
-    OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
-    avatars.dataSource = self;
-    _avatars = avatars;
-
-    OCTSubmanagerObjects *objects = [OCTSubmanagerObjects new];
-    objects.dataSource = self;
-    _objects = objects;
+    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
+    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
+    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
+    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
+    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
+    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
 
     _toxSaveFileLock = [NSObject new];
 
@@ -183,6 +165,18 @@
     NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
 
     NSParameterAssert(configuration.options);
+}
+
+- (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
+{
+    id<OCTSubmanagerProtocol> submanager = [class new];
+    submanager.dataSource = self;
+
+    if ([submanager respondsToSelector:@selector(configure)]) {
+        [submanager configure];
+    }
+
+    return submanager;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
