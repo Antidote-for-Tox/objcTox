@@ -19,6 +19,8 @@
 #import "OCTTox.h"
 #import <OCMock/OCMock.h>
 
+@import AVFoundation;
+
 @interface OCTSubmanagerCalls (Tests)
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
@@ -101,7 +103,16 @@
 
 - (void)testInit
 {
-    XCTAssertNotNil(self.callManager);
+    id tox = OCMClassMock([OCTTox class]);
+    OCMStub([self.mockedToxAV alloc]).andReturn(self.mockedToxAV);
+    OCMStub([self.mockedToxAV initWithTox:tox error:nil]).andReturn(self.mockedToxAV);
+
+    OCTSubmanagerCalls *manager = [[OCTSubmanagerCalls alloc] initWithTox:tox];
+
+    XCTAssertNotNil(manager);
+    OCMVerify([(OCTToxAV *)self.mockedToxAV start]);
+
+    [tox stopMocking];
 }
 
 - (void)testSetup
@@ -341,6 +352,7 @@
 
     OCMStub([self.callManager.audioEngine isAudioRunning:nil]).andReturn(YES);
     OCMStub([self.callManager.audioEngine stopAudioFlow:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.callManager.audioEngine startAudioFlow:nil]);
 
     [self createFriendWithFriendNumber:4];
     [self createFriendWithFriendNumber:5];

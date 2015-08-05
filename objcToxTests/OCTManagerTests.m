@@ -19,6 +19,7 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerCalls.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
@@ -51,6 +52,7 @@
 @interface OCTManagerTests : XCTestCase
 
 @property (strong, nonatomic) OCTManager *manager;
+@property (nonatomic, assign) id mockedCallManager;
 
 @end
 
@@ -60,6 +62,8 @@
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
+    OCMStub([[self.mockedCallManager alloc] initWithTox:[OCMArg anyPointer] error:nil]).andReturn(self.mockedCallManager);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     self.manager = [[OCTManager alloc] initWithConfiguration:configuration];
@@ -68,6 +72,8 @@
 - (void)tearDown
 {
     self.manager = nil;
+    [self.mockedCallManager stopMocking];
+    self.mockedCallManager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
@@ -101,11 +107,7 @@
     OCMStub([tox alloc]).andReturn(tox);
     OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
 
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    OCMStub([toxAV alloc]).andReturn(toxAV);
-
     OCMExpect([tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
-    OCMExpect([toxAV initWithTox:tox error:[OCMArg anyObjectRef]]);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
@@ -115,9 +117,7 @@
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
     OCMVerifyAll(tox);
-    OCMVerifyAll(toxAV);
 
-    [toxAV stopMocking];
     [tox stopMocking];
 }
 
@@ -129,11 +129,7 @@
     OCMStub([tox alloc]).andReturn(tox);
     OCMStub([tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(tox);
 
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    OCMStub([toxAV alloc]).andReturn(toxAV);
-
     OCMExpect([tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
-    OCMExpect([toxAV initWithTox:tox error:[OCMArg anyObjectRef]]);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
@@ -143,9 +139,7 @@
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
     OCMVerifyAll(tox);
-    OCMVerifyAll(toxAV);
 
-    [toxAV stopMocking];
     [tox stopMocking];
 }
 
