@@ -15,7 +15,7 @@
 
 @import AVFoundation;
 
-static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
 @interface OCTVideoEngine () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
@@ -25,6 +25,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) OCTVideoView *videoView;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
+@property (nonatomic, assign) CVPixelBufferPoolRef pixelPool;
 
 @property (nonatomic, assign) NSUInteger sizeOfChromaPlanes;
 
@@ -46,6 +47,15 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
 
+
+    NSDictionary *poolAttributes = @{(id)kCVPixelBufferIOSurfacePropertiesKey : @0,
+                                     (id)kCVPixelBufferHeightKey : @192,
+                                     (id)kCVPixelBufferWidthKey : @144};
+
+    CVPixelBufferPoolCreate(kCFAllocatorDefault,
+                            NULL,
+                            (__bridge CFDictionaryRef)(poolAttributes),
+                            &_pixelPool);
     return self;
 }
 
@@ -65,11 +75,13 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
     self.dataOutput.videoSettings = @{
-        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kPixelFormatCapture),
     };
     [self.dataOutput setSampleBufferDelegate:self queue:self.processingQueue];
 
     [self.captureSession addOutput:self.dataOutput];
+    AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
+    conn.videoOrientation = AVCaptureVideoOrientationPortrait;
 
     return YES;
 }
@@ -139,7 +151,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     if (! self.processIncomingVideo || ! self.videoView) {
         return;
     }
-    // Create CVPixelBuffer -->CIImage --> OCTVideoView?
+    
     CVPixelBufferRef bufferRef = NULL;
 
     void *planeBaseAddress[3] = {(void *)yPlane, (void *)uPlane, (void *)vPlane};
@@ -149,7 +161,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     CVReturn success = CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault,
                                                           width, height,
-                                                          kPixelFormat,
+                                                          kPixelFormatCapture,
                                                           NULL,
                                                           0,
                                                           2,
@@ -180,7 +192,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
 
-
     if (! imageBuffer) {
         return;
     }
@@ -189,12 +200,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     OCTToxAVVideoWidth width = (OCTToxAVVideoWidth)CVPixelBufferGetWidth(imageBuffer);
     OCTToxAVVideoHeight height = (OCTToxAVVideoHeight)CVPixelBufferGetHeight(imageBuffer);
+    NSUInteger numberOfElementsForChroma = height * width / 2;
 
     uint8_t *yPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
     uint8_t *uvPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
 
-    NSUInteger numberOfElementsForChroma = height * width / 4;
-
+    /**
+     * Recreate the buffers if the original ones are too small
+     */
     if (numberOfElementsForChroma > self.sizeOfChromaPlanes) {
 
         if (self.reusableUChromaPlane) {
@@ -211,7 +224,10 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         self.sizeOfChromaPlanes = numberOfElementsForChroma;
     }
 
-    for (int i = 0; i < (height * width / 4); i += 2) {
+    /**
+     * Deinterleaved the UV planes and place them to in the reusable arrays
+     */
+    for (int i = 0; i < (height * width / 2); i += 2) {
         self.reusableUChromaPlane[i / 2] = uvPlane[i];
         self.reusableVChromaPlane[i / 2] = uvPlane[i+1];
     }
