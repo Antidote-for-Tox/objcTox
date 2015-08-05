@@ -74,6 +74,16 @@
  */
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath;
+/**
+ * Copies tox save file to temporary directory and return path to it.
+ *
+ * @param error NSFileManager error in case if file cannot be copied.
+ *
+ * @return Temporary path of current tox save file.
+ */
+- (NSString *)exportToxSaveFile:(NSError **)error;
+
+#pragma mark -  Deprecated
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and
@@ -95,7 +105,10 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
+- (BOOL)bootstrapFromHost:(NSString *)host
+                     port:(OCTToxPort)port
+                publicKey:(NSString *)publicKey
+                    error:(NSError **)error __attribute((deprecated(("Use bootstrap submanager instead"))));
 
 /**
  * Adds additional host:port pair as TCP relay.
@@ -112,15 +125,9 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
-
-/**
- * Copies tox save file to temporary directory and return path to it.
- *
- * @param error NSFileManager error in case if file cannot be copied.
- *
- * @return Temporary path of current tox save file.
- */
-- (NSString *)exportToxSaveFile:(NSError **)error;
+- (BOOL)addTCPRelayWithHost:(NSString *)host
+                       port:(OCTToxPort)port
+                  publicKey:(NSString *)publicKey
+                      error:(NSError **)error __attribute((deprecated(("Use bootstrap submanager instead"))));
 
 @end
