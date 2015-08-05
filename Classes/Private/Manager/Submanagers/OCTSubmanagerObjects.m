@@ -15,11 +15,10 @@
 
 @interface OCTSubmanagerObjects ()
 
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
-
 @end
 
 @implementation OCTSubmanagerObjects
+@synthesize dataSource = _dataSource;
 
 #pragma mark -  Public
 

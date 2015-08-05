@@ -12,7 +12,9 @@
 #import "OCTManagerConstants.h"
 
 @class OCTManagerConfiguration;
+
 @class OCTSubmanagerAvatars;
+@class OCTSubmanagerBootstrap;
 @class OCTSubmanagerChats;
 @class OCTSubmanagerFiles;
 @class OCTSubmanagerFriends;
@@ -25,6 +27,11 @@
  * Submanager with all user avatar methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
+
+/**
+ * Submanager responsible for connecting to other nodes.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
 
 /**
  * Submanager with all chats methods.

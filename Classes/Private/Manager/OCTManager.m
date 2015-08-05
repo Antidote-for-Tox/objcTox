@@ -12,6 +12,7 @@
 #import "OCTTox.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
@@ -25,6 +26,7 @@
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
@@ -82,6 +84,7 @@
     _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
     _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
+    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
     _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
     _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
@@ -200,12 +203,13 @@
     }
 
     NSArray *submanagers = @[
-        self.user,
-        self.friends,
+        self.avatars,
+        self.bootstrap,
         self.chats,
         self.files,
-        self.avatars,
+        self.friends,
         self.objects,
+        self.user,
     ];
 
     for (id delegate in submanagers) {

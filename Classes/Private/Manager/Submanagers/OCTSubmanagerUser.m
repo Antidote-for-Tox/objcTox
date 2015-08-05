@@ -11,11 +11,10 @@
 
 @interface OCTSubmanagerUser ()
 
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
-
 @end
 
 @implementation OCTSubmanagerUser
+@synthesize dataSource = _dataSource;
 
 #pragma mark -  Properties
 
