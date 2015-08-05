@@ -12,6 +12,7 @@
 #import "OCTManager.h"
 #import "OCTTox.h"
 #import "OCTSubmanagerDataSource.h"
+#import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFriends+Private.h"

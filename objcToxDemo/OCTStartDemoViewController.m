@@ -13,6 +13,7 @@
 #import "OCTFriendsViewController.h"
 #import "OCTChatsViewController.h"
 #import "AppDelegate.h"
+#import "OCTManagerConfiguration.h"
 
 #define NAVIGATION_WITH_CONTROLLER(class) \
     [[UINavigationController alloc] initWithRootViewController :[[class alloc] initWithManager:manager]]

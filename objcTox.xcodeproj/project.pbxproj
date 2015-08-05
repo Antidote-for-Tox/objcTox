@@ -247,19 +247,19 @@
 		343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */ = {
 			isa = PBXGroup;
 			children = (
-				5D189A68D6F95FD80457FCACAAB93D5D /* OCTSubmanagerAvatars+Private.h */,
 				CC7756D762A864873026929FC1CD003E /* OCTSubmanagerAvatars.m */,
-				67CE089BF824F5E312E1F2DA82200173 /* OCTSubmanagerChats+Private.h */,
+				5D189A68D6F95FD80457FCACAAB93D5D /* OCTSubmanagerAvatars+Private.h */,
 				5F8DB9E80557EDCED72F1E0D5E868D9F /* OCTSubmanagerChats.m */,
+				67CE089BF824F5E312E1F2DA82200173 /* OCTSubmanagerChats+Private.h */,
 				468C7E16643FCCEB54CFF0414052EC3C /* OCTSubmanagerDataSource.h */,
-				1F210739EBF632594BBF9C51E585A589 /* OCTSubmanagerFriends+Private.h */,
-				A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */,
-				A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */,
-				C2F358725E9EF3F392D73A1ABBDD3DAB /* OCTSubmanagerUser.m */,
 				11B4BAF01B11E2800001A96A /* OCTSubmanagerFiles.m */,
 				11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */,
+				A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */,
+				1F210739EBF632594BBF9C51E585A589 /* OCTSubmanagerFriends+Private.h */,
 				11D6C9911B3B251000E21A35 /* OCTSubmanagerObjects.m */,
 				11D6C9941B3B252300E21A35 /* OCTSubmanagerObjects+Private.h */,
+				C2F358725E9EF3F392D73A1ABBDD3DAB /* OCTSubmanagerUser.m */,
+				A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */,
 			);
 			path = Submanagers;
 			sourceTree = "<group>";
@@ -315,10 +315,10 @@
 			children = (
 				6FF6A77851AA32B2CEF6DF716083BD66 /* OCTSubmanagerAvatars.h */,
 				2CBE0C2E379DCF740AF5D469F096D309 /* OCTSubmanagerChats.h */,
-				91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */,
-				DC15169F1B57241E08B356608016D41A /* OCTSubmanagerUser.h */,
 				11B4BAEF1B11E2530001A96A /* OCTSubmanagerFiles.h */,
+				91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */,
 				11D6C98E1B3B24F700E21A35 /* OCTSubmanagerObjects.h */,
+				DC15169F1B57241E08B356608016D41A /* OCTSubmanagerUser.h */,
 			);
 			path = Submanagers;
 			sourceTree = "<group>";

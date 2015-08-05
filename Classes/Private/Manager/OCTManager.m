@@ -10,12 +10,13 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
-#import "OCTSubmanagerUser+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
+#import "OCTManagerConfiguration.h"
+#import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerUser+Private.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -23,12 +24,12 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 

@@ -10,6 +10,7 @@
 #import "OCTConversationViewController.h"
 #import "RBQFetchedResultsController.h"
 #import "OCTChat.h"
+#import "OCTSubmanagerObjects.h"
 
 @interface OCTChatsViewController () <RBQFetchedResultsControllerDelegate>
 

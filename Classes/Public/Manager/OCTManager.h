@@ -8,26 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTManagerConfiguration.h"
+#import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
-#import "OCTSubmanagerAvatars.h"
-#import "OCTSubmanagerChats.h"
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerUser.h"
-#import "OCTSubmanagerFiles.h"
-#import "OCTSubmanagerObjects.h"
+
+@class OCTManagerConfiguration;
+@class OCTSubmanagerAvatars;
+@class OCTSubmanagerChats;
+@class OCTSubmanagerFiles;
+@class OCTSubmanagerFriends;
+@class OCTSubmanagerObjects;
+@class OCTSubmanagerUser;
 
 @interface OCTManager : NSObject
 
 /**
- * Submanager with all user methods.
+ * Submanager with all user avatar methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
-
-/**
- * Submanager with all friends methods.
- */
-@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
 
 /**
  * Submanager with all chats methods.
@@ -40,14 +37,19 @@
 @property (strong, nonatomic, readonly) OCTSubmanagerFiles *files;
 
 /**
- * Submanager with all user avatar methods.
+ * Submanager with all friends methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
 
 /**
  * Submanager with all objects methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;
+
+/**
+ * Submanager with all user methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
