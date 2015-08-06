@@ -29,6 +29,10 @@
 {
     self = [super self];
 
+    if (! self) {
+        return nil;
+    }
+
     _formatType = format;
 
     return self;
