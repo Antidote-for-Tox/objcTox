@@ -31,6 +31,9 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 @property (strong, nonatomic) NSObject *nodesLock;
 @property (strong, nonatomic) NSObject *bootstrappingLock;
 
+@property (assign, nonatomic) NSTimeInterval didConnectDelay;
+@property (assign, nonatomic) NSTimeInterval iterationTime;
+
 @end
 
 @implementation OCTSubmanagerBootstrap
@@ -49,6 +52,9 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
     _addedNodes = [NSMutableSet new];
     _nodesLock = [NSObject new];
     _bootstrappingLock = [NSObject new];
+
+    _didConnectDelay = kDidConnectDelay;
+    _iterationTime = kIterationTime;
 
     return self;
 }
@@ -87,8 +93,8 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
     NSNumber *didConnect = [[self.dataSource managerGetSettingsStorage] objectForKey:kOCTSubmanagerBootstrapDidConnectKey];
 
     if (didConnect.boolValue) {
-        DDLogVerbose(@"%@: did connect before, waiting %g seconds", self, kDidConnectDelay);
-        [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:kDidConnectDelay];
+        DDLogVerbose(@"%@: did connect before, waiting %g seconds", self, self.didConnectDelay);
+        [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:self.didConnectDelay];
     }
     else {
         [self tryToBootstrap];
@@ -131,7 +137,7 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
         [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
     }
 
-    [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:kIterationTime];
+    [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:self.iterationTime];
 }
 
 - (void)finishBootstrapping
