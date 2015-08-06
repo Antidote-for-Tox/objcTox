@@ -8,6 +8,7 @@
 
 #import "OCTVideoEngine.h"
 #import "OCTVideoView.h"
+#import "OCTPixelBufferPool.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -15,7 +16,7 @@
 
 @import AVFoundation;
 
-static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
 @interface OCTVideoEngine () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
@@ -25,13 +26,14 @@ static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarV
 @property (nonatomic, strong) OCTVideoView *videoView;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
-@property (nonatomic, assign) CVPixelBufferPoolRef pixelPool;
-
+@property (strong, nonatomic) OCTPixelBufferPool *pixelPool;
 @property (nonatomic, assign) NSUInteger sizeOfChromaPlanes;
 
 @end
 
 @implementation OCTVideoEngine
+
+#pragma mark - Life cycle
 
 - (instancetype)init
 {
@@ -46,17 +48,20 @@ static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarV
     _captureSession.sessionPreset = AVCaptureSessionPresetLow;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
+    _pixelPool = [[OCTPixelBufferPool alloc] initWithFormat:kPixelFormat];
 
-
-    NSDictionary *poolAttributes = @{(id)kCVPixelBufferIOSurfacePropertiesKey : @0,
-                                     (id)kCVPixelBufferHeightKey : @192,
-                                     (id)kCVPixelBufferWidthKey : @144};
-
-    CVPixelBufferPoolCreate(kCFAllocatorDefault,
-                            NULL,
-                            (__bridge CFDictionaryRef)(poolAttributes),
-                            &_pixelPool);
     return self;
+}
+
+- (void)dealloc
+{
+    if (self.reusableUChromaPlane) {
+        free(self.reusableUChromaPlane);
+    }
+
+    if (self.reusableVChromaPlane) {
+        free(self.reusableVChromaPlane);
+    }
 }
 
 #pragma mark - Public
@@ -75,7 +80,7 @@ static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarV
 
     self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
     self.dataOutput.videoSettings = @{
-        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kPixelFormatCapture),
+        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kPixelFormat),
     };
     [self.dataOutput setSampleBufferDelegate:self queue:self.processingQueue];
 
@@ -148,44 +153,58 @@ static const OSType kPixelFormatCapture = kCVPixelFormatType_420YpCbCr8BiPlanarV
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    if (! self.processIncomingVideo || ! self.videoView) {
-        return;
-    }
+    dispatch_sync(self.processingQueue, ^{
+        if (! self.processIncomingVideo || ! self.videoView) {
+            return;
+        }
 
-    CVPixelBufferRef bufferRef = NULL;
+        /**
+         * Create pixel buffers and copy YUV planes over
+         */
 
-    void *planeBaseAddress[3] = {(void *)yPlane, (void *)uPlane, (void *)vPlane};
-    size_t planeWidths[3] = {(size_t)yStride, (size_t)uStride, (size_t)vStride};
-    size_t planeHeight[3] = {height, height / 4, height / 4};
-    size_t bytesPerRow[3] = {abs(yStride - width), (abs(uStride) - width) / 2, (abs(vStride) - width) / 4};
+        CVPixelBufferRef bufferRef = NULL;
 
-    CVReturn success = CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault,
-                                                          width, height,
-                                                          kPixelFormatCapture,
-                                                          NULL,
-                                                          0,
-                                                          2,
-                                                          planeBaseAddress,
-                                                          planeWidths, planeHeight, bytesPerRow,
-                                                          NULL,
-                                                          NULL,
-                                                          NULL,
-                                                          &bufferRef);
+        if (! [self.pixelPool createPixelBuffer:&bufferRef width:width height:height]) {
+            return;
+        }
 
-    if (success != kCVReturnSuccess) {
-        DDLogWarn(@"Error:%d CVPixelBufferCreateWithPlanarBytes",  success);
-    }
+        CVPixelBufferLockBaseAddress(bufferRef, 0);
 
-    CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
-    CVPixelBufferRelease(bufferRef);
+        uint8_t *ySource = (uint8_t *)yPlane;
+        uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
+        uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
 
-    self.videoView.image = coreImage;
+        uint8_t *uSource = (uint8_t *)uPlane;
+        uint8_t *vSource = (uint8_t *)vPlane;
+
+        for (size_t yHeight = 0; yHeight < height; yHeight++) {
+
+            /* Copy yPlane data */
+            memcpy(yDestinationPlane, ySource, width);
+            ySource += yStride;
+            yDestinationPlane += width;
+
+            for (size_t pixelWidth = 0; pixelWidth < width; pixelWidth++) {
+                uvDestinationPlane[pixelWidth * 2] = uSource[pixelWidth];
+                uvDestinationPlane[(pixelWidth * 2) + 1] = vSource[pixelWidth];
+            }
+            uvDestinationPlane += width / 2;
+            uSource += uStride;
+            vSource += vStride;
+        }
+
+        CVPixelBufferUnlockBaseAddress(bufferRef, 0);
+
+        /* Create Core Image */
+        CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
+
+        CVPixelBufferRelease(bufferRef);
+
+        self.videoView.image = coreImage;
+    });
 }
 
 #pragma mark - Buffer Delegate
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
-{}
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
