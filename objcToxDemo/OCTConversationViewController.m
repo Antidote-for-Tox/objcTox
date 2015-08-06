@@ -14,6 +14,8 @@
 #import "RBQFetchedResultsController.h"
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
+#import "OCTSubmanagerObjects.h"
+#import "OCTSubmanagerChats.h"
 
 @interface OCTConversationViewController () <RBQFetchedResultsControllerDelegate>
 

@@ -14,6 +14,9 @@
 #import "RBQFetchedResultsController.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
+#import "OCTSubmanagerObjects.h"
+#import "OCTSubmanagerChats.h"
+#import "OCTSubmanagerFriends.h"
 
 typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeFriends = 0,

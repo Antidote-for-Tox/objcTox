@@ -8,26 +8,30 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTManagerConfiguration.h"
+#import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
-#import "OCTSubmanagerAvatars.h"
-#import "OCTSubmanagerChats.h"
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerUser.h"
-#import "OCTSubmanagerFiles.h"
-#import "OCTSubmanagerObjects.h"
+
+@class OCTManagerConfiguration;
+
+@class OCTSubmanagerAvatars;
+@class OCTSubmanagerBootstrap;
+@class OCTSubmanagerChats;
+@class OCTSubmanagerFiles;
+@class OCTSubmanagerFriends;
+@class OCTSubmanagerObjects;
+@class OCTSubmanagerUser;
 
 @interface OCTManager : NSObject
 
 /**
- * Submanager with all user methods.
+ * Submanager with all user avatar methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
+@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
 
 /**
- * Submanager with all friends methods.
+ * Submanager responsible for connecting to other nodes.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
 
 /**
  * Submanager with all chats methods.
@@ -40,14 +44,19 @@
 @property (strong, nonatomic, readonly) OCTSubmanagerFiles *files;
 
 /**
- * Submanager with all user avatar methods.
+ * Submanager with all friends methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
 
 /**
  * Submanager with all objects methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;
+
+/**
+ * Submanager with all user methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
@@ -72,6 +81,16 @@
  */
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath;
+/**
+ * Copies tox save file to temporary directory and return path to it.
+ *
+ * @param error NSFileManager error in case if file cannot be copied.
+ *
+ * @return Temporary path of current tox save file.
+ */
+- (NSString *)exportToxSaveFile:(NSError **)error;
+
+#pragma mark -  Deprecated
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and
@@ -93,7 +112,10 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
+- (BOOL)bootstrapFromHost:(NSString *)host
+                     port:(OCTToxPort)port
+                publicKey:(NSString *)publicKey
+                    error:(NSError **)error __attribute((deprecated(("Use bootstrap submanager instead"))));
 
 /**
  * Adds additional host:port pair as TCP relay.
@@ -110,15 +132,9 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error;
-
-/**
- * Copies tox save file to temporary directory and return path to it.
- *
- * @param error NSFileManager error in case if file cannot be copied.
- *
- * @return Temporary path of current tox save file.
- */
-- (NSString *)exportToxSaveFile:(NSError **)error;
+- (BOOL)addTCPRelayWithHost:(NSString *)host
+                       port:(OCTToxPort)port
+                  publicKey:(NSString *)publicKey
+                      error:(NSError **)error __attribute((deprecated(("Use bootstrap submanager instead"))));
 
 @end

@@ -12,7 +12,9 @@
 #import "OCTManager.h"
 #import "OCTTox.h"
 #import "OCTSubmanagerDataSource.h"
+#import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
@@ -25,12 +27,13 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 
@@ -74,18 +77,22 @@
 - (void)testInit
 {
     XCTAssertNotNil(self.manager);
-    XCTAssertNotNil(self.manager.user);
-    XCTAssertEqual(self.manager.user.dataSource, self.manager);
-    XCTAssertNotNil(self.manager.friends);
-    XCTAssertEqual(self.manager.friends.dataSource, self.manager);
+
+    XCTAssertNotNil(self.manager.avatars);
+    XCTAssertEqual(self.manager.avatars.dataSource, self.manager);
+    XCTAssertNotNil(self.manager.bootstrap);
+    XCTAssertEqual(self.manager.bootstrap.dataSource, self.manager);
     XCTAssertNotNil(self.manager.chats);
     XCTAssertEqual(self.manager.chats.dataSource, self.manager);
     XCTAssertNotNil(self.manager.files);
     XCTAssertEqual(self.manager.files.dataSource, self.manager);
-    XCTAssertNotNil(self.manager.avatars);
-    XCTAssertEqual(self.manager.avatars.dataSource, self.manager);
+    XCTAssertNotNil(self.manager.friends);
+    XCTAssertEqual(self.manager.friends.dataSource, self.manager);
     XCTAssertNotNil(self.manager.objects);
     XCTAssertEqual(self.manager.objects.dataSource, self.manager);
+    XCTAssertNotNil(self.manager.user);
+    XCTAssertEqual(self.manager.user.dataSource, self.manager);
+
     XCTAssertNotNil(self.manager.tox);
     XCTAssertNotNil(self.manager.configuration);
     XCTAssertNotNil(self.manager.realmManager);
@@ -104,7 +111,10 @@
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL result = [manager bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+#pragma clang diagnostic pop
 
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
@@ -125,7 +135,10 @@
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL result = [manager addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+#pragma clang diagnostic pop
 
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
@@ -145,12 +158,13 @@
 - (void)testForwardTargetForSelector
 {
     id submanager = [FakeSubmanager new];
-    self.manager.user = submanager;
-    self.manager.friends = submanager;
+    self.manager.avatars = submanager;
+    self.manager.bootstrap = submanager;
     self.manager.chats = submanager;
     self.manager.files = submanager;
-    self.manager.avatars = submanager;
+    self.manager.friends = submanager;
     self.manager.objects = submanager;
+    self.manager.user = submanager;
 
     // test non protocol selector
     XCTAssertNil([self.manager forwardingTargetForSelector:@selector(dataSource)]);
@@ -167,57 +181,73 @@
     id submanager = [FakeSubmanager new];
     id dummy = [NSObject new];
 
-    self.manager.user = submanager;
-    self.manager.friends = dummy;
+    self.manager.avatars = submanager;
+    self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.files = dummy;
-    self.manager.avatars = dummy;
+    self.manager.friends = dummy;
     self.manager.objects = dummy;
+    self.manager.user = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.user = dummy;
-    self.manager.friends = submanager;
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = submanager;
     self.manager.chats = dummy;
     self.manager.files = dummy;
-    self.manager.avatars = dummy;
+    self.manager.friends = dummy;
     self.manager.objects = dummy;
+    self.manager.user = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.user = dummy;
-    self.manager.friends = dummy;
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
     self.manager.chats = submanager;
     self.manager.files = dummy;
-    self.manager.avatars = dummy;
+    self.manager.friends = dummy;
     self.manager.objects = dummy;
+    self.manager.user = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.user = dummy;
-    self.manager.friends = dummy;
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.files = submanager;
-    self.manager.avatars = dummy;
+    self.manager.friends = dummy;
     self.manager.objects = dummy;
+    self.manager.user = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.user = dummy;
-    self.manager.friends = dummy;
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.files = dummy;
-    self.manager.avatars = submanager;
+    self.manager.friends = submanager;
     self.manager.objects = dummy;
+    self.manager.user = dummy;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.user = dummy;
-    self.manager.friends = dummy;
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.files = dummy;
-    self.manager.avatars = dummy;
+    self.manager.friends = dummy;
     self.manager.objects = submanager;
+    self.manager.user = dummy;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
+    self.manager.chats = dummy;
+    self.manager.files = dummy;
+    self.manager.friends = dummy;
+    self.manager.objects = dummy;
+    self.manager.user = submanager;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 }

@@ -16,6 +16,7 @@
 @protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
+- (BOOL)managerIsToxConnected;
 - (void)managerSaveTox;
 - (OCTRealmManager *)managerGetRealmManager;
 - (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;

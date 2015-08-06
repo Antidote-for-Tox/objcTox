@@ -13,6 +13,8 @@
 #import "OCTFriendsViewController.h"
 #import "OCTChatsViewController.h"
 #import "AppDelegate.h"
+#import "OCTManagerConfiguration.h"
+#import "OCTSubmanagerBootstrap.h"
 
 #define NAVIGATION_WITH_CONTROLLER(class) \
     [[UINavigationController alloc] initWithRootViewController :[[class alloc] initWithManager:manager]]
@@ -120,20 +122,8 @@ typedef NS_ENUM(NSUInteger, Row) {
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.window.rootViewController = tabBar;
 
-    [manager bootstrapFromHost:@"192.254.75.102"
-                          port:33445
-                     publicKey:@"951C88B7E75C867418ACDB5D273821372BB5BD652740BCDF623A4FA293E75D2F"
-                         error:nil];
-
-    [manager bootstrapFromHost:@"178.62.125.224"
-                          port:33445
-                     publicKey:@"10B20C49ACBD968D7C80F2E8438F92EA51F189F4E70CFBBB2C2C8C799E97F03E"
-                         error:nil];
-
-    [manager bootstrapFromHost:@"192.210.149.121"
-                          port:33445
-                     publicKey:@"F404ABAA1C99A9D37D61AB54898F56793E1DEF8BD46B1038B9D822E8460FAB67"
-                         error:nil];
+    [manager.bootstrap addPredefinedNodes];
+    [manager.bootstrap bootstrap];
 }
 
 - (void)showActionSheetForRow:(Row)row

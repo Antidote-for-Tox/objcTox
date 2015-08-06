@@ -8,6 +8,8 @@
 
 #import "OCTTableViewController.h"
 
+@class OCTChat;
+
 @interface OCTConversationViewController : OCTTableViewController
 
 - (instancetype)initWithManager:(OCTManager *)manager chat:(OCTChat *)chat;

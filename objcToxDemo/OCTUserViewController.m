@@ -11,6 +11,7 @@
 #import "OCTUserViewController.h"
 #import "OCTStartDemoViewController.h"
 #import "AppDelegate.h"
+#import "OCTSubmanagerUser.h"
 
 typedef NS_ENUM(NSUInteger, Row) {
     RowConnectionStatus,

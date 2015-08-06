@@ -10,12 +10,14 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
-#import "OCTSubmanagerUser+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
+#import "OCTManagerConfiguration.h"
+#import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerUser+Private.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -23,12 +25,13 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 
@@ -80,30 +83,13 @@
 
     _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
-    OCTSubmanagerUser *user = [OCTSubmanagerUser new];
-    user.dataSource = self;
-    _user = user;
-
-    OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
-    friends.dataSource = self;
-    [friends configure];
-    _friends = friends;
-
-    OCTSubmanagerChats *chats = [OCTSubmanagerChats new];
-    chats.dataSource = self;
-    _chats = chats;
-
-    OCTSubmanagerFiles *files = [OCTSubmanagerFiles new];
-    files.dataSource = self;
-    _files = files;
-
-    OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
-    avatars.dataSource = self;
-    _avatars = avatars;
-
-    OCTSubmanagerObjects *objects = [OCTSubmanagerObjects new];
-    objects.dataSource = self;
-    _objects = objects;
+    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
+    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
+    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
+    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
+    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
+    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
+    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
 
     _toxSaveFileLock = [NSObject new];
 
@@ -149,6 +135,11 @@
     return self.tox;
 }
 
+- (BOOL)managerIsToxConnected
+{
+    return (self.user.connectionStatus != OCTToxConnectionStatusNone);
+}
+
 - (void)managerSaveTox
 {
     return [self saveTox];
@@ -184,6 +175,18 @@
     NSParameterAssert(configuration.options);
 }
 
+- (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
+{
+    id<OCTSubmanagerProtocol> submanager = [class new];
+    submanager.dataSource = self;
+
+    if ([submanager respondsToSelector:@selector(configure)]) {
+        [submanager configure];
+    }
+
+    return submanager;
+}
+
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
     id submanager = [self forwardingTargetForSelector:aSelector];
@@ -205,12 +208,13 @@
     }
 
     NSArray *submanagers = @[
-        self.user,
-        self.friends,
+        self.avatars,
+        self.bootstrap,
         self.chats,
         self.files,
-        self.avatars,
+        self.friends,
         self.objects,
+        self.user,
     ];
 
     for (id delegate in submanagers) {
