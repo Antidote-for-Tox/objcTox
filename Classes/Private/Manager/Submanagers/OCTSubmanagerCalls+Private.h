@@ -25,7 +25,6 @@
 
 /**
  * Initialize the OCTSubmanagerCall
- *
  */
 - (instancetype)initWithTox:(OCTTox *)tox;
 

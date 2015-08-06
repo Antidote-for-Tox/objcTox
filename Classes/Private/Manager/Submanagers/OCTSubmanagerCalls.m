@@ -217,14 +217,14 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     }
 }
 
-- (UIView *)videoFeedWithRect:(CGRect)rect
+- (void)getVideoFeed:(void (^)(UIView *))completionBlock
 {
-    return [self.videoEngine videoFeedWithRect:rect];
+    [self.videoEngine getVideoFeed:completionBlock];
 }
 
-- (CALayer *)videoCallPreview
+- (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock
 {
-    return [self.videoEngine videoCallPreview];
+    [self.videoEngine getVideoCallPreview:completionBlock];
 }
 
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error

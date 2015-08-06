@@ -56,16 +56,16 @@
 - (BOOL)isSendingVideo;
 
 /**
- * Current video feed.
+ * Generate a UIView with the current incoming video feed.
  */
-- (UIView *)videoFeedWithRect:(CGRect)rect;
+- (void)getVideoFeed:(void (^)(UIView *videoFeed))completionBlock;
 
 /**
  * Layer of the preview video.
  * @return CALayer that can be added to a UIView. Nil if
  * OCTVideoEngine is not sending any video.
  */
-- (CALayer *)videoCallPreview;
+- (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
 
 /**
  * Provide video frames to video engine to process.

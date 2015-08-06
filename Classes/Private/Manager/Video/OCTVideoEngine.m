@@ -125,22 +125,24 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     return self.captureSession.isRunning;
 }
 
-- (CALayer *)videoCallPreview
+- (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock
 {
     DDLogVerbose(@"%@: videoCallPreview", self);
-    AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
-
-    return previewLayer;
+    dispatch_async(self.processingQueue, ^{
+        AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+        completionBlock(previewLayer);
+    });
 }
 
-- (UIView *)videoFeedWithRect:(CGRect)rect;
+- (void)getVideoFeed:(void (^)(UIView *videoFeed))completionBlock
 {
-    DDLogVerbose(@"%@: videoFeedWithRect", self);
-    if (! self.videoView) {
-        self.videoView = [[OCTVideoView alloc] initWithFrame:rect];
-    }
-
-    return self.videoView;
+    DDLogVerbose(@"%@: getVideoFeed", self);
+    dispatch_async(self.processingQueue, ^{
+        if (! self.videoView) {
+            self.videoView = [[OCTVideoView alloc] initWithFrame:CGRectZero];
+        }
+        completionBlock(self.videoView);
+    });
 }
 
 - (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
