@@ -111,7 +111,10 @@
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL result = [manager bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+#pragma clang diagnostic pop
 
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
@@ -132,7 +135,10 @@
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL result = [manager addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+#pragma clang diagnostic pop
 
     XCTAssertTrue(result);
     XCTAssertEqual(error, error2);
