@@ -91,6 +91,10 @@
 
 - (void)tox:(OCTTox *)tox connectionStatus:(OCTToxConnectionStatus)connectionStatus
 {
+    if (connectionStatus != OCTToxConnectionStatusNone) {
+        [self.dataSource managerSaveTox];
+    }
+
     [self.delegate OCTSubmanagerUser:self connectionStatusUpdate:connectionStatus];
 }
 

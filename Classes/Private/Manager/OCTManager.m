@@ -135,6 +135,11 @@
     return self.tox;
 }
 
+- (BOOL)managerIsToxConnected
+{
+    return (self.user.connectionStatus != OCTToxConnectionStatusNone);
+}
+
 - (void)managerSaveTox
 {
     return [self saveTox];
