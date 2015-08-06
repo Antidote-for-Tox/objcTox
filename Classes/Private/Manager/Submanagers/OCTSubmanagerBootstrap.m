@@ -95,6 +95,14 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
     }
 }
 
+- (BOOL)addTCPRelayWithHost:(NSString *)host
+                       port:(OCTToxPort)port
+                  publicKey:(NSString *)publicKey
+                      error:(NSError **)error
+{
+    return [[self.dataSource managerGetTox] addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
+}
+
 #pragma mark -  Private
 
 - (void)tryToBootstrap
