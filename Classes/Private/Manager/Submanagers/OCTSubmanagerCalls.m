@@ -9,7 +9,7 @@
 #import "OCTSubmanagerCalls+Private.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
-const OCTToxAVVideoBitRate kDefaultVideoBitRate = 400;
+const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 

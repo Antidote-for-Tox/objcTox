@@ -97,6 +97,8 @@
 		F06673F31B27BA5F00CBEC25 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F07C8F9A1B1E37D300E399F5 /* OCTToxAVConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */; };
 		F07C8F9E1B1E444300E399F5 /* OCTToxAVTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */; };
+		F0943F241B7299D40093495F /* OCTPixelBufferPool.m in Sources */ = {isa = PBXBuildFile; fileRef = F0943F231B7299D40093495F /* OCTPixelBufferPool.m */; };
+		F0943F251B7299D40093495F /* OCTPixelBufferPool.m in Sources */ = {isa = PBXBuildFile; fileRef = F0943F231B7299D40093495F /* OCTPixelBufferPool.m */; };
 		F09E0C2F1B18475F00C25A24 /* OCTSubmanagerCalls.m in Sources */ = {isa = PBXBuildFile; fileRef = F09E0C2E1B18475F00C25A24 /* OCTSubmanagerCalls.m */; };
 		F0A6B9191B127EA700E48797 /* OCTAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */; };
 		F0B36B551B2CFE2200892E05 /* OCTTabBarControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B36B541B2CFE2200892E05 /* OCTTabBarControllerViewController.m */; };
@@ -231,6 +233,8 @@
 		F07C8F981B1E37D300E399F5 /* OCTToxAVConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVConstants.m; sourceTree = "<group>"; };
 		F07C8F9D1B1E444300E399F5 /* OCTToxAVTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxAVTests.m; sourceTree = "<group>"; };
 		F07C8F9F1B1E4F7400E399F5 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
+		F0943F221B7299D40093495F /* OCTPixelBufferPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTPixelBufferPool.h; path = Video/OCTPixelBufferPool.h; sourceTree = "<group>"; };
+		F0943F231B7299D40093495F /* OCTPixelBufferPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTPixelBufferPool.m; path = Video/OCTPixelBufferPool.m; sourceTree = "<group>"; };
 		F09E0C2E1B18475F00C25A24 /* OCTSubmanagerCalls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerCalls.m; sourceTree = "<group>"; };
 		F0A6B9171B127EA700E48797 /* OCTAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTAudioEngine.h; path = Audio/OCTAudioEngine.h; sourceTree = "<group>"; };
 		F0A6B9181B127EA700E48797 /* OCTAudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTAudioEngine.m; path = Audio/OCTAudioEngine.m; sourceTree = "<group>"; };
@@ -575,6 +579,8 @@
 				F0246F721B3482540000E49E /* OCTVideoEngine.m */,
 				F0DAA6411B369F3D00A55CB1 /* OCTVideoView.h */,
 				F0DAA6421B369F3D00A55CB1 /* OCTVideoView.m */,
+				F0943F221B7299D40093495F /* OCTPixelBufferPool.h */,
+				F0943F231B7299D40093495F /* OCTPixelBufferPool.m */,
 			);
 			name = Video;
 			sourceTree = "<group>";
@@ -775,6 +781,7 @@
 				4CD198EE0026B99EA22137D5D0B3B7E3 /* AppDelegate.m in Sources */,
 				EE0FB021193E20E6903390EA84A70DAC /* OCTCall.m in Sources */,
 				C363991E51115CA10E610D76F13FC009 /* OCTChat.m in Sources */,
+				F0943F251B7299D40093495F /* OCTPixelBufferPool.m in Sources */,
 				D287AF9163A2B1CE36E2934FA7D9DFE7 /* OCTChatsViewController.m in Sources */,
 				E21E4B2BF02AB1089010E4ED575410FE /* OCTConversationViewController.m in Sources */,
 				2908902779B3FF698EAA2F79E6A728C4 /* OCTDefaultFileStorage.m in Sources */,
@@ -830,6 +837,7 @@
 				F02C04D11B20FB98001025D1 /* OCTSubmanagerCallsTests.m in Sources */,
 				11CD5AE91B386A4D00585194 /* OCTObject.m in Sources */,
 				11B4BAF11B11E2800001A96A /* OCTSubmanagerFiles.m in Sources */,
+				F0943F241B7299D40093495F /* OCTPixelBufferPool.m in Sources */,
 				3A74FCE2D1704C1086CBBA8CB9844CB9 /* OCTDefaultFileStorage.m in Sources */,
 				50CD1B5B457C0F1972B01EAB009DF786 /* OCTDefaultFileStorageTests.m in Sources */,
 				8DFDF4C7E88DAD408EDD398109D93BEF /* OCTDefaultSettingsStorage.m in Sources */,

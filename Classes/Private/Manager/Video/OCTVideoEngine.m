@@ -8,6 +8,7 @@
 
 #import "OCTVideoEngine.h"
 #import "OCTVideoView.h"
+#import "OCTPixelBufferPool.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -25,12 +26,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) OCTVideoView *videoView;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
-
+@property (strong, nonatomic) OCTPixelBufferPool *pixelPool;
 @property (nonatomic, assign) NSUInteger sizeOfChromaPlanes;
 
 @end
 
 @implementation OCTVideoEngine
+
+#pragma mark - Life cycle
 
 - (instancetype)init
 {
@@ -42,11 +45,23 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     DDLogVerbose(@"%@: init", self);
 
     _captureSession = [AVCaptureSession new];
-    _captureSession.sessionPreset = AVCaptureSessionPreset1280x720;
+    _captureSession.sessionPreset = AVCaptureSessionPresetLow;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
+    _pixelPool = [[OCTPixelBufferPool alloc] initWithFormat:kPixelFormat];
 
     return self;
+}
+
+- (void)dealloc
+{
+    if (self.reusableUChromaPlane) {
+        free(self.reusableUChromaPlane);
+    }
+
+    if (self.reusableVChromaPlane) {
+        free(self.reusableVChromaPlane);
+    }
 }
 
 #pragma mark - Public
@@ -65,11 +80,13 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
     self.dataOutput.videoSettings = @{
-        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+        (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kPixelFormat),
     };
     [self.dataOutput setSampleBufferDelegate:self queue:self.processingQueue];
 
     [self.captureSession addOutput:self.dataOutput];
+    AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
+    conn.videoOrientation = AVCaptureVideoOrientationPortrait;
 
     return YES;
 }
@@ -136,50 +153,63 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    if (! self.processIncomingVideo || ! self.videoView) {
-        return;
-    }
-    // Create CVPixelBuffer -->CIImage --> OCTVideoView?
-    CVPixelBufferRef bufferRef = NULL;
+    dispatch_sync(self.processingQueue, ^{
+        if (! self.processIncomingVideo || ! self.videoView) {
+            return;
+        }
 
-    void *planeBaseAddress[3] = {(void *)yPlane, (void *)uPlane, (void *)vPlane};
-    size_t planeWidths[3] = {(size_t)yStride, (size_t)uStride, (size_t)vStride};
-    size_t planeHeight[3] = {height, height / 4, height / 4};
-    size_t bytesPerRow[3] = {abs(yStride - width), (abs(uStride) - width) / 2, (abs(vStride) - width) / 4};
+        /**
+         * Create pixel buffers and copy YUV planes over
+         */
+        CVPixelBufferRef bufferRef = NULL;
 
-    CVReturn success = CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault,
-                                                          width, height,
-                                                          kPixelFormat,
-                                                          NULL,
-                                                          0,
-                                                          2,
-                                                          planeBaseAddress,
-                                                          planeWidths, planeHeight, bytesPerRow,
-                                                          NULL,
-                                                          NULL,
-                                                          NULL,
-                                                          &bufferRef);
+        if (! [self.pixelPool createPixelBuffer:&bufferRef width:width height:height]) {
+            return;
+        }
 
-    if (success != kCVReturnSuccess) {
-        DDLogWarn(@"Error:%d CVPixelBufferCreateWithPlanarBytes",  success);
-    }
+        CVPixelBufferLockBaseAddress(bufferRef, 0);
 
-    CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
-    CVPixelBufferRelease(bufferRef);
+        OCTToxAVPlaneData *ySource = yPlane;
+        uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
 
-    self.videoView.image = coreImage;
+        /* Copy yPlane data */
+        for (size_t yHeight = 0; yHeight < height; yHeight++) {
+            memcpy(yDestinationPlane, ySource, width);
+            ySource += yStride;
+            yDestinationPlane += width;
+        }
+
+        /* Interweave U and V */
+        uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
+        OCTToxAVPlaneData *uSource = uPlane;
+        OCTToxAVPlaneData *vSource = vPlane;
+        for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
+            for (size_t pixelWidth = 0; pixelWidth < width / 2; pixelWidth++) {
+                uvDestinationPlane[pixelWidth * 2] = uSource[pixelWidth];
+                uvDestinationPlane[(pixelWidth * 2) + 1] = vSource[pixelWidth];
+            }
+            uvDestinationPlane += width;
+            uSource += abs(uStride);
+            vSource += abs(vStride);
+        }
+
+        CVPixelBufferUnlockBaseAddress(bufferRef, 0);
+
+        /* Create Core Image */
+        CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
+
+        CVPixelBufferRelease(bufferRef);
+
+        self.videoView.image = coreImage;
+    });
 }
 
 #pragma mark - Buffer Delegate
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
-{}
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
 
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-
 
     if (! imageBuffer) {
         return;
@@ -189,12 +219,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     OCTToxAVVideoWidth width = (OCTToxAVVideoWidth)CVPixelBufferGetWidth(imageBuffer);
     OCTToxAVVideoHeight height = (OCTToxAVVideoHeight)CVPixelBufferGetHeight(imageBuffer);
+    NSUInteger numberOfElementsForChroma = height * width / 2;
 
     uint8_t *yPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
     uint8_t *uvPlane = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
 
-    NSUInteger numberOfElementsForChroma = height * width / 4;
-
+    /**
+     * Recreate the buffers if the original ones are too small
+     */
     if (numberOfElementsForChroma > self.sizeOfChromaPlanes) {
 
         if (self.reusableUChromaPlane) {
@@ -211,7 +243,10 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         self.sizeOfChromaPlanes = numberOfElementsForChroma;
     }
 
-    for (int i = 0; i < (height * width / 4); i += 2) {
+    /**
+     * Deinterleaved the UV planes and place them to in the reusable arrays
+     */
+    for (int i = 0; i < (height * width / 2); i += 2) {
         self.reusableUChromaPlane[i / 2] = uvPlane[i];
         self.reusableVChromaPlane[i / 2] = uvPlane[i+1];
     }
