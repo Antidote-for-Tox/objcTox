@@ -161,7 +161,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         /**
          * Create pixel buffers and copy YUV planes over
          */
-
         CVPixelBufferRef bufferRef = NULL;
 
         if (! [self.pixelPool createPixelBuffer:&bufferRef width:width height:height]) {
@@ -170,27 +169,28 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
         CVPixelBufferLockBaseAddress(bufferRef, 0);
 
-        uint8_t *ySource = (uint8_t *)yPlane;
+        OCTToxAVPlaneData *ySource = yPlane;
         uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
-        uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
 
-        uint8_t *uSource = (uint8_t *)uPlane;
-        uint8_t *vSource = (uint8_t *)vPlane;
-
+        /* Copy yPlane data */
         for (size_t yHeight = 0; yHeight < height; yHeight++) {
-
-            /* Copy yPlane data */
             memcpy(yDestinationPlane, ySource, width);
             ySource += yStride;
             yDestinationPlane += width;
+        }
 
-            for (size_t pixelWidth = 0; pixelWidth < width; pixelWidth++) {
+        /* Interweave U and V */
+        uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
+        OCTToxAVPlaneData *uSource = uPlane;
+        OCTToxAVPlaneData *vSource = vPlane;
+        for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
+            for (size_t pixelWidth = 0; pixelWidth < width / 2; pixelWidth++) {
                 uvDestinationPlane[pixelWidth * 2] = uSource[pixelWidth];
                 uvDestinationPlane[(pixelWidth * 2) + 1] = vSource[pixelWidth];
             }
-            uvDestinationPlane += width / 2;
-            uSource += uStride;
-            vSource += vStride;
+            uvDestinationPlane += width;
+            uSource += abs(uStride);
+            vSource += abs(vStride);
         }
 
         CVPixelBufferUnlockBaseAddress(bufferRef, 0);
