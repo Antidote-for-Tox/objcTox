@@ -155,7 +155,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    dispatch_sync(self.processingQueue, ^{
+    dispatch_async(self.processingQueue, ^{
         if (! self.processIncomingVideo || ! self.videoView) {
             return;
         }
