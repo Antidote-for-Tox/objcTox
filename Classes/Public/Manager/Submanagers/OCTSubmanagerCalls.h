@@ -90,7 +90,8 @@
  * The preview video of the user.
  * You must be in a video call for this to show. Otherwise the layer will
  * just be black.
- * @param completionBlock Do stuff with the layer after it has been generated.
+ * @param completionBlock Block responsible for using the layer. This
+ * must not be nil.
  */
 - (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
 

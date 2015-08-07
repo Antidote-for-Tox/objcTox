@@ -125,6 +125,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock
 {
+    NSParameterAssert(completionBlock);
     DDLogVerbose(@"%@: videoCallPreview", self);
     dispatch_async(self.processingQueue, ^{
         AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];

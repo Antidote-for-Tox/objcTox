@@ -53,8 +53,9 @@
 
 /**
  * Layer of the preview video.
- * @return CALayer that can be added to a UIView. Nil if
- * OCTVideoEngine is not sending any video.
+ * Layer will be nil if videoSession is not running.
+ * @param completionBlock Block responsible for using the layer. This
+ * must not be nil.
  */
 - (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
 
