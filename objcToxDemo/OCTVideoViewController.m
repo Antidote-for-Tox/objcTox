@@ -43,7 +43,6 @@ static const CGFloat kEdgeInsets = 25.0;
     [self createPreviewView];
     [self createVideoFeedView];
 
-    [self createVideoViewConstraints];
     [self createPreviewViewConstraints];
 }
 
@@ -138,17 +137,27 @@ static const CGFloat kEdgeInsets = 25.0;
 - (void)adjustPreviewLayer
 {
     if (! self.previewLayer) {
-        self.previewLayer = [self.manager videoCallPreview];
+        __weak OCTVideoViewController *weakSelf = self;
+
         [self.previewView.layer addSublayer:self.previewLayer];
+        [self.manager getVideoCallPreview:^(CALayer *layer) {
+            OCTVideoViewController *strongSelf = weakSelf;
+            [strongSelf.previewView.layer addSublayer:layer];
+            strongSelf.previewLayer = layer;
+            strongSelf.previewLayer.frame = strongSelf.previewView.bounds;
+        }];
     }
-    self.previewLayer.frame = self.previewView.bounds;
+    else {
+        self.previewLayer.frame = self.previewView.bounds;
+    }
 }
 
 - (void)createVideoFeedView
 {
-    self.videoFeed = [self.manager videoFeedWithRect:CGRectZero];
+    self.videoFeed = [self.manager videoFeed];
     self.videoFeed.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.videoFeed];
+    [self createVideoViewConstraints];
 }
 
 - (void)createDismissVCButton

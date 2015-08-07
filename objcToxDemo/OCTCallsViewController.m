@@ -248,6 +248,8 @@
 
 - (void)showVideo
 {
+    [self.manager.calls enableVideoSending:YES forCall:self.selectedCall error:nil];
+
     OCTVideoViewController *videoViewController = [[OCTVideoViewController alloc] initWithCallManager:self.manager.calls];
     videoViewController.modalInPopover = YES;
     videoViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;

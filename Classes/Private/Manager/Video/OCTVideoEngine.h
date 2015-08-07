@@ -29,15 +29,6 @@
 - (BOOL)setupWithError:(NSError **)error;
 
 /**
- * Process incoming video frames.
- * Set to YES to process video, otherwise NO
- * to ignore the incoming frames in receiveVideoFrameWithWidth...
- * Will be set to YES automatically when calling startSendingVideo
- * Will be set to NO after stopSendingVideo
- */
-@property (nonatomic, assign) BOOL processIncomingVideo;
-
-/**
  * Start sending video data.
  * This will turn on processIncomingVideo to YES
  */
@@ -56,16 +47,17 @@
 - (BOOL)isSendingVideo;
 
 /**
- * Current video feed.
+ * Generate a UIView with the current incoming video feed.
  */
-- (UIView *)videoFeedWithRect:(CGRect)rect;
+- (UIView *)videoFeed;
 
 /**
  * Layer of the preview video.
- * @return CALayer that can be added to a UIView. Nil if
- * OCTVideoEngine is not sending any video.
+ * Layer will be nil if videoSession is not running.
+ * @param completionBlock Block responsible for using the layer. This
+ * must not be nil.
  */
-- (CALayer *)videoCallPreview;
+- (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
 
 /**
  * Provide video frames to video engine to process.

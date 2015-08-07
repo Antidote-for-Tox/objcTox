@@ -83,17 +83,17 @@
 
 /**
  * The UIView that will have the video feed.
- * @return UIView of the video feed. Nil if no video available.
  */
-- (UIView *)videoFeedWithRect:(CGRect)rect;
+- (UIView *)videoFeed;
 
 /**
  * The preview video of the user.
  * You must be in a video call for this to show. Otherwise the layer will
  * just be black.
- * @return CALayer of the preview. Nil if not available.
+ * @param completionBlock Block responsible for using the layer. This
+ * must not be nil.
  */
-- (CALayer *)videoCallPreview;
+- (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
 
 /**
  * Set the Audio bit rate.

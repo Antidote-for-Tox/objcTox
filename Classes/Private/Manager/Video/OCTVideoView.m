@@ -19,26 +19,24 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    EAGLContext *eaglContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-
-    return [self initWithFrame:frame context:eaglContext];
-}
-
-- (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context
-{
-    self = [super initWithFrame:frame context:context];
-
-    _coreImageContext = [CIContext contextWithEAGLContext:context];
+    self = [super initWithFrame:frame];
 
     if (! self) {
         return nil;
     }
 
+    __weak OCTVideoView *weakSelf = self;
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        OCTVideoView *strongSelf = weakSelf;
+        strongSelf.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        strongSelf.coreImageContext = [CIContext contextWithEAGLContext:strongSelf.context];
+    });
+
     self.enableSetNeedsDisplay = NO;
 
     return self;
 }
-
 
 - (void)setImage:(CIImage *)image
 {

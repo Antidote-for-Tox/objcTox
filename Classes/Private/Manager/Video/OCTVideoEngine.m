@@ -23,7 +23,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureVideoDataOutput *dataOutput;
 @property (nonatomic, strong) dispatch_queue_t processingQueue;
-@property (nonatomic, strong) OCTVideoView *videoView;
+@property (nonatomic, weak) OCTVideoView *videoView;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
 @property (strong, nonatomic) OCTPixelBufferPool *pixelPool;
@@ -94,7 +94,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (void)startSendingVideo
 {
     DDLogVerbose(@"%@: startSendingVideo", self);
-    self.processIncomingVideo = YES;
 
     dispatch_async(self.processingQueue, ^{
         if ([self isSendingVideo]) {
@@ -107,7 +106,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (void)stopSendingVideo
 {
     DDLogVerbose(@"%@: stopSendingVideo", self);
-    self.processIncomingVideo = NO;
 
     dispatch_async(self.processingQueue, ^{
 
@@ -125,22 +123,31 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     return self.captureSession.isRunning;
 }
 
-- (CALayer *)videoCallPreview
+- (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock
 {
+    NSParameterAssert(completionBlock);
     DDLogVerbose(@"%@: videoCallPreview", self);
-    AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+    dispatch_async(self.processingQueue, ^{
+        AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
 
-    return previewLayer;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionBlock(previewLayer);
+        });
+    });
 }
 
-- (UIView *)videoFeedWithRect:(CGRect)rect;
+- (UIView *)videoFeed;
 {
-    DDLogVerbose(@"%@: videoFeedWithRect", self);
-    if (! self.videoView) {
-        self.videoView = [[OCTVideoView alloc] initWithFrame:rect];
+    DDLogVerbose(@"%@: videoFeed", self);
+
+    OCTVideoView *feed = self.videoView;
+
+    if (! feed) {
+        feed = [[OCTVideoView alloc] initWithFrame:CGRectZero];
+        self.videoView = feed;
     }
 
-    return self.videoView;
+    return feed;
 }
 
 - (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
@@ -153,8 +160,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    dispatch_sync(self.processingQueue, ^{
-        if (! self.processIncomingVideo || ! self.videoView) {
+    dispatch_async(self.processingQueue, ^{
+        if (! self.videoView) {
             return;
         }
 
