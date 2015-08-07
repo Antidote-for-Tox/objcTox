@@ -29,15 +29,6 @@
 - (BOOL)setupWithError:(NSError **)error;
 
 /**
- * Process incoming video frames.
- * Set to YES to process video, otherwise NO
- * to ignore the incoming frames in receiveVideoFrameWithWidth...
- * Will be set to YES automatically when calling startSendingVideo
- * Will be set to NO after stopSendingVideo
- */
-@property (nonatomic, assign) BOOL processIncomingVideo;
-
-/**
  * Start sending video data.
  * This will turn on processIncomingVideo to YES
  */
@@ -58,7 +49,7 @@
 /**
  * Generate a UIView with the current incoming video feed.
  */
-- (void)getVideoFeed:(void (^)(UIView *videoFeed))completionBlock;
+- (UIView *)videoFeed;
 
 /**
  * Layer of the preview video.

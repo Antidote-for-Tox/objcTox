@@ -83,9 +83,8 @@
 
 /**
  * The UIView that will have the video feed.
- * @param completionBlock Do stuff with the view after it has been generated.
  */
-- (void)getVideoFeed:(void (^)(UIView *videoFeed))completionBlock;
+- (UIView *)videoFeed;
 
 /**
  * The preview video of the user.

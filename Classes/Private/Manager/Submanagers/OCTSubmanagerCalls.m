@@ -217,9 +217,9 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     }
 }
 
-- (void)getVideoFeed:(void (^)(UIView *))completionBlock
+- (UIView *)videoFeed
 {
-    [self.videoEngine getVideoFeed:completionBlock];
+    return [self.videoEngine videoFeed];
 }
 
 - (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock

@@ -156,18 +156,10 @@ static const CGFloat kEdgeInsets = 25.0;
 
 - (void)createVideoFeedView
 {
-    __weak OCTVideoViewController *weakSelf = self;
-
-    [self.manager getVideoFeed:^(UIView *videoView) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            OCTVideoViewController *strongSelf = weakSelf;
-            strongSelf.videoFeed = videoView;
-            strongSelf.videoFeed.translatesAutoresizingMaskIntoConstraints = NO;
-            [strongSelf.view addSubview:self.videoFeed];
-
-            [strongSelf createVideoViewConstraints];
-        });
-    }];
+    self.videoFeed = [self.manager videoFeed];
+    self.videoFeed.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.videoFeed];
+    [self createVideoViewConstraints];
 }
 
 - (void)createDismissVCButton

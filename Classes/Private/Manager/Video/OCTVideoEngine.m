@@ -23,7 +23,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureVideoDataOutput *dataOutput;
 @property (nonatomic, strong) dispatch_queue_t processingQueue;
-@property (nonatomic, strong) OCTVideoView *videoView;
+@property (nonatomic, weak) OCTVideoView *videoView;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
 @property (strong, nonatomic) OCTPixelBufferPool *pixelPool;
@@ -94,7 +94,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (void)startSendingVideo
 {
     DDLogVerbose(@"%@: startSendingVideo", self);
-    self.processIncomingVideo = YES;
 
     dispatch_async(self.processingQueue, ^{
         if ([self isSendingVideo]) {
@@ -107,7 +106,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (void)stopSendingVideo
 {
     DDLogVerbose(@"%@: stopSendingVideo", self);
-    self.processIncomingVideo = NO;
 
     dispatch_async(self.processingQueue, ^{
 
@@ -134,15 +132,19 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     });
 }
 
-- (void)getVideoFeed:(void (^)(UIView *videoFeed))completionBlock
+- (UIView *)videoFeed;
 {
-    DDLogVerbose(@"%@: getVideoFeed", self);
-    dispatch_async(self.processingQueue, ^{
-        if (! self.videoView) {
-            self.videoView = [[OCTVideoView alloc] initWithFrame:CGRectZero];
-        }
-        completionBlock(self.videoView);
-    });
+    DDLogVerbose(@"%@: videoFeed", self);
+
+    if (! self.videoView) {
+        OCTVideoView *feed = [[OCTVideoView alloc] initWithFrame:CGRectZero];
+        self.videoView = feed;
+
+        return feed;
+    }
+    else {
+        return self.videoView;
+    }
 }
 
 - (void)receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width
@@ -156,7 +158,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
     dispatch_async(self.processingQueue, ^{
-        if (! self.processIncomingVideo || ! self.videoView) {
+        if (! self.videoView) {
             return;
         }
 
