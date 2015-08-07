@@ -46,12 +46,6 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    if (! self.coreImageContext) {
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        return;
-    }
-
     if (self.image) {
         CGFloat scale = self.window.screen.scale;
         CGRect destRect = CGRectApplyAffineTransform(self.bounds, CGAffineTransformMakeScale(scale, scale));

@@ -141,12 +141,10 @@ static const CGFloat kEdgeInsets = 25.0;
 
         [self.previewView.layer addSublayer:self.previewLayer];
         [self.manager getVideoCallPreview:^(CALayer *layer) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                OCTVideoViewController *strongSelf = weakSelf;
-                [strongSelf.previewView.layer addSublayer:layer];
-                strongSelf.previewLayer = layer;
-                strongSelf.previewLayer.frame = strongSelf.previewView.bounds;
-            });
+            OCTVideoViewController *strongSelf = weakSelf;
+            [strongSelf.previewView.layer addSublayer:layer];
+            strongSelf.previewLayer = layer;
+            strongSelf.previewLayer.frame = strongSelf.previewView.bounds;
         }];
     }
     else {
