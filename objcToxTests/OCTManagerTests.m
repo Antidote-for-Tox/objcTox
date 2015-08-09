@@ -64,7 +64,7 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    self.manager = [[OCTManager alloc] initWithConfiguration:configuration];
+    self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 }
 
 - (void)tearDown
@@ -109,7 +109,7 @@
     OCMExpect([tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -133,7 +133,7 @@
     OCMExpect([tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

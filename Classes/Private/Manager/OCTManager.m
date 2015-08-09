@@ -43,13 +43,14 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
 {
-    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil];
+    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil error:error];
 }
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath
+                                error:(NSError **)error
 {
     self = [super init];
 
@@ -73,7 +74,12 @@
         savedData = [NSData dataWithContentsOfFile:savedDataPath];
     }
 
-    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
+    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:error];
+
+    if (! _tox) {
+        return nil;
+    }
+
     _tox.delegate = self;
     [_tox start];
 
@@ -102,16 +108,6 @@
 }
 
 #pragma mark -  Public
-
-- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
-}
-
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
-}
 
 - (NSString *)exportToxSaveFile:(NSError **)error
 {
@@ -241,6 +237,29 @@
                                          userInfo:@{ @"NSError" : error }];
         }
     }
+}
+
+#pragma mark -  Deprecated
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+{
+    return [self initWithConfiguration:configuration error:nil];
+}
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+{
+    return [self initWithConfiguration:configuration loadToxSaveFilePath:toxSaveFilePath error:nil];
+}
+
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
+}
+
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
 }
 
 @end
