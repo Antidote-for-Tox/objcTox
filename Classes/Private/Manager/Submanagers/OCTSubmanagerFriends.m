@@ -60,13 +60,11 @@
     return [self createFriendWithFriendNumber:friendNumber error:error];
 }
 
-- (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest
+- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest
 {
     NSParameterAssert(friendRequest);
 
     [[self.dataSource managerGetRealmManager] deleteObject:friendRequest];
-
-    return YES;
 }
 
 - (BOOL)removeFriend:(OCTFriend *)friend error:(NSError **)error

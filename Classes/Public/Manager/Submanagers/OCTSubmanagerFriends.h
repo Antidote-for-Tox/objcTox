@@ -41,7 +41,7 @@
  *
  * @param friendRequest Friend request to remove.
  */
-- (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest;
+- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;
 
 /**
  * Remove friend from list. This cannot be undone.
