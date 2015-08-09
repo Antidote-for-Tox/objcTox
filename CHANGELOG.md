@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OCTSubmanagerBootstrap that implements bootstrapping logic from STS https://github.com/Tox/Tox-STS/pull/65/files.
 - Predefined list of nodes to bootstrap from https://wiki.tox.chat/users/nodes.
 
+### Changes
+- OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
+
 ### Deprecated
 - [OCTManager bootstrapFromHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.
 - [OCTManager addTCPRelayWithHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.

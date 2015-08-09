@@ -7,18 +7,30 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
+#import "OCTRealmTests.h"
 #import "OCTSubmanagerFriends.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTTox.h"
+#import "OCTFriendRequest.h"
 
-@interface OCTSubmanagerFriendsTests : XCTestCase
+static const OCTToxFriendNumber kFriendNumber = 5;
+static NSString *const kPublicKey = @"kPublicKey";
+static NSString *const kName = @"kName";
+static NSString *const kStatusMessage = @"kStatusMessage";
+static const OCTToxUserStatus kStatus = OCTToxUserStatusAway;
+static const OCTToxConnectionStatus kConnectionStatus = OCTToxConnectionStatusUDP;
+static const BOOL kIsTyping = YES;
+static NSDate *sLastSeenOnline;
+static NSString *const kMessage = @"kMessage";
+
+@interface OCTSubmanagerFriendsTests : OCTRealmTests
 
 @property (strong, nonatomic) OCTSubmanagerFriends *submanager;
 @property (strong, nonatomic) id dataSource;
+@property (strong, nonatomic) id tox;
 
 @end
 
@@ -28,7 +40,14 @@
 {
     [super setUp];
 
+    sLastSeenOnline = [NSDate date];
+
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
+
+    OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
+
+    self.tox = OCMClassMock([OCTTox class]);
+    OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
 
     self.submanager = [OCTSubmanagerFriends new];
     self.submanager.dataSource = self.dataSource;
@@ -37,285 +56,308 @@
 - (void)tearDown
 {
     self.dataSource = nil;
+    self.tox = nil;
     self.submanager = nil;
 
     [super tearDown];
 }
 
-- (void)testInit
+- (void)testConfigure
 {
-    XCTAssertNotNil(self.submanager);
+    OCTFriend *friend = [self createFriend];
+    friend.status = OCTToxUserStatusBusy;
+    friend.isConnected = YES;
+    friend.connectionStatus = OCTToxConnectionStatusUDP;
+    friend.isTyping = YES;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager configure];
+
+    XCTAssertEqual(friend.status, OCTToxUserStatusNone);
+    XCTAssertFalse(friend.isConnected);
+    XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusNone);
+    XCTAssertFalse(friend.isTyping);
 }
 
-// - (void)testConfigureFriends
-// {
-//     NSArray *numbersArray = @[@0, @1, @3, @5];
-//     NSArray *friendsArray = @[
-//         OCMClassMock([OCTFriend class]),
-//         OCMClassMock([OCTFriend class]),
-//         OCMClassMock([OCTFriend class]),
-//         OCMClassMock([OCTFriend class])];
+#pragma mark -  Public
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox friendsArray]).andReturn(numbersArray);
+- (void)testSendFriendRequestSuccess
+{
+    [self stubFriendMethodsInTox];
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+    OCMExpect([self.tox addFriendWithAddress:kPublicKey message:@"message" error:nil]).andReturn(kFriendNumber);
 
-//     id friendsContainer = OCMClassMock([OCTFriendsContainer class]);
-//     OCMStub([friendsContainer alloc]).andReturn(friendsContainer);
-//     OCMExpect([friendsContainer setDataSource:(id)self.submanager]);
-//     OCMExpect([friendsContainer configure]);
-//     OCMExpect([friendsContainer initWithFriendsArray:[OCMArg checkWithBlock:^BOOL (NSArray *array) {
-//         XCTAssertEqual(array.count, 4);
-//         XCTAssertEqual(array[0], friendsArray[0]);
-//         XCTAssertEqual(array[1], friendsArray[1]);
-//         XCTAssertEqual(array[2], friendsArray[2]);
-//         XCTAssertEqual(array[3], friendsArray[3]);
+    BOOL result = [self.submanager sendFriendRequestToAddress:kPublicKey message:@"message" error:nil];
 
-//         return YES;
-//     }]]).andReturn(friendsContainer);
+    XCTAssertTrue(result);
+    OCMVerify([self.dataSource managerSaveTox]);
+    OCMVerifyAll(self.tox);
 
-//     id converterFriend = OCMClassMock([OCTConverterFriend class]);
-//     OCMStub([converterFriend friendFromFriendNumber:0]).andReturn(friendsArray[0]);
-//     OCMStub([converterFriend friendFromFriendNumber:1]).andReturn(friendsArray[1]);
-//     OCMStub([converterFriend friendFromFriendNumber:3]).andReturn(friendsArray[2]);
-//     OCMStub([converterFriend friendFromFriendNumber:5]).andReturn(friendsArray[3]);
-//     self.submanager.converterFriend = converterFriend;
+    RLMResults *objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
 
-//     [self.submanager configure];
+    OCTFriend *friend = [objects firstObject];
 
-//     XCTAssertEqual(friendsContainer, self.submanager.friendsContainer);
-//     OCMVerifyAll(friendsContainer);
+    [self verifyFriend:friend];
+}
 
-//     [friendsContainer stopMocking];
-// }
+- (void)testSendFriendRequestFailure
+{
+    NSError *error;
+    NSError *error2 = [NSError new];
 
-// #pragma mark -  Public
+    [[self.dataSource reject] managerSaveTox];
+    OCMExpect([self.tox addFriendWithAddress:kPublicKey message:@"message" error:[OCMArg setTo:error2]]).andReturn(kOCTToxFriendNumberFailure);
 
-// - (void)testSendFriendRequestToAddress
-// {
-//     NSError *error;
+    BOOL result = [self.submanager sendFriendRequestToAddress:kPublicKey message:@"message" error:&error];
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(7);
+    XCTAssertFalse(result);
+    XCTAssertEqualObjects(error, error2);
+}
 
-//     id friend = OCMClassMock([OCTFriend class]);
+- (void)testApproveFriendRequestSuccess
+{
+    [self stubFriendMethodsInTox];
 
-//     id converterFriend = OCMClassMock([OCTConverterFriend class]);
-//     OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
-//     self.submanager.converterFriend = converterFriend;
+    OCTFriendRequest *friendRequest = [OCTFriendRequest new];
+    friendRequest.publicKey = kPublicKey;
+    friendRequest.message = @"message";
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friendRequest];
+    [self.realmManager.realm commitWriteTransaction];
 
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
-//     BOOL result = [self.submanager sendFriendRequestToAddress:@"address" message:@"message" error:&error];
+    OCMExpect([self.tox addFriendWithNoRequestWithPublicKey:kPublicKey error:nil]).andReturn(kFriendNumber);
 
-//     XCTAssertTrue(result);
-//     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 1);
+    BOOL result = [self.submanager approveFriendRequest:friendRequest error:nil];
 
-//     OCTFriend *theFriend = [self.submanager.friendsContainer friendAtIndex:0];
-//     XCTAssertEqual(friend, theFriend);
+    XCTAssertTrue(result);
+    OCMVerify([self.dataSource managerSaveTox]);
+    OCMVerifyAll(self.tox);
 
-//     OCMVerify([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg setTo:error]]);
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 0);
 
-// - (void)testSendFriendRequestToAddressFailure1
-// {
-//     NSError *error;
+    objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox addFriendWithAddress:@"address" message:@"message" error:[OCMArg anyObjectRef]]).andReturn(kOCTToxFriendNumberFailure);
+    OCTFriend *friend = [objects firstObject];
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+    [self verifyFriend:friend];
+}
 
-//     BOOL result = [self.submanager sendFriendRequestToAddress:@"address" message:@"message" error:&error];
+- (void)testApproveFriendRequestFailure
+{
+    OCTFriendRequest *friendRequest = [OCTFriendRequest new];
+    friendRequest.publicKey = kPublicKey;
+    friendRequest.message = @"message";
 
-//     XCTAssertFalse(result);
-// }
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friendRequest];
+    [self.realmManager.realm commitWriteTransaction];
 
-// - (void)testApproveFriendRequest
-// {
-//     NSError *error;
+    NSError *error;
+    NSError *error2 = [NSError new];
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(7);
+    [[self.dataSource reject] managerSaveTox];
+    OCMExpect([self.tox addFriendWithNoRequestWithPublicKey:kPublicKey error:[OCMArg setTo:error2]]).andReturn(kOCTToxFriendNumberFailure);
 
-//     id friend = OCMClassMock([OCTFriend class]);
+    BOOL result = [self.submanager approveFriendRequest:friendRequest error:&error];
 
-//     id converterFriend = OCMClassMock([OCTConverterFriend class]);
-//     OCMStub([converterFriend friendFromFriendNumber:7]).andReturn(friend);
-//     self.submanager.converterFriend = converterFriend;
+    XCTAssertFalse(result);
+    XCTAssertEqualObjects(error, error2);
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
 
-//     id request = OCMClassMock([OCTFriendRequest class]);
-//     OCMStub([request publicKey]).andReturn(@"address");
+    XCTAssertEqualObjects(friendRequest, [objects firstObject]);
+}
 
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:nil];
-//     BOOL result = [self.submanager approveFriendRequest:request error:&error];
+- (void)testRemoveFriendRequest
+{
+    OCTFriendRequest *friendRequest = [OCTFriendRequest new];
+    friendRequest.publicKey = kPublicKey;
+    friendRequest.message = @"message";
 
-//     XCTAssertTrue(result);
-//     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 1);
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friendRequest];
+    [self.realmManager.realm commitWriteTransaction];
 
-//     OCTFriend *theFriend = [self.submanager.friendsContainer friendAtIndex:0];
-//     XCTAssertEqual(friend, theFriend);
+    [self.submanager removeFriendRequest:friendRequest];
 
-//     OCMVerify([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg setTo:error]]);
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 0);
+}
 
-// - (void)testApproveFriendRequestFailure1
-// {
-//     NSError *error;
+- (void)testRemoveFriendSuccess
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox addFriendWithNoRequestWithPublicKey:@"address" error:[OCMArg anyObjectRef]]).andReturn(kOCTToxFriendNumberFailure);
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+    OCMExpect([self.tox deleteFriendWithFriendNumber:kFriendNumber error:nil]).andReturn(YES);
 
-//     id request = OCMClassMock([OCTFriendRequest class]);
-//     OCMStub([request publicKey]).andReturn(@"address");
+    BOOL result = [self.submanager removeFriend:friend error:nil];
 
-//     BOOL result = [self.submanager approveFriendRequest:request error:&error];
+    XCTAssertTrue(result);
+    OCMVerify([self.dataSource managerSaveTox]);
 
-//     XCTAssertFalse(result);
-// }
+    RLMResults *objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 0);
+}
 
-// - (void)testRemoveFriendRequest
-// {
-//     id request = OCMClassMock([OCTFriendRequest class]);
-//     OCMStub([request publicKey]).andReturn(@"key");
+- (void)testRemoveFriendFailure
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
 
-//     id dbManager = OCMClassMock([OCTDBManager class]);
-//     OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
 
-//     [self.submanager removeFriendRequest:request];
+    NSError *error;
+    NSError *error2 = [NSError new];
+
+    [[self.dataSource reject] managerSaveTox];
+    OCMExpect([self.tox deleteFriendWithFriendNumber:kFriendNumber error:[OCMArg setTo:error2]]).andReturn(NO);
 
-//     OCMVerify([dbManager removeFriendRequestWithPublicKey:@"key"]);
-// }
+    BOOL result = [self.submanager removeFriend:friend error:&error];
 
-// - (void)testRemoveFriend
-// {
-//     NSError *error;
+    XCTAssertFalse(result);
 
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox deleteFriendWithFriendNumber:7 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    RLMResults *objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
+    XCTAssertEqualObjects([objects firstObject], friend);
+}
 
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
+#pragma mark -  OCTToxDelegate
 
-//     OCTFriend *friend = OCMClassMock([OCTFriend class]);
-//     OCMStub([friend friendNumber]).andReturn(7);
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     BOOL result = [self.submanager removeFriend:friend error:&error];
-
-//     XCTAssertTrue(result);
-//     XCTAssertEqual([self.submanager.friendsContainer friendsCount], 0);
-
-//     OCMVerify([tox deleteFriendWithFriendNumber:7 error:[OCMArg setTo:error]]);
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
-
-// - (void)testRemoveFriendFailure1
-// {
-//     NSError *error;
-
-//     id tox = OCMClassMock([OCTTox class]);
-//     OCMStub([tox deleteFriendWithFriendNumber:7 error:[OCMArg anyObjectRef]]).andReturn(NO);
-
-//     OCMStub([self.dataSource managerGetTox]).andReturn(tox);
-
-//     OCTFriend *friend = OCMClassMock([OCTFriend class]);
-//     OCMStub([friend friendNumber]).andReturn(7);
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     BOOL result = [self.submanager removeFriend:friend error:&error];
-
-//     XCTAssertFalse(result);
-//     XCTAssertEqual([self.submanager.friendsContainer friendAtIndex:0], friend);
-// }
-
-// #pragma mark -  OCTToxDelegate
-
-// - (void)testFriendRequestWithMessage
-// {
-//     id dbManager = OCMClassMock([OCTDBManager class]);
-//     OCMStub([self.dataSource managerGetDBManager]).andReturn(dbManager);
-
-//     NSDate *before = [NSDate date];
-
-//     OCMExpect([dbManager addFriendRequest:[OCMArg checkWithBlock:^BOOL (OCTDBFriendRequest *request) {
-//         NSDate *after = [NSDate date];
-
-//         return
-//         [request.message isEqualToString:@"message"] &&
-//         [request.publicKey isEqualToString:@"publicKey"];
-//         (request.dateInterval >= [before timeIntervalSince1970]) &&
-//         (request.dateInterval <= [after timeIntervalSince1970]);
-//     }]]);
-
-//     [self.submanager tox:nil friendRequestWithMessage:@"message" publicKey:@"publicKey"];
-
-//     OCMVerifyAll(dbManager);
-// }
-
-// - (void)testToxFriendNameUpdate
-// {
-//     OCTFriend *friend = [OCTFriend new];
-//     friend.friendNumber = 7;
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     [self.submanager tox:nil friendNameUpdate:@"name" friendNumber:7];
-
-//     XCTAssertEqualObjects(friend.name, @"name");
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
-
-// - (void)testToxFriendStatusMessageUpdate
-// {
-//     OCTFriend *friend = [OCTFriend new];
-//     friend.friendNumber = 7;
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     [self.submanager tox:nil friendStatusMessageUpdate:@"statusMessage" friendNumber:7];
-
-//     XCTAssertEqualObjects(friend.statusMessage, @"statusMessage");
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
-
-// - (void)testToxFriendStatusUpdate
-// {
-//     OCTFriend *friend = [OCTFriend new];
-//     friend.friendNumber = 7;
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     [self.submanager tox:nil friendStatusUpdate:OCTToxUserStatusBusy friendNumber:7];
-
-//     XCTAssertEqual(friend.status, OCTToxUserStatusBusy);
-//     OCMVerify([self.dataSource managerSaveTox]);
-// }
-
-// - (void)testToxFriendIsTypingUpdate
-// {
-//     OCTFriend *friend = [OCTFriend new];
-//     friend.friendNumber = 7;
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     [self.submanager tox:nil friendIsTypingUpdate:YES friendNumber:7];
-
-//     XCTAssertEqual(friend.isTyping, YES);
-// }
-
-// - (void)testToxFriendConnectionStatusUpdate
-// {
-//     OCTFriend *friend = [OCTFriend new];
-//     friend.friendNumber = 7;
-
-//     self.submanager.friendsContainer = [[OCTFriendsContainer alloc] initWithFriendsArray:@[ friend ]];
-//     [self.submanager tox:nil friendConnectionStatusChanged:OCTToxConnectionStatusUDP friendNumber:7];
-
-//     XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusUDP);
-// }
+- (void)textFriendRequestWithMessage
+{
+    [self.submanager tox:self.tox friendRequestWithMessage:kMessage publicKey:kPublicKey];
+    NSDate *date = [NSDate date];
+
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
+
+    OCTFriendRequest *request = [objects firstObject];
+    XCTAssertEqualObjects(request.publicKey, kPublicKey);
+    XCTAssertEqualObjects(request.message, kMessage);
+    XCTAssertEqual(request.dateInterval, [date timeIntervalSince1970]);
+}
+
+- (void)textFriendNameUpdate
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+    friend.publicKey = kPublicKey;
+    friend.nickname = kPublicKey;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendNameUpdate:@"" friendNumber:kFriendNumber];
+    XCTAssertEqualObjects(friend.name, @"");
+    XCTAssertEqualObjects(friend.nickname, kPublicKey);
+
+    [self.submanager tox:self.tox friendNameUpdate:kName friendNumber:kFriendNumber];
+    XCTAssertEqualObjects(friend.name, kName);
+    XCTAssertEqualObjects(friend.nickname, kName);
+}
+
+- (void)testStatusMessageUpdate
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendStatusMessageUpdate:kStatusMessage friendNumber:kFriendNumber];
+    XCTAssertEqualObjects(friend.statusMessage, kStatusMessage);
+}
+
+- (void)testStatusUpdate
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendStatusUpdate:kStatus friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.status, kStatus);
+}
+
+- (void)testIsTypingUpdate
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendIsTypingUpdate:kIsTyping friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.isTyping, kIsTyping);
+}
+
+- (void)testFriendConnectionStatusChanged
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusUDP friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusUDP);
+    XCTAssertTrue(friend.isConnected);
+
+    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusNone friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusNone);
+    XCTAssertFalse(friend.isConnected);
+
+    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusTCP friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.connectionStatus, OCTToxConnectionStatusTCP);
+    XCTAssertTrue(friend.isConnected);
+}
+
+#pragma mark -  Helper methods
+
+- (void)stubFriendMethodsInTox
+{
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kPublicKey);
+    OCMStub([self.tox friendNameWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kName);
+    OCMStub([self.tox friendStatusMessageWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kStatusMessage);
+    OCMStub([self.tox friendStatusWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kStatus);
+    OCMStub([self.tox friendConnectionStatusWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kConnectionStatus);
+    OCMStub([self.tox friendGetLastOnlineWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(sLastSeenOnline);
+    OCMStub([self.tox isFriendTypingWithFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(kIsTyping);
+}
+
+- (void)verifyFriend:(OCTFriend *)friend
+{
+    XCTAssertEqual(friend.friendNumber, kFriendNumber);
+    XCTAssertEqualObjects(friend.nickname, kName);
+    XCTAssertEqualObjects(friend.publicKey, kPublicKey);
+    XCTAssertEqualObjects(friend.name, kName);
+    XCTAssertEqualObjects(friend.statusMessage, kStatusMessage);
+    XCTAssertEqual(friend.status, kStatus);
+    XCTAssertEqual(friend.isConnected, YES);
+    XCTAssertEqual(friend.connectionStatus, kConnectionStatus);
+    XCTAssertEqual(friend.lastSeenOnlineInterval, [sLastSeenOnline timeIntervalSince1970]);
+    XCTAssertEqual(friend.isTyping, kIsTyping);
+}
 
 @end
