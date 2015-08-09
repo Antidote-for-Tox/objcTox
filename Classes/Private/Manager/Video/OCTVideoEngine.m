@@ -119,7 +119,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)isSendingVideo
 {
-    DDLogVerbose(@"%@: isVideoSessionRunning", self);
+    DDLogVerbose(@"%@: isSendingVideo", self);
     return self.captureSession.isRunning;
 }
 

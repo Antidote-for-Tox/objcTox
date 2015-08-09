@@ -430,6 +430,10 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
             [self.audioEngine stopAudioFlow:nil];
         }
 
+        if ((self.videoEngine.friendNumber == friendNumber) && [self.videoEngine isSendingVideo]) {
+            [self.videoEngine stopSendingVideo];
+        }
+
         return;
     }
 
