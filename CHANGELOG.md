@@ -4,14 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 ### Added
-- OCTSubmanagerBootstrap that implements bootstrapping logic from STS https://github.com/Tox/Tox-STS/pull/65/files.
+- OCTSubmanagerBootstrap that implements bootstrapping logic from STS [Tox-STS/#65](https://github.com/Tox/Tox-STS/pull/65/files).
 - Predefined list of nodes to bootstrap from https://wiki.tox.chat/users/nodes.
 
 ### Changes
 - OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
 
 ### Fixed
-- Crash when loading bad profile https://github.com/Antidote-for-Tox/objcTox/issues/98
+- Crash when loading bad profile [#98](https://github.com/Antidote-for-Tox/objcTox/issues/98).
 
 ### Deprecated
 - [OCTManager initWithConfiguration:], use [OCTManager initWithConfiguration:error:] instead.
