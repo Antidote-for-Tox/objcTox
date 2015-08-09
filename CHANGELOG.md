@@ -10,7 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 - OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
 
+### Fixed
+- Crash when loading bad profile https://github.com/Antidote-for-Tox/objcTox/issues/98
+
 ### Deprecated
+- [OCTManager initWithConfiguration:], use [OCTManager initWithConfiguration:error:] instead.
+- [OCTManager initWithConfiguration:loadToxSaveFilePath:], use [OCTManager initWithConfiguration:loadToxSaveFilePath:error:] instead.
 - [OCTManager bootstrapFromHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.
 - [OCTManager addTCPRelayWithHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.
 

@@ -63,10 +63,12 @@
  * change it you have to recreate OCTManager.
  *
  * @param configuration Configuration to be used.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorInitCode for all error codes.
  *
  * @return Initialized OCTManager.
  */
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration;
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error;
 
 /**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
@@ -76,11 +78,14 @@
  *
  * @param configuration Configuration to be used.
  * @param toxSaveFilePath Path to load tox save file from. If file does not exist parameter is ignored.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorInitCode for all error codes.
  *
  * @return Initialized OCTManager.
  */
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                  loadToxSaveFilePath:(NSString *)toxSaveFilePath;
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+                                error:(NSError **)error;
 /**
  * Copies tox save file to temporary directory and return path to it.
  *
@@ -91,6 +96,13 @@
 - (NSString *)exportToxSaveFile:(NSError **)error;
 
 #pragma mark -  Deprecated
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+    __attribute((deprecated(("User initWithConfiguration:error: instead"))));
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+    __attribute((deprecated(("User initWithConfiguration:loadToxSaveFilePath:error: instead"))));
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and
