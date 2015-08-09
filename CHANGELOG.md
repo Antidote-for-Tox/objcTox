@@ -14,10 +14,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Crash when loading bad profile [#98](https://github.com/Antidote-for-Tox/objcTox/issues/98).
 
 ### Deprecated
-- [OCTManager initWithConfiguration:], use [OCTManager initWithConfiguration:error:] instead.
-- [OCTManager initWithConfiguration:loadToxSaveFilePath:], use [OCTManager initWithConfiguration:loadToxSaveFilePath:error:] instead.
-- [OCTManager bootstrapFromHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.
-- [OCTManager addTCPRelayWithHost:port:publicKey:error:], use OCTSubmanagerBootstrap instead.
+- `[OCTManager initWithConfiguration:]`, use `[OCTManager initWithConfiguration:error:]` instead.
+- `[OCTManager initWithConfiguration:loadToxSaveFilePath:]`, use `[OCTManager initWithConfiguration:loadToxSaveFilePath:error:]` instead.
+- `[OCTManager bootstrapFromHost:port:publicKey:error:]`, use OCTSubmanagerBootstrap instead.
+- `[OCTManager addTCPRelayWithHost:port:publicKey:error:]`, use OCTSubmanagerBootstrap instead.
 
 ## [0.1.0] - 2015-06-30
 ### Added
