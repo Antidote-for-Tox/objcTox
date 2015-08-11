@@ -60,6 +60,6 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
                    failureReason:(NSString *)failureReason;
 - (struct Tox_Options)cToxOptionsFromOptions:(OCTToxOptions *)options;
 - (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length;
-- (uint8_t *)hexStringToBin:(NSString *)string;
++ (uint8_t *)hexStringToBin:(NSString *)string;
 
 @end

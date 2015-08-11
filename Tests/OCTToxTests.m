@@ -619,7 +619,7 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
 
 - (void)testHexStringToBin
 {
-    uint8_t *bin = [self.tox hexStringToBin:@"000102030405060708090A0B0C0D0E0F"];
+    uint8_t *bin = [OCTTox hexStringToBin:@"000102030405060708090A0B0C0D0E0F"];
 
     for (NSUInteger i = 0; i < 16; i++) {
         XCTAssertTrue(bin[i] == i);

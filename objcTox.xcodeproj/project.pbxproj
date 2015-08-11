@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		02BF0BDB5D6755A98E2ABFCF /* libPods-iOSDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5186A577303E72B8484B255 /* libPods-iOSDemo.a */; };
+		1123588D1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
+		1123588E1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
+		1123588F1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
+		112358901B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
+		112358911B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
+		112358921B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
+		112358931B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
+		112358941B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
+		112358991B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
+		1123589B1B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
 		866BE357D605477D835F08E6 /* libPods-OSXDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 776E7130F8D89BC23795C94A /* libPods-OSXDemo.a */; };
 		9CB44B641B84D8C1007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B631B84D8C1007FA7B6 /* main.m */; };
 		9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B661B84D8C1007FA7B6 /* AppDelegate.m */; };
@@ -237,6 +247,12 @@
 		0C8675AE3CA95C16D39FCB3D /* libPods-OSXDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OSXDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		110EE0D81B387C3D00CC347A /* OCTRealmManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTRealmManager.h; sourceTree = "<group>"; };
 		110EE0D91B387C3D00CC347A /* OCTRealmManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTRealmManager.m; sourceTree = "<group>"; };
+		1123588A1B87927100E8FB71 /* OCTToxDNS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxDNS.m; sourceTree = "<group>"; };
+		1123588B1B87927100E8FB71 /* OCTToxDNS+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTToxDNS+Private.h"; sourceTree = "<group>"; };
+		1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxDNS3Object.m; sourceTree = "<group>"; };
+		112358951B87928700E8FB71 /* OCTToxDNS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxDNS.h; sourceTree = "<group>"; };
+		112358961B87928700E8FB71 /* OCTToxDNS3Object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxDNS3Object.h; sourceTree = "<group>"; };
+		112358971B8792B500E8FB71 /* OCTToxDNSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxDNSTests.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerBootstrap.h; sourceTree = "<group>"; };
@@ -450,6 +466,9 @@
 				B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */,
 				1125DC491B2107E900C8DB98 /* OCTTox+Private.h */,
 				872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */,
+				1123588A1B87927100E8FB71 /* OCTToxDNS.m */,
+				1123588B1B87927100E8FB71 /* OCTToxDNS+Private.h */,
+				1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */,
 				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
 			);
 			path = Wrapper;
@@ -777,6 +796,7 @@
 				9CB44CAC1B84DF46007FA7B6 /* OCTSubmanagerFriendsTests.m */,
 				9CB44CAD1B84DF46007FA7B6 /* OCTSubmanagerObjectsTests.m */,
 				9CB44CAE1B84DF46007FA7B6 /* OCTSubmanagerUserTests.m */,
+				112358971B8792B500E8FB71 /* OCTToxDNSTests.m */,
 				9CB44CAF1B84DF46007FA7B6 /* OCTToxTests.m */,
 			);
 			path = Tests;
@@ -848,6 +868,8 @@
 				1D66E7C409BC96AC7372B302BABF1D88 /* OCTTox.h */,
 				6733F3E1A4E00CC032F25870E9083F13 /* OCTToxConstants.h */,
 				49DADF58900503E712C710CF13F175DD /* OCTToxDelegate.h */,
+				112358951B87928700E8FB71 /* OCTToxDNS.h */,
+				112358961B87928700E8FB71 /* OCTToxDNS3Object.h */,
 				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
 			);
 			path = Wrapper;
@@ -1161,6 +1183,7 @@
 				9CB44B901B84D91C007FA7B6 /* OCTConversationViewController.m in Sources */,
 				9CB44BF81B84D9E1007FA7B6 /* OCTToxConstants.m in Sources */,
 				9CB44BF41B84D9E1007FA7B6 /* OCTSubmanagerUser.m in Sources */,
+				1123588D1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
 				9CB44B641B84D8C1007FA7B6 /* main.m in Sources */,
 				9CB44BFC1B84D9E1007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44BE31B84D9E1007FA7B6 /* OCTManagerConfiguration.m in Sources */,
@@ -1186,6 +1209,7 @@
 				9CB44BF21B84D9E1007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
 				9CB44BE71B84D9E1007FA7B6 /* OCTFriend.m in Sources */,
 				9CB44BE11B84D9E1007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
+				112358911B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44BFE1B84D9E1007FA7B6 /* RBQFetchRequest.m in Sources */,
 				9CB44BF31B84D9E1007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 			);
@@ -1228,6 +1252,7 @@
 				9CB44C1B1B84DBA3007FA7B6 /* OCTManager.m in Sources */,
 				9CB44CC81B84DF46007FA7B6 /* OCTSubmanagerChatsTests.m in Sources */,
 				9CB44C1C1B84DBA3007FA7B6 /* OCTManagerConstants.m in Sources */,
+				112358921B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44C251B84DBA3007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				9CB44C101B84DBA3007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44C2A1B84DBA3007FA7B6 /* RBQObjectCacheObject.m in Sources */,
@@ -1240,6 +1265,8 @@
 				9CB44C0D1B84DBA3007FA7B6 /* OCTBasicContainer.m in Sources */,
 				9CB44C091B84DBA3007FA7B6 /* OCTMessageAbstract.m in Sources */,
 				9CB44C201B84DBA3007FA7B6 /* RBQFetchRequest.m in Sources */,
+				1123588E1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
+				112358991B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */,
 				9CB44CBE1B84DF46007FA7B6 /* OCTMessageAbstractTests.m in Sources */,
 				9CB44C111B84DBA3007FA7B6 /* OCTDefaultSettingsStorage.m in Sources */,
 				9CB44CB41B84DF46007FA7B6 /* OCTDefaultFileStorageTests.m in Sources */,
@@ -1259,6 +1286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9CB44C6E1B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */,
+				1123588F1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
 				9CB44C691B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */,
 				9CB44C721B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				9CB44C391B84DCCC007FA7B6 /* main.m in Sources */,
@@ -1290,6 +1318,7 @@
 				9CB44C651B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				9CB44C521B84DCFB007FA7B6 /* OCTRealmManager.m in Sources */,
 				9CB44C561B84DCFB007FA7B6 /* OCTFriendRequest.m in Sources */,
+				112358931B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44C581B84DCFB007FA7B6 /* OCTMessageFile.m in Sources */,
 				9CB44C5C1B84DCFB007FA7B6 /* OCTSubmanagerAvatars.m in Sources */,
 				9CB44C5D1B84DCFB007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
@@ -1338,6 +1367,7 @@
 				9CB44C7C1B84DCFB007FA7B6 /* OCTFriendRequest.m in Sources */,
 				9CB44CC91B84DF46007FA7B6 /* OCTSubmanagerChatsTests.m in Sources */,
 				9CB44C851B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
+				112358941B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44C8D1B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C7D1B84DCFB007FA7B6 /* OCTMessageAbstract.m in Sources */,
 				9CB44C961B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
@@ -1350,6 +1380,8 @@
 				9CB44C761B84DCFB007FA7B6 /* OCTDefaultSettingsStorage.m in Sources */,
 				9CB44C8B1B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				9CB44C8C1B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */,
+				112358901B87927100E8FB71 /* OCTToxDNS.m in Sources */,
+				1123589B1B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */,
 				9CB44CBF1B84DF46007FA7B6 /* OCTMessageAbstractTests.m in Sources */,
 				9CB44C881B84DCFB007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				9CB44CB51B84DF46007FA7B6 /* OCTDefaultFileStorageTests.m in Sources */,
