@@ -27,7 +27,7 @@
 
 - (instancetype)initWithFormat:(OSType)format;
 {
-    self = [super self];
+    self = [super init];
 
     if (! self) {
         return nil;

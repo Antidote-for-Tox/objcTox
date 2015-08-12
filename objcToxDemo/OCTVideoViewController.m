@@ -24,7 +24,7 @@ static const CGFloat kEdgeInsets = 25.0;
 
 - (instancetype)initWithCallManager:(OCTSubmanagerCalls *)manager
 {
-    self = [super self];
+    self = [super init];
 
     if (! self) {
         return nil;
