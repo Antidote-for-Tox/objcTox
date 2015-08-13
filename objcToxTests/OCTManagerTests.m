@@ -62,9 +62,6 @@
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-
-    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 }
 
 - (void)tearDown
@@ -76,6 +73,8 @@
 
 - (void)testInit
 {
+    [self createManager];
+
     XCTAssertNotNil(self.manager);
 
     XCTAssertNotNil(self.manager.avatars);
@@ -149,6 +148,8 @@
 
 - (void)testSubmanagerDataSource
 {
+    [self createManager];
+
     XCTAssertEqual([self.manager managerGetTox], self.manager.tox);
     XCTAssertEqual([self.manager managerGetRealmManager], self.manager.realmManager);
     XCTAssertEqual([self.manager managerGetSettingsStorage], self.manager.configuration.settingsStorage);
@@ -157,6 +158,8 @@
 
 - (void)testForwardTargetForSelector
 {
+    [self createManager];
+
     id submanager = [FakeSubmanager new];
     self.manager.avatars = submanager;
     self.manager.bootstrap = submanager;
@@ -178,6 +181,8 @@
 
 - (void)testForwardTargetForSelector2
 {
+    [self createManager];
+
     id submanager = [FakeSubmanager new];
     id dummy = [NSObject new];
 
@@ -250,6 +255,12 @@
     self.manager.user = submanager;
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+}
+
+- (void)createManager
+{
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 }
 
 @end
