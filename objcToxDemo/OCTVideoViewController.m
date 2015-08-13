@@ -8,21 +8,23 @@
 
 #import "OCTVideoViewController.h"
 #import "OCTSubmanagerCalls.h"
+#import "OCTTableViewController.h"
 
 static const CGFloat kEdgeInsets = 25.0;
 
 @interface OCTVideoViewController ()
 
 @property (nonatomic, strong) OCTSubmanagerCalls *manager;
-@property (nonatomic, strong) UIButton *dismissVCButton;
+@property (nonatomic, strong) UIButton *menuActionButton;
 @property (nonatomic, strong) UIView *previewView;
 @property (nonatomic, weak) CALayer *previewLayer;
 @property (nonatomic, strong) UIView *videoFeed;
+@property (nonatomic, strong) OCTCall *call;
 @end
 
 @implementation OCTVideoViewController
 
-- (instancetype)initWithCallManager:(OCTSubmanagerCalls *)manager
+- (instancetype)initWithCallManager:(OCTSubmanagerCalls *)manager call:(OCTCall *)call
 {
     self = [super init];
 
@@ -31,6 +33,7 @@ static const CGFloat kEdgeInsets = 25.0;
     }
 
     _manager = manager;
+    _call = call;
 
     return self;
 }
@@ -162,18 +165,62 @@ static const CGFloat kEdgeInsets = 25.0;
 
 - (void)createDismissVCButton
 {
-    self.dismissVCButton = [[UIButton alloc] initWithFrame:self.view.bounds];
-    self.dismissVCButton.backgroundColor = [UIColor clearColor];
-    [self.dismissVCButton addTarget:self
-                             action:@selector(dismissViewButtonPressed)
-                   forControlEvents:UIControlEventTouchUpInside];
+    self.menuActionButton = [[UIButton alloc] initWithFrame:self.view.bounds];
+    self.menuActionButton.backgroundColor = [UIColor clearColor];
+    [self.menuActionButton addTarget:self
+                              action:@selector(showActionDialog)
+                    forControlEvents:UIControlEventTouchUpInside];
 
-    [self.view addSubview:self.dismissVCButton];
+    [self.view addSubview:self.menuActionButton];
 }
+
+- (void)showActionDialog
+{
+    __weak OCTVideoViewController *weakSelf = self;
+
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Video"
+                                                                             message:@"actions"
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *stopSendingVideoAction = [UIAlertAction actionWithTitle:@"Stop sending video"
+                                                                     style:UIAlertActionStyleDefault
+                                                                   handler:^(UIAlertAction *action) {
+        [weakSelf stopSendingVideo];
+    }];
+    UIAlertAction *startSendingVideoAction = [UIAlertAction actionWithTitle:@"Start sending video"
+                                                                      style:UIAlertActionStyleDefault
+                                                                    handler:^(UIAlertAction *action) {
+        [weakSelf startSendingVideo];
+    }];
+
+    UIAlertAction *dismissAction = [UIAlertAction actionWithTitle:@"Dismiss view"
+                                                            style:UIAlertActionStyleDestructive
+                                                          handler:^(UIAlertAction *action) {
+        [weakSelf dismissViewButtonPressed];
+    }];
+
+    [alertController addAction:stopSendingVideoAction];
+    [alertController addAction:startSendingVideoAction];
+    [alertController addAction:dismissAction];
+
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+#pragma mark - Touch actions
 
 - (void)dismissViewButtonPressed
 {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)stopSendingVideo
+{
+    [self.manager enableVideoSending:NO forCall:self.call error:nil];
+}
+
+- (void)startSendingVideo
+{
+    [self.manager enableVideoSending:YES forCall:self.call error:nil];
 }
 
 
