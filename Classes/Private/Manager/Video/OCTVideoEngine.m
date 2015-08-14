@@ -24,6 +24,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 @property (nonatomic, strong) AVCaptureVideoDataOutput *dataOutput;
 @property (nonatomic, strong) dispatch_queue_t processingQueue;
 @property (nonatomic, weak) OCTVideoView *videoView;
+@property (nonatomic, weak) AVCaptureVideoPreviewLayer *previewLayer;
 @property (nonatomic, assign) uint8_t *reusableUChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableVChromaPlane;
 @property (nonatomic, assign) uint8_t *reusableYChromaPlane;
@@ -90,6 +91,10 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
     conn.videoOrientation = AVCaptureVideoOrientationPortrait;
 
+    if (conn.supportsVideoOrientation) {
+        [self registerOrientationNotification];
+    }
+
     return YES;
 }
 
@@ -130,10 +135,13 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     NSParameterAssert(completionBlock);
     DDLogVerbose(@"%@: videoCallPreview", self);
     dispatch_async(self.processingQueue, ^{
-        AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+
+        if (! self.previewLayer) {
+            self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+        }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            completionBlock(previewLayer);
+            completionBlock(self.previewLayer);
         });
     });
 }
@@ -326,6 +334,41 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         }
     }
     return nil;
+}
+
+- (void)registerOrientationNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationChanged)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
+}
+
+- (void)orientationChanged
+{
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
+    AVCaptureVideoOrientation orientation;
+
+    switch (deviceOrientation) {
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = AVCaptureVideoOrientationPortraitUpsideDown;
+            break;
+        case UIDeviceOrientationPortrait:
+            orientation = AVCaptureVideoOrientationPortrait;
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            orientation = AVCaptureVideoOrientationLandscapeRight;
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            orientation = AVCaptureVideoOrientationLandscapeLeft;
+            break;
+        default:
+            return;
+    }
+
+    conn.videoOrientation = orientation;
+    self.previewLayer.connection.videoOrientation = orientation;
 }
 
 @end

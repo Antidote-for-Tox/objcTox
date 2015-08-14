@@ -131,6 +131,7 @@ static const CGFloat kEdgeInsets = 25.0;
 - (void)createPreviewView
 {
     self.previewView = [UIView new];
+    self.previewView.userInteractionEnabled = NO;
     self.previewView.backgroundColor = [UIColor blackColor];
     self.previewView.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -159,6 +160,7 @@ static const CGFloat kEdgeInsets = 25.0;
 {
     self.videoFeed = [self.manager videoFeed];
     self.videoFeed.translatesAutoresizingMaskIntoConstraints = NO;
+    self.videoFeed.userInteractionEnabled = NO;
     [self.view addSubview:self.videoFeed];
     [self createVideoViewConstraints];
 }
