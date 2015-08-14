@@ -146,6 +146,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         dispatch_async(dispatch_get_main_queue(), ^{
             completionBlock(previewLayer);
         });
+
+        self.previewLayer = previewLayer;
     });
 }
 
