@@ -362,6 +362,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         case UIDeviceOrientationPortrait:
             orientation = AVCaptureVideoOrientationPortrait;
             break;
+        /* Landscapes are reversed, otherwise for some reason the video will be upside down */
         case UIDeviceOrientationLandscapeLeft:
             orientation = AVCaptureVideoOrientationLandscapeRight;
             break;
