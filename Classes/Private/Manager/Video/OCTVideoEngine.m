@@ -65,6 +65,8 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     if (self.reusableVChromaPlane) {
         free(self.reusableVChromaPlane);
     }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Public
@@ -89,10 +91,10 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     [self.captureSession addOutput:self.dataOutput];
     AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
-    conn.videoOrientation = AVCaptureVideoOrientationPortrait;
 
     if (conn.supportsVideoOrientation) {
         [self registerOrientationNotification];
+        [self orientationChanged];
     }
 
     return YES;
@@ -135,13 +137,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     NSParameterAssert(completionBlock);
     DDLogVerbose(@"%@: videoCallPreview", self);
     dispatch_async(self.processingQueue, ^{
+        AVCaptureVideoPreviewLayer *previewLayer = self.previewLayer;
 
         if (! self.previewLayer) {
-            self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+            previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            completionBlock(self.previewLayer);
+            completionBlock(previewLayer);
         });
     });
 }
