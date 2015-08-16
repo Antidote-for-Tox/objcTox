@@ -175,50 +175,52 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber
 {
+
+    if (! self.videoView) {
+        return;
+    }
+
+    size_t yBytesPerRow = MIN(width, abs(yStride));
+    size_t uvBytesPerRow = MIN(width / 2, abs(uStride));
+
+    /**
+     * Create pixel buffers and copy YUV planes over
+     */
+    CVPixelBufferRef bufferRef = NULL;
+
+    if (! [self.pixelPool createPixelBuffer:&bufferRef width:width height:height]) {
+        return;
+    }
+
+    CVPixelBufferLockBaseAddress(bufferRef, 0);
+
+    OCTToxAVPlaneData *ySource = yPlane;
+    uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
+
+    /* Copy yPlane data */
+    for (size_t yHeight = 0; yHeight < height; yHeight++) {
+        memcpy(yDestinationPlane, ySource, yBytesPerRow);
+        ySource += yStride;
+        yDestinationPlane += yBytesPerRow;
+    }
+
+    /* Interweave U and V */
+    uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
+    OCTToxAVPlaneData *uSource = uPlane;
+    OCTToxAVPlaneData *vSource = vPlane;
+    for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
+        for (size_t index = 0; index < uvBytesPerRow; index++) {
+            uvDestinationPlane[index * 2] = uSource[index];
+            uvDestinationPlane[(index * 2) + 1] = vSource[index];
+        }
+        uvDestinationPlane += uvBytesPerRow * 2;
+        uSource += uStride;
+        vSource += vStride;
+    }
+
+    CVPixelBufferUnlockBaseAddress(bufferRef, 0);
+
     dispatch_async(self.processingQueue, ^{
-        if (! self.videoView) {
-            return;
-        }
-
-        size_t yBytesPerRow = MIN(width, abs(yStride));
-        size_t uvBytesPerRow = MIN(width / 2, abs(uStride));
-
-        /**
-         * Create pixel buffers and copy YUV planes over
-         */
-        CVPixelBufferRef bufferRef = NULL;
-
-        if (! [self.pixelPool createPixelBuffer:&bufferRef width:width height:height]) {
-            return;
-        }
-
-        CVPixelBufferLockBaseAddress(bufferRef, 0);
-
-        OCTToxAVPlaneData *ySource = yPlane;
-        uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
-
-        /* Copy yPlane data */
-        for (size_t yHeight = 0; yHeight < height; yHeight++) {
-            memcpy(yDestinationPlane, ySource, yBytesPerRow);
-            ySource += yStride;
-            yDestinationPlane += yBytesPerRow;
-        }
-
-        /* Interweave U and V */
-        uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
-        OCTToxAVPlaneData *uSource = uPlane;
-        OCTToxAVPlaneData *vSource = vPlane;
-        for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
-            for (size_t index = 0; index < uvBytesPerRow; index++) {
-                uvDestinationPlane[index * 2] = uSource[index];
-                uvDestinationPlane[(index * 2) + 1] = vSource[index];
-            }
-            uvDestinationPlane += uvBytesPerRow * 2;
-            uSource += uStride;
-            vSource += vStride;
-        }
-
-        CVPixelBufferUnlockBaseAddress(bufferRef, 0);
 
         /* Create Core Image */
         CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
