@@ -655,13 +655,12 @@ void receiveVideoFrameCallback(ToxAV *cToxAV,
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:yStride:uStride:vStride:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV
-             receiveVideoFrameWithWidth:width height:height
-                                 yPlane:yPlane uPlane:uPlane vPlane:vPlane
-                                yStride:yStride uStride:uStride vStride:vStride
-                           friendNumber:friendNumber];
-        }
-    });
+    if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveVideoFrameWithWidth:height:yPlane:uPlane:vPlane:yStride:uStride:vStride:friendNumber:)]) {
+        [toxAV.delegate toxAV:toxAV
+         receiveVideoFrameWithWidth:width height:height
+                             yPlane:yPlane uPlane:uPlane vPlane:vPlane
+                            yStride:yStride uStride:uStride vStride:vStride
+                       friendNumber:friendNumber];
+    }
+
 }

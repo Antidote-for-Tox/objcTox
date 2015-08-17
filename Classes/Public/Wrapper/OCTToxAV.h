@@ -176,7 +176,6 @@
  * @param y Y (Luminance) plane data.
  * @param u U (Chroma) plane data.
  * @param v V (Chroma) plane data.
- * @param a A (Alpha) plane data.
  * @param error If an error occurs, this pointer is set to an actual error object.
  */
 - (BOOL)sendVideoFrametoFriend:(OCTToxFriendNumber)friendNumber
