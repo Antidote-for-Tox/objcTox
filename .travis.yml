@@ -10,14 +10,13 @@ notifications:
 before_install:
     - gem install slather -N
     - gem install cocoapods
-    - brew update
-    - brew unlink xctool
-    - brew install xctool
+    # fixing issue with homebrew https://github.com/Homebrew/homebrew/issues/42553
+    - brew update; brew update
     - brew install uncrustify
     - pod install
 
 script:
-    - xctool -workspace objcTox.xcworkspace -scheme objcToxDemo -destination 'platform=iOS Simulator,name=iPhone 6' -sdk iphonesimulator GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES clean test
+    - xctool -workspace objcTox.xcworkspace -scheme objcToxDemo -sdk iphonesimulator GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES clean test
     - ./run-uncrustify.sh --check
 
 after_success:
