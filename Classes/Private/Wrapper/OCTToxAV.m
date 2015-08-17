@@ -638,11 +638,9 @@ void receiveAudioFrameCallback(ToxAV *cToxAV,
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
-        }
-    });
+    if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveAudio:sampleCount:channels:sampleRate:friendNumber:)]) {
+        [toxAV.delegate toxAV:toxAV receiveAudio:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate friendNumber:friendNumber];
+    }
 }
 
 void receiveVideoFrameCallback(ToxAV *cToxAV,
