@@ -16,7 +16,6 @@
 @class OCTToxAV;
 @class OCTCall;
 
-NS_ASSUME_NONNULL_BEGIN
 @interface OCTSubmanagerCalls : NSObject
 
 @property (nullable, weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
@@ -32,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to an error when setting up.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)setupWithError:(NSError **)error;
+- (BOOL)setupWithError:(NSError *__nullable *__nullable)error;
 
 /**
  * This class is responsible for telling the end-user what calls we have available.
@@ -43,7 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to an error when attempting to answer a call
  * @return OCTCall session
  */
-- (nullable OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
+- (nullable OCTCall *)callToChat:(nonnull OCTChat *)chat
+                     enableAudio:(BOOL)enableAudio
+                     enableVideo:(BOOL)enableVideo
+                           error:(NSError *__nullable *__nullable)error;
 
 /**
  * Enable video calling for an active call.
@@ -53,7 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to an error object.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)enableVideoSending:(BOOL)enable forCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)enableVideoSending:(BOOL)enable
+                   forCall:(nonnull OCTCall *)call
+                     error:(NSError *__nullable *__nullable)error;
 
 /**
  * Answer a call
@@ -63,7 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to an error when attempting to answer a call
  * @return YES if we were able to succesfully answer the call, otherwise NO.
  */
-- (BOOL)answerCall:(OCTCall *)call enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
+- (BOOL)answerCall:(nonnull OCTCall *)call
+       enableAudio:(BOOL)enableAudio
+       enableVideo:(BOOL)enableVideo
+             error:(NSError *__nullable *__nullable)error;
 
 /**
  * Send the audio to the speaker
@@ -71,7 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to error object.
  * @return YES if successful, otherwise NO.
  */
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker
+                      error:(NSError *__nullable *__nullable)error;
 
 /**
  * Send call control to call.
@@ -80,7 +88,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param error Pointer to error object if there's an issue muting the call.
  * @return YES if succesful, NO otherwise.
  */
-- (BOOL)sendCallControl:(OCTToxAVCallControl)control toCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)sendCallControl:(OCTToxAVCallControl)control
+                 toCall:(nonnull OCTCall *)call
+                  error:(NSError *__nullable *__nullable)error;
 
 /**
  * The UIView that will have the video feed.
@@ -94,7 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionBlock Block responsible for using the layer. This
  * must not be nil.
  */
-- (void)getVideoCallPreview:(void (^)(CALayer *layer))completionBlock;
+- (void)getVideoCallPreview:(void (^__nonnull)( CALayer *__nullable layer))completionBlock;
 
 /**
  * Set the Audio bit rate.
@@ -102,7 +112,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param call The Call to set the bitrate for.
  * @param error Pointer to error object if there's an issue setting the bitrate.
  */
-- (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
+- (BOOL)setAudioBitrate:(int)bitrate forCall:(nonnull OCTCall *)call error:(NSError *__nullable *__nullable)error;
 
 @end
-NS_ASSUME_NONNULL_END
