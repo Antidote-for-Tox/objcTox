@@ -16,9 +16,10 @@
 @class OCTToxAV;
 @class OCTCall;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface OCTSubmanagerCalls : NSObject
 
-@property (weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
+@property (nullable, weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
 
 /**
  * Set the property to YES to enable the microphone, otherwise NO.
@@ -42,7 +43,7 @@
  * @param error Pointer to an error when attempting to answer a call
  * @return OCTCall session
  */
-- (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
+- (nullable OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error;
 
 /**
  * Enable video calling for an active call.
@@ -84,7 +85,7 @@
 /**
  * The UIView that will have the video feed.
  */
-- (UIView *)videoFeed;
+- (nullable UIView *)videoFeed;
 
 /**
  * The preview video of the user.
@@ -104,3 +105,4 @@
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(OCTCall *)call error:(NSError **)error;
 
 @end
+NS_ASSUME_NONNULL_END
