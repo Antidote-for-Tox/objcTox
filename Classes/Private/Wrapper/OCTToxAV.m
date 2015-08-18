@@ -110,7 +110,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTToxAVQueue", NULL);
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
-        [self updateTimerInterval:_toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000)];
+        [self updateTimerIntervalIfNeeded];
 
         __weak OCTToxAV *weakSelf = self;
         dispatch_source_set_event_handler(self.timer, ^{
@@ -121,11 +121,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
             _toxav_iterate(strongSelf.toxAV);
 
-            uint64_t nextIterate = _toxav_iteration_interval(strongSelf.toxAV) * (NSEC_PER_SEC / 1000);
-
-            if (strongSelf.previousIterate != nextIterate) {
-                [strongSelf updateTimerInterval:nextIterate];
-            }
+            [strongSelf updateTimerIntervalIfNeeded];
         });
 
         dispatch_resume(self.timer);
@@ -541,10 +537,16 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     return [NSError errorWithDomain:kOCTToxAVErrorDomain code:code userInfo:userInfo];
 }
 
-- (void)updateTimerInterval:(uint64_t)nextIterate
+- (void)updateTimerIntervalIfNeeded
 {
-    dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, nextIterate), nextIterate, nextIterate / 5);
+    uint64_t nextIterate = _toxav_iteration_interval(self.toxAV) * (NSEC_PER_SEC / 1000);
+
+    if (self.previousIterate == nextIterate) {
+        return;
+    }
+
     self.previousIterate = nextIterate;
+    dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, nextIterate), nextIterate, nextIterate / 5);
 }
 
 @end
