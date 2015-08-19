@@ -46,7 +46,6 @@
 		7B50D4015369FF9246FFFE44FA3060AB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F6740C4D5BC5EAEF0899DB785509871 /* main.m */; };
 		7B6FEC56C07964FDF22C528A81D1CF9B /* OCTFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4FD719502F8CAC073376C0369F6CF4E /* OCTFriendsViewController.m */; };
 		7D18E5ACB7333A6459A2A16F8340B236 /* OCTManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C92B3571411C749259814093809FAD10 /* OCTManagerTests.m */; };
-		7D3A12D68FD43A6157E02284AF0D2A43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BBA89896F49E2B57529897659F92AE8 /* libPods.a */; };
 		81FD7F91EABF9ECD34A41C4A7F724D2C /* OCTManagerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DBC12869590BEAD637C9DF06567EF /* OCTManagerConstants.m */; };
 		874F77154552B4DC59A6CABB6A4D6397 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
 		893066FF62015FDCE84BB45658D32643 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */; };
@@ -270,7 +269,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF6CC64C3F26D6940C543F574927289E /* libPods-objcToxTests.a in Frameworks */,
-				7D3A12D68FD43A6157E02284AF0D2A43 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
