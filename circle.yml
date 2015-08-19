@@ -10,6 +10,8 @@ dependencies:
 
 test:
   override:
+    - xctool -workspace objcTox.xcworkspace -scheme OSXDemo -sdk macosx10.10 CODE_SIGNING_REQUIRED=NO clean test
+
     - xctool
       -workspace objcTox.xcworkspace
       -scheme iOSDemo
@@ -19,8 +21,6 @@ test:
       GCC_GENERATE_TEST_COVERAGE_FILES=YES
       clean
       test
-
-    - xctool -workspace objcTox.xcworkspace -scheme OSXDemo -sdk macosx10.10 CODE_SIGNING_REQUIRED=NO clean test
 
     - ./run-uncrustify.sh --check
 
