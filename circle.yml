@@ -19,6 +19,16 @@ test:
       clean
       test
 
+    - xctool
+      -workspace objcTox.xcworkspace
+      -scheme OSXDemo
+      -sdk iphonesimulator
+      CODE_SIGNING_REQUIRED=NO
+      GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES
+      GCC_GENERATE_TEST_COVERAGE_FILES=YES
+      clean
+      test
+
     - ./run-uncrustify.sh --check
 
 deployment:

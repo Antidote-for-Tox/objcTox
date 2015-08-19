@@ -32,3 +32,17 @@ target :iOSDemoTests do
     common_pods
     test_pods
 end
+
+target :OSXDemo do
+    platform :osx, '10.9'
+    link_with 'OSXDemo'
+    common_pods
+    demo_pods
+end
+
+target :OSXDemoTests do
+    platform :osx, '10.9'
+    link_with 'OSXDemoTests'
+    common_pods
+    test_pods
+end
