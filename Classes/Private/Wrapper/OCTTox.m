@@ -115,7 +115,10 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 - (void)dealloc
 {
     [self stop];
-    tox_kill(self.tox);
+
+    if (self.tox) {
+        tox_kill(self.tox);
+    }
 
     DDLogVerbose(@"%@: dealloc called, tox killed", self);
 }

@@ -10,11 +10,10 @@
 
 @interface OCTSubmanagerFiles ()
 
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
-
 @end
 
 @implementation OCTSubmanagerFiles
+@synthesize dataSource = _dataSource;
 
 #pragma mark -  Lifecycle
 

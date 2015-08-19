@@ -14,13 +14,14 @@
 #import "OCTRealmManager.h"
 #import "RBQFetchRequest.h"
 
-@interface OCTSubmanagerFriends ()
+NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendConnectionStatusChangeNotificationName";
 
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+@interface OCTSubmanagerFriends ()
 
 @end
 
 @implementation OCTSubmanagerFriends
+@synthesize dataSource = _dataSource;
 
 #pragma mark -  Public
 
@@ -61,13 +62,11 @@
     return [self createFriendWithFriendNumber:friendNumber error:error];
 }
 
-- (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest
+- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest
 {
     NSParameterAssert(friendRequest);
 
     [[self.dataSource managerGetRealmManager] deleteObject:friendRequest];
-
-    return YES;
 }
 
 - (BOOL)removeFriend:(OCTFriend *)friend error:(NSError **)error
@@ -174,11 +173,14 @@
     [self.dataSource managerSaveTox];
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
 
-    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+    [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.isConnected = (status != OCTToxConnectionStatusNone);
         theFriend.connectionStatus = status;
     }];
+
+    [[self.dataSource managerGetNotificationCenter] postNotificationName:kOCTFriendConnectionStatusChangeNotificationName object:friend];
 }
 
 #pragma mark -  Private

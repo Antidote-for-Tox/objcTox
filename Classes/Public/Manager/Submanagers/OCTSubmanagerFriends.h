@@ -14,25 +14,43 @@
 @interface OCTSubmanagerFriends : NSObject
 
 /**
- * This adds friend to the list.
- * address and message are required.
+ * Send friend request to given address. Automatically adds friend with this address to friend list.
  *
- * TODO write documentation
+ * @param address Address of a friend. If required.
+ * @param message Message to send with friend request. Is required.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendAdd for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
 - (BOOL)sendFriendRequestToAddress:(NSString *)address message:(NSString *)message error:(NSError **)error;
 
 /**
- * TODO write documentation
+ * Approve given friend request. After approving new friend will be added and friendRequest will be removed.
+ *
+ * @param friendRequest Friend request to approve.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendAdd for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
 - (BOOL)approveFriendRequest:(OCTFriendRequest *)friendRequest error:(NSError **)error;
 
 /**
- * TODO write documentation
+ * Remove friend request from list. This cannot be undone.
+ *
+ * @param friendRequest Friend request to remove.
  */
-- (BOOL)removeFriendRequest:(OCTFriendRequest *)friendRequest;
+- (void)removeFriendRequest:(OCTFriendRequest *)friendRequest;
 
 /**
- * TODO write documentation
+ * Remove friend from list. This cannot be undone.
+ *
+ * @param friend Friend to remove.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See OCTToxErrorFriendDelete for all error codes.
+ *
+ * @return YES on success, NO on failure.
  */
 - (BOOL)removeFriend:(OCTFriend *)friend error:(NSError **)error;
 

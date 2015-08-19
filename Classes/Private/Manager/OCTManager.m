@@ -10,13 +10,15 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
-#import "OCTSubmanagerUser+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
+#import "OCTManagerConfiguration.h"
+#import "OCTSubmanagerAvatars+Private.h"
+#import "OCTSubmanagerBootstrap+Private.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerAvatars+Private.h"
-#import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerUser+Private.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -24,17 +26,20 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
+@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 
 @property (strong, nonatomic, readonly) NSObject *toxSaveFileLock;
+
+@property (strong, atomic) NSNotificationCenter *notificationCenter;
 
 @end
 
@@ -42,19 +47,22 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
 {
-    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil];
+    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil error:error];
 }
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath
+                                error:(NSError **)error
 {
     self = [super init];
 
     if (! self) {
         return nil;
     }
+
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     [self validateConfiguration:configuration];
 
@@ -72,7 +80,12 @@
         savedData = [NSData dataWithContentsOfFile:savedDataPath];
     }
 
-    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:nil];
+    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:error];
+
+    if (! _tox) {
+        return nil;
+    }
+
     _tox.delegate = self;
     [_tox start];
 
@@ -82,35 +95,19 @@
 
     _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
 
-    OCTSubmanagerUser *user = [OCTSubmanagerUser new];
-    user.dataSource = self;
-    _user = user;
-
-    OCTSubmanagerFriends *friends = [OCTSubmanagerFriends new];
-    friends.dataSource = self;
-    [friends configure];
-    _friends = friends;
-
-    OCTSubmanagerChats *chats = [OCTSubmanagerChats new];
-    chats.dataSource = self;
-    _chats = chats;
-
-    OCTSubmanagerFiles *files = [OCTSubmanagerFiles new];
-    files.dataSource = self;
-    _files = files;
-
-    OCTSubmanagerAvatars *avatars = [OCTSubmanagerAvatars new];
-    avatars.dataSource = self;
-    _avatars = avatars;
+    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
+    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
+    _calls = [self createSubmanagerWithClass:[OCTSubmanagerCalls class]];
+    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
+    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
+    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
+    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
+    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
 
     OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
     calls.dataSource = self;
     _calls = calls;
     [_calls setupWithError:nil];
-
-    OCTSubmanagerObjects *objects = [OCTSubmanagerObjects new];
-    objects.dataSource = self;
-    _objects = objects;
 
     _toxSaveFileLock = [NSObject new];
 
@@ -123,16 +120,6 @@
 }
 
 #pragma mark -  Public
-
-- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
-}
-
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
-}
 
 - (NSString *)exportToxSaveFile:(NSError **)error
 {
@@ -156,6 +143,11 @@
     return self.tox;
 }
 
+- (BOOL)managerIsToxConnected
+{
+    return (self.user.connectionStatus != OCTToxConnectionStatusNone);
+}
+
 - (void)managerSaveTox
 {
     return [self saveTox];
@@ -176,6 +168,11 @@
     return self.configuration.fileStorage;
 }
 
+- (NSNotificationCenter *)managerGetNotificationCenter
+{
+    return self.notificationCenter;
+}
+
 #pragma mark -  Private
 
 - (void)validateConfiguration:(OCTManagerConfiguration *)configuration
@@ -189,6 +186,18 @@
     NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
 
     NSParameterAssert(configuration.options);
+}
+
+- (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
+{
+    id<OCTSubmanagerProtocol> submanager = [class new];
+    submanager.dataSource = self;
+
+    if ([submanager respondsToSelector:@selector(configure)]) {
+        [submanager configure];
+    }
+
+    return submanager;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
@@ -212,12 +221,13 @@
     }
 
     NSArray *submanagers = @[
-        self.user,
-        self.friends,
+        self.avatars,
+        self.bootstrap,
         self.chats,
         self.files,
-        self.avatars,
+        self.friends,
         self.objects,
+        self.user,
     ];
 
     for (id delegate in submanagers) {
@@ -239,11 +249,38 @@
         NSError *error;
 
         if (! [data writeToFile:savedDataPath options:NSDataWritingAtomic error:&error]) {
-            @throw [NSException exceptionWithName:@"saveToxException"
-                                           reason:error.debugDescription
-                                         userInfo:@{ @"NSError" : error }];
+            NSDictionary *userInfo = nil;
+
+            if (error) {
+                userInfo = @{ @"NSError" : error };
+            }
+
+            @throw [NSException exceptionWithName:@"saveToxException" reason:error.debugDescription userInfo:userInfo];
         }
     }
+}
+
+#pragma mark -  Deprecated
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+{
+    return [self initWithConfiguration:configuration error:nil];
+}
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+{
+    return [self initWithConfiguration:configuration loadToxSaveFilePath:toxSaveFilePath error:nil];
+}
+
+- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
+}
+
+- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
+{
+    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
 }
 
 @end
