@@ -11,7 +11,7 @@ test:
   override:
     - xctool
       -workspace objcTox.xcworkspace
-      -scheme objcToxDemo
+      -scheme iOSDemo
       -sdk iphonesimulator
       CODE_SIGNING_REQUIRED=NO
       GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES

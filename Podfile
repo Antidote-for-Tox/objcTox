@@ -19,16 +19,16 @@ def test_pods
 end
 
 
-target :objcToxDemo do
+target :iOSDemo do
     platform :ios, '7.0'
-    link_with 'objcToxDemo'
+    link_with 'iOSDemo'
     common_pods
     demo_pods
 end
 
-target :objcToxTests do
+target :iOSDemoTests do
     platform :ios, '7.0'
-    link_with 'objcToxTests'
+    link_with 'iOSDemoTests'
     common_pods
     test_pods
 end
