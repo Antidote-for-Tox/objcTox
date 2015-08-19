@@ -4,8 +4,9 @@ machine:
 
 dependencies:
   pre:
-    - sudo gem install cocoapods -N
     - brew install uncrustify
+    - sudo gem install cocoapods -N -v 0.37.2
+    - gem uninstall cocoapods -v '>0.37.2' --force || true
 
 test:
   override:
