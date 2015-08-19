@@ -54,6 +54,32 @@
 		8DFDF4C7E88DAD408EDD398109D93BEF /* OCTDefaultSettingsStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = F9903D6570BD33520A6B31B285B3DA31 /* OCTDefaultSettingsStorage.m */; };
 		94F0A37FA0EEEA35BC0EF33D61741340 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
 		9A210974454B279C2439C1522F0E73A6 /* OCTSubmanagerChatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 072A00BF5A53D71960CADFC371D1701C /* OCTSubmanagerChatsTests.m */; };
+		9C478F791B78C1FB000ADD5C /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
+		9C478F7A1B78C1FB000ADD5C /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
+		9C478F7B1B78C1FB000ADD5C /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
+		9C478F7C1B78C1FB000ADD5C /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
+		9C478F7D1B78C1FB000ADD5C /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
+		9C478F7E1B78C1FB000ADD5C /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
+		9C478F811B78C1FB000ADD5C /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
+		9C478F821B78C1FB000ADD5C /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
+		9C478F831B78C1FB000ADD5C /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
+		9C478F841B78C1FB000ADD5C /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
+		9C478F851B78C1FB000ADD5C /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
+		9C478F861B78C1FB000ADD5C /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
+		9C478F871B78C1FB000ADD5C /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
+		9C478F881B78C1FB000ADD5C /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
+		9C478F891B78C1FB000ADD5C /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
+		9C478F8A1B78C1FB000ADD5C /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
+		9C478F8D1B78C1FB000ADD5C /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
+		9C478F8E1B78C1FB000ADD5C /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
+		9C478F931B78C1FB000ADD5C /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
+		9C478F941B78C1FB000ADD5C /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
+		9C478F971B78C1FB000ADD5C /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
+		9C478F981B78C1FB000ADD5C /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
+		9C478F991B78C1FB000ADD5C /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
+		9C478F9A1B78C1FB000ADD5C /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
+		9C478F9B1B78C1FB000ADD5C /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
+		9C478F9C1B78C1FB000ADD5C /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
 		9C90E8D61B3ACA8400EDC47A /* OCTObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C90E8D51B3ACA8400EDC47A /* OCTObjectTests.m */; };
 		9CB71FC21B399EE400E3C1EF /* OCTRealmManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 110EE0D91B387C3D00CC347A /* OCTRealmManager.m */; };
 		9CB71FC31B399EE800E3C1EF /* OCTObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 11CD5AE81B386A4D00585194 /* OCTObject.m */; };
@@ -161,6 +187,37 @@
 		91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFriends.h; sourceTree = "<group>"; };
 		979E2EA3AF3406624C5F28600DB4F752 /* OCTStartDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTStartDemoViewController.m; sourceTree = "<group>"; };
 		9947527983306654F3696FAB653EACC3 /* OCTSettingsStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageProtocol.h; sourceTree = "<group>"; };
+		9C478F571B78C1FB000ADD5C /* RBQControllerCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQControllerCacheObject.h; sourceTree = "<group>"; };
+		9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQControllerCacheObject.m; sourceTree = "<group>"; };
+		9C478F591B78C1FB000ADD5C /* RBQObjectCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQObjectCacheObject.h; sourceTree = "<group>"; };
+		9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQObjectCacheObject.m; sourceTree = "<group>"; };
+		9C478F5B1B78C1FB000ADD5C /* RBQSectionCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQSectionCacheObject.h; sourceTree = "<group>"; };
+		9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQSectionCacheObject.m; sourceTree = "<group>"; };
+		9C478F5D1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		9C478F5E1B78C1FB000ADD5C /* RBQFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQFetchedResultsController.h; sourceTree = "<group>"; };
+		9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQFetchedResultsController.m; sourceTree = "<group>"; };
+		9C478F601B78C1FB000ADD5C /* RBQFetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQFetchRequest.h; sourceTree = "<group>"; };
+		9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQFetchRequest.m; sourceTree = "<group>"; };
+		9C478F641B78C1FB000ADD5C /* RLMObject+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+Notifications.h"; sourceTree = "<group>"; };
+		9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+Notifications.m"; sourceTree = "<group>"; };
+		9C478F661B78C1FB000ADD5C /* RLMRealm+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealm+Notifications.h"; sourceTree = "<group>"; };
+		9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealm+Notifications.m"; sourceTree = "<group>"; };
+		9C478F681B78C1FB000ADD5C /* RLMResults+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMResults+Notifications.h"; sourceTree = "<group>"; };
+		9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMResults+Notifications.m"; sourceTree = "<group>"; };
+		9C478F6A1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		9C478F6B1B78C1FB000ADD5C /* RBQRealmNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQRealmNotificationManager.h; sourceTree = "<group>"; };
+		9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQRealmNotificationManager.m; sourceTree = "<group>"; };
+		9C478F6D1B78C1FB000ADD5C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9C478F6F1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		9C478F701B78C1FB000ADD5C /* RBQSafeRealmObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQSafeRealmObject.h; sourceTree = "<group>"; };
+		9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQSafeRealmObject.m; sourceTree = "<group>"; };
+		9C478F721B78C1FB000ADD5C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9C478F731B78C1FB000ADD5C /* RLMArray+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMArray+Utilities.h"; sourceTree = "<group>"; };
+		9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMArray+Utilities.m"; sourceTree = "<group>"; };
+		9C478F751B78C1FB000ADD5C /* RLMObject+SafeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+SafeObject.h"; sourceTree = "<group>"; };
+		9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+SafeObject.m"; sourceTree = "<group>"; };
+		9C478F771B78C1FB000ADD5C /* RLMObject+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+Utilities.h"; sourceTree = "<group>"; };
+		9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+Utilities.m"; sourceTree = "<group>"; };
 		9C90E8D51B3ACA8400EDC47A /* OCTObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTObjectTests.m; sourceTree = "<group>"; };
 		9CB71FBC1B386B2F00E3C1EF /* OCTChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTChat.h; sourceTree = "<group>"; };
 		9CB71FBD1B386B2F00E3C1EF /* OCTFriend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTFriend.h; sourceTree = "<group>"; };
@@ -373,6 +430,7 @@
 		6B2BAAC14E1289AF1DBE31D6A928E9AA /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				9C478F551B78C1FB000ADD5C /* RBQFetchedResultsController */,
 				B729102B12162A2F537D836802D56E79 /* Configuration */,
 				714C4AAE365D94A8BC642E0D66F052D4 /* Objects */,
 				59DFACB59220710D4B2227182A018958 /* Submanagers */,
@@ -414,6 +472,76 @@
 				110EE0D91B387C3D00CC347A /* OCTRealmManager.m */,
 			);
 			path = Database;
+			sourceTree = "<group>";
+		};
+		9C478F551B78C1FB000ADD5C /* RBQFetchedResultsController */ = {
+			isa = PBXGroup;
+			children = (
+				9C478F561B78C1FB000ADD5C /* CacheObjects */,
+				9C478F5D1B78C1FB000ADD5C /* LICENSE */,
+				9C478F5E1B78C1FB000ADD5C /* RBQFetchedResultsController.h */,
+				9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */,
+				9C478F601B78C1FB000ADD5C /* RBQFetchRequest.h */,
+				9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */,
+				9C478F621B78C1FB000ADD5C /* RBQRealmNotificationManager */,
+				9C478F6E1B78C1FB000ADD5C /* RealmUtilities */,
+			);
+			path = RBQFetchedResultsController;
+			sourceTree = "<group>";
+		};
+		9C478F561B78C1FB000ADD5C /* CacheObjects */ = {
+			isa = PBXGroup;
+			children = (
+				9C478F571B78C1FB000ADD5C /* RBQControllerCacheObject.h */,
+				9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */,
+				9C478F591B78C1FB000ADD5C /* RBQObjectCacheObject.h */,
+				9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */,
+				9C478F5B1B78C1FB000ADD5C /* RBQSectionCacheObject.h */,
+				9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */,
+			);
+			path = CacheObjects;
+			sourceTree = "<group>";
+		};
+		9C478F621B78C1FB000ADD5C /* RBQRealmNotificationManager */ = {
+			isa = PBXGroup;
+			children = (
+				9C478F631B78C1FB000ADD5C /* Helpers */,
+				9C478F6A1B78C1FB000ADD5C /* LICENSE */,
+				9C478F6B1B78C1FB000ADD5C /* RBQRealmNotificationManager.h */,
+				9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */,
+				9C478F6D1B78C1FB000ADD5C /* README.md */,
+			);
+			path = RBQRealmNotificationManager;
+			sourceTree = "<group>";
+		};
+		9C478F631B78C1FB000ADD5C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				9C478F641B78C1FB000ADD5C /* RLMObject+Notifications.h */,
+				9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */,
+				9C478F661B78C1FB000ADD5C /* RLMRealm+Notifications.h */,
+				9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */,
+				9C478F681B78C1FB000ADD5C /* RLMResults+Notifications.h */,
+				9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		9C478F6E1B78C1FB000ADD5C /* RealmUtilities */ = {
+			isa = PBXGroup;
+			children = (
+				9C478F6F1B78C1FB000ADD5C /* LICENSE */,
+				9C478F701B78C1FB000ADD5C /* RBQSafeRealmObject.h */,
+				9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */,
+				9C478F721B78C1FB000ADD5C /* README.md */,
+				9C478F731B78C1FB000ADD5C /* RLMArray+Utilities.h */,
+				9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */,
+				9C478F751B78C1FB000ADD5C /* RLMObject+SafeObject.h */,
+				9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */,
+				9C478F771B78C1FB000ADD5C /* RLMObject+Utilities.h */,
+				9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */,
+			);
+			path = RealmUtilities;
 			sourceTree = "<group>";
 		};
 		B6667C5B1813BB0AD0E5589A2B981680 /* Classes */ = {
@@ -681,19 +809,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C478F9A1B78C1FB000ADD5C /* RLMObject+SafeObject.m in Sources */,
 				4CD198EE0026B99EA22137D5D0B3B7E3 /* AppDelegate.m in Sources */,
 				C77B6C69F3D666A4ED5E48D20F8390CC /* OCTBasicContainer.m in Sources */,
 				C363991E51115CA10E610D76F13FC009 /* OCTChat.m in Sources */,
+				9C478F7A1B78C1FB000ADD5C /* RBQControllerCacheObject.m in Sources */,
 				D287AF9163A2B1CE36E2934FA7D9DFE7 /* OCTChatsViewController.m in Sources */,
 				E21E4B2BF02AB1089010E4ED575410FE /* OCTConversationViewController.m in Sources */,
+				9C478F7C1B78C1FB000ADD5C /* RBQObjectCacheObject.m in Sources */,
+				9C478F861B78C1FB000ADD5C /* RLMObject+Notifications.m in Sources */,
+				9C478F9C1B78C1FB000ADD5C /* RLMObject+Utilities.m in Sources */,
+				9C478F8E1B78C1FB000ADD5C /* RBQRealmNotificationManager.m in Sources */,
 				2908902779B3FF698EAA2F79E6A728C4 /* OCTDefaultFileStorage.m in Sources */,
 				8A994D5A7BC169CB867437C1C2503C81 /* OCTDefaultSettingsStorage.m in Sources */,
+				9C478F821B78C1FB000ADD5C /* RBQFetchedResultsController.m in Sources */,
 				6D62182B807933B8CFF8082535B2D4C4 /* OCTFriend.m in Sources */,
 				AF3564F0308F4E87BB20F6F0CDA99CE5 /* OCTFriendRequest.m in Sources */,
+				9C478F981B78C1FB000ADD5C /* RLMArray+Utilities.m in Sources */,
 				11D497B71B72C0A200634B56 /* OCTNode.m in Sources */,
 				7B6FEC56C07964FDF22C528A81D1CF9B /* OCTFriendsViewController.m in Sources */,
 				151D618362367948963B668523A2235C /* OCTManager.m in Sources */,
 				A411EAC68985CDE413644951C5CE9463 /* OCTManagerConfiguration.m in Sources */,
+				9C478F7E1B78C1FB000ADD5C /* RBQSectionCacheObject.m in Sources */,
 				7172E3572EC95E0A06D502AE35A59FA4 /* OCTManagerConstants.m in Sources */,
 				EE9A84F0183CA4D0C3342BD50E2F44E5 /* OCTMessageAbstract.m in Sources */,
 				11B4BAF21B11E2850001A96A /* OCTSubmanagerFiles.m in Sources */,
@@ -701,18 +838,22 @@
 				9CB71FC31B399EE800E3C1EF /* OCTObject.m in Sources */,
 				9CB71FC21B399EE400E3C1EF /* OCTRealmManager.m in Sources */,
 				25E5DD48EE60A2A6203731909C2F310E /* OCTMessageText.m in Sources */,
+				9C478F941B78C1FB000ADD5C /* RBQSafeRealmObject.m in Sources */,
 				F9A7007A32C59757AC4132DF656C5793 /* OCTStartDemoViewController.m in Sources */,
 				C32A3D05D0D8E311BE9CEDB2979424DE /* OCTSubmanagerAvatars.m in Sources */,
 				A050857A5C2D7974A8857AFF2A52053B /* OCTSubmanagerChats.m in Sources */,
+				9C478F881B78C1FB000ADD5C /* RLMRealm+Notifications.m in Sources */,
 				D9D0587D1B7D85A0B474FC7872831EA8 /* OCTSubmanagerFriends.m in Sources */,
 				5FB0DDAF63C36E0050A15B56311BD5F7 /* OCTSubmanagerUser.m in Sources */,
 				11D6C9931B3B251000E21A35 /* OCTSubmanagerObjects.m in Sources */,
 				17447E8C08F7FFAFB783AE0AF4207D7F /* OCTTableViewController.m in Sources */,
 				94F0A37FA0EEEA35BC0EF33D61741340 /* OCTTox.m in Sources */,
 				D8F9288BBAFADBB9AA3E0E04A0876917 /* OCTToxConstants.m in Sources */,
+				9C478F8A1B78C1FB000ADD5C /* RLMResults+Notifications.m in Sources */,
 				117D37D41B72B61E006E885C /* OCTSubmanagerBootstrap.m in Sources */,
 				4BED2FCCE976E6B6E24E087CCE893F39 /* OCTToxOptions.m in Sources */,
 				0DE4B4F9DEA2A6B0028871D2E12114AB /* OCTUserViewController.m in Sources */,
+				9C478F841B78C1FB000ADD5C /* RBQFetchRequest.m in Sources */,
 				7B50D4015369FF9246FFFE44FA3060AB /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -722,27 +863,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				110EE0DA1B387C3D00CC347A /* OCTRealmManager.m in Sources */,
+				9C478F791B78C1FB000ADD5C /* RBQControllerCacheObject.m in Sources */,
 				E4FCA1A65D564AAE850FD10107CBE9B8 /* OCTBasicContainer.m in Sources */,
 				11D6C9921B3B251000E21A35 /* OCTSubmanagerObjects.m in Sources */,
+				9C478F8D1B78C1FB000ADD5C /* RBQRealmNotificationManager.m in Sources */,
 				C8B86B51F8DD682C2F3FE9466D44B575 /* OCTBasicContainerTests.m in Sources */,
 				70127B62E87BA470CAEDA23529AAD540 /* OCTChat.m in Sources */,
 				11CD5AE91B386A4D00585194 /* OCTObject.m in Sources */,
 				11B4BAF11B11E2800001A96A /* OCTSubmanagerFiles.m in Sources */,
+				9C478F871B78C1FB000ADD5C /* RLMRealm+Notifications.m in Sources */,
+				9C478F891B78C1FB000ADD5C /* RLMResults+Notifications.m in Sources */,
 				3A74FCE2D1704C1086CBBA8CB9844CB9 /* OCTDefaultFileStorage.m in Sources */,
 				50CD1B5B457C0F1972B01EAB009DF786 /* OCTDefaultFileStorageTests.m in Sources */,
 				8DFDF4C7E88DAD408EDD398109D93BEF /* OCTDefaultSettingsStorage.m in Sources */,
+				9C478F7D1B78C1FB000ADD5C /* RBQSectionCacheObject.m in Sources */,
 				11B4BAF71B11E38A0001A96A /* OCTSubmanagerFilesTests.m in Sources */,
 				190C0E5B7BE9104B733C2154B65EC076 /* OCTDefaultSettingsStorageTests.m in Sources */,
 				9CB71FC71B3AC13200E3C1EF /* OCTFriendRequestTests.m in Sources */,
 				215E67CE2045A546EBB9E1C129A67686 /* OCTFriend.m in Sources */,
 				11D497B91B73F26500634B56 /* OCTSubmanagerBootstrapTests.m in Sources */,
+				9C478F7B1B78C1FB000ADD5C /* RBQObjectCacheObject.m in Sources */,
 				B48159C75FC55D659FD8A8673F2CC1FE /* OCTFriendRequest.m in Sources */,
 				9CB71FC91B3AC19800E3C1EF /* OCTChatTests.m in Sources */,
 				539D28156841AD45033774F3D7C7F19B /* OCTManager.m in Sources */,
 				50258CB971E2379741E4E7973EE06F76 /* OCTManagerConfiguration.m in Sources */,
 				11D497B61B72BE5700634B56 /* OCTNode.m in Sources */,
+				9C478F851B78C1FB000ADD5C /* RLMObject+Notifications.m in Sources */,
 				0B8E8A0EB99B3637B2FDFDD28C33CB42 /* OCTManagerConfigurationTests.m in Sources */,
 				81FD7F91EABF9ECD34A41C4A7F724D2C /* OCTManagerConstants.m in Sources */,
+				9C478F991B78C1FB000ADD5C /* RLMObject+SafeObject.m in Sources */,
 				7D18E5ACB7333A6459A2A16F8340B236 /* OCTManagerTests.m in Sources */,
 				D6BA636E1AB78BB1B2AE66F2F044C0CE /* OCTMessageAbstract.m in Sources */,
 				38713DE80E6373A18DA786BD3D5C0E8A /* OCTMessageFile.m in Sources */,
@@ -752,18 +901,23 @@
 				9D47C8AD7A4BB676A9D597F6BAD98E9E /* OCTSubmanagerAvatarsTests.m in Sources */,
 				B8894C615E543938FE6404226DDC827B /* OCTSubmanagerChats.m in Sources */,
 				9A210974454B279C2439C1522F0E73A6 /* OCTSubmanagerChatsTests.m in Sources */,
+				9C478F811B78C1FB000ADD5C /* RBQFetchedResultsController.m in Sources */,
+				9C478F971B78C1FB000ADD5C /* RLMArray+Utilities.m in Sources */,
 				9CB71FC51B3AC00800E3C1EF /* OCTMessageAbstractTests.m in Sources */,
+				9C478F831B78C1FB000ADD5C /* RBQFetchRequest.m in Sources */,
 				A94857657B0268DED8DF9B3D758113EB /* OCTSubmanagerFriends.m in Sources */,
 				117D37D31B72B476006E885C /* OCTSubmanagerBootstrap.m in Sources */,
 				C7C59445E2ED09BF57E01AE17C1758BE /* OCTSubmanagerFriendsTests.m in Sources */,
 				DC59B2832799B657C5D70898E0454C40 /* OCTSubmanagerUser.m in Sources */,
 				D9BD7F73E755A07009A2EF5ACC5C345B /* OCTSubmanagerUserTests.m in Sources */,
+				9C478F931B78C1FB000ADD5C /* RBQSafeRealmObject.m in Sources */,
 				874F77154552B4DC59A6CABB6A4D6397 /* OCTTox.m in Sources */,
 				893066FF62015FDCE84BB45658D32643 /* OCTToxConstants.m in Sources */,
 				4E4763F528BBD1BC03942CE5539F6FC7 /* OCTToxOptions.m in Sources */,
 				5FEB6690AA990BAAC797A711582F7B5C /* OCTToxTests.m in Sources */,
 				11D6C9991B3B283900E21A35 /* OCTSubmanagerObjectsTests.m in Sources */,
 				9C90E8D61B3ACA8400EDC47A /* OCTObjectTests.m in Sources */,
+				9C478F9B1B78C1FB000ADD5C /* RLMObject+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
