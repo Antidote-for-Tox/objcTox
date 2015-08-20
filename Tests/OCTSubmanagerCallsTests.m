@@ -92,6 +92,10 @@
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    [self.dataSource stopMocking];
+    [self.mockedAudioEngine stopMocking];
+    [self.mockedVideoEngine stopMocking];
+    [self.mockedToxAV stopMocking];
     self.dataSource = nil;
     self.callManager = nil;
     self.tox = nil;
@@ -273,7 +277,7 @@
 
     OCMVerify([self.mockedAudioEngine startAudioFlow:nil]);
     OCMVerify([self.mockedAudioEngine setFriendNumber:92]);
-    OCMVerify([timer startTimerForCall:call]);
+    OCMVerify([timer startTimerForCall:[OCMArg isNotNil]]);
 
     XCTAssertEqual(call.status, OCTCallStatusActive);
     XCTAssertTrue(call.friendAcceptingVideo);
@@ -366,7 +370,7 @@
     id mockedTimer = OCMClassMock([OCTCallTimer class]);
     [mockedTimer setExpectationOrderMatters:YES];
     OCMExpect([mockedTimer stopTimer]);
-    OCMExpect([mockedTimer startTimerForCall:secondCall]);
+    OCMExpect([mockedTimer startTimerForCall:[OCMArg isNotNil]]);
 
     self.callManager.timer = mockedTimer;
 
@@ -393,7 +397,7 @@
     [mockedTimer setExpectationOrderMatters:YES];
     self.callManager.timer = mockedTimer;
     OCMExpect([mockedTimer stopTimer]);
-    OCMExpect([mockedTimer startTimerForCall:call]);
+    OCMExpect([mockedTimer startTimerForCall:[OCMArg isNotNil]]);
 
     [self.callManager toxAV:nil callStateChanged:OCTToxAVFriendCallStatePaused friendNumber:11];
 
@@ -452,7 +456,7 @@
     OCTCall *call = [self.callManager createCallWithFriendNumber:221 status:OCTCallStatusActive];
 
     [self.callManager toxAV:nil receiveCallAudioEnabled:YES videoEnabled:NO friendNumber:221];
-    OCMVerify([delegate callSubmanager:self.callManager receiveCall:call audioEnabled:YES videoEnabled:NO]);
+    OCMVerify([delegate callSubmanager:self.callManager receiveCall:[OCMArg isNotNil] audioEnabled:YES videoEnabled:NO]);
     XCTAssertEqualObjects(friend, call.caller);
     XCTAssertFalse([call isOutgoing]);
 }
