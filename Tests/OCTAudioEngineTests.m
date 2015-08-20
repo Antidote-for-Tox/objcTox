@@ -14,7 +14,7 @@
 
 @import AVFoundation;
 
-void *refToSelf;
+static void *refToSelf;
 
 OSStatus mocked_AUGraphIsRunning(AUGraph inGraph, Boolean *outIsRunning);
 OSStatus mocked_AUGraphNotRunning(AUGraph inGraph, Boolean *outIsRunning);

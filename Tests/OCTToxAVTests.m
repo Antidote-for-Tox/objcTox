@@ -13,7 +13,7 @@
 #import "OCTTox+Private.h"
 #import "OCTCAsserts.h"
 
-void *refToSelf;
+static void *refToSelf;
 
 uint32_t mocked_toxav_version_major(void);
 uint32_t mocked_toxav_version_minor(void);
