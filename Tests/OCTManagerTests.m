@@ -11,7 +11,6 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
-#import "OCTToxAV.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
@@ -21,7 +20,7 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
-#import "OCTSubmanagerCalls.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
@@ -68,7 +67,6 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
-    OCMStub([[self.mockedCallManager alloc] initWithTox:[OCMArg anyPointer] error:nil]).andReturn(self.mockedCallManager);
 
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.tox alloc]).andReturn(self.tox);
@@ -271,6 +269,7 @@
 
 - (void)createManager
 {
+    OCMStub([[self.mockedCallManager alloc] initWithTox:[OCMArg anyPointer]]).andReturn(nil);
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 }
