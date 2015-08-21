@@ -166,7 +166,7 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 #pragma mark - Audio Status
 - (BOOL)isAudioRunning:(NSError **)error
 {
-    Boolean running;
+    Boolean running = false;
     OSStatus status = _AUGraphIsRunning(self.processingGraph,
                                         &running);
     if (status != noErr) {
