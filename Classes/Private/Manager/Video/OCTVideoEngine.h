@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "OCTView.h"
 
 #import "OCTToxAV.h"
 
@@ -47,9 +47,9 @@
 - (BOOL)isSendingVideo;
 
 /**
- * Generate a UIView with the current incoming video feed.
+ * Generate a OCTView with the current incoming video feed.
  */
-- (UIView *)videoFeed;
+- (OCTView *)videoFeed;
 
 /**
  * Layer of the preview video.

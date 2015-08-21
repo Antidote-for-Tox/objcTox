@@ -149,18 +149,28 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         return NO;
     }
 
+#if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
 
     return [session setActive:NO error:error];
+#else
+#warning TODO audio OSX
+    return NO;
+#endif
 }
 
 - (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
 {
+#if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
 
     AVAudioSessionPortOverride override = (speaker) ? AVAudioSessionPortOverrideSpeaker : AVAudioSessionPortOverrideNone;
 
     return [session overrideOutputAudioPort:override error:error];
+#else
+#warning TODO audio OSX
+    return NO;
+#endif
 }
 
 #pragma mark - Audio Status
@@ -346,19 +356,28 @@ OSStatus outputRenderCallBack(void *inRefCon,
 
 - (BOOL)startAudioSession:(NSError **)error
 {
+#if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
 
     return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
             [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
             [session setMode:AVAudioSessionModeVoiceChat error:error] &&
             [session setActive:YES error:error]);
+#else
+#warning TODO audio OSX
+    return NO;
+#endif
 }
 
 - (BOOL)setUpStreamFormat:(NSError **)error
 {
+#if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
     self.inputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
     self.outputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
+#else
+#warning TODO audio OSX
+#endif
 
     UInt32 bytesPerSample = sizeof(SInt16);
 

@@ -407,6 +407,7 @@
 		9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+SafeObject.m"; sourceTree = "<group>"; };
 		9C478F771B78C1FB000ADD5C /* RLMObject+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+Utilities.h"; sourceTree = "<group>"; };
 		9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+Utilities.m"; sourceTree = "<group>"; };
+		9CA28E721B874A7F007BB7C5 /* OCTView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTView.h; sourceTree = "<group>"; };
 		9CB44B5F1B84D8C1007FA7B6 /* iOSDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB44B621B84D8C1007FA7B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9CB44B631B84D8C1007FA7B6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -697,6 +698,7 @@
 				9CB71FC01B386B2F00E3C1EF /* OCTMessageFile.h */,
 				9CB71FC11B386B2F00E3C1EF /* OCTMessageText.h */,
 				11CD5AE51B386A3A00585194 /* OCTObject.h */,
+				9CA28E721B874A7F007BB7C5 /* OCTView.h */,
 			);
 			path = Objects;
 			sourceTree = "<group>";

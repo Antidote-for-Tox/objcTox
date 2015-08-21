@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "OCTCAsserts.h"
@@ -54,6 +53,7 @@ int16_t *pcmRender;
 
     refToSelf = (__bridge void *)(self);
 
+#if TARGET_OS_IPHONE
     self.audioSession = OCMClassMock([AVAudioSession class]);
     OCMStub([self.audioSession sharedInstance]).andReturn(self.audioSession);
     OCMStub([self.audioSession sampleRate]).andReturn(44100.00);
@@ -66,6 +66,9 @@ int16_t *pcmRender;
 
     self.audioEngine = [[OCTAudioEngine alloc] init];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)tearDown
@@ -88,14 +91,19 @@ int16_t *pcmRender;
 
 - (void)testStartAudioFlow
 {
+#if TARGET_OS_IPHONE
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     _AUGraphStart = mocked_success_inGraph;
     NSError *error;
     XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testStopAudioFlow
 {
+#if TARGET_OS_IPHONE
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     _AUGraphStop = mocked_success_inGraph;
     _AUGraphStart = mocked_success_inGraph;
@@ -106,19 +114,27 @@ int16_t *pcmRender;
     XCTAssertFalse([self.audioEngine stopAudioFlow:&error]);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, 1);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testRouteAudioToSpeaker
 {
+#if TARGET_OS_IPHONE
     [self.audioEngine routeAudioToSpeaker:YES error:nil];
     OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
 
     [self.audioEngine routeAudioToSpeaker:NO error:nil];
     OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:[OCMArg anyObjectRef]]);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testIsAudioRunning
 {
+#if TARGET_OS_IPHONE
     _AUGraphIsRunning = mocked_AUGraphIsRunning;
     XCTAssertTrue([self.audioEngine isAudioRunning:nil]);
 
@@ -127,10 +143,14 @@ int16_t *pcmRender;
     XCTAssertFalse([self.audioEngine isAudioRunning:&error]);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, 1);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testProvideAudioFrames
 {
+#if TARGET_OS_IPHONE
     OCTToxAVSampleCount sampleCount = 4;
     OCTToxAVChannels channelCount = 2;
     OCTToxAVSampleRate sampleRate = 33333;
@@ -145,10 +165,14 @@ int16_t *pcmRender;
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     XCTAssertEqual((int)self.audioEngine.outputBuffer.fillCount, 16);
     XCTAssertEqual(self.audioEngine.outputSampleRate, 33333);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testStartingGraph
 {
+#if TARGET_OS_IPHONE
     NSError *error;
     _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
     _AUGraphInitialize = mocked_success_inGraph;
@@ -159,10 +183,14 @@ int16_t *pcmRender;
 
     _AUGraphStart = mocked_success_inGraph;
     XCTAssertTrue([self.audioEngine startAudioFlow:nil]);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testInputRenderCallback
 {
+#if TARGET_OS_IPHONE
     id toxAV = OCMClassMock([OCTToxAV class]);
     self.audioEngine.toxav = toxAV;
     self.audioEngine.friendNumber = 1234;
@@ -176,10 +204,14 @@ int16_t *pcmRender;
     OCMVerify([toxAV sendAudioFrame:[OCMArg anyPointer] sampleCount:1920 channels:2 sampleRate:48000 toFriend:1234 error:[OCMArg anyObjectRef]]);
 
     free(pcmRender);
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)testFillError
 {
+#if TARGET_OS_IPHONE
     NSError *error;
     [self.audioEngine fillError:&error
                        withCode:2
@@ -194,7 +226,11 @@ int16_t *pcmRender;
                        withCode:4
                     description:@"Test"
                   failureReason:@"TestFailure"];
+#else
+#warning TODO audio OSX
+#endif
 }
+
 @end
 
 #pragma mark mocked audio engine functions

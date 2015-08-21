@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "OCTVideoEngine.h"
@@ -112,7 +111,7 @@
     OCMStub([mockedVideoView alloc]).andReturn(mockedVideoView);
     OCMStub([mockedVideoView initWithFrame:CGRectZero]).andReturn(mockedVideoView);
 
-    UIView *view = [self.videoEngine videoFeed];
+    OCTView *view = [self.videoEngine videoFeed];
 
     XCTAssertEqualObjects(view, mockedVideoView);
 }
