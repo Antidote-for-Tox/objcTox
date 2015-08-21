@@ -13,6 +13,7 @@
 @class OCTSubmanagerAvatars;
 @class OCTSubmanagerBootstrap;
 @class OCTSubmanagerChats;
+@class OCTSubmanagerDNS;
 @class OCTSubmanagerFiles;
 @class OCTSubmanagerFriends;
 @class OCTSubmanagerObjects;
@@ -25,6 +26,7 @@
 @property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
+@property (strong, nonatomic, readonly) OCTSubmanagerDNS *dns;
 @property (strong, nonatomic, readonly) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;

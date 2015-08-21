@@ -18,6 +18,11 @@
 		112358941B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
 		112358991B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
 		1123589B1B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
+		112358A31B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
+		112358A41B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
+		112358A51B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
+		112358A61B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
+		112358AE1B87975900E8FB71 /* OCTSubmanagerDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */; };
 		866BE357D605477D835F08E6 /* libPods-OSXDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 776E7130F8D89BC23795C94A /* libPods-OSXDemo.a */; };
 		9CB44B641B84D8C1007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B631B84D8C1007FA7B6 /* main.m */; };
 		9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B661B84D8C1007FA7B6 /* AppDelegate.m */; };
@@ -253,6 +258,10 @@
 		112358951B87928700E8FB71 /* OCTToxDNS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxDNS.h; sourceTree = "<group>"; };
 		112358961B87928700E8FB71 /* OCTToxDNS3Object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxDNS3Object.h; sourceTree = "<group>"; };
 		112358971B8792B500E8FB71 /* OCTToxDNSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxDNSTests.m; sourceTree = "<group>"; };
+		1123589C1B87961F00E8FB71 /* OCTSubmanagerDNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerDNS.h; sourceTree = "<group>"; };
+		112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerDNS.m; sourceTree = "<group>"; };
+		112358A71B87964700E8FB71 /* OCTSubmanagerDNS+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerDNS+Private.h"; sourceTree = "<group>"; };
+		112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerDNSTests.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerBootstrap.h; sourceTree = "<group>"; };
@@ -484,6 +493,8 @@
 				5F8DB9E80557EDCED72F1E0D5E868D9F /* OCTSubmanagerChats.m */,
 				67CE089BF824F5E312E1F2DA82200173 /* OCTSubmanagerChats+Private.h */,
 				468C7E16643FCCEB54CFF0414052EC3C /* OCTSubmanagerDataSource.h */,
+				112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */,
+				112358A71B87964700E8FB71 /* OCTSubmanagerDNS+Private.h */,
 				11B4BAF01B11E2800001A96A /* OCTSubmanagerFiles.m */,
 				11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */,
 				A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */,
@@ -530,6 +541,7 @@
 				6FF6A77851AA32B2CEF6DF716083BD66 /* OCTSubmanagerAvatars.h */,
 				117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */,
 				2CBE0C2E379DCF740AF5D469F096D309 /* OCTSubmanagerChats.h */,
+				1123589C1B87961F00E8FB71 /* OCTSubmanagerDNS.h */,
 				11B4BAEF1B11E2530001A96A /* OCTSubmanagerFiles.h */,
 				91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */,
 				11D6C98E1B3B24F700E21A35 /* OCTSubmanagerObjects.h */,
@@ -792,6 +804,7 @@
 				9CB44CA81B84DF46007FA7B6 /* OCTSubmanagerAvatarsTests.m */,
 				9CB44CA91B84DF46007FA7B6 /* OCTSubmanagerBootstrapTests.m */,
 				9CB44CAA1B84DF46007FA7B6 /* OCTSubmanagerChatsTests.m */,
+				112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */,
 				9CB44CAB1B84DF46007FA7B6 /* OCTSubmanagerFilesTests.m */,
 				9CB44CAC1B84DF46007FA7B6 /* OCTSubmanagerFriendsTests.m */,
 				9CB44CAD1B84DF46007FA7B6 /* OCTSubmanagerObjectsTests.m */,
@@ -1185,6 +1198,7 @@
 				9CB44BF41B84D9E1007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				1123588D1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
 				9CB44B641B84D8C1007FA7B6 /* main.m in Sources */,
+				112358A31B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44BFC1B84D9E1007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44BE31B84D9E1007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44BF61B84D9E1007FA7B6 /* OCTManagerConstants.m in Sources */,
@@ -1247,6 +1261,7 @@
 				9CB44CCC1B84DF46007FA7B6 /* OCTSubmanagerFriendsTests.m in Sources */,
 				9CB44CB21B84DF46007FA7B6 /* OCTChatTests.m in Sources */,
 				9CB44CC61B84DF46007FA7B6 /* OCTSubmanagerBootstrapTests.m in Sources */,
+				112358AE1B87975900E8FB71 /* OCTSubmanagerDNSTests.m in Sources */,
 				9CB44C1D1B84DBA3007FA7B6 /* OCTToxConstants.m in Sources */,
 				9CB44C141B84DBA3007FA7B6 /* OCTSubmanagerChats.m in Sources */,
 				9CB44C1B1B84DBA3007FA7B6 /* OCTManager.m in Sources */,
@@ -1260,6 +1275,7 @@
 				9CB44C261B84DBA3007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44CBA1B84DF46007FA7B6 /* OCTManagerConfigurationTests.m in Sources */,
 				9CB44C281B84DBA3007FA7B6 /* RLMArray+Utilities.m in Sources */,
+				112358A41B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44CCA1B84DF46007FA7B6 /* OCTSubmanagerFilesTests.m in Sources */,
 				9CB44C291B84DBA3007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				9CB44C0D1B84DBA3007FA7B6 /* OCTBasicContainer.m in Sources */,
@@ -1304,6 +1320,7 @@
 				9CB44C671B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C641B84DCFB007FA7B6 /* OCTManagerConstants.m in Sources */,
 				9CB44C621B84DCFB007FA7B6 /* OCTSubmanagerUser.m in Sources */,
+				112358A51B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44C711B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */,
 				9CB44C5B1B84DCFB007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C5A1B84DCFB007FA7B6 /* OCTNode.m in Sources */,
@@ -1375,6 +1392,7 @@
 				9CB44C991B84DCFB007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44CBB1B84DF46007FA7B6 /* OCTManagerConfigurationTests.m in Sources */,
 				9CB44C941B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */,
+				112358A61B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44CCB1B84DF46007FA7B6 /* OCTSubmanagerFilesTests.m in Sources */,
 				9CB44C8E1B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				9CB44C761B84DCFB007FA7B6 /* OCTDefaultSettingsStorage.m in Sources */,
