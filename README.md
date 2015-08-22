@@ -8,14 +8,21 @@ Objective-C wrapper for [Tox](https://tox.chat/).
 
 See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current and previous versions).
 
+- iOS 7.0+ and OS X 10.9+ compatibility.
 - OCTTox wrapper for tox.h file.
-- OCTManager that provides high level API for Tox. Below are features for OCTManager.
+- OCTToxDNS wrapper for toxdns.h file.
+- OCTManager that provides high level API for Tox.
+
+##### OCTManager features
+
+- Bootstrapping logic from STS.
 - Changing user name, status, status message, nospam.
 - Sending, receiving, removing and accepting friend requests.
 - Removing friends.
-- Auto updating and changeable nickname for friend.
+- Auto-updated and changeable nickname for friend.
 - Chat objects with various information.
 - Sending and receiving messages.
+- tox1 and tox3 DNS discovery.
 
 #### What's next?
 
