@@ -11,9 +11,19 @@
 #import "OCTPredefined.h"
 #import "OCTManagerConstants.h"
 #import "OCTToxDNS3Object.h"
-#import "dns_sd.h"
 
-typedef void (^OCTDNSQueryCallback)(DNSServiceErrorType errorCode, NSData *data);
+DNSServiceErrorType (*_DNSServiceQueryRecord)(
+    DNSServiceRef *sdRef,
+    DNSServiceFlags flags,
+    uint32_t interfaceIndex,
+    const char *fullname,
+    uint16_t rrtype,
+    uint16_t rrclass,
+    DNSServiceQueryRecordReply callBack,
+    void *context);
+DNSServiceErrorType (*_DNSServiceProcessResult)(DNSServiceRef sdRef);
+void (*_DNSServiceRefDeallocate)(DNSServiceRef sdRef);
+
 
 static const uint16_t kMaxDNS3StringLength = 255;
 
@@ -34,6 +44,21 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
 
 @implementation OCTSubmanagerDNS
 @synthesize dataSource = _dataSource;
+
+#pragma mark -  Lifecycle
+
+- (instancetype)init
+{
+    self = [super init];
+
+    if (! self) {
+        return nil;
+    }
+
+    [self setupCFunctions];
+
+    return self;
+}
 
 #pragma mark -  Properties
 
@@ -82,7 +107,6 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
         [self callFailureBlock:failureBlock withCode:OCTDNSErrorNoPublicKey];
         return;
     }
-
 
     OCTToxDNS3Object *dns3Object = [dns generateDNS3StringForName:name maxStringLength:kMaxDNS3StringLength];
     NSString *fullname = [NSString stringWithFormat:@"_%@._tox.%@", dns3Object.generatedString, domain];
@@ -156,6 +180,13 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
 
 #pragma mark -  Private
 
+- (void)setupCFunctions
+{
+    _DNSServiceQueryRecord = DNSServiceQueryRecord;
+    _DNSServiceProcessResult = DNSServiceProcessResult;
+    _DNSServiceRefDeallocate = DNSServiceRefDeallocate;
+}
+
 - (void)callFailureBlock:(void (^)(NSError *error))failureBlock withCode:(OCTDNSError)code
 {
     if (! failureBlock) {
@@ -213,7 +244,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
     NSParameterAssert(fullname);
 
     DNSServiceRef serviceRef;
-    DNSServiceErrorType dnsError = DNSServiceQueryRecord(
+    DNSServiceErrorType dnsError = _DNSServiceQueryRecord(
         &serviceRef,
         0,
         0,
@@ -228,7 +259,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
         goto clear;
     }
 
-    dnsError = DNSServiceProcessResult(serviceRef);
+    dnsError = _DNSServiceProcessResult(serviceRef);
 
     if (dnsError != kDNSServiceErr_NoError) {
         [self callFailureBlock:failureBlock withCode:OCTDNSErrorDNSQueryError];
@@ -236,7 +267,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
     }
 
     clear:
-    DNSServiceRefDeallocate(serviceRef);
+    _DNSServiceRefDeallocate(serviceRef);
 }
 
 - (NSString *)stringFromDNSResult:(NSString *)result forKey:(NSString *)key

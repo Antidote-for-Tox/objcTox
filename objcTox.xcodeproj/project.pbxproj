@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		02BF0BDB5D6755A98E2ABFCF /* libPods-iOSDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5186A577303E72B8484B255 /* libPods-iOSDemo.a */; };
+		112027C91B88D3FC0082DD31 /* OCTSubmanagerDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */; };
+		112027CA1B88D3FC0082DD31 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
 		1123588D1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
 		1123588E1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
 		1123588F1B87927100E8FB71 /* OCTToxDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588A1B87927100E8FB71 /* OCTToxDNS.m */; };
@@ -17,7 +19,6 @@
 		112358931B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
 		112358941B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */; };
 		112358991B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
-		1123589B1B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358971B8792B500E8FB71 /* OCTToxDNSTests.m */; };
 		112358A31B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
 		112358A41B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
 		112358A51B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
@@ -1364,6 +1365,7 @@
 				9CB44C9A1B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C801B84DCFB007FA7B6 /* OCTNode.m in Sources */,
+				112027CA1B88D3FC0082DD31 /* OCTToxDNSTests.m in Sources */,
 				9CB44C7A1B84DCFB007FA7B6 /* OCTChat.m in Sources */,
 				9CB44CD31B84DF46007FA7B6 /* OCTToxTests.m in Sources */,
 				9CB44CD11B84DF46007FA7B6 /* OCTSubmanagerUserTests.m in Sources */,
@@ -1388,6 +1390,7 @@
 				9CB44C831B84DCFB007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
 				9CB44CCD1B84DF46007FA7B6 /* OCTSubmanagerFriendsTests.m in Sources */,
 				9CB44CB31B84DF46007FA7B6 /* OCTChatTests.m in Sources */,
+				112027C91B88D3FC0082DD31 /* OCTSubmanagerDNSTests.m in Sources */,
 				9CB44CC71B84DF46007FA7B6 /* OCTSubmanagerBootstrapTests.m in Sources */,
 				9CB44C951B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				9CB44C971B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */,
@@ -1409,7 +1412,6 @@
 				9CB44C8B1B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				9CB44C8C1B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */,
 				112358901B87927100E8FB71 /* OCTToxDNS.m in Sources */,
-				1123589B1B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */,
 				9CB44CBF1B84DF46007FA7B6 /* OCTMessageAbstractTests.m in Sources */,
 				9CB44C881B84DCFB007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				9CB44CB51B84DF46007FA7B6 /* OCTDefaultFileStorageTests.m in Sources */,
