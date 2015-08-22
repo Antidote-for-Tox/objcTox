@@ -114,12 +114,27 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
 
 - (void)tox:(OCTTox *)tox friendRequestWithMessage:(NSString *)message publicKey:(NSString *)publicKey
 {
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"publicKey == %@", publicKey];
+    RBQFetchRequest *fetchRequest = [realmManager fetchRequestForClass:[OCTFriendRequest class] withPredicate:predicate];
+    if ([fetchRequest fetchObjects].count > 0) {
+        // friendRequest already exists
+        return;
+    }
+
+    fetchRequest = [realmManager fetchRequestForClass:[OCTFriend class] withPredicate:predicate];
+    if ([fetchRequest fetchObjects].count > 0) {
+        // friend with such publicKey already exists
+        return;
+    }
+
     OCTFriendRequest *request = [OCTFriendRequest new];
     request.publicKey = publicKey;
     request.message = message;
     request.dateInterval = [[NSDate date] timeIntervalSince1970];
 
-    [[self.dataSource managerGetRealmManager] addObject:request];
+    [realmManager addObject:request];
 }
 
 - (void)tox:(OCTTox *)tox friendNameUpdate:(NSString *)name friendNumber:(OCTToxFriendNumber)friendNumber

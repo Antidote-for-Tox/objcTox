@@ -15,7 +15,7 @@
  *
  * See OCTSubmanagerBootstrap for more information.
  *
- * Updated 2015-08-05.
+ * Updated 2015-08-22.
  */
 + (NSArray *)bootstrapNodes;
 

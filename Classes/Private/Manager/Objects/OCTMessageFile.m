@@ -20,7 +20,11 @@
 {
     NSString *description = [super description];
 
-    return [description stringByAppendingFormat:@"OCTMessageFile with fileName = %@, fileSize = %llu", self.fileName, self.fileSize];
+    const NSUInteger maxSymbols = 3;
+    NSString *fileName = self.fileName.length > maxSymbols ? [self.fileName substringToIndex : maxSymbols] : @"";
+
+    return [description stringByAppendingFormat:@"OCTMessageFile with fileName = %@..., fileSize = %llu",
+            fileName, self.fileSize];
 }
 
 @end

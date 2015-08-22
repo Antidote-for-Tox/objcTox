@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Crash when loading bad profile [#98](https://github.com/Antidote-for-Tox/objcTox/issues/98).
+- Friend request was added several times [#50](https://github.com/Antidote-for-Tox/objcTox/issues/50).
 
 ### Deprecated
 - `[OCTManager initWithConfiguration:]`, use `[OCTManager initWithConfiguration:error:]` instead.
