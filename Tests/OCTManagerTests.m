@@ -16,6 +16,7 @@
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
+#import "OCTSubmanagerDNS+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
@@ -31,6 +32,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
@@ -102,6 +104,8 @@
     XCTAssertEqual(self.manager.bootstrap.dataSource, self.manager);
     XCTAssertNotNil(self.manager.chats);
     XCTAssertEqual(self.manager.chats.dataSource, self.manager);
+    XCTAssertNotNil(self.manager.dns);
+    XCTAssertEqual(self.manager.dns.dataSource, self.manager);
     XCTAssertNotNil(self.manager.files);
     XCTAssertEqual(self.manager.files.dataSource, self.manager);
     XCTAssertNotNil(self.manager.friends);
@@ -174,6 +178,7 @@
     self.manager.avatars = submanager;
     self.manager.bootstrap = submanager;
     self.manager.chats = submanager;
+    self.manager.dns = submanager;
     self.manager.files = submanager;
     self.manager.friends = submanager;
     self.manager.objects = submanager;
@@ -199,6 +204,7 @@
     self.manager.avatars = submanager;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -209,6 +215,7 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = submanager;
     self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -219,6 +226,7 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = submanager;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -229,6 +237,18 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
+    self.manager.dns = submanager;
+    self.manager.files = dummy;
+    self.manager.friends = dummy;
+    self.manager.objects = dummy;
+    self.manager.user = dummy;
+
+    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
+
+    self.manager.avatars = dummy;
+    self.manager.bootstrap = dummy;
+    self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = submanager;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -239,6 +259,7 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = submanager;
     self.manager.objects = dummy;
@@ -249,6 +270,7 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = submanager;
@@ -259,6 +281,7 @@
     self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
+    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;

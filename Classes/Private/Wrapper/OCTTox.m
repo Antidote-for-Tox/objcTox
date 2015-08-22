@@ -209,7 +209,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         return nil;
     }
 
-    NSString *address = [self binToHexString:cAddress length:length];
+    NSString *address = [OCTTox binToHexString:cAddress length:length];
 
     free(cAddress);
 
@@ -224,7 +224,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     _tox_self_get_public_key(self.tox, cPublicKey);
 
-    NSString *publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+    NSString *publicKey = [OCTTox binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     free(cPublicKey);
 
     return publicKey;
@@ -238,7 +238,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     tox_self_get_secret_key(self.tox, cSecretKey);
 
-    NSString *secretKey = [self binToHexString:cSecretKey length:TOX_SECRET_KEY_SIZE];
+    NSString *secretKey = [OCTTox binToHexString:cSecretKey length:TOX_SECRET_KEY_SIZE];
     free(cSecretKey);
 
     return secretKey;
@@ -292,7 +292,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     DDLogInfo(@"%@: bootstrap with host %@ port %d publicKey %@", self, host, port, publicKey);
 
     const char *cAddress = host.UTF8String;
-    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+    uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
     TOX_ERR_BOOTSTRAP cError;
 
@@ -313,7 +313,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     DDLogInfo(@"%@: add TCP relay with host %@ port %d publicKey %@", self, host, port, publicKey);
 
     const char *cAddress = host.UTF8String;
-    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+    uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
     TOX_ERR_BOOTSTRAP cError;
 
@@ -334,7 +334,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     DDLogVerbose(@"%@: add friend with address.length %lu, message.length %lu", self, (unsigned long)address.length, (unsigned long)message.length);
 
-    uint8_t *cAddress = [self hexStringToBin:address];
+    uint8_t *cAddress = [OCTTox hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
     size_t length = [message lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
@@ -356,7 +356,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     DDLogVerbose(@"%@: add friend with no request and publicKey.length %lu", self, (unsigned long)publicKey.length);
 
-    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+    uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
     TOX_ERR_FRIEND_ADD cError;
 
@@ -389,7 +389,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     DDLogVerbose(@"%@: get friend number with publicKey.length %lu", self, (unsigned long)publicKey.length);
 
-    uint8_t *cPublicKey = [self hexStringToBin:publicKey];
+    uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
     TOX_ERR_FRIEND_BY_PUBLIC_KEY cError;
 
@@ -415,7 +415,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSString *publicKey = nil;
 
     if (result) {
-        publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+        publicKey = [OCTTox binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     }
 
     if (cPublicKey) {
@@ -1542,7 +1542,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     return cOptions;
 }
 
-- (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
++ (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
 {
     NSMutableString *string = [NSMutableString stringWithCapacity:length];
 
@@ -1554,7 +1554,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 }
 
 // You are responsible for freeing the return value!
-- (uint8_t *)hexStringToBin:(NSString *)string
++ (uint8_t *)hexStringToBin:(NSString *)string
 {
     // byte is represented by exactly 2 hex digits, so lenth of binary string
     // is half of that of the hex one. only hex string with even length
@@ -1683,7 +1683,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+    NSString *publicKey = [OCTTox binToHexString:(uint8_t *)cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{

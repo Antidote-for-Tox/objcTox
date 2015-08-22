@@ -18,7 +18,10 @@
 {
     NSString *description = [super description];
 
-    return [description stringByAppendingFormat:@"OCTMessageText %@", self.text];
+    const NSUInteger maxSymbols = 3;
+    NSString *text = self.text.length > maxSymbols ? [self.text substringToIndex : maxSymbols] : @"";
+
+    return [description stringByAppendingFormat:@"OCTMessageText %@..., length %lu", text, (unsigned long)self.text.length];
 }
 
 @end

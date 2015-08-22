@@ -17,6 +17,7 @@
 @class OCTSubmanagerBootstrap;
 @class OCTSubmanagerCalls;
 @class OCTSubmanagerChats;
+@class OCTSubmanagerDNS;
 @class OCTSubmanagerFiles;
 @class OCTSubmanagerFriends;
 @class OCTSubmanagerObjects;
@@ -43,6 +44,11 @@
  * Submanager with all chats methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
+
+/**
+ * Submanager with all DNS methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerDNS *dns;
 
 /**
  * Submanager with all files methods.
@@ -104,11 +110,11 @@
 #pragma mark -  Deprecated
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-    __attribute((deprecated(("User initWithConfiguration:error: instead"))));
+    __attribute((deprecated(("Use initWithConfiguration:error: instead"))));
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath
-    __attribute((deprecated(("User initWithConfiguration:loadToxSaveFilePath:error: instead"))));
+    __attribute((deprecated(("Use initWithConfiguration:loadToxSaveFilePath:error: instead"))));
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and

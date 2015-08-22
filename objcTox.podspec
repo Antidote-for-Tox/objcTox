@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "objcTox"
-  s.version          = "0.1.0"
+  s.version          = "0.2.0"
   s.summary          = "Objective-C wrapper for Tox"
   s.homepage         = "https://github.com/Antidote-for-Tox/objcTox"
   s.license          = "MIT"
@@ -30,5 +30,4 @@ Pod::Spec.new do |s|
   s.dependency 'TPCircularBuffer', '~> 0.0.1'
   s.dependency 'CocoaLumberjack', '1.9.2'
   s.dependency 'Realm', '0.93.2'
-  s.dependency 'RBQFetchedResultsController', '1.8.9.3'
 end

@@ -223,11 +223,7 @@ static char kRBQRefreshTriggeredKey;
     else {
         NSError *error;
         if (! [[NSFileManager defaultManager] removeItemAtPath:[RBQFetchedResultsController basePathForCaches]
-                                                         error:&error]) {
-#ifdef DEBUG
-            NSLog(@"%@", error.localizedDescription);
-#endif
-        }
+                                                         error:&error]) {}
     }
 }
 
@@ -244,11 +240,6 @@ static char kRBQRefreshTriggeredKey;
                                                          options:0
                                                            error:&error];
 
-    if (error) {
-        NSLog(@"Error retrieving sync cache directories: %@", error.localizedDescription);
-
-    }
-
     NSMutableArray *cachePaths = [NSMutableArray array];
 
     for (NSURL *url in urlsInSyncCache) {
@@ -257,20 +248,14 @@ static char kRBQRefreshTriggeredKey;
 
         if (! [url getResourceValue:&isDirectory
                              forKey:NSURLIsDirectoryKey
-                              error:&theError]) {
-
-            NSLog(@"Error retrieving resource value: %@", theError.localizedDescription);
-        }
+                              error:&theError]) {}
 
         if (isDirectory.boolValue) {
             NSString *name = nil;
 
             if (! [url getResourceValue:&name
                                  forKey:NSURLNameKey
-                                  error:&theError]) {
-
-                NSLog(@"Error retrieving resource value: %@", theError.localizedDescription);
-            }
+                                  error:&theError]) {}
             else {
                 // Directory name is filename with extension stripped
                 NSString *cachePath = [RBQFetchedResultsController cachePathWithName:name];
@@ -314,12 +299,6 @@ static char kRBQRefreshTriggeredKey;
 #endif
          }
                                                         error:&error];
-
-        if (error) {
-#ifdef DEBUG
-            NSLog(@"FRC Cache Directory Creation Error: %@", error.localizedDescription);
-#endif
-        }
     }
 
     NSString *fileName = [NSString stringWithFormat:@"%@.realm", name];
@@ -349,12 +328,6 @@ static char kRBQRefreshTriggeredKey;
 #endif
          }
                                                         error:&error];
-
-        if (error) {
-#ifdef DEBUG
-            NSLog(@"FRC Cache Directory Creation Error: %@", error.localizedDescription);
-#endif
-        }
     }
 
     return basePath;
@@ -382,12 +355,6 @@ static char kRBQRefreshTriggeredKey;
 #endif
          }
                                                         error:&error];
-
-        if (error) {
-#ifdef DEBUG
-            NSLog(@"FRC Cache Directory Creation Error: %@", error.localizedDescription);
-#endif
-        }
     }
 
     return cachePath;
@@ -725,11 +692,6 @@ static char kRBQRefreshTriggeredKey;
             if (entityChangesObject &&
                 [realm.path isEqualToString:weakSelf.fetchRequest.realmPath]) {
 
-#ifdef DEBUG
-                NSLog(@"%lu Added Objects", (unsigned long)entityChangesObject.addedSafeObjects.count);
-                NSLog(@"%lu Deleted Objects", (unsigned long)entityChangesObject.deletedSafeObjects.count);
-                NSLog(@"%lu Changed Objects", (unsigned long)entityChangesObject.changedSafeObjects.count);
-#endif
                 [weakSelf calculateChangesWithAddedSafeObjects:entityChangesObject.addedSafeObjects
                                             deletedSafeObjects:entityChangesObject.deletedSafeObjects
                                             changedSafeObjects:entityChangesObject.changedSafeObjects
@@ -809,17 +771,9 @@ static char kRBQRefreshTriggeredKey;
                                     changedSafeObjects:changedSafeObjects
                                                  state:state];
 
-#ifdef DEBUG
-        NSLog(@"%lu Object Changes", (unsigned long)changeSets.cacheObjectsChangeSet.count);
-        NSLog(@"%lu Section Changes", (unsigned long)changeSets.cacheSectionsChangeSet.count);
-#endif
-
         // Make sure we actually identified changes
         // (changes might not match entity name)
         if (! changeSets) {
-#ifdef DEBUG
-            NSLog(@"No change objects or section changes found!");
-#endif
             return;
         }
 
@@ -839,14 +793,6 @@ static char kRBQRefreshTriggeredKey;
         RBQDerivedChangesObject *derivedChanges = [self deriveChangesWithChangeSets:changeSets
                                                                      sectionChanges:sectionChanges
                                                                               state:state];
-#ifdef DEBUG
-        NSLog(@"%lu Derived Inserted Sections", (unsigned long)derivedChanges.insertedSectionChanges.count);
-        NSLog(@"%lu Derived Deleted Sections", (unsigned long)derivedChanges.deletedSectionChanges.count);
-        NSLog(@"%lu Derived Added Objects", (unsigned long)derivedChanges.insertedObjectChanges.count);
-        NSLog(@"%lu Derived Deleted Objects", (unsigned long)derivedChanges.deletedObjectChanges.count);
-        NSLog(@"%lu Derived Moved Objects", (unsigned long)derivedChanges.movedObjectChanges.count);
-#endif
-
         // Apply Derived Changes To Cache
         [self applyDerivedChangesToCache:derivedChanges
                                    state:state];

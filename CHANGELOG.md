@@ -3,17 +3,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.2.0] - 2015-08-22
 ### Added
 - OS X 10.9+ compatibility
 - OCTSubmanagerBootstrap that implements bootstrapping logic from STS [Tox-STS/#65](https://github.com/Tox/Tox-STS/pull/65/files).
+- OCTToxDNS which is wrapper for toxdns.
+- OCTSubmanagerDNS with methods for tox3 and tox1 discovery.
 - Predefined list of nodes to bootstrap from https://wiki.tox.chat/users/nodes.
 
 ### Changes
 - `toxcore-ios` replaced with `toxcore` pod.
+- RBQFetchedResultsController pod replaced with integrated-one with fixes for OS X compatibility. **Note** that NSFetchedResultsChangeType was replaced with RBQFetchedResultsChangeType.
 - OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
+- Removed RBQFetchedResultsController logging.
 
 ### Fixed
 - Crash when loading bad profile [#98](https://github.com/Antidote-for-Tox/objcTox/issues/98).
+- Friend request was added several times [#50](https://github.com/Antidote-for-Tox/objcTox/issues/50).
 
 ### Deprecated
 - `[OCTManager initWithConfiguration:]`, use `[OCTManager initWithConfiguration:error:]` instead.
@@ -32,4 +39,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...master
+[0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0
