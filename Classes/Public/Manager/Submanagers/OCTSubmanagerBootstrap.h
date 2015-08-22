@@ -26,7 +26,7 @@
 
 /**
  * Add nodes from https://wiki.tox.chat/users/nodes. objcTox is trying to keep this list up to date.
- * You can check all nodes in OCTPredefinedNodes.h file.
+ * You can check all nodes in OCTPredefined file.
  *
  * This will NOT start bootstrapping. To start actual bootstrapping set all desired nodes
  * and call `bootstrap` method.

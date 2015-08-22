@@ -14,6 +14,7 @@
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
+#import "OCTSubmanagerDNS+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerFriends+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
@@ -28,6 +29,7 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
@@ -96,6 +98,7 @@
     _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
     _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
+    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNS class]];
     _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
     _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
     _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
@@ -216,6 +219,7 @@
         self.avatars,
         self.bootstrap,
         self.chats,
+        self.dns,
         self.files,
         self.friends,
         self.objects,

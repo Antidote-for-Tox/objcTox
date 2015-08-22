@@ -16,6 +16,7 @@
 @class OCTSubmanagerAvatars;
 @class OCTSubmanagerBootstrap;
 @class OCTSubmanagerChats;
+@class OCTSubmanagerDNS;
 @class OCTSubmanagerFiles;
 @class OCTSubmanagerFriends;
 @class OCTSubmanagerObjects;
@@ -37,6 +38,11 @@
  * Submanager with all chats methods.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
+
+/**
+ * Submanager with all DNS methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerDNS *dns;
 
 /**
  * Submanager with all files methods.
