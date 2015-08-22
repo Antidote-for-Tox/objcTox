@@ -23,6 +23,10 @@
 		112358A51B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
 		112358A61B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */; };
 		112358AE1B87975900E8FB71 /* OCTSubmanagerDNSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */; };
+		112358B01B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
+		112358B11B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
+		112358B21B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
+		112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
 		866BE357D605477D835F08E6 /* libPods-OSXDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 776E7130F8D89BC23795C94A /* libPods-OSXDemo.a */; };
 		9CB44B641B84D8C1007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B631B84D8C1007FA7B6 /* main.m */; };
 		9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B661B84D8C1007FA7B6 /* AppDelegate.m */; };
@@ -262,6 +266,7 @@
 		112358A21B87963A00E8FB71 /* OCTSubmanagerDNS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerDNS.m; sourceTree = "<group>"; };
 		112358A71B87964700E8FB71 /* OCTSubmanagerDNS+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerDNS+Private.h"; sourceTree = "<group>"; };
 		112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerDNSTests.m; sourceTree = "<group>"; };
+		112358AF1B887E8F00E8FB71 /* OCTPredefined.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTPredefined.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerBootstrap.h; sourceTree = "<group>"; };
@@ -272,7 +277,7 @@
 		11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerFiles+Private.h"; sourceTree = "<group>"; };
 		11CD5AE51B386A3A00585194 /* OCTObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTObject.h; sourceTree = "<group>"; };
 		11CD5AE81B386A4D00585194 /* OCTObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTObject.m; sourceTree = "<group>"; };
-		11D497B31B72B94A00634B56 /* OCTPredefinedNodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTPredefinedNodes.h; sourceTree = "<group>"; };
+		11D497B31B72B94A00634B56 /* OCTPredefined.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTPredefined.h; sourceTree = "<group>"; };
 		11D497B41B72BE5700634B56 /* OCTNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTNode.h; sourceTree = "<group>"; };
 		11D497B51B72BE5700634B56 /* OCTNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTNode.m; sourceTree = "<group>"; };
 		11D6C98E1B3B24F700E21A35 /* OCTSubmanagerObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerObjects.h; sourceTree = "<group>"; };
@@ -592,7 +597,8 @@
 				59DFACB59220710D4B2227182A018958 /* Submanagers */,
 				31BCEE5F6D309D5BA4FAE6E6E70C2CA7 /* OCTManager.h */,
 				647688B7386EE74BA1E6359A822B2BE6 /* OCTManagerConstants.h */,
-				11D497B31B72B94A00634B56 /* OCTPredefinedNodes.h */,
+				11D497B31B72B94A00634B56 /* OCTPredefined.h */,
+				112358AF1B887E8F00E8FB71 /* OCTPredefined.m */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -1191,6 +1197,7 @@
 				9CB44BF71B84D9E1007FA7B6 /* OCTTox.m in Sources */,
 				9CB44BF51B84D9E1007FA7B6 /* OCTManager.m in Sources */,
 				9CB44BFD1B84D9E1007FA7B6 /* RBQFetchedResultsController.m in Sources */,
+				112358B01B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44BE81B84D9E1007FA7B6 /* OCTFriendRequest.m in Sources */,
 				9CB44B931B84D91C007FA7B6 /* OCTTableViewController.m in Sources */,
 				9CB44B901B84D91C007FA7B6 /* OCTConversationViewController.m in Sources */,
@@ -1269,6 +1276,7 @@
 				9CB44C1C1B84DBA3007FA7B6 /* OCTManagerConstants.m in Sources */,
 				112358921B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44C251B84DBA3007FA7B6 /* RLMObject+Utilities.m in Sources */,
+				112358B11B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C101B84DBA3007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44C2A1B84DBA3007FA7B6 /* RBQObjectCacheObject.m in Sources */,
 				9CB44C241B84DBA3007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
@@ -1339,6 +1347,7 @@
 				9CB44C581B84DCFB007FA7B6 /* OCTMessageFile.m in Sources */,
 				9CB44C5C1B84DCFB007FA7B6 /* OCTSubmanagerAvatars.m in Sources */,
 				9CB44C5D1B84DCFB007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
+				112358B21B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C511B84DCFB007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44C701B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
 				9CB44C6F1B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */,
@@ -1353,6 +1362,7 @@
 			files = (
 				9CB44C981B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				9CB44C9A1B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */,
+				112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C801B84DCFB007FA7B6 /* OCTNode.m in Sources */,
 				9CB44C7A1B84DCFB007FA7B6 /* OCTChat.m in Sources */,
 				9CB44CD31B84DF46007FA7B6 /* OCTToxTests.m in Sources */,

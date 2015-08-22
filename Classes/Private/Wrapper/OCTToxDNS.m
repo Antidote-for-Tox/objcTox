@@ -46,7 +46,7 @@ const NSUInteger kOCTToxDNSMaxRecommendedNameLength = TOXDNS_MAX_RECOMMENDED_NAM
     void *dns3 = _tox_dns3_new(cAddress);
     free(cAddress);
 
-    if (! _dns3) {
+    if (! dns3) {
         return nil;
     }
 
@@ -102,9 +102,8 @@ const NSUInteger kOCTToxDNSMaxRecommendedNameLength = TOXDNS_MAX_RECOMMENDED_NAM
         return nil;
     }
 
-    NSString *toxId = [[NSString alloc] initWithBytes:cToxId length:cToxIdLength encoding:NSUTF8StringEncoding];
+    NSString *toxId = [OCTTox binToHexString:cToxId length:cToxIdLength];
 
-    free(cToxId);
 
     return toxId;
 }

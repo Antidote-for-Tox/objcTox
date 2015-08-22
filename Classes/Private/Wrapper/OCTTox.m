@@ -209,7 +209,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         return nil;
     }
 
-    NSString *address = [self binToHexString:cAddress length:length];
+    NSString *address = [OCTTox binToHexString:cAddress length:length];
 
     free(cAddress);
 
@@ -224,7 +224,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     _tox_self_get_public_key(self.tox, cPublicKey);
 
-    NSString *publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+    NSString *publicKey = [OCTTox binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     free(cPublicKey);
 
     return publicKey;
@@ -238,7 +238,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     tox_self_get_secret_key(self.tox, cSecretKey);
 
-    NSString *secretKey = [self binToHexString:cSecretKey length:TOX_SECRET_KEY_SIZE];
+    NSString *secretKey = [OCTTox binToHexString:cSecretKey length:TOX_SECRET_KEY_SIZE];
     free(cSecretKey);
 
     return secretKey;
@@ -415,7 +415,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSString *publicKey = nil;
 
     if (result) {
-        publicKey = [self binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+        publicKey = [OCTTox binToHexString:cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     }
 
     if (cPublicKey) {
@@ -1542,7 +1542,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     return cOptions;
 }
 
-- (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
++ (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length
 {
     NSMutableString *string = [NSMutableString stringWithCapacity:length];
 
@@ -1683,7 +1683,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    NSString *publicKey = [tox binToHexString:(uint8_t *)cPublicKey length:TOX_PUBLIC_KEY_SIZE];
+    NSString *publicKey = [OCTTox binToHexString:(uint8_t *)cPublicKey length:TOX_PUBLIC_KEY_SIZE];
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{

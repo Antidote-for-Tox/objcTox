@@ -612,7 +612,7 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
 - (void)testBinToHexString
 {
     uint8_t bin[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    NSString *string = [self.tox binToHexString:bin length:16];
+    NSString *string = [OCTTox binToHexString:bin length:16];
 
     XCTAssertTrue([@"000102030405060708090A0B0C0D0E0F" isEqualToString:string]);
 }

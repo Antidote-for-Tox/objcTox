@@ -7,7 +7,7 @@
 //
 
 #import "OCTSubmanagerBootstrap+Private.h"
-#import "OCTPredefinedNodes.h"
+#import "OCTPredefined.h"
 #import "OCTNode.h"
 #import "OCTTox.h"
 #import "OCTSettingsStorageProtocol.h"
@@ -72,7 +72,7 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 
 - (void)addPredefinedNodes
 {
-    for (NSArray *nodeArray in OCTPredefinedNodes()) {
+    for (NSArray *nodeArray in [OCTPredefined bootstrapNodes]) {
         NSNumber *port = nodeArray[1];
         [self addNodeWithHost:nodeArray[0] port:port.unsignedShortValue publicKey:nodeArray[2]];
     }

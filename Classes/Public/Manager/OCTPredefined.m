@@ -1,21 +1,17 @@
 //
-//  OCTPredefinedNodes.h
+//  OCTPredefined.m
 //  objcTox
 //
-//  Created by Dmytro Vorobiov on 05/08/15.
+//  Created by Dmytro Vorobiov on 22/08/15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-/**
- * A list of nodes from https://wiki.tox.chat/users/nodes
- *
- * See OCTSubmanagerBootstrap for more information
- */
-NSArray *OCTPredefinedNodes()
+#import "OCTPredefined.h"
+
+@implementation OCTPredefined
+
++ (NSArray *)bootstrapNodes
 {
-    /**
-     * Updated 2015-08-05.
-     */
     return @[
         @[
             // sonOfRa, DE
@@ -169,3 +165,15 @@ NSArray *OCTPredefinedNodes()
         ],
     ];
 }
+
++ (NSArray *)tox3Servers
+{
+    return @[
+        @[
+            @"utox.org",
+            @"d3154f65d28a5b41a05d4ac7e4b39c6b1c233cc857fb365c56e8392737462a12",
+        ],
+    ];
+}
+
+@end
