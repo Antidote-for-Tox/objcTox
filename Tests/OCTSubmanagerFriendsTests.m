@@ -238,10 +238,9 @@ static NSString *const kMessage = @"kMessage";
 
 #pragma mark -  OCTToxDelegate
 
-- (void)textFriendRequestWithMessage
+- (void)testFriendRequestWithMessage
 {
     [self.submanager tox:self.tox friendRequestWithMessage:kMessage publicKey:kPublicKey];
-    NSDate *date = [NSDate date];
 
     RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
     XCTAssertEqual(objects.count, 1);
@@ -249,10 +248,44 @@ static NSString *const kMessage = @"kMessage";
     OCTFriendRequest *request = [objects firstObject];
     XCTAssertEqualObjects(request.publicKey, kPublicKey);
     XCTAssertEqualObjects(request.message, kMessage);
-    XCTAssertEqual(request.dateInterval, [date timeIntervalSince1970]);
+    XCTAssertTrue(([[NSDate date] timeIntervalSince1970] - request.dateInterval) < 0.1);
 }
 
-- (void)textFriendNameUpdate
+- (void)testFriendRequestWithMessageDuplicate
+{
+    // trying to add same friend request twice
+    [self.submanager tox:self.tox friendRequestWithMessage:kMessage publicKey:kPublicKey];
+    [self.submanager tox:self.tox friendRequestWithMessage:kMessage publicKey:kPublicKey];
+
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 1);
+
+    OCTFriendRequest *request = [objects firstObject];
+    XCTAssertEqualObjects(request.publicKey, kPublicKey);
+    XCTAssertEqualObjects(request.message, kMessage);
+    XCTAssertTrue(([[NSDate date] timeIntervalSince1970] - request.dateInterval) < 0.1);
+}
+
+- (void)testFriendRequestWithMessageFriendExists
+{
+    OCTFriend *friend = [self createFriend];
+    friend.publicKey = kPublicKey;
+    friend.status = OCTToxUserStatusBusy;
+    friend.isConnected = YES;
+    friend.connectionStatus = OCTToxConnectionStatusUDP;
+    friend.isTyping = YES;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox friendRequestWithMessage:kMessage publicKey:kPublicKey];
+
+    RLMResults *objects = [OCTFriendRequest allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 0);
+}
+
+- (void)testFriendNameUpdate
 {
     OCTFriend *friend = [self createFriend];
     friend.friendNumber = kFriendNumber;
