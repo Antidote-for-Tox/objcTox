@@ -104,11 +104,11 @@
 #pragma mark -  Deprecated
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-    __attribute((deprecated(("User initWithConfiguration:error: instead"))));
+    __attribute((deprecated(("Use initWithConfiguration:error: instead"))));
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath
-    __attribute((deprecated(("User initWithConfiguration:loadToxSaveFilePath:error: instead"))));
+    __attribute((deprecated(("Use initWithConfiguration:loadToxSaveFilePath:error: instead"))));
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and
