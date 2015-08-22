@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 - `toxcore-ios` replaced with `toxcore` pod.
+- RBQFetchedResultsController pod replaced with integrated-one with fixes for OS X compatibility. **Note** that NSFetchedResultsChangeType was replaced with RBQFetchedResultsChangeType.
 - OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
 
 ### Fixed
