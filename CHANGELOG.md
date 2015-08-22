@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.2.0] - 2015-08-22
 ### Added
 - OS X 10.9+ compatibility
 - OCTSubmanagerBootstrap that implements bootstrapping logic from STS [Tox-STS/#65](https://github.com/Tox/Tox-STS/pull/65/files).
@@ -37,4 +39,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...master
+[0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0
