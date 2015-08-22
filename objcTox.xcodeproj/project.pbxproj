@@ -1698,6 +1698,32 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_NO_PIE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"Pods-iOSDemo-BlocksKit\"",
+					"-l\"Pods-iOSDemo-CocoaLumberjack\"",
+					"-l\"Pods-iOSDemo-Masonry\"",
+					"-l\"Pods-iOSDemo-Realm\"",
+					"-l\"Pods-iOSDemo-TPCircularBuffer\"",
+					"-l\"Pods-iOSDemo-libopus-patched-config\"",
+					"-l\"Pods-iOSDemo-libsodium\"",
+					"-l\"Pods-iOSDemo-toxcore\"",
+					"-l\"c++\"",
+					"-l\"realm-ios\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"vpx\"",
+					"-read_only_relocs",
+					suppress,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1717,6 +1743,25 @@
 				INFOPLIST_FILE = iOSDemoTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"Pods-iOSDemoTests-CocoaLumberjack\"",
+					"-l\"Pods-iOSDemoTests-OCMock\"",
+					"-l\"Pods-iOSDemoTests-Realm\"",
+					"-l\"Pods-iOSDemoTests-TPCircularBuffer\"",
+					"-l\"Pods-iOSDemoTests-libopus-patched-config\"",
+					"-l\"Pods-iOSDemoTests-libsodium\"",
+					"-l\"Pods-iOSDemoTests-toxcore\"",
+					"-l\"c++\"",
+					"-l\"realm-ios\"",
+					"-framework",
+					"\"AudioToolbox\"",
+					"-framework",
+					"\"vpx\"",
+					"-read_only_relocs",
+					suppress,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
