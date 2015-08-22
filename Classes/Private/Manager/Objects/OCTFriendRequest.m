@@ -19,7 +19,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"OCTFriendRequest with publicKey %@\nmessage %@", self.publicKey, self.message];
+    return [NSString stringWithFormat:@"OCTFriendRequest with publicKey %@...\nmessage length %lu",
+            [self.publicKey substringToIndex:5], (unsigned long)self.message.length];
 }
 
 @end
