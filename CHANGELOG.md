@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `toxcore-ios` replaced with `toxcore` pod.
 - RBQFetchedResultsController pod replaced with integrated-one with fixes for OS X compatibility. **Note** that NSFetchedResultsChangeType was replaced with RBQFetchedResultsChangeType.
 - OCTSubmanagerFriends: removed return `BOOL` value from `removeFriendRequest:` method.
+- Removed RBQFetchedResultsController logging.
 
 ### Fixed
 - Crash when loading bad profile [#98](https://github.com/Antidote-for-Tox/objcTox/issues/98).
