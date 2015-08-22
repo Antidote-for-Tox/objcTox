@@ -8,6 +8,7 @@
 
 #import "OCTVideoView.h"
 @import Foundation;
+@import AVFoundation;
 
 @interface OCTVideoView ()
 
@@ -56,8 +57,16 @@
 {
 #if TARGET_OS_IPHONE
     if (self.image) {
-        CGFloat scale = self.window.screen.scale;
-        CGRect destRect = CGRectApplyAffineTransform(self.bounds, CGAffineTransformMakeScale(scale, scale));
+
+        glClearColor(0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        CGRect destRect = AVMakeRectWithAspectRatioInsideRect(self.image.extent.size, rect);
+
+        CGFloat screenscale = self.window.screen.scale;
+
+        destRect = CGRectApplyAffineTransform(destRect, CGAffineTransformMakeScale(screenscale, screenscale));
+
         [self.coreImageContext drawImage:self.image inRect:destRect fromRect:self.image.extent];
     }
 #else
