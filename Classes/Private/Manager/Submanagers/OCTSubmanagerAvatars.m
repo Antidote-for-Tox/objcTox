@@ -15,11 +15,10 @@ static NSString *const kuserAvatarFileName = @"user_avatar";
 
 @interface OCTSubmanagerAvatars ()
 
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
-
 @end
 
 @implementation OCTSubmanagerAvatars
+@synthesize dataSource = _dataSource;
 
 #pragma mark -  Public
 

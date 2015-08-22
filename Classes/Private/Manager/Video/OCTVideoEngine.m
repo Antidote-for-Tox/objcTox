@@ -151,7 +151,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     });
 }
 
-- (UIView *)videoFeed;
+- (OCTView *)videoFeed;
 {
     DDLogVerbose(@"%@: videoFeed", self);
 
@@ -223,11 +223,15 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     dispatch_async(self.processingQueue, ^{
 
         /* Create Core Image */
+#if TARGET_OS_IPHONE
         CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
 
         CVPixelBufferRelease(bufferRef);
 
         self.videoView.image = coreImage;
+#else
+#warning TODO audio OSX
+#endif
     });
 }
 
@@ -345,14 +349,19 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)registerOrientationNotification
 {
+#if TARGET_OS_IPHONE
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(orientationChanged)
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
+#else
+#warning TODO audio OSX
+#endif
 }
 
 - (void)orientationChanged
 {
+#if TARGET_OS_IPHONE
     UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
     AVCaptureConnection *conn = [self.dataOutput connectionWithMediaType:AVMediaTypeVideo];
     AVCaptureVideoOrientation orientation;
@@ -377,6 +386,9 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     conn.videoOrientation = orientation;
     self.previewLayer.connection.videoOrientation = orientation;
+#else
+#warning TODO audio OSX
+#endif
 }
 
 @end

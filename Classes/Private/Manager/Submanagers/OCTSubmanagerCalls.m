@@ -217,7 +217,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     }
 }
 
-- (UIView *)videoFeed
+- (OCTView *)videoFeed
 {
     return [self.videoEngine videoFeed];
 }

@@ -88,3 +88,22 @@ typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
          */
         OCTCallPausedStatusByFriend = 1 << 1,
 };
+
+typedef NS_ENUM(NSUInteger, OCTDNSError) {
+    /**
+     * Given string for DNS discovery is wrong.
+     */
+    OCTDNSErrorWrongString,
+
+    /**
+     * No public key is found for domain. You have to add server first with `addTox3Server:publicKey:` method.
+     *
+     * This error can occur only in tox3 dns discovery method.
+     */
+    OCTDNSErrorNoPublicKey,
+
+    /**
+     * Error occurred during dns discovery.
+     */
+    OCTDNSErrorDNSQueryError,
+};

@@ -7,11 +7,8 @@
 //
 
 #import "OCTSubmanagerChats.h"
-#import "OCTSubmanagerDataSource.h"
-#import "OCTToxDelegate.h"
+#import "OCTSubmanagerProtocol.h"
 
-@interface OCTSubmanagerChats (Private) <OCTToxDelegate>
-
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+@interface OCTSubmanagerChats (Private) <OCTSubmanagerProtocol>
 
 @end

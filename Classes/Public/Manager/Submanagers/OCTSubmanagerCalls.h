@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "OCTView.h"
 #import "OCTChat.h"
 #import "OCTToxAVConstants.h"
 #import "OCTSubmanagerCallsDelegate.h"
@@ -93,9 +93,9 @@
                   error:(NSError *__nullable *__nullable)error;
 
 /**
- * The UIView that will have the video feed.
+ * The OCTView that will have the video feed.
  */
-- (nullable UIView *)videoFeed;
+- (nullable OCTView *)videoFeed;
 
 /**
  * The preview video of the user.
