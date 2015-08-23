@@ -163,6 +163,10 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
         [allNodes removeObjectAtIndex:index];
     }
 
+    @synchronized(self.addedNodes) {
+        [self.addedNodes minusSet:[NSSet setWithArray:selectedNodes]];
+    }
+
     return [selectedNodes copy];
 }
 

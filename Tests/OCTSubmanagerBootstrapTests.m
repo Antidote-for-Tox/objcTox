@@ -88,7 +88,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:nil];
 
     self.submanager.didConnectDelay = 0.0;
-    self.submanager.iterationTime = 0.05;
+    self.submanager.iterationTime = 0.1;
 
     [self.submanager addNodeWithHost:@"h1" port:1 publicKey:@"1"];
     [self.submanager addNodeWithHost:@"h2" port:2 publicKey:@"2"];
@@ -105,8 +105,8 @@
 
     [self performBlock:^{
         [expectation fulfill];
-    } afterDelay:0.5];
-    [self waitForExpectationsWithTimeout:1.2 handler:nil];
+    } afterDelay:0.4];
+    [self waitForExpectationsWithTimeout:0.45 handler:nil];
 
     OCMVerify([self.tox bootstrapFromHost:@"h1" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
     OCMVerify([self.tox bootstrapFromHost:@"h2" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
