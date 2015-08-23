@@ -32,6 +32,20 @@ static const uint64_t kCurrentSchemeVersion = 1;
 
 @implementation OCTRealmManager
 
+#pragma mark -  Class methods
+
++ (NSMutableSet *)migratedPathesSet
+{
+    static NSMutableSet *dictionary;
+    static dispatch_once_t token;
+
+    dispatch_once(&token, ^{
+        dictionary = [NSMutableSet new];
+    });
+
+    return dictionary;
+}
+
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithDatabasePath:(NSString *)path
@@ -51,7 +65,16 @@ static const uint64_t kCurrentSchemeVersion = 1;
     __weak OCTRealmManager *weakSelf = self;
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
-        [strongSelf performMigrationForRealmWithPath:path];
+
+        @synchronized([OCTRealmManager class]) {
+            NSMutableSet *migratedPathesSet = [OCTRealmManager migratedPathesSet];
+
+            if (! [migratedPathesSet containsObject:path]) {
+                [migratedPathesSet addObject:path];
+                [strongSelf performMigrationForRealmWithPath:path];
+            }
+        }
+
         strongSelf->_realm = [RLMRealm realmWithPath:path];
     });
 
