@@ -61,6 +61,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     return status;
 }
 
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
+{
+    return [self.videoEngine switchToCameraFront:front error:error];
+}
+
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;

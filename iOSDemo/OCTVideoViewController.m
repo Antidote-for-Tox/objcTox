@@ -189,10 +189,23 @@ static const CGFloat kEdgeInsets = 25.0;
                                                                    handler:^(UIAlertAction *action) {
         [weakSelf stopSendingVideo];
     }];
+
     UIAlertAction *startSendingVideoAction = [UIAlertAction actionWithTitle:@"Start sending video"
                                                                       style:UIAlertActionStyleDefault
                                                                     handler:^(UIAlertAction *action) {
         [weakSelf startSendingVideo];
+    }];
+
+    UIAlertAction *switchToRearAction = [UIAlertAction actionWithTitle:@"Use rear camera"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction *action) {
+        [weakSelf switchToBack];
+    }];
+
+    UIAlertAction *switchToFrontAction = [UIAlertAction actionWithTitle:@"Use front camera"
+                                                                  style:UIAlertActionStyleDefault
+                                                                handler:^(UIAlertAction *action) {
+        [weakSelf switchToFront];
     }];
 
     UIAlertAction *dismissAction = [UIAlertAction actionWithTitle:@"Dismiss view"
@@ -203,6 +216,8 @@ static const CGFloat kEdgeInsets = 25.0;
 
     [alertController addAction:stopSendingVideoAction];
     [alertController addAction:startSendingVideoAction];
+    [alertController addAction:switchToRearAction];
+    [alertController addAction:switchToFrontAction];
     [alertController addAction:dismissAction];
 
     [self presentViewController:alertController animated:YES completion:nil];
@@ -225,5 +240,13 @@ static const CGFloat kEdgeInsets = 25.0;
     [self.manager enableVideoSending:YES forCall:self.call error:nil];
 }
 
+- (void)switchToFront
+{
+    [self.manager switchToCameraFront:YES error:nil];
+}
 
+- (void)switchToBack
+{
+    [self.manager switchToCameraFront:NO error:nil];
+}
 @end
