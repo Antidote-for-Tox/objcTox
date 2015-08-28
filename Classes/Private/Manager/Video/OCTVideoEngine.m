@@ -74,14 +74,16 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (BOOL)setupWithError:(NSError **)error
 {
     DDLogVerbose(@"%@: setupWithError", self);
-    AVCaptureDevice *videoCaptureDevice = [self frontCamera];
+    AVCaptureDevice *videoCaptureDevice = [self getDeviceForPosition:AVCaptureDevicePositionFront];
     AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:videoCaptureDevice error:error];
 
     if (! videoInput) {
         return NO;
     }
 
-    [self.captureSession addInput:videoInput];
+    if ([self.captureSession canAddInput:videoInput]) {
+        [self.captureSession addInput:videoInput];
+    }
 
     self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
     self.dataOutput.videoSettings = @{
@@ -96,6 +98,45 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         [self registerOrientationNotification];
         [self orientationChanged];
     }
+
+    return YES;
+}
+
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
+{
+    DDLogVerbose(@"%@: switchToCameraFront %d", self, front);
+
+    AVCaptureDevicePosition position = front ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+
+    NSArray *inputs = [self.captureSession inputs];
+
+    AVCaptureInput *current = [inputs firstObject];
+    if ([current isKindOfClass:[AVCaptureDeviceInput class]]) {
+        AVCaptureDeviceInput *inputDevice = (AVCaptureDeviceInput *)current;
+        if (inputDevice.device.position == position) {
+            return YES;
+        }
+    }
+
+    for (AVCaptureInput *input in inputs) {
+        [self.captureSession removeInput:input];
+    }
+
+    AVCaptureDevice *camera = [self getDeviceForPosition:position];
+
+    AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:camera error:error];
+
+    if (! videoInput) {
+        return NO;
+    }
+
+    if (! [self.captureSession canAddInput:videoInput]) {
+        return NO;
+    }
+
+    [self.captureSession addInput:videoInput];
+
+    [self orientationChanged];
 
     return YES;
 }
@@ -335,15 +376,17 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 #pragma mark - Private
 
-- (AVCaptureDevice *)frontCamera
+- (AVCaptureDevice *)getDeviceForPosition:(AVCaptureDevicePosition)position
 {
-    DDLogVerbose(@"%@: frontCamera", self);
+    DDLogVerbose(@"%@: getDeviceForPosition", self);
+
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice *device in devices) {
-        if ([device position] == AVCaptureDevicePositionFront) {
+        if ([device position] == position) {
             return device;
         }
     }
+
     return nil;
 }
 

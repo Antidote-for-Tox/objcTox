@@ -34,6 +34,15 @@
 - (BOOL)setupWithError:(NSError *__nullable *__nullable)error;
 
 /**
+ * Use a different camera for input.
+ * @param front YES to use the front camera, NO to use the
+ * rear camera. Front camera is used by default.
+ * @error Pointer to error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error;
+
+/**
  * This class is responsible for telling the end-user what calls we have available.
  * We can also initialize a call session from here.
  * @param chat The chat for which we would like to initiate a call.

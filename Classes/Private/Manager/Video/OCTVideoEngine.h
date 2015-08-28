@@ -29,6 +29,15 @@
 - (BOOL)setupWithError:(NSError **)error;
 
 /**
+ * Use a different camera for input.
+ * @param front YES to use the front camera, NO to use the
+ * rear camera. Front camera is used by default.
+ * @error Pointer to error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error;
+
+/**
  * Start sending video data.
  * This will turn on processIncomingVideo to YES
  */
