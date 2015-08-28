@@ -81,7 +81,9 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         return NO;
     }
 
-    [self.captureSession addInput:videoInput];
+    if ([self.captureSession canAddInput:videoInput]) {
+        [self.captureSession addInput:videoInput];
+    }
 
     self.dataOutput.alwaysDiscardsLateVideoFrames = YES;
     self.dataOutput.videoSettings = @{
@@ -129,7 +131,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     }
 
     if (! [self.captureSession canAddInput:videoInput]) {
-        // fill error?
         return NO;
     }
 
