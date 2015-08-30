@@ -11,6 +11,7 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTToxAV.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
@@ -27,6 +28,7 @@
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
+@property (strong, nonatomic, readonly) OCTToxAV *toxAV;
 @property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
@@ -59,6 +61,7 @@
 @property (strong, nonatomic) OCTManager *manager;
 @property (nonatomic, assign) id mockedCallManager;
 @property (strong, nonatomic) id tox;
+@property (strong, nonatomic) id toxAV;
 
 @end
 
@@ -74,6 +77,10 @@
     OCMStub([self.tox alloc]).andReturn(self.tox);
     OCMStub([self.tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.tox);
 
+    self.toxAV = OCMClassMock([OCTToxAV class]);
+    OCMStub([self.toxAV alloc]).andReturn(self.toxAV);
+    OCMStub([self.toxAV initWithTox:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.toxAV);
+
     id data = OCMClassMock([NSData class]);
 
     OCMStub([data writeToFile:[OCMArg any] options:NSDataWritingAtomic error:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -84,6 +91,9 @@
 {
     [self.tox stopMocking];
     self.tox = nil;
+
+    [self.toxAV stopMocking];
+    self.toxAV = nil;
 
     self.manager = nil;
     [self.mockedCallManager stopMocking];
