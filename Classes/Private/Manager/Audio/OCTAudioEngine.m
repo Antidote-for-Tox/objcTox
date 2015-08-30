@@ -94,9 +94,22 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
     TPCircularBufferInit(&_outputBuffer, kBufferLength);
     TPCircularBufferInit(&_inputBuffer, kBufferLength);
 
+    _enableMicrophone = YES;
+
+    return self;
+}
+
+- (void)dealloc
+{
+    TPCircularBufferCleanup(&_outputBuffer);
+    TPCircularBufferCleanup(&_inputBuffer);
+}
+
+- (BOOL)setupGraphWithError:(NSError **)error
+{
     _NewAUGraph(&_processingGraph);
 
-    _AUGraphAddNode(_processingGraph,
+    _AUGraphAddNode(self.processingGraph,
                     &_ioUnitDescription,
                     &_ioNode);
 
@@ -104,43 +117,30 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
 
     _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
 
-    _enableMicrophone = YES;
-
-    return self;
-}
-
-- (BOOL)setupWithError:(NSError **)error
-{
-    __block BOOL status = NO;
-    dispatch_once(&_setupOnceToken, ^{
-        status = ([self enableInputScope:error] &&
-                  [self registerInputCallBack:error] &&
-                  [self registerOutputCallBack:error] &&
-                  [self initializeGraph:error]);
-    });
-
-    return status;
-}
-
-- (void)dealloc
-{
-    TPCircularBufferCleanup(&_outputBuffer);
-    TPCircularBufferCleanup(&_inputBuffer);
-
-    _DisposeAUGraph(_processingGraph);
+    return ([self enableInputScope:error] &&
+            [self registerInputCallBack:error] &&
+            [self registerOutputCallBack:error] &&
+            [self initializeGraph:error]);
 }
 
 #pragma mark - Audio Controls
 - (BOOL)startAudioFlow:(NSError **)error
 {
-    return ([self startAudioSession:error] &&
+    return ([self setupGraphWithError:error] &&
+            [self startAudioSession:error] &&
             [self setUpStreamFormat:error] &&
             [self startGraph:error]);
 }
 
 - (BOOL)stopAudioFlow:(NSError **)error
 {
+
     OSStatus status = _AUGraphStop(self.processingGraph);
+
+    AUGraphClose(self.processingGraph);
+
+    DisposeAUGraph(self.processingGraph);
+
     if (status != noErr) {
         [self fillError:error
                withCode:status
@@ -148,6 +148,9 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
           failureReason:@"Failed to stop graph"];
         return NO;
     }
+
+    TPCircularBufferClear(&_outputBuffer);
+    TPCircularBufferClear(&_inputBuffer);
 
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];

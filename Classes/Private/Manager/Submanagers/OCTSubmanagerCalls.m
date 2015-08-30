@@ -53,9 +53,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
         self.videoEngine = [OCTVideoEngine new];
         self.videoEngine.toxav = self.toxAV;
 
-
-        status = [self.audioEngine setupWithError:error] &&
-                 [self.videoEngine setupWithError:error];
+        status = [self.videoEngine setupWithError:error];
     });
 
     return status;
@@ -382,7 +380,12 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     if (start) {
         OCTFriend *friend = [call.chat.friends firstObject];
 
-        [self.audioEngine startAudioFlow:nil];
+        NSError *error;
+        if (! [self.audioEngine startAudioFlow:&error]) {
+            NSLog(@"Error starting audio flow %@", error);
+        }
+
+
 
         if (call.videoIsEnabled) {
             [self.videoEngine startSendingVideo];

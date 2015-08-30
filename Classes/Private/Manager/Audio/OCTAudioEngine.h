@@ -21,13 +21,6 @@
 @property (nonatomic, assign) BOOL enableMicrophone;
 
 /**
- * Setup must be called once before using the audio engine.
- * @param error Pointer to error object.
- * @return YES on success, otherwise NO.
- **/
-- (BOOL)setupWithError:(NSError **)error;
-
-/**
  * Starts the Audio Processing Graph.
  * @param error Pointer to error object.
  * @return YES on success, otherwise NO.
