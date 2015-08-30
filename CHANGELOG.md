@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [0.2.1] - 2015-08-30
 ### Fixed
 - Bootstrapping was using same nodes over and over again.
 - Memory issues with OCTSubmanagerBootstrap.
@@ -47,5 +48,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...master
+[0.2.1]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0
