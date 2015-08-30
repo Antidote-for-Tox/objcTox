@@ -108,6 +108,24 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
             friend.isTyping = NO;
         }
     }];
+
+    for (NSNumber *friendNumber in [[self.dataSource managerGetTox] friendsArray]) {
+        OCTToxFriendNumber number = [friendNumber intValue];
+
+        BOOL found = NO;
+
+        for (OCTFriend *friend in friendsArray) {
+            if (friend.friendNumber == number) {
+                found = YES;
+                break;
+            }
+        }
+
+        if (! found) {
+            // it seems that friend is in Tox but isn't in Realm. Let's add it.
+            [self createFriendWithFriendNumber:number error:nil];
+        }
+    }
 }
 
 #pragma mark -  OCTToxDelegate

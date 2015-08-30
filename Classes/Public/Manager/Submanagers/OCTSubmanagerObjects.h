@@ -43,7 +43,8 @@
  * Sets nickname property for friend.
  *
  * @param friend Friend to change.
- * @param nickname New nickname.
+ * @param nickname New nickname. If nickname is empty or nil, it will be set to friends name.
+ * If friend don't have name, it will be set to friends publicKey.
  */
 - (void)changeFriend:(OCTFriend *)friend nickname:(NSString *)nickname;
 

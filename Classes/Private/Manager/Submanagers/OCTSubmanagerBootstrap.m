@@ -94,7 +94,7 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 
     if (didConnect.boolValue) {
         DDLogVerbose(@"%@: did connect before, waiting %g seconds", self, self.didConnectDelay);
-        [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:self.didConnectDelay];
+        [self tryToBootstrapAfter:self.didConnectDelay];
     }
     else {
         [self tryToBootstrap];
@@ -110,6 +110,21 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 }
 
 #pragma mark -  Private
+
+- (void)tryToBootstrapAfter:(NSTimeInterval)after
+{
+    __weak OCTSubmanagerBootstrap *weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, after * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        __strong OCTSubmanagerBootstrap *strongSelf = weakSelf;
+
+        if (! strongSelf) {
+            DDLogInfo(@"OCTSubmanagerBootstrap is dead, seems that OCTManager was killed, quiting.");
+            return;
+        }
+
+        [strongSelf tryToBootstrap];
+    });
+}
 
 - (void)tryToBootstrap
 {
@@ -137,7 +152,7 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
         [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
     }
 
-    [self performSelector:@selector(tryToBootstrap) withObject:nil afterDelay:self.iterationTime];
+    [self tryToBootstrapAfter:self.iterationTime];
 }
 
 - (void)finishBootstrapping
@@ -161,6 +176,10 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 
         [selectedNodes addObject:allNodes[index]];
         [allNodes removeObjectAtIndex:index];
+    }
+
+    @synchronized(self.addedNodes) {
+        [self.addedNodes minusSet:[NSSet setWithArray:selectedNodes]];
     }
 
     return [selectedNodes copy];

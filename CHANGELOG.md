@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [0.2.1] - 2015-08-30
+### Fixed
+- Bootstrapping was using same nodes over and over again.
+- Memory issues with OCTSubmanagerBootstrap.
+- Realm migration crash when recreating OCTManager with same configuration.
+- Crash when exporting profile from OCTManager.
+- Adding all unadded friends to Realm on startup (this may happen when importing existing .tox file).
+- Changing friend's nickname to default one when setting nil or empty string.
+
 ## [0.2.0] - 2015-08-22
 ### Added
 - OS X 10.9+ compatibility
@@ -39,5 +48,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...master
+[0.2.1]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0

@@ -82,6 +82,29 @@ static NSString *const kMessage = @"kMessage";
     XCTAssertFalse(friend.isTyping);
 }
 
+- (void)testConfigure2
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = 99;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    NSArray *array = @[@(99), @(kFriendNumber)];
+    OCMStub([self.tox friendsArray]).andReturn(array);
+    [self stubFriendMethodsInTox];
+
+    [self.submanager configure];
+
+    RLMResults *objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
+    XCTAssertEqual(objects.count, 2);
+
+    OCTFriend *added = [objects lastObject];
+
+    [self verifyFriend:added];
+}
+
 #pragma mark -  Public
 
 - (void)testSendFriendRequestSuccess
