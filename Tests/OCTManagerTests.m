@@ -26,7 +26,7 @@
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
-@property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
+@property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
@@ -284,6 +284,38 @@
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 }
+
+- (void)testExportToxSaveFile
+{
+    id configuration = OCMClassMock([OCTManagerConfiguration class]);
+    id storage = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
+    OCMStub([configuration fileStorage]).andReturn(storage);
+    OCMStub([configuration copy]).andReturn(configuration);
+    OCMStub([storage pathForToxSaveFile]).andReturn(@"somewhere/tox.save");
+    OCMStub([storage pathForTemporaryFilesDirectory]).andReturn(@"tmp");
+
+    id fileManager = OCMClassMock([NSFileManager class]);
+    OCMStub([fileManager defaultManager]).andReturn(fileManager);
+    OCMExpect([fileManager copyItemAtPath:@"somewhere/tox.save" toPath:@"tmp/tox.save" error:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    id realmManager = OCMClassMock([OCTRealmManager class]);
+    OCMStub([realmManager alloc]).andReturn(realmManager);
+    OCMStub([realmManager initWithDatabasePath:[OCMArg any]]).andReturn(realmManager);
+
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+
+    NSString *path = [manager exportToxSaveFile:nil];
+
+    XCTAssertEqualObjects(path, @"tmp/tox.save");
+    OCMVerifyAll(fileManager);
+
+    [fileManager stopMocking];
+    [realmManager stopMocking];
+    fileManager = nil;
+    realmManager = nil;
+}
+
+#pragma mark -  Helper methods
 
 - (void)createManager
 {

@@ -123,7 +123,13 @@
         NSString *tempPath = self.configuration.fileStorage.pathForTemporaryFilesDirectory;
         tempPath = [tempPath stringByAppendingPathComponent:[savedDataPath lastPathComponent]];
 
-        if (! [[NSFileManager defaultManager] copyItemAtPath:savedDataPath toPath:tempPath error:error]) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+
+        if ([fileManager fileExistsAtPath:tempPath]) {
+            [fileManager removeItemAtPath:tempPath error:error];
+        }
+
+        if (! [fileManager copyItemAtPath:savedDataPath toPath:tempPath error:error]) {
             return nil;
         }
 

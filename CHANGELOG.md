@@ -3,10 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
 ### Fixed
 - Bootstrapping was using same nodes over and over again.
 - Memory issues with OCTSubmanagerBootstrap.
 - Realm migration crash when recreating OCTManager with same configuration.
+- Crash when exporting profile from OCTManager.
+- Changing friend's nickname to default one when setting nil or empty string.
 
 ## [0.2.0] - 2015-08-22
 ### Added

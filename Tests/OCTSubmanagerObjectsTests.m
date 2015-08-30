@@ -114,6 +114,42 @@
     XCTAssertEqualObjects(friend.nickname, @"new");
 }
 
+- (void)testChangeFriendNicknameEmpty1
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.nickname = @"nickname";
+    friend.name = @"name";
+    friend.publicKey = @"public";
+
+    OCMStub([self.realmManager updateObject:friend withBlock:[OCMArg checkWithBlock:^BOOL (id obj) {
+        void (^block)(id) = obj;
+        block(friend);
+        return YES;
+    }]]);
+
+    [self.submanager changeFriend:friend nickname:@""];
+
+    XCTAssertEqualObjects(friend.nickname, @"name");
+}
+
+- (void)testChangeFriendNicknameEmpty2
+{
+    OCTFriend *friend = [OCTFriend new];
+    friend.nickname = @"nickname";
+    friend.name = @"";
+    friend.publicKey = @"public";
+
+    OCMStub([self.realmManager updateObject:friend withBlock:[OCMArg checkWithBlock:^BOOL (id obj) {
+        void (^block)(id) = obj;
+        block(friend);
+        return YES;
+    }]]);
+
+    [self.submanager changeFriend:friend nickname:@""];
+
+    XCTAssertEqualObjects(friend.nickname, @"public");
+}
+
 - (void)testChangeChatEnteredText
 {
     OCTChat *chat = [OCTChat new];
