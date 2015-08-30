@@ -41,7 +41,15 @@
     OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
 
     [manager updateObject:friend withBlock:^(OCTFriend *theFriend) {
-        theFriend.nickname = nickname;
+        if (nickname.length) {
+            theFriend.nickname = nickname;
+        }
+        else if (theFriend.name.length) {
+            theFriend.nickname = theFriend.name;
+        }
+        else {
+            theFriend.nickname = theFriend.publicKey;
+        }
     }];
 }
 
