@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Memory issues with OCTSubmanagerBootstrap.
 - Realm migration crash when recreating OCTManager with same configuration.
 - Crash when exporting profile from OCTManager.
+- Adding all unadded friends to Realm on startup (this may happen when importing existing .tox file).
 - Changing friend's nickname to default one when setting nil or empty string.
 
 ## [0.2.0] - 2015-08-22
