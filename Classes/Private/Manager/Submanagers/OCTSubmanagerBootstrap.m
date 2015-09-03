@@ -12,6 +12,8 @@
 #import "OCTTox.h"
 #import "OCTSettingsStorageProtocol.h"
 #import "DDLog.h"
+#import "OCTRealmManager.h"
+#import "OCTSettingsStorageObject.h"
 
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
@@ -19,8 +21,6 @@
 static const NSTimeInterval kDidConnectDelay = 10.0;
 static const NSTimeInterval kIterationTime = 5.0;
 static const NSUInteger kNodesPerIteration = 4;
-
-static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBootstrapDidConnectKey";
 
 @interface OCTSubmanagerBootstrap ()
 
@@ -90,9 +90,9 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 
     DDLogVerbose(@"%@: bootstrapping with %lu nodes", self, (unsigned long)self.addedNodes.count);
 
-    NSNumber *didConnect = [[self.dataSource managerGetSettingsStorage] objectForKey:kOCTSubmanagerBootstrapDidConnectKey];
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    if (didConnect.boolValue) {
+    if (realmManager.settingsStorage.bootstrapDidConnect) {
         DDLogVerbose(@"%@: did connect before, waiting %g seconds", self, self.didConnectDelay);
         [self tryToBootstrapAfter:self.didConnectDelay];
     }
@@ -130,7 +130,12 @@ static NSString *const kOCTSubmanagerBootstrapDidConnectKey = @"kOCTSubmanagerBo
 {
     if ([self.dataSource managerIsToxConnected]) {
         DDLogInfo(@"%@: trying to bootstrap... tox is connected, exiting", self);
-        [[self.dataSource managerGetSettingsStorage] setObject:@(YES) forKey:kOCTSubmanagerBootstrapDidConnectKey];
+
+        OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+        [realmManager updateObject:realmManager.settingsStorage withBlock:^(OCTSettingsStorageObject *object) {
+            object.bootstrapDidConnect = YES;
+        }];
+
         [self finishBootstrapping];
 
         return;
