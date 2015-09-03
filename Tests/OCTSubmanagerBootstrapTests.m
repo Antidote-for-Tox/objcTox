@@ -11,7 +11,6 @@
 
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerDataSource.h"
-#import "OCTSettingsStorageProtocol.h"
 #import "OCTTox.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"

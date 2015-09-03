@@ -159,11 +159,6 @@
     return self.realmManager;
 }
 
-- (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage
-{
-    return self.configuration.settingsStorage;
-}
-
 - (id<OCTFileStorageProtocol>)managerGetFileStorage
 {
     return self.configuration.fileStorage;

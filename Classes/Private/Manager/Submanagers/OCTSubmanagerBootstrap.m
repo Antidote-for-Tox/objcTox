@@ -10,7 +10,6 @@
 #import "OCTPredefined.h"
 #import "OCTNode.h"
 #import "OCTTox.h"
-#import "OCTSettingsStorageProtocol.h"
 #import "DDLog.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"

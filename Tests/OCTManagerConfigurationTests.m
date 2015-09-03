@@ -33,7 +33,6 @@
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
 
-    XCTAssertNotNil(configuration.settingsStorage);
     XCTAssertNotNil(configuration.fileStorage);
     XCTAssertNotNil(configuration.options);
 }
@@ -50,7 +49,6 @@
 
     OCTManagerConfiguration *c2 = [configuration copy];
 
-    XCTAssertEqualObjects(configuration.settingsStorage, c2.settingsStorage);
     XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
 
     XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);

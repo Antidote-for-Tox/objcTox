@@ -7,7 +7,6 @@
 //
 
 #import "OCTManagerConfiguration.h"
-#import "OCTDefaultSettingsStorage.h"
 #import "OCTDefaultFileStorage.h"
 
 static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTox.settings";
@@ -20,9 +19,6 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
 + (instancetype)defaultConfiguration
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration new];
-
-    configuration.settingsStorage = [[OCTDefaultSettingsStorage alloc]
-                                     initWithUserDefaultsKey:kDefaultSettingsStorageUserDefaultsKey];
 
     NSString *baseDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     baseDirectory = [baseDirectory stringByAppendingPathComponent:kDefaultBaseDirectory];
@@ -54,7 +50,6 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
 {
     OCTManagerConfiguration *configuration = [[[self class] allocWithZone:zone] init];
 
-    configuration.settingsStorage = self.settingsStorage;
     configuration.fileStorage = self.fileStorage;
     configuration.options = [self.options copy];
 

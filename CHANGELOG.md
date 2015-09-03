@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 ### Changed
-- Realm updated to version 0.95.0
+- Realm updated to version 0.95.0.
+- OCTSettingsStorageProtocol was removed. Now objcTox stores its settings in Realm database.
 
 ## [0.2.1] - 2015-08-30
 ### Fixed

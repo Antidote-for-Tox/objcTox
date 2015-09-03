@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OCTSettingsStorageProtocol.h"
 #import "OCTFileStorageProtocol.h"
 #import "OCTToxOptions.h"
 
@@ -16,13 +15,6 @@
  * Configuration for OCTManager.
  */
 @interface OCTManagerConfiguration : NSObject <NSCopying>
-
-/**
- * Settings storage to be used.
- *
- * By default OCTDefaultSettingsStorage will be used.
- */
-@property (strong, nonatomic) id<OCTSettingsStorageProtocol> settingsStorage;
 
 /**
  * File storage to be used.
