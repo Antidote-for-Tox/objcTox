@@ -144,7 +144,10 @@ inMemoryRealmId = _inMemoryRealmId;
 - (RLMRealm *)realm
 {
     if (self.inMemoryRealmId) {
-        return [RLMRealm inMemoryRealmWithIdentifier:self.inMemoryRealmId];
+        RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+        configuration.inMemoryIdentifier = self.inMemoryRealmId;
+
+        return [RLMRealm realmWithConfiguration:configuration error:nil];
     }
 
     if ([NSThread isMainThread] &&
