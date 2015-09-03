@@ -160,7 +160,6 @@
 
     XCTAssertEqual([self.manager managerGetTox], self.manager.tox);
     XCTAssertEqual([self.manager managerGetRealmManager], self.manager.realmManager);
-    XCTAssertEqual([self.manager managerGetSettingsStorage], self.manager.configuration.settingsStorage);
     XCTAssertEqual([self.manager managerGetFileStorage], self.manager.configuration.fileStorage);
     XCTAssertEqual([self.manager managerGetNotificationCenter], self.manager.notificationCenter);
 }

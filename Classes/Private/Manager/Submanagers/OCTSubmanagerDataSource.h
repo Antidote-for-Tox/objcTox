@@ -36,7 +36,6 @@
 - (BOOL)managerIsToxConnected;
 - (void)managerSaveTox;
 - (OCTRealmManager *)managerGetRealmManager;
-- (id<OCTSettingsStorageProtocol>)managerGetSettingsStorage;
 - (id<OCTFileStorageProtocol>)managerGetFileStorage;
 - (NSNotificationCenter *)managerGetNotificationCenter;
 

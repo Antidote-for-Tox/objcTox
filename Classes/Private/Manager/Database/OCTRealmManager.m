@@ -16,12 +16,14 @@
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
+#import "OCTSettingsStorageObject.h"
 
 #import "DDLog.h"
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-static const uint64_t kCurrentSchemeVersion = 1;
+static const uint64_t kCurrentSchemeVersion = 2;
+static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
 
@@ -31,6 +33,7 @@ static const uint64_t kCurrentSchemeVersion = 1;
 @end
 
 @implementation OCTRealmManager
+@synthesize settingsStorage = _settingsStorage;
 
 #pragma mark -  Lifecycle
 
@@ -52,17 +55,8 @@ static const uint64_t kCurrentSchemeVersion = 1;
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
 
-        RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
-        configuration.path = path;
-        configuration.schemaVersion = kCurrentSchemeVersion;
-        configuration.migrationBlock = [strongSelf realmMigrationBlock];
-
-        NSError *error;
-        strongSelf->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
-
-        if (! strongSelf->_realm) {
-            DDLogInfo(@"OCTRealmManager: init failed with error %@", error);
-        }
+        [strongSelf createRealmWithPath:path];
+        [strongSelf createSettingsStorage];
     });
 
     return self;
@@ -171,6 +165,36 @@ static const uint64_t kCurrentSchemeVersion = 1;
 }
 
 #pragma mark -  Other methods
+
+- (void)createRealmWithPath:(NSString *)path
+{
+    RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+    configuration.path = path;
+    configuration.schemaVersion = kCurrentSchemeVersion;
+    configuration.migrationBlock = [self realmMigrationBlock];
+
+    NSError *error;
+    self->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
+
+    if (! self->_realm) {
+        DDLogInfo(@"OCTRealmManager: init failed with error %@", error);
+    }
+}
+
+- (void)createSettingsStorage
+{
+    _settingsStorage = [OCTSettingsStorageObject objectInRealm:self.realm
+                                                 forPrimaryKey:kSettingsStorageObjectPrimaryKey];
+
+    if (! _settingsStorage) {
+        DDLogInfo(@"OCTRealmManager: no _settingsStorage, creating it");
+        _settingsStorage = [OCTSettingsStorageObject new];
+
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:_settingsStorage];
+        [self.realm commitWriteTransaction];
+    }
+}
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
@@ -285,6 +309,10 @@ static const uint64_t kCurrentSchemeVersion = 1;
     return ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
                if (oldSchemaVersion < 1) {
                    // objcTox version 0.1.0
+               }
+
+               if (oldSchemaVersion < 2) {
+                   // objcTox version 0.2.1
                }
     };
 }
