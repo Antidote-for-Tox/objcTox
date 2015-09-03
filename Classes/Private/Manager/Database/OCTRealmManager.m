@@ -32,20 +32,6 @@ static const uint64_t kCurrentSchemeVersion = 1;
 
 @implementation OCTRealmManager
 
-#pragma mark -  Class methods
-
-+ (NSMutableSet *)migratedPathesSet
-{
-    static NSMutableSet *dictionary;
-    static dispatch_once_t token;
-
-    dispatch_once(&token, ^{
-        dictionary = [NSMutableSet new];
-    });
-
-    return dictionary;
-}
-
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithDatabasePath:(NSString *)path
@@ -66,16 +52,17 @@ static const uint64_t kCurrentSchemeVersion = 1;
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
 
-        @synchronized([OCTRealmManager class]) {
-            NSMutableSet *migratedPathesSet = [OCTRealmManager migratedPathesSet];
+        RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+        configuration.path = path;
+        configuration.schemaVersion = kCurrentSchemeVersion;
+        configuration.migrationBlock = [strongSelf realmMigrationBlock];
 
-            if (! [migratedPathesSet containsObject:path]) {
-                [migratedPathesSet addObject:path];
-                [strongSelf performMigrationForRealmWithPath:path];
-            }
+        NSError *error;
+        strongSelf->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
+
+        if (! strongSelf->_realm) {
+            DDLogInfo(@"OCTRealmManager: init failed with error %@", error);
         }
-
-        strongSelf->_realm = [RLMRealm realmWithPath:path];
     });
 
     return self;
@@ -293,14 +280,13 @@ static const uint64_t kCurrentSchemeVersion = 1;
 
 #pragma mark -  Private
 
-- (void)performMigrationForRealmWithPath:(NSString *)path
+- (RLMMigrationBlock)realmMigrationBlock
 {
-    [RLMRealm setSchemaVersion:kCurrentSchemeVersion forRealmAtPath:path withMigrationBlock:
-     ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 1) {
-            // objcTox version 0.1.0
-        }
-    }];
+    return ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
+               if (oldSchemaVersion < 1) {
+                   // objcTox version 0.1.0
+               }
+    };
 }
 
 - (RBQRealmChangeLogger *)logger

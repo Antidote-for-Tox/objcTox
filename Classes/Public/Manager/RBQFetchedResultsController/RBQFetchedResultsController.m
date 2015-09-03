@@ -1884,8 +1884,10 @@ static char kRBQRefreshTriggeredKey;
         return self.inMemoryRealmCache;
     }
     else {
+        RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+        configuration.inMemoryIdentifier = [self nameForFetchRequest:self.fetchRequest];
 
-        RLMRealm *realm = [RLMRealm inMemoryRealmWithIdentifier:[self nameForFetchRequest:self.fetchRequest]];
+        RLMRealm *realm = [RLMRealm realmWithConfiguration:configuration error:nil];
 
         // Hold onto a strong reference so inMemory realm cache doesn't get deallocated
         // We don't use the cache since this is deprecated
