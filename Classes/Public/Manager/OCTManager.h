@@ -85,6 +85,13 @@
  */
 - (NSString *)exportToxSaveFile:(NSError **)error;
 
+/**
+ * Set passphrase to encrypt tox save file.
+ *
+ * @param passphrase You can pass nil to disable encryption.
+ */
+- (void)changePassphrase:(NSString *)passphrase;
+
 #pragma mark -  Deprecated
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration

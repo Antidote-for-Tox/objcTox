@@ -41,6 +41,15 @@
 @property (strong, nonatomic, nonnull) OCTToxOptions *options;
 
 /**
+ * Passphrase used to decrypt tox save file.
+ * You should specify this parameter *only* if tox save file is already encrypted. If you would like to
+ * enable encryption please use OCTManager's method.
+ *
+ * Default value: nil.
+ */
+@property (strong, nonatomic, nullable) NSString *passphrase;
+
+/**
  * If this parameter is set, tox save file will be copied from given path.
  * You can set this property to import tox save from some other location.
  *

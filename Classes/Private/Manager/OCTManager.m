@@ -55,50 +55,20 @@
         return nil;
     }
 
-    self.notificationCenter = [[NSNotificationCenter alloc] init];
-
     [self validateConfiguration:configuration];
-
-    NSString *savedDataPath = configuration.fileStorage.pathForToxSaveFile;
-
-    if (configuration.importToxSaveFromPath &&
-        [[NSFileManager defaultManager] fileExistsAtPath:configuration.importToxSaveFromPath]) {
-        [[NSFileManager defaultManager] moveItemAtPath:configuration.importToxSaveFromPath toPath:savedDataPath error:nil];
-    }
-
     _configuration = [configuration copy];
 
-    NSData *savedData = nil;
+    [self createNotificationCenter];
+    [self importToxSaveIfNeeded];
 
-    if ([[NSFileManager defaultManager] fileExistsAtPath:savedDataPath]) {
-        savedData = [NSData dataWithContentsOfFile:savedDataPath];
-    }
+    NSData *savedData = [self getSavedData];
 
-    _tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:savedData error:error];
-
-    if (! _tox) {
+    if (! [self createToxWithSavedData:savedData error:error]) {
         return nil;
     }
 
-    _tox.delegate = self;
-    [_tox start];
-
-    if (! savedData) {
-        [self saveTox];
-    }
-
-    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:configuration.fileStorage.pathForDatabase];
-
-    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
-    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
-    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
-    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNS class]];
-    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
-    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
-    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
-    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
-
-    _toxSaveFileLock = [NSObject new];
+    [self createRealmManager];
+    [self createSubmanagers];
 
     return self;
 }
@@ -130,6 +100,9 @@
         return tempPath;
     }
 }
+
+- (void)changePassphrase:(NSString *)passphrase
+{}
 
 #pragma mark -  OCTSubmanagerDataSource
 
@@ -174,6 +147,67 @@
     NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
 
     NSParameterAssert(configuration.options);
+}
+
+- (void)createNotificationCenter
+{
+    _notificationCenter = [[NSNotificationCenter alloc] init];
+}
+
+- (void)importToxSaveIfNeeded
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    if (_configuration.importToxSaveFromPath && [fileManager fileExistsAtPath:_configuration.importToxSaveFromPath]) {
+        [fileManager moveItemAtPath:_configuration.importToxSaveFromPath
+                             toPath:_configuration.fileStorage.pathForToxSaveFile error:nil];
+    }
+}
+
+- (NSData *)getSavedData
+{
+    NSString *savedDataPath = _configuration.fileStorage.pathForToxSaveFile;
+
+    return [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath] ?
+           [NSData dataWithContentsOfFile : savedDataPath] :
+           nil;
+}
+
+- (BOOL)createToxWithSavedData:(NSData *)savedData error:(NSError **)error
+{
+    _tox = [[OCTTox alloc] initWithOptions:_configuration.options savedData:savedData error:error];
+    _toxSaveFileLock = [NSObject new];
+
+    if (! _tox) {
+        return NO;
+    }
+
+    _tox.delegate = self;
+    [_tox start];
+
+    if (! savedData) {
+        // Tox was created for the first time, save it.
+        [self saveTox];
+    }
+
+    return YES;
+}
+
+- (void)createRealmManager
+{
+    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:_configuration.fileStorage.pathForDatabase];
+}
+
+- (void)createSubmanagers
+{
+    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
+    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
+    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
+    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNS class]];
+    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
+    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
+    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
+    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
 }
 
 - (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
