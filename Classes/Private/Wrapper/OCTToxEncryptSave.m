@@ -21,7 +21,9 @@
 
 #pragma mark -  Lifecycle
 
-- (nullable instancetype)initWithPassphrase:(nonnull NSString *)passphrase error:(NSError *__nullable *__nullable)error
+- (nullable instancetype)initWithPassphrase:(nonnull NSString *)passphrase
+                                    toxData:(nullable NSData *)toxData
+                                      error:(NSError *__nullable *__nullable)error
 {
     self = [super init];
 
@@ -32,11 +34,30 @@
     _passKey = malloc(TOX_PASS_KEY_LENGTH);
     TOX_ERR_KEY_DERIVATION cError;
 
-    bool result = tox_derive_key_from_pass(
-        (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
-        [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
-        _passKey,
-        &cError);
+    uint8_t salt[TOX_PASS_SALT_LENGTH];
+    bool hasSalt = false;
+
+    if (toxData) {
+        hasSalt = tox_get_salt(toxData.bytes, salt);
+    }
+
+    bool result = false;
+
+    if (hasSalt) {
+        result = tox_derive_key_with_salt(
+            (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
+            [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+            salt,
+            _passKey,
+            &cError);
+    }
+    else {
+        result = tox_derive_key_from_pass(
+            (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
+            [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+            _passKey,
+            &cError);
+    }
 
     [OCTToxEncryptSave fillError:error withCErrorKeyDerivation:cError];
 
@@ -247,8 +268,8 @@
         case TOX_ERR_DECRYPTION_INVALID_LENGTH:
         case TOX_ERR_DECRYPTION_KEY_DERIVATION_FAILED:
         case TOX_ERR_DECRYPTION_FAILED:
-            code = OCTToxEncryptSaveDecryptionErrorNull;
-            failureReason = @"Decryption failed, please report";
+            code = OCTToxEncryptSaveDecryptionErrorFailed;
+            failureReason = @"Decryption failed, passphrase is incorrect or data is corrupt";
             break;
     }
 

@@ -62,17 +62,19 @@
     [self validateConfiguration:configuration];
     _configuration = [configuration copy];
 
-    if (! [self changePassphrase:_configuration.passphrase]) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
-        return nil;
-    }
-
     if (! [self importToxSaveIfNeeded]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
         return nil;
     }
 
     NSData *savedData = [self getSavedData];
+
+    if (! [self createEncryptSaveWithPassphrase:_configuration.passphrase toxData:savedData]) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
+        return nil;
+    }
+    // no need to keep passphrase in memory.
+    _configuration.passphrase = nil;
 
     BOOL wasDecryptError = NO;
     savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
@@ -122,16 +124,12 @@
 
 - (BOOL)changePassphrase:(NSString *)passphrase
 {
-    @synchronized(self.toxSaveFileLock) {
-        if (passphrase) {
-            self.encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:passphrase error:nil];
-            return (self.encryptSave != 0);
-        }
-        else {
-            self.encryptSave = nil;
-            return YES;
-        }
-    }
+    // Passing nil as tox data as we are setting new passphrase.
+    BOOL result = [self createEncryptSaveWithPassphrase:passphrase toxData:nil];
+
+    [self saveTox];
+
+    return result;
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -167,6 +165,20 @@
 }
 
 #pragma mark -  Private
+
+- (BOOL)createEncryptSaveWithPassphrase:(NSString *)passphrase toxData:(NSData *)toxData
+{
+    @synchronized(self.toxSaveFileLock) {
+        if (passphrase) {
+            self.encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:passphrase toxData:toxData error:nil];
+            return (self.encryptSave != 0);
+        }
+        else {
+            self.encryptSave = nil;
+            return YES;
+        }
+    }
+}
 
 - (void)validateConfiguration:(OCTManagerConfiguration *)configuration
 {

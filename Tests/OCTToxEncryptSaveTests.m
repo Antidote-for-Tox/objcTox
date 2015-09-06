@@ -48,7 +48,7 @@
 
 - (void)testInstanceMethods
 {
-    OCTToxEncryptSave *save = [[OCTToxEncryptSave alloc] initWithPassphrase:@"p@s$" error:nil];
+    OCTToxEncryptSave *save = [[OCTToxEncryptSave alloc] initWithPassphrase:@"p@s$" toxData:nil error:nil];
 
     XCTAssertNotNil(save);
 
@@ -66,6 +66,16 @@
     XCTAssertFalse([OCTToxEncryptSave isDataEncrypted:decrypted]);
     XCTAssertTrue([data isEqualToData:decrypted]);
     XCTAssertFalse([encrypted isEqualToData:decrypted]);
+
+    save = nil;
+
+    OCTToxEncryptSave *anotherSave = [[OCTToxEncryptSave alloc] initWithPassphrase:@"p@s$" toxData:encrypted error:nil];
+
+    NSData *anotherDecrypted = [anotherSave decryptData:encrypted error:nil];
+
+    XCTAssertFalse([OCTToxEncryptSave isDataEncrypted:anotherDecrypted]);
+    XCTAssertTrue([data isEqualToData:anotherDecrypted]);
+    XCTAssertFalse([encrypted isEqualToData:anotherDecrypted]);
 }
 
 @end

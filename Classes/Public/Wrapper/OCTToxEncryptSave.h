@@ -62,12 +62,15 @@
  * to the actual encryption.
  *
  * @param passphrase Passphrase used to encrypt/decrypt the data.
+ * @param toxData If you have toxData that you would like to decrypt, you have to pass it here. Salt will be extracted from data and used for key generation.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxEncryptSaveKeyDerivationError for all error codes.
  *
  * @return Created instance or nil in case of error.
  */
-- (nullable instancetype)initWithPassphrase:(nonnull NSString *)passphrase error:(NSError *__nullable *__nullable)error;
+- (nullable instancetype)initWithPassphrase:(nonnull NSString *)passphrase
+                                    toxData:(nullable NSData *)toxData
+                                      error:(NSError *__nullable *__nullable)error;
 
 /**
  * Encrypts the given data.
