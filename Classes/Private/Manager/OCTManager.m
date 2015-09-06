@@ -49,13 +49,6 @@
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
 {
-    return [self initWithConfiguration:configuration loadToxSaveFilePath:nil error:error];
-}
-
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
-                                error:(NSError **)error
-{
     self = [super init];
 
     if (! self) {
@@ -68,8 +61,9 @@
 
     NSString *savedDataPath = configuration.fileStorage.pathForToxSaveFile;
 
-    if (toxSaveFilePath && [[NSFileManager defaultManager] fileExistsAtPath:toxSaveFilePath]) {
-        [[NSFileManager defaultManager] moveItemAtPath:toxSaveFilePath toPath:savedDataPath error:nil];
+    if (configuration.importToxSaveFromPath &&
+        [[NSFileManager defaultManager] fileExistsAtPath:configuration.importToxSaveFromPath]) {
+        [[NSFileManager defaultManager] moveItemAtPath:configuration.importToxSaveFromPath toPath:savedDataPath error:nil];
     }
 
     _configuration = [configuration copy];
@@ -173,8 +167,6 @@
 
 - (void)validateConfiguration:(OCTManagerConfiguration *)configuration
 {
-    NSParameterAssert(configuration.settingsStorage);
-
     NSParameterAssert(configuration.fileStorage);
     NSParameterAssert(configuration.fileStorage.pathForDownloadedFilesDirectory);
     NSParameterAssert(configuration.fileStorage.pathForUploadedFilesDirectory);
@@ -258,6 +250,14 @@
 }
 
 #pragma mark -  Deprecated
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+                                error:(NSError **)error
+{
+    configuration.importToxSaveFromPath = toxSaveFilePath;
+    return [self initWithConfiguration:configuration error:error];
+}
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
 {

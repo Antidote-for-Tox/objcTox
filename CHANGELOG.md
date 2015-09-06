@@ -11,6 +11,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - toxcore was updated to 0.0.0-2ab3b14-2.
 - OCTSettingsStorageProtocol was removed. Now objcTox stores its settings in Realm database.
 
+### Deprecated
+- `[OCTManager initWithConfiguration:loadToxSaveFilePath:error:]`, use `[OCTManager initWithConfiguration:error:]` instead. Instead of `toxSaveFilePath` use property on OCTManagerConfiguration: `importToxSaveFromPath`.
+
 ## [0.2.1] - 2015-08-30
 ### Fixed
 - Bootstrapping was using same nodes over and over again.

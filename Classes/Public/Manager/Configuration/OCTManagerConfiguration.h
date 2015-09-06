@@ -17,36 +17,46 @@
 @interface OCTManagerConfiguration : NSObject <NSCopying>
 
 /**
- * File storage to be used.
+ * File storage to use.
  *
- * By default OCTDefaultFileStorage will be used.
- */
-@property (strong, nonatomic) id<OCTFileStorageProtocol> fileStorage;
-
-/**
- * Options for tox to use.
- */
-@property (strong, nonatomic) OCTToxOptions *options;
-
-/**
- * This is default configuration for manager. Parameters are follows
- *
- * - settings are stored in NSDictionary in NSUserDefaults for "me.dvor.objcTox.settings" key;
- *
+ * Default values: OCTDefaultFileStorage will be used with following parameters:
  * - tox save file is stored at "{app document directory}/me.dvor.objcTox/save.tox"
  * - downloaded files are stored at "{app document directory}/me.dvor.objcTox/downloads"
  * - uploaded files are stored at "{app document directory}/me.dvor.objcTox/uploads"
  * - avatars are stored at "{app document directory}/me.dvor.objcTox/avatars"
  * - temporary files are stored at NSTemporaryDirectory()
+ */
+@property (strong, nonatomic, nonnull) id<OCTFileStorageProtocol> fileStorage;
+
+/**
+ * Options for tox to use.
  *
+ * Default values:
  * - IPv6 support enabled
  * - UDP support enabled
  * - No proxy is used.
  *
- * @return Default configuration for OCTManager.
- *
  * @warning On mobile devices you may want to turn off UDP support to increase battery life.
  */
-+ (instancetype)defaultConfiguration;
+@property (strong, nonatomic, nonnull) OCTToxOptions *options;
+
+/**
+ * If this parameter is set, tox save file will be copied from given path.
+ * You can set this property to import tox save from some other location.
+ *
+ * @warning Old tox save file will be overwritten with the new one.
+ *
+ * Default value: nil.
+ */
+@property (strong, nonatomic, nullable) NSString *importToxSaveFromPath;
+
+/**
+ * This is default configuration for manager.
+ * Each property of OCTManagerConfiguration has "Default value" field. This method returns configuration
+ * with those default values set.
+ *
+ * @return Default configuration for OCTManager.
+ */
++ (nonnull instancetype)defaultConfiguration;
 
 @end
