@@ -20,8 +20,14 @@
 @class OCTMessageAbstract;
 @class OCTMessageText;
 @class OCTMessageFile;
+@class OCTSettingsStorageObject;
 
 @interface OCTRealmManager : NSObject
+
+/**
+ * Storage with all objcTox settings.
+ */
+@property (strong, nonatomic, readonly) OCTSettingsStorageObject *settingsStorage;
 
 - (instancetype)initWithDatabasePath:(NSString *)path;
 

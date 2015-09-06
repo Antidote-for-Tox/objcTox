@@ -10,6 +10,7 @@
 #import <XCTest/XCTest.h>
 
 #import "OCTManager.h"
+#import "OCTManagerConstants.h"
 #import "OCTTox.h"
 #import "OCTToxAV.h"
 #import "OCTSubmanagerDataSource.h"
@@ -133,6 +134,106 @@
     XCTAssertNotNil(self.manager.notificationCenter);
 }
 
+- (void)testEncryption
+{
+    // We want use real data to make sure that encryption/decryption actually works. This is really crucial test.
+    [self.tox stopMocking];
+    self.tox = nil;
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+
+    // Just in case, removing leftovers from other tests.
+    [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
+
+    NSString *userAddress;
+
+    {
+        OCTManager *nonEncrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        XCTAssertNotNil(nonEncrypted);
+
+        userAddress = nonEncrypted.user.userAddress;
+        [nonEncrypted.user setUserName:@"nonEncrypted" error:nil];
+
+        // Encrypting
+        [nonEncrypted changePassphrase:@"password123"];
+        nonEncrypted = nil;
+    }
+
+    configuration.passphrase = @"password123";
+
+    {
+        OCTManager *encrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        XCTAssertNotNil(encrypted);
+        XCTAssertEqualObjects(userAddress, encrypted.user.userAddress);
+        XCTAssertEqualObjects(@"nonEncrypted", encrypted.user.userName);
+
+        // Change passphrase
+        [encrypted.user setUserName:@"renamed" error:nil];
+        [encrypted changePassphrase:@"$ecur!"];
+        encrypted = nil;
+    }
+
+    configuration.passphrase = @"$ecur!";
+
+    {
+        OCTManager *renamedEncrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        XCTAssertNotNil(renamedEncrypted);
+        XCTAssertEqualObjects(userAddress, renamedEncrypted.user.userAddress);
+        XCTAssertEqualObjects(@"renamed", renamedEncrypted.user.userName);
+
+        // Remove passphrase
+        [renamedEncrypted.user setUserName:@"removed" error:nil];
+        [renamedEncrypted changePassphrase:nil];
+        renamedEncrypted = nil;
+    }
+
+    configuration.passphrase = nil;
+
+    {
+        OCTManager *removed = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        XCTAssertNotNil(removed);
+        XCTAssertEqualObjects(userAddress, removed.user.userAddress);
+        XCTAssertEqualObjects(@"removed", removed.user.userName);
+
+        // Encrypt again
+        [removed.user setUserName:@"again" error:nil];
+        [removed changePassphrase:@"@g@!n"];
+        removed = nil;
+    }
+
+    configuration.passphrase = @"@g@!n";
+
+    {
+        OCTManager *again = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        XCTAssertNotNil(again);
+        XCTAssertEqualObjects(userAddress, again.user.userAddress);
+        XCTAssertEqualObjects(@"again", again.user.userName);
+    }
+
+    configuration.passphrase = nil;
+
+    {
+        NSError *error;
+        OCTManager *noPassword = [[OCTManager alloc] initWithConfiguration:configuration error:&error];
+        XCTAssertNil(noPassword);
+        XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
+        XCTAssertEqual(error.code, OCTManagerInitErrorCreateToxEncrypted);
+    }
+
+    configuration.passphrase = @"wrong password";
+
+    {
+        NSError *error;
+        OCTManager *wrongPassword = [[OCTManager alloc] initWithConfiguration:configuration error:&error];
+        XCTAssertNil(wrongPassword);
+        XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
+        XCTAssertEqual(error.code, OCTManagerInitErrorDecryptFailed);
+    }
+
+    // Cleaning up
+    [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
+}
+
 - (void)testBootstrap
 {
     NSError *error, *error2;
@@ -175,7 +276,6 @@
 
     XCTAssertEqual([self.manager managerGetTox], self.manager.tox);
     XCTAssertEqual([self.manager managerGetRealmManager], self.manager.realmManager);
-    XCTAssertEqual([self.manager managerGetSettingsStorage], self.manager.configuration.settingsStorage);
     XCTAssertEqual([self.manager managerGetFileStorage], self.manager.configuration.fileStorage);
     XCTAssertEqual([self.manager managerGetNotificationCenter], self.manager.notificationCenter);
 }

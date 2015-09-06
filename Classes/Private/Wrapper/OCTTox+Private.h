@@ -55,7 +55,7 @@ tox_file_recv_chunk_cb fileReceiveChunkCallback;
 - (BOOL)fillError:(NSError **)error withCErrorFileGet:(TOX_ERR_FILE_GET)cError;
 - (BOOL)fillError:(NSError **)error withCErrorFileSend:(TOX_ERR_FILE_SEND)cError;
 - (BOOL)fillError:(NSError **)error withCErrorFileSendChunk:(TOX_ERR_FILE_SEND_CHUNK)cError;
-- (NSError *)createErrorWithCode:(NSUInteger)code
++ (NSError *)createErrorWithCode:(NSUInteger)code
                      description:(NSString *)description
                    failureReason:(NSString *)failureReason;
 - (struct Tox_Options)cToxOptionsFromOptions:(OCTToxOptions *)options;

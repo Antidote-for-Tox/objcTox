@@ -11,8 +11,9 @@
 
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerDataSource.h"
-#import "OCTSettingsStorageProtocol.h"
 #import "OCTTox.h"
+#import "OCTRealmManager.h"
+#import "OCTSettingsStorageObject.h"
 
 @interface OCTSubmanagerBootstrap (Tests)
 
@@ -25,6 +26,7 @@
 
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
+@property (strong, nonatomic) id realmManager;
 @property (strong, nonatomic) id settingsStorage;
 @property (strong, nonatomic) OCTSubmanagerBootstrap *submanager;
 
@@ -39,10 +41,12 @@
 
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
     self.tox = OCMClassMock([OCTTox class]);
-    self.settingsStorage = OCMProtocolMock(@protocol(OCTSettingsStorageProtocol));
+    self.realmManager = OCMClassMock([OCTRealmManager class]);
+    self.settingsStorage = OCMClassMock([OCTSettingsStorageObject class]);
 
     OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
-    OCMStub([self.dataSource managerGetSettingsStorage]).andReturn(self.settingsStorage);
+    OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
+    OCMStub([self.realmManager settingsStorage]).andReturn(self.settingsStorage);
 
     self.submanager = [OCTSubmanagerBootstrap new];
     self.submanager.dataSource = self.dataSource;
@@ -52,6 +56,7 @@
 {
     self.dataSource = nil;
     self.tox = nil;
+    self.realmManager = nil;
     self.settingsStorage = nil;
     self.submanager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
@@ -124,7 +129,7 @@
 {
     XCTestExpectation *expectation = [self expectationWithDescription:nil];
 
-    OCMStub([self.settingsStorage objectForKey:[OCMArg any]]).andReturn(@(YES));
+    OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
 
     self.submanager.didConnectDelay = 0.1;
     self.submanager.iterationTime = 0.05;
@@ -145,7 +150,7 @@
 {
     XCTestExpectation *expectation = [self expectationWithDescription:nil];
 
-    OCMStub([self.settingsStorage objectForKey:[OCMArg any]]).andReturn(@(YES));
+    OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
     [[self.tox reject] bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]];
 
     self.submanager.didConnectDelay = 0.2;

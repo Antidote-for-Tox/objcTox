@@ -76,28 +76,12 @@
  *
  * @param configuration Configuration to be used.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See OCTToxErrorInitCode for all error codes.
+ * See OCTManagerInitError for all error codes.
  *
  * @return Initialized OCTManager.
  */
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error;
 
-/**
- * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
- * change it you have to recreate OCTManager.
- *
- * Replaces current tox save file with new one from toxSaveFilePath. Save file will be copied to appropriate directory.
- *
- * @param configuration Configuration to be used.
- * @param toxSaveFilePath Path to load tox save file from. If file does not exist parameter is ignored.
- * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See OCTToxErrorInitCode for all error codes.
- *
- * @return Initialized OCTManager.
- */
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
-                                error:(NSError **)error;
 /**
  * Copies tox save file to temporary directory and return path to it.
  *
@@ -107,14 +91,30 @@
  */
 - (NSString *)exportToxSaveFile:(NSError **)error;
 
+/**
+ * Set passphrase to encrypt tox save file.
+ *
+ * @param passphrase You can pass nil to disable encryption.
+ *
+ * @return YES on success, NO on failure.
+ */
+- (BOOL)changePassphrase:(NSString *)passphrase;
+
 #pragma mark -  Deprecated
+
+- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
+                                error:(NSError **)error
+    __attribute((deprecated(("Use initWithConfiguration:error: instead."
+                             "toxSaveFilePath parameter moved to OCTManagerConfiguration.importToxSaveFromPath"))));
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
     __attribute((deprecated(("Use initWithConfiguration:error: instead"))));
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
                   loadToxSaveFilePath:(NSString *)toxSaveFilePath
-    __attribute((deprecated(("Use initWithConfiguration:loadToxSaveFilePath:error: instead"))));
+    __attribute((deprecated(("Use initWithConfiguration:error: instead."
+                             "toxSaveFilePath parameter moved to OCTManagerConfiguration.importToxSaveFromPath"))));
 
 /**
  * Sends a "get nodes" request to the given bootstrap node with IP, port, and

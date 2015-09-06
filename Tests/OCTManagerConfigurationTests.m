@@ -33,7 +33,6 @@
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
 
-    XCTAssertNotNil(configuration.settingsStorage);
     XCTAssertNotNil(configuration.fileStorage);
     XCTAssertNotNil(configuration.options);
 }
@@ -47,10 +46,11 @@
     configuration.options.proxyHost = @"proxy.address";
     configuration.options.proxyPort = 999;
     configuration.options.tcpPort = 777;
+    configuration.importToxSaveFromPath = @"save.tox";
+    configuration.passphrase = @"p@s$";
 
     OCTManagerConfiguration *c2 = [configuration copy];
 
-    XCTAssertEqualObjects(configuration.settingsStorage, c2.settingsStorage);
     XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
 
     XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);
@@ -59,6 +59,8 @@
     XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
     XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
     XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
+    XCTAssertEqualObjects(configuration.importToxSaveFromPath, c2.importToxSaveFromPath);
+    XCTAssertEqualObjects(configuration.passphrase, c2.passphrase);
 }
 
 @end
