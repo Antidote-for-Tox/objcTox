@@ -13,7 +13,7 @@ const OCTToxFriendNumber kOCTToxFriendNumberFailure = UINT32_MAX;
 const OCTToxFileNumber kOCTToxFileNumberFailure = UINT32_MAX;
 const OCTToxFileSize kOCTToxFileSizeUnknown = UINT64_MAX;
 
-NSString *const kOCTToxErrorDomain = @"me.dvor.objcTox.ErrorDomain";
+NSString *const kOCTToxErrorDomain = @"me.dvor.objcTox.OCTToxErrorDomain";
 
 const NSUInteger kOCTToxAddressLength = 2 * TOX_ADDRESS_SIZE;
 const NSUInteger kOCTToxPublicKeyLength = 2 * TOX_PUBLIC_KEY_SIZE;

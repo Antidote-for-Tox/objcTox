@@ -53,8 +53,6 @@
  * If this parameter is set, tox save file will be copied from given path.
  * You can set this property to import tox save from some other location.
  *
- * @warning Old tox save file will be overwritten with the new one.
- *
  * Default value: nil.
  */
 @property (strong, nonatomic, nullable) NSString *importToxSaveFromPath;

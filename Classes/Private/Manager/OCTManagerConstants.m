@@ -8,3 +8,5 @@
 
 #import <Foundation/Foundation.h>
 #import "OCTManagerConstants.h"
+
+NSString *const kOCTManagerErrorDomain = @"me.dvor.objcTox.OCTManagerErrorDomain";

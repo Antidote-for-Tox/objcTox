@@ -70,7 +70,7 @@
  *
  * @param configuration Configuration to be used.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See OCTToxErrorInitCode for all error codes.
+ * See OCTManagerInitError for all error codes.
  *
  * @return Initialized OCTManager.
  */
@@ -89,8 +89,10 @@
  * Set passphrase to encrypt tox save file.
  *
  * @param passphrase You can pass nil to disable encryption.
+ *
+ * @return YES on success, NO on failure.
  */
-- (void)changePassphrase:(NSString *)passphrase;
+- (BOOL)changePassphrase:(NSString *)passphrase;
 
 #pragma mark -  Deprecated
 

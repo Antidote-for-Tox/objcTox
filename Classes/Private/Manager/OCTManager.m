@@ -10,6 +10,8 @@
 
 #import "OCTManager.h"
 #import "OCTTox.h"
+#import "OCTToxEncryptSave.h"
+#import "OCTToxEncryptSaveConstants.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
@@ -41,6 +43,8 @@
 
 @property (strong, atomic) NSNotificationCenter *notificationCenter;
 
+@property (strong, nonatomic) OCTToxEncryptSave *encryptSave;
+
 @end
 
 @implementation OCTManager
@@ -58,15 +62,30 @@
     [self validateConfiguration:configuration];
     _configuration = [configuration copy];
 
-    [self createNotificationCenter];
-    [self importToxSaveIfNeeded];
+    if (! [self changePassphrase:_configuration.passphrase]) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
+        return nil;
+    }
+
+    if (! [self importToxSaveIfNeeded]) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
+        return nil;
+    }
 
     NSData *savedData = [self getSavedData];
+
+    BOOL wasDecryptError = NO;
+    savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
+
+    if (wasDecryptError) {
+        return nil;
+    }
 
     if (! [self createToxWithSavedData:savedData error:error]) {
         return nil;
     }
 
+    [self createNotificationCenter];
     [self createRealmManager];
     [self createSubmanagers];
 
@@ -101,8 +120,19 @@
     }
 }
 
-- (void)changePassphrase:(NSString *)passphrase
-{}
+- (BOOL)changePassphrase:(NSString *)passphrase
+{
+    @synchronized(self.toxSaveFileLock) {
+        if (passphrase) {
+            self.encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:passphrase error:nil];
+            return (self.encryptSave != 0);
+        }
+        else {
+            self.encryptSave = nil;
+            return YES;
+        }
+    }
+}
 
 #pragma mark -  OCTSubmanagerDataSource
 
@@ -154,14 +184,17 @@
     _notificationCenter = [[NSNotificationCenter alloc] init];
 }
 
-- (void)importToxSaveIfNeeded
+- (BOOL)importToxSaveIfNeeded
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (_configuration.importToxSaveFromPath && [fileManager fileExistsAtPath:_configuration.importToxSaveFromPath]) {
-        [fileManager moveItemAtPath:_configuration.importToxSaveFromPath
-                             toPath:_configuration.fileStorage.pathForToxSaveFile error:nil];
+        return [fileManager copyItemAtPath:_configuration.importToxSaveFromPath
+                                    toPath:_configuration.fileStorage.pathForToxSaveFile
+                                     error:nil];
     }
+
+    return YES;
 }
 
 - (NSData *)getSavedData
@@ -173,24 +206,92 @@
            nil;
 }
 
+- (NSData *)decryptSavedDataIfNeeded:(NSData *)data error:(NSError **)error wasDecryptError:(BOOL *)wasDecryptError
+{
+    if (! data || ! _encryptSave) {
+        return data;
+    }
+
+    NSError *decryptError = nil;
+
+    NSData *result = [_encryptSave decryptData:data error:&decryptError];
+
+    if (result) {
+        return result;
+    }
+
+    *wasDecryptError = YES;
+    OCTToxEncryptSaveDecryptionError code = decryptError.code;
+
+    switch (code) {
+        case OCTToxEncryptSaveDecryptionErrorNone:
+            break;
+        case OCTToxEncryptSaveDecryptionErrorNull:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptNull];
+            break;
+        case OCTToxEncryptSaveDecryptionErrorBadFormat:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptBadFormat];
+            break;
+        case OCTToxEncryptSaveDecryptionErrorFailed:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptFailed];
+            break;
+    }
+
+    return nil;
+}
+
 - (BOOL)createToxWithSavedData:(NSData *)savedData error:(NSError **)error
 {
-    _tox = [[OCTTox alloc] initWithOptions:_configuration.options savedData:savedData error:error];
-    _toxSaveFileLock = [NSObject new];
+    NSError *toxError = nil;
 
-    if (! _tox) {
-        return NO;
+    _tox = [[OCTTox alloc] initWithOptions:_configuration.options savedData:savedData error:&toxError];
+
+    if (_tox) {
+        _toxSaveFileLock = [NSObject new];
+        _tox.delegate = self;
+        [_tox start];
+
+        if (! savedData) {
+            // Tox was created for the first time, save it.
+            [self saveTox];
+        }
+
+        return YES;
     }
 
-    _tox.delegate = self;
-    [_tox start];
+    OCTToxErrorInitCode code = toxError.code;
 
-    if (! savedData) {
-        // Tox was created for the first time, save it.
-        [self saveTox];
+    switch (code) {
+        case OCTToxErrorInitCodeUnknown:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxUnknown];
+            break;
+        case OCTToxErrorInitCodeMemoryError:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxMemoryError];
+            break;
+        case OCTToxErrorInitCodePortAlloc:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxPortAlloc];
+            break;
+        case OCTToxErrorInitCodeProxyBadType:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxProxyBadType];
+            break;
+        case OCTToxErrorInitCodeProxyBadHost:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxProxyBadHost];
+            break;
+        case OCTToxErrorInitCodeProxyBadPort:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxProxyBadPort];
+            break;
+        case OCTToxErrorInitCodeProxyNotFound:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxProxyNotFound];
+            break;
+        case OCTToxErrorInitCodeEncrypted:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxEncrypted];
+            break;
+        case OCTToxErrorInitCodeLoadBadFormat:
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorCreateToxBadFormat];
+            break;
     }
 
-    return YES;
+    return NO;
 }
 
 - (void)createRealmManager
@@ -220,6 +321,67 @@
     }
 
     return submanager;
+}
+
+- (BOOL)fillError:(NSError **)error withInitErrorCode:(OCTManagerInitError)code
+{
+    if (! error) {
+        return NO;
+    }
+
+    NSString *failureReason = nil;
+
+    switch (code) {
+        case OCTManagerInitErrorPassphraseFailed:
+            failureReason = @"Cannot create symmetric key from given passphrase.";
+            break;
+        case OCTManagerInitErrorCannotImportToxSave:
+            failureReason = @"Cannot copy tox save at `importToxSaveFromPath` path.";
+            break;
+        case OCTManagerInitErrorDecryptNull:
+            failureReason = @"Cannot decrypt tox save file. Some input data was empty.";
+            break;
+        case OCTManagerInitErrorDecryptBadFormat:
+            failureReason = @"Cannot decrypt tox save file. Data has bad format.";
+            break;
+        case OCTManagerInitErrorDecryptFailed:
+            failureReason = @"Cannot decrypt tox save file. The encrypted byte array could not be decrypted. Either the data was corrupt or the password/key was incorrect.";
+            break;
+        case OCTManagerInitErrorCreateToxUnknown:
+            failureReason = @"Cannot create tox. Unknown error occurred.";
+            break;
+        case OCTManagerInitErrorCreateToxMemoryError:
+            failureReason = @"Cannot create tox. Was unable to allocate enough memory to store the internal structures for the Tox object.";
+            break;
+        case OCTManagerInitErrorCreateToxPortAlloc:
+            failureReason = @"Cannot create tox. Was unable to bind to a port.";
+            break;
+        case OCTManagerInitErrorCreateToxProxyBadType:
+            failureReason = @"Cannot create tox. Proxy type was invalid.";
+            break;
+        case OCTManagerInitErrorCreateToxProxyBadHost:
+            failureReason = @"Cannot create tox. proxyAddress had an invalid format or was nil (while proxyType was set).";
+            break;
+        case OCTManagerInitErrorCreateToxProxyBadPort:
+            failureReason = @"Cannot create tox. Proxy port was invalid.";
+            break;
+        case OCTManagerInitErrorCreateToxProxyNotFound:
+            failureReason = @"Cannot create tox. The proxy host passed could not be resolved.";
+            break;
+        case OCTManagerInitErrorCreateToxEncrypted:
+            failureReason = @"Cannot create tox. The saved data to be loaded contained an encrypted save.";
+            break;
+        case OCTManagerInitErrorCreateToxBadFormat:
+            failureReason = @"Cannot create tox. Data has bad format.";
+            break;
+    }
+
+    *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:code userInfo:@{
+                  NSLocalizedDescriptionKey : @"Cannot create OCTManager",
+                  NSLocalizedFailureReasonErrorKey : failureReason
+              }];
+
+    return YES;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
@@ -265,13 +427,7 @@
 - (void)saveTox
 {
     @synchronized(self.toxSaveFileLock) {
-        NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
-
-        NSData *data = [self.tox save];
-
-        NSError *error;
-
-        if (! [data writeToFile:savedDataPath options:NSDataWritingAtomic error:&error]) {
+        void (^throwException)(NSError *) = ^(NSError *error) {
             NSDictionary *userInfo = nil;
 
             if (error) {
@@ -279,6 +435,22 @@
             }
 
             @throw [NSException exceptionWithName:@"saveToxException" reason:error.debugDescription userInfo:userInfo];
+        };
+
+        NSData *data = [self.tox save];
+
+        NSError *error;
+
+        if (self.encryptSave) {
+            data = [self.encryptSave encryptData:data error:&error];
+
+            if (! data) {
+                throwException(error);
+            }
+        }
+
+        if (! [data writeToFile:self.configuration.fileStorage.pathForToxSaveFile options:NSDataWritingAtomic error:&error]) {
+            throwException(error);
         }
     }
 }
