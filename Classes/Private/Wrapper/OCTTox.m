@@ -950,7 +950,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -983,7 +983,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1036,7 +1036,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1061,7 +1061,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1090,7 +1090,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1115,7 +1115,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1144,7 +1144,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1169,7 +1169,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1198,7 +1198,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1223,7 +1223,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1268,7 +1268,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1317,7 +1317,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1362,7 +1362,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1395,7 +1395,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1436,7 +1436,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
@@ -1489,12 +1489,12 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             break;
     }
 
-    *error = [self createErrorWithCode:code description:description failureReason:failureReason];
+    *error = [OCTTox createErrorWithCode:code description:description failureReason:failureReason];
 
     return YES;
 }
 
-- (NSError *)createErrorWithCode:(NSUInteger)code
++ (NSError *)createErrorWithCode:(NSUInteger)code
                      description:(NSString *)description
                    failureReason:(NSString *)failureReason
 {

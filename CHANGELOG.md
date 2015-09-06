@@ -3,9 +3,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+### Added
+- OCTToxEncryptSave, wrapper for toxencryptsave.
+- OCTManager: added encrypted tox files support.
+
 ### Changed
 - Realm updated to version 0.95.0.
+- toxcore was updated to 0.0.0-2ab3b14-2.
 - OCTSettingsStorageProtocol was removed. Now objcTox stores its settings in Realm database.
+- OCTManager: `initWithConfiguration:error` method now uses OCTManagerInitError codes.
+
+### Deprecated
+- `[OCTManager initWithConfiguration:loadToxSaveFilePath:error:]`, use `[OCTManager initWithConfiguration:error:]` instead. Instead of `toxSaveFilePath` use property on OCTManagerConfiguration: `importToxSaveFromPath`.
 
 ## [0.2.1] - 2015-08-30
 ### Fixed

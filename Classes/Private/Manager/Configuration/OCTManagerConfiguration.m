@@ -9,7 +9,6 @@
 #import "OCTManagerConfiguration.h"
 #import "OCTDefaultFileStorage.h"
 
-static NSString *const kDefaultSettingsStorageUserDefaultsKey = @"me.dvor.objcTox.settings";
 static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
 
 @implementation OCTManagerConfiguration
@@ -41,6 +40,8 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     configuration.options.proxyPort = 0;
     configuration.options.tcpPort = 0;
 
+    configuration.importToxSaveFromPath = nil;
+
     return configuration;
 }
 
@@ -52,6 +53,8 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
 
     configuration.fileStorage = self.fileStorage;
     configuration.options = [self.options copy];
+    configuration.importToxSaveFromPath = [self.importToxSaveFromPath copy];
+    configuration.passphrase = [self.passphrase copy];
 
     return configuration;
 }

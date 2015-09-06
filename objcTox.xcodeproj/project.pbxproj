@@ -28,6 +28,12 @@
 		112358B11B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
 		112358B21B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
 		112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
+		112779D41B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
+		112779D51B9B6F0B00E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
+		119B13E51B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
+		119B13E61B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
+		119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
+		119B13E81B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
 		11E80D831B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E80D821B98C647008DFC47 /* OCTSettingsStorageObject.m */; };
 		11E80D841B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E80D821B98C647008DFC47 /* OCTSettingsStorageObject.m */; };
 		11E80D851B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E80D821B98C647008DFC47 /* OCTSettingsStorageObject.m */; };
@@ -261,10 +267,14 @@
 		112358AD1B87975900E8FB71 /* OCTSubmanagerDNSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerDNSTests.m; sourceTree = "<group>"; };
 		112358AF1B887E8F00E8FB71 /* OCTPredefined.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTPredefined.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
+		112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxEncryptSaveTests.m; sourceTree = "<group>"; };
 		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerBootstrap.h; sourceTree = "<group>"; };
 		117D37CF1B72B46D006E885C /* OCTSubmanagerBootstrap+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerBootstrap+Private.h"; sourceTree = "<group>"; };
 		117D37D21B72B476006E885C /* OCTSubmanagerBootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerBootstrap.m; sourceTree = "<group>"; };
+		119B13DE1B9AF58B006DA6FF /* OCTToxEncryptSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxEncryptSave.h; sourceTree = "<group>"; };
+		119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxEncryptSave.m; sourceTree = "<group>"; };
+		119B13E91B9AF78F006DA6FF /* OCTToxEncryptSaveConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxEncryptSaveConstants.h; sourceTree = "<group>"; };
 		11B4BAEF1B11E2530001A96A /* OCTSubmanagerFiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFiles.h; sourceTree = "<group>"; };
 		11B4BAF01B11E2800001A96A /* OCTSubmanagerFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerFiles.m; sourceTree = "<group>"; };
 		11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerFiles+Private.h"; sourceTree = "<group>"; };
@@ -471,6 +481,7 @@
 				1123588A1B87927100E8FB71 /* OCTToxDNS.m */,
 				1123588B1B87927100E8FB71 /* OCTToxDNS+Private.h */,
 				1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */,
+				119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */,
 				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
 			);
 			path = Wrapper;
@@ -801,6 +812,7 @@
 				9CB44CAD1B84DF46007FA7B6 /* OCTSubmanagerObjectsTests.m */,
 				9CB44CAE1B84DF46007FA7B6 /* OCTSubmanagerUserTests.m */,
 				112358971B8792B500E8FB71 /* OCTToxDNSTests.m */,
+				112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */,
 				9CB44CAF1B84DF46007FA7B6 /* OCTToxTests.m */,
 			);
 			path = Tests;
@@ -872,6 +884,8 @@
 				49DADF58900503E712C710CF13F175DD /* OCTToxDelegate.h */,
 				112358951B87928700E8FB71 /* OCTToxDNS.h */,
 				112358961B87928700E8FB71 /* OCTToxDNS3Object.h */,
+				119B13DE1B9AF58B006DA6FF /* OCTToxEncryptSave.h */,
+				119B13E91B9AF78F006DA6FF /* OCTToxEncryptSaveConstants.h */,
 				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
 			);
 			path = Wrapper;
@@ -1185,6 +1199,7 @@
 				9CB44B931B84D91C007FA7B6 /* OCTTableViewController.m in Sources */,
 				9CB44B901B84D91C007FA7B6 /* OCTConversationViewController.m in Sources */,
 				9CB44BF81B84D9E1007FA7B6 /* OCTToxConstants.m in Sources */,
+				119B13E51B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 				9CB44BF41B84D9E1007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				1123588D1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
 				9CB44B641B84D8C1007FA7B6 /* main.m in Sources */,
@@ -1227,6 +1242,7 @@
 				9CB44C0F1B84DBA3007FA7B6 /* OCTMessageFile.m in Sources */,
 				9CB44C231B84DBA3007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				9CB44CD21B84DF46007FA7B6 /* OCTToxTests.m in Sources */,
+				112779D41B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m in Sources */,
 				9CB44CD01B84DF46007FA7B6 /* OCTSubmanagerUserTests.m in Sources */,
 				9CB44CC21B84DF46007FA7B6 /* OCTRealmTests.m in Sources */,
 				9CB44CC01B84DF46007FA7B6 /* OCTObjectTests.m in Sources */,
@@ -1281,6 +1297,7 @@
 				9CB44C2C1B84DBA3007FA7B6 /* RBQFetchedResultsController.m in Sources */,
 				9CB44C2B1B84DBA3007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44CB81B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,
+				119B13E61B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1295,6 +1312,7 @@
 				11E80D851B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */,
 				9CB44C391B84DCCC007FA7B6 /* main.m in Sources */,
 				9CB44C681B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
+				119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 				9CB44C5F1B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
 				9CB44C6C1B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
 				9CB44C611B84DCFB007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
@@ -1343,6 +1361,7 @@
 				112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C801B84DCFB007FA7B6 /* OCTNode.m in Sources */,
 				112027CA1B88D3FC0082DD31 /* OCTToxDNSTests.m in Sources */,
+				112779D51B9B6F0B00E475B4 /* OCTToxEncryptSaveTests.m in Sources */,
 				9CB44C7A1B84DCFB007FA7B6 /* OCTChat.m in Sources */,
 				9CB44CD31B84DF46007FA7B6 /* OCTToxTests.m in Sources */,
 				9CB44CD11B84DF46007FA7B6 /* OCTSubmanagerUserTests.m in Sources */,
@@ -1397,6 +1416,7 @@
 				9CB44C911B84DCFB007FA7B6 /* RBQFetchedResultsController.m in Sources */,
 				9CB44C901B84DCFB007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44CB91B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,
+				119B13E81B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1497,6 +1517,7 @@
 					"$(inherited)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = iOSDemoTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1534,6 +1555,7 @@
 					"$(inherited)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = OSXDemoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
