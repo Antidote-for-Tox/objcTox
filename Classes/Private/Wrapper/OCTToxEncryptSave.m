@@ -31,7 +31,7 @@
         return nil;
     }
 
-    _passKey = malloc(TOX_PASS_KEY_LENGTH);
+    _passKey = malloc(TOX_PASS_KEY_LENGTH + TOX_PASS_SALT_LENGTH);
     TOX_ERR_KEY_DERIVATION cError;
 
     uint8_t salt[TOX_PASS_SALT_LENGTH];
