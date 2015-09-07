@@ -12,6 +12,7 @@
 #import "OCTManager.h"
 #import "OCTManagerConstants.h"
 #import "OCTTox.h"
+#import "OCTToxEncryptSave.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
@@ -217,6 +218,49 @@
 
     // Cleaning up
     [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
+}
+
+- (void)testConfiguration
+{
+    OCTToxEncryptSave *encryptSave = OCMClassMock([OCTToxEncryptSave class]);
+    OCMStub([(id)encryptSave alloc]).andReturn(encryptSave);
+    OCMStub([encryptSave initWithPassphrase:[OCMArg any]
+                                    toxData:[OCMArg any]
+                                      error:[OCMArg anyObjectRef]]).andReturn(encryptSave);
+    OCMStub([encryptSave encryptData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn([NSData new]);
+    OCMStub([encryptSave decryptData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn([NSData new]);
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    configuration.options.IPv6Enabled = YES;
+    configuration.options.UDPEnabled = YES;
+    configuration.options.proxyType = OCTToxProxyTypeHTTP;
+    configuration.options.proxyHost = @"proxy.address";
+    configuration.options.proxyPort = 999;
+    configuration.options.tcpPort = 777;
+    configuration.importToxSaveFromPath = @"save.tox";
+    configuration.passphrase = @"p@s$";
+
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+
+    OCTManagerConfiguration *c2 = [manager configuration];
+
+    XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
+    XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);
+    XCTAssertEqual(configuration.options.UDPEnabled, c2.options.UDPEnabled);
+    XCTAssertEqual(configuration.options.proxyType, c2.options.proxyType);
+    XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
+    XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
+    XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
+    XCTAssertEqualObjects(configuration.importToxSaveFromPath, c2.importToxSaveFromPath);
+    XCTAssertEqualObjects(configuration.passphrase, c2.passphrase);
+
+    [manager changePassphrase:@"123456"];
+
+    OCTManagerConfiguration *c3 = [manager configuration];
+
+    XCTAssertEqualObjects(@"123456", c3.passphrase);
+
+    [(id)encryptSave stopMocking];
 }
 
 - (void)testBootstrap
