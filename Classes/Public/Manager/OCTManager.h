@@ -77,6 +77,13 @@
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error;
 
 /**
+ * Configuration used by OCTManager.
+ *
+ * @return Copy of configuration used by manager.
+ */
+- (OCTManagerConfiguration *)configuration;
+
+/**
  * Copies tox save file to temporary directory and return path to it.
  *
  * @param error NSFileManager error in case if file cannot be copied.

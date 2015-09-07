@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - OCTToxEncryptSave, wrapper for toxencryptsave.
 - OCTManager: added encrypted tox files support.
+- OCTManager: added `configuration` method.
 
 ### Changed
 - Realm updated to version 0.95.0.
