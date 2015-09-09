@@ -49,6 +49,19 @@
 
 @implementation OCTManager
 
+#pragma mark -  Class methods
+
++ (BOOL)isToxSaveEncryptedAtPath:(NSString *)path
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+
+    if (! savedData) {
+        return NO;
+    }
+
+    return [OCTToxEncryptSave isDataEncrypted:savedData];
+}
+
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
@@ -67,7 +80,7 @@
         return nil;
     }
 
-    NSData *savedData = [self getSavedData];
+    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
 
     if (! [self createEncryptSaveWithPassphrase:_currentConfiguration.passphrase toxData:savedData]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
@@ -214,12 +227,10 @@
     return YES;
 }
 
-- (NSData *)getSavedData
++ (NSData *)getSavedDataFromPath:(NSString *)path
 {
-    NSString *savedDataPath = _currentConfiguration.fileStorage.pathForToxSaveFile;
-
-    return [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath] ?
-           [NSData dataWithContentsOfFile : savedDataPath] :
+    return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
+           [NSData dataWithContentsOfFile : path] :
            nil;
 }
 

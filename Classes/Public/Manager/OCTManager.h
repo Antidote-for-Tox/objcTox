@@ -65,6 +65,13 @@
 @property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
 
 /**
+ * @param path Path to tox save file.
+ *
+ * @return YES if save file is encrypted. NO if it isn't encrypted OR if file does not exist.
+ */
++ (BOOL)isToxSaveEncryptedAtPath:(NSString *)path;
+
+/**
  * Create manager with configuration. There is no way to change configuration after init method. If you'd like to
  * change it you have to recreate OCTManager.
  *
