@@ -27,7 +27,7 @@
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
-@property (copy, nonatomic, readonly) OCTManagerConfiguration *configuration;
+@property (copy, nonatomic, readonly) OCTManagerConfiguration *currentConfiguration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
@@ -51,6 +51,19 @@
 
 @implementation OCTManager
 
+#pragma mark -  Class methods
+
++ (BOOL)isToxSaveEncryptedAtPath:(NSString *)path
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+
+    if (! savedData) {
+        return NO;
+    }
+
+    return [OCTToxEncryptSave isDataEncrypted:savedData];
+}
+
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
@@ -62,21 +75,19 @@
     }
 
     [self validateConfiguration:configuration];
-    _configuration = [configuration copy];
+    _currentConfiguration = [configuration copy];
 
     if (! [self importToxSaveIfNeeded]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
         return nil;
     }
 
-    NSData *savedData = [self getSavedData];
+    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
 
-    if (! [self createEncryptSaveWithPassphrase:_configuration.passphrase toxData:savedData]) {
+    if (! [self createEncryptSaveWithPassphrase:_currentConfiguration.passphrase toxData:savedData]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
         return nil;
     }
-    // no need to keep passphrase in memory.
-    _configuration.passphrase = nil;
 
     BOOL wasDecryptError = NO;
     savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
@@ -103,11 +114,16 @@
 
 #pragma mark -  Public
 
+- (OCTManagerConfiguration *)configuration
+{
+    return [self.currentConfiguration copy];
+}
+
 - (NSString *)exportToxSaveFile:(NSError **)error
 {
     @synchronized(self.toxSaveFileLock) {
-        NSString *savedDataPath = self.configuration.fileStorage.pathForToxSaveFile;
-        NSString *tempPath = self.configuration.fileStorage.pathForTemporaryFilesDirectory;
+        NSString *savedDataPath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
+        NSString *tempPath = self.currentConfiguration.fileStorage.pathForTemporaryFilesDirectory;
         tempPath = [tempPath stringByAppendingPathComponent:[savedDataPath lastPathComponent]];
 
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -126,6 +142,8 @@
 
 - (BOOL)changePassphrase:(NSString *)passphrase
 {
+    self.currentConfiguration.passphrase = passphrase;
+
     // Passing nil as tox data as we are setting new passphrase.
     BOOL result = [self createEncryptSaveWithPassphrase:passphrase toxData:nil];
 
@@ -158,7 +176,7 @@
 
 - (id<OCTFileStorageProtocol>)managerGetFileStorage
 {
-    return self.configuration.fileStorage;
+    return self.currentConfiguration.fileStorage;
 }
 
 - (NSNotificationCenter *)managerGetNotificationCenter
@@ -202,21 +220,19 @@
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    if (_configuration.importToxSaveFromPath && [fileManager fileExistsAtPath:_configuration.importToxSaveFromPath]) {
-        return [fileManager copyItemAtPath:_configuration.importToxSaveFromPath
-                                    toPath:_configuration.fileStorage.pathForToxSaveFile
+    if (_currentConfiguration.importToxSaveFromPath && [fileManager fileExistsAtPath:_currentConfiguration.importToxSaveFromPath]) {
+        return [fileManager copyItemAtPath:_currentConfiguration.importToxSaveFromPath
+                                    toPath:_currentConfiguration.fileStorage.pathForToxSaveFile
                                      error:nil];
     }
 
     return YES;
 }
 
-- (NSData *)getSavedData
++ (NSData *)getSavedDataFromPath:(NSString *)path
 {
-    NSString *savedDataPath = _configuration.fileStorage.pathForToxSaveFile;
-
-    return [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath] ?
-           [NSData dataWithContentsOfFile : savedDataPath] :
+    return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
+           [NSData dataWithContentsOfFile : path] :
            nil;
 }
 
@@ -258,7 +274,7 @@
 {
     NSError *toxError = nil;
 
-    _tox = [[OCTTox alloc] initWithOptions:_configuration.options savedData:savedData error:&toxError];
+    _tox = [[OCTTox alloc] initWithOptions:_currentConfiguration.options savedData:savedData error:&toxError];
 
     if (_tox) {
         _toxSaveFileLock = [NSObject new];
@@ -310,7 +326,7 @@
 
 - (void)createRealmManager
 {
-    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:_configuration.fileStorage.pathForDatabase];
+    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:_currentConfiguration.fileStorage.pathForDatabase];
 }
 
 - (void)createSubmanagers
@@ -468,7 +484,7 @@
             }
         }
 
-        if (! [data writeToFile:self.configuration.fileStorage.pathForToxSaveFile options:NSDataWritingAtomic error:&error]) {
+        if (! [data writeToFile:self.currentConfiguration.fileStorage.pathForToxSaveFile options:NSDataWritingAtomic error:&error]) {
             throwException(error);
         }
     }

@@ -193,6 +193,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     if (! _settingsStorage) {
         DDLogInfo(@"OCTRealmManager: no _settingsStorage, creating it");
         _settingsStorage = [OCTSettingsStorageObject new];
+        _settingsStorage.uniqueIdentifier = kSettingsStorageObjectPrimaryKey;
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:_settingsStorage];

@@ -3,9 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.3.0] - 2015-09-22
 ### Added
 - OCTToxEncryptSave, wrapper for toxencryptsave.
 - OCTManager: added encrypted tox files support.
+- OCTManager: added `configuration` method.
+- OCTManager: added `isToxSaveEncryptedAtPath` method.
 
 ### Changed
 - Realm updated to version 0.95.0.
@@ -60,6 +64,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.3.0...master
+[0.3.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0
