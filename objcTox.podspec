@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Classes/**/*.{m,h}'
   s.public_header_files = 'Classes/Public/**/*.h'
-  s.dependency 'toxcore', '0.0.0-2ab3b14-2'
+  s.dependency 'toxcore', '0.0.0-6120b0e'
   s.dependency 'CocoaLumberjack', '1.9.2'
   s.dependency 'Realm', '0.95.0'
 end

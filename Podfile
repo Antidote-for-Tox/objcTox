@@ -5,7 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 inhibit_all_warnings!
 
 def common_pods
-    pod 'toxcore', '0.0.0-2ab3b14-2'
+    pod 'toxcore', '0.0.0-6120b0e'
     pod 'CocoaLumberjack', '~> 1.9.2'
     pod 'Realm', '0.95.0'
 end

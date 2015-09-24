@@ -93,7 +93,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox3DiscoveryWrongString
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
 
     [self.submanager tox3DiscoveryForString:@"wrongstring" success:^(NSString *toxId) {
         XCTAssertTrue(NO, @"We shouldn't be here");
@@ -110,7 +110,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox3DiscoveryNoPublicKey
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
 
     [self.submanager tox3DiscoveryForString:@"some@domain.com" success:^(NSString *toxId) {
         XCTAssertTrue(NO, @"We shouldn't be here");
@@ -127,7 +127,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox3DiscoveryQueryErrorImmediately
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeFailureImmediately];
 
     id dns3Object = OCMClassMock([OCTToxDNS3Object class]);
@@ -151,7 +151,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox3DiscoveryQueryErrorCallback
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeFailureCallback];
 
     id dns3Object = OCMClassMock([OCTToxDNS3Object class]);
@@ -175,7 +175,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox3DiscoveryQuerySuccess
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeSuccess];
 
     id dns3Object = OCMClassMock([OCTToxDNS3Object class]);
@@ -199,7 +199,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox1DiscoveryQueryErrorImmediately
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeFailureImmediately];
 
     [self.submanager tox1DiscoveryForString:@"some@domain" success:^(NSString *toxId) {
@@ -217,7 +217,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testToxDiscoveryQueryErrorCallback
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeFailureCallback];
 
     [self.submanager tox1DiscoveryForString:@"some@domain" success:^(NSString *toxId) {
@@ -235,7 +235,7 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
 
 - (void)testTox1DiscoveryQuerySuccess
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"discovery"];
     [self mockDNSQueryWithSuccess:MockedQueryTypeSuccess];
 
     [self.submanager tox1DiscoveryForString:@"some@domain" success:^(NSString *toxId) {

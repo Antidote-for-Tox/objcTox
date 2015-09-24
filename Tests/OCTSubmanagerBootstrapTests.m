@@ -65,7 +65,7 @@
 
 - (void)testBootstrapCustomNodes
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
     self.submanager.didConnectDelay = 0.0;
     self.submanager.iterationTime = 0.05;
@@ -90,7 +90,7 @@
 
 - (void)testBootstrapSeveralPortions
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
     self.submanager.didConnectDelay = 0.0;
     self.submanager.iterationTime = 0.1;
@@ -127,7 +127,7 @@
 
 - (void)testBootstrapDidConnectVerify
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
     OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
 
@@ -148,7 +148,7 @@
 
 - (void)testBootstrapDidConnectReject
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
     OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
     [[self.tox reject] bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]];
