@@ -43,7 +43,7 @@ it, simply add the following line to your Podfile:
 
 1. Clone repo `git clone https://github.com/Antidote-for-Tox/objcTox.git`
 2. Install CocoaPods `pod install`
-3. Open `objcTox.xcworkspace` file with Xcode 5+.
+3. Open `objcTox.xcworkspace` file with Xcode 7.
 
 Cocoapods 0.38.X for some reason is failing with
 

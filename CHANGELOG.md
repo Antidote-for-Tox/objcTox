@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+### Changes
+- toxcore was updated to 0.0.0-6120b0e.
+
+### Fixes
+- Build issue on Xcode 7.
 
 ## [0.3.0] - 2015-09-22
 ### Added
