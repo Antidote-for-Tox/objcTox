@@ -19,6 +19,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 @property (assign, nonatomic) Tox *tox;
 
 @property (strong, nonatomic) dispatch_source_t timer;
+@property (assign, nonatomic) uint64_t previousIterate;
 
 @end
 
@@ -153,8 +154,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         dispatch_queue_t queue = dispatch_queue_create("me.dvor.objcTox.OCTToxQueue", NULL);
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
-        uint64_t interval = tox_iteration_interval(self.tox) * (NSEC_PER_SEC / 1000);
-        dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, 0), interval, interval / 5);
+        [self updateTimerIntervalIfNeeded];
 
         __weak OCTTox *weakSelf = self;
         dispatch_source_set_event_handler(self.timer, ^{
@@ -164,6 +164,8 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
             }
 
             tox_iterate(strongSelf.tox);
+
+            [strongSelf updateTimerIntervalIfNeeded];
         });
 
         dispatch_resume(self.timer);
@@ -829,6 +831,18 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 }
 
 #pragma mark -  Private methods
+
+- (void)updateTimerIntervalIfNeeded
+{
+    uint64_t nextIterate = tox_iteration_interval(self.tox) * (NSEC_PER_SEC / 1000);
+
+    if (self.previousIterate == nextIterate) {
+        return;
+    }
+
+    self.previousIterate = nextIterate;
+    dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, nextIterate), nextIterate, nextIterate / 5);
+}
 
 - (void)setupCFunctions
 {
