@@ -315,8 +315,8 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 - (void)convertAllCallsToMessages
 {
-    RLMResults *calls = [OCTCall objectsInRealm:self.realm where:nil];
-
+    RLMResults *calls = [OCTCall allObjectsInRealm:self.realm];
+  
     DDLogInfo(@"OCTRealmManager: removing %lu calls", (unsigned long)calls.count);
 
     RBQRealmChangeLogger *logger = [self logger];
