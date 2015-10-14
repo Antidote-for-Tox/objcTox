@@ -470,40 +470,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     [self updateCall:call withState:state pausedStatus:pauseStatus];
 }
 
-- (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber
-{
-    if (stable) {
-        return;
-    }
-
-    OCTToxAVAudioBitRate newBitrate;
-
-    switch (bitrate) {
-        case OCTToxAVAudioBitRate48:
-            newBitrate = OCTToxAVAudioBitRate32;
-            break;
-        case OCTToxAVAudioBitRate32:
-            newBitrate = OCTToxAVAudioBitRate24;
-            break;
-        case OCTToxAVAudioBitRate24:
-            newBitrate = OCTToxAVAudioBitRate16;
-            break;
-        case OCTToxAVAudioBitRate16:
-            newBitrate = OCTToxAVAudioBitRate8;
-            break;
-        case OCTToxAVAudioBitRate8:
-            return;
-        case OCTToxAVAudioBitRateDisabled:
-            NSAssert(NO, @"We shouldn't be here!");
-            break;
-    }
-
-    [self.toxAV setAudioBitRate:newBitrate force:NO forFriend:friendNumber error:nil];
-}
-
-- (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable
-{}
-
 - (void)   toxAV:(OCTToxAV *)toxAV
     receiveAudio:(OCTToxAVPCMData *)pcm
      sampleCount:(OCTToxAVSampleCount)sampleCount
@@ -513,6 +479,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 {
     [self.audioEngine provideAudioFrames:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate fromFriend:friendNumber];
 }
+
+- (void)toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
+ audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
+ videoBitRate:(OCTToxAVVideoBitRate)videoBitrate
+{}
 
 - (void)                 toxAV:(OCTToxAV *)toxAV
     receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height

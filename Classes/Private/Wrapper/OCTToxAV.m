@@ -624,38 +624,6 @@ void callStateCallback(ToxAV *cToxAV,
     });
 }
 
-void audioBitRateStatusCallback(ToxAV *cToxAV,
-                                uint32_t friendNumber,
-                                bool stable,
-                                uint32_t bitRate,
-                                void *userData)
-{
-    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: audioBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:audioBitRateChanged:stable:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV audioBitRateChanged:bitRate stable:stable friendNumber:friendNumber];
-        }
-    });
-}
-
-void videoBitRateStatusCallback(ToxAV *cToxAV,
-                                uint32_t friendNumber,
-                                bool stable,
-                                uint32_t bitRate,
-                                void *userData)
-{
-    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: videoBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:videoBitRateChanged:friendNumber:stable:)]) {
-            [toxAV.delegate toxAV:toxAV videoBitRateChanged:bitRate friendNumber:friendNumber stable:stable];
-        }
-    });
-}
-
 void bitRateStatusCallback(ToxAV *cToxAV,
                            uint32_t friendNumber,
                            uint32_t audio_bit_rate,
@@ -666,8 +634,10 @@ void bitRateStatusCallback(ToxAV *cToxAV,
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: bitRateStatusCallback from friend %d audioBitRate: %d videoBitRate: %d", toxAV, friendNumber, audio_bit_rate, video_bit_rate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:videoBitRateChanged:friendNumber:stable:)]) {
-            //to do
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:bitrateStatusForFriendNumber:audioBitRate:videoBitRate:)]) {
+            [toxAV.delegate toxAV:toxAV bitrateStatusForFriendNumber:friendNumber
+                     audioBitRate:audio_bit_rate
+                     videoBitRate:video_bit_rate];
         }
     });
 }

@@ -36,30 +36,16 @@
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
- * Audio bitrate has changed.
- * @param bitrate The bitrate in Kb/sec.
- * @param stable Is the stream stable enough to keep the bit rate.
- * Upon successful, non forceful, bit rate change, this is set to
- * true and 'bit_rate' is set to new bit rate.
- * The stable is set to false with bit_rate set to the unstable
- * bit rate when either current stream is unstable with said bit rate
- * or the non forceful change failed.
- * @param friendNumber Friend number of appropriate friend.
+ * The event is triggered when the network becomes too saturated for 
+ * current bit rates at which point core suggests new bit rates.
+ * @param friendNumber The friend number of the friend for which to set the
+ * bit rate.
+ * @param audio_bit_rate Suggested maximum audio bit rate in Kb/sec.
+ * @param video_bit_rate Suggested maximum video bit rate in Kb/sec.
  */
-- (void)toxAV:(OCTToxAV *)toxAV audioBitRateChanged:(OCTToxAVAudioBitRate)bitrate stable:(BOOL)stable friendNumber:(OCTToxFriendNumber)friendNumber;
-
-/**
- * Video bitrate has changed.
- * @param bitrate The bitrate in Kb/sec.
- * @param stable Is the stream stable enough to keep the bit rate.
- * Upon successful, non forceful, bit rate change, this is set to
- * true and 'bit_rate' is set to new bit rate.
- * The stable is set to false with bit_rate set to the unstable
- * bit rate when either current stream is unstable with said bit rate
- * or the non forceful change failed.
- * @param friendNumber Friend number of appropriate friend.
- */
-- (void)toxAV:(OCTToxAV *)toxAV videoBitRateChanged:(OCTToxAVVideoBitRate)bitrate friendNumber:(OCTToxFriendNumber)friendNumber stable:(BOOL)stable;
+- (void)toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
+                                                audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
+                                                videoBitRate:(OCTToxAVVideoBitRate)videoBitrate;
 
 /**
  * Received audio frame from friend.
