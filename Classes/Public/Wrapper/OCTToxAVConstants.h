@@ -20,6 +20,7 @@ typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
 extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
+extern const uint32_t kOCTToxAVBitRateUnchanged;
 
 extern NSString *const kOCTToxAVErrorDomain;
 
@@ -113,6 +114,11 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorCall) {
     OCTToxAVErrorCallMalloc,
 
     /**
+     * Synchronization error occurred.
+     */
+    OCTToxAVErrorCallSync,
+
+    /**
      * The friend number did not designate a valid friend.
      */
     OCTToxAVErrorCallFriendNotFound,
@@ -139,6 +145,11 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorCall) {
  */
 typedef NS_ENUM(NSInteger, OCTToxAVErrorAnswer) {
     OCTToxAVErrorAnswerUnknown,
+
+    /**
+     * Synchronization error occurred.
+     */
+    OCTToxAVErrorAnswerSync,
 
     /**
      * Failed to initialize codecs for call session. Note that codec initiation
@@ -171,6 +182,11 @@ typedef NS_ENUM(NSInteger, OCTToxErrorCallControl) {
     OCTToxAVErrorControlUnknown,
 
     /**
+     * Synchronization error occurred.
+     */
+    OCTToxAVErrorControlSync,
+
+    /**
      * The friend number passed did not designate a valid friend.
      */
     OCTToxAVErrorControlFriendNotFound,
@@ -196,9 +212,19 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateUnknown,
 
     /**
-     * The bit rate passed was not one of the supported values.
+     * Synchronization error occured.
      */
-    OCTToxAVErrorSetBitRateInvalid,
+    OCTToxAVErrorSetBitRateSync,
+
+    /**
+     * The audio bit rate passed was not one of the supported values.
+     */
+    OCTToxAVErrorSetBitRateInvalidAudioBitRate,
+
+    /**
+     * The video bit rate passed was not one of the supported values.
+     */
+    OCTToxAVErrorSetBitRateInvalidVideoBitRate,
 
     /**
      * The friend number passed did not designate a valid friend.
