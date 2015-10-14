@@ -374,9 +374,9 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
         bitRateStatusCallback(NULL, 1234, 567, 890, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
         OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                bitrateStatusForFriendNumber:1234
-                                audioBitRate:567
-                                videoBitRate:890]);
+                   bitrateStatusForFriendNumber:1234
+                                   audioBitRate:567
+                                   videoBitRate:890]);
     }];
 }
 
