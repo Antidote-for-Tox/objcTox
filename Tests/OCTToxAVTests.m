@@ -368,18 +368,6 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     }];
 }
 
-- (void)testBitRateCallback
-{
-    [self makeTestCallbackWithCallBlock:^{
-        bitRateStatusCallback(NULL, 1234, 567, 890, (__bridge void *)self.toxAV);
-    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
-        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                   bitrateStatusForFriendNumber:1234
-                                   audioBitRate:567
-                                   videoBitRate:890]);
-    }];
-}
-
 - (void)testReceiveAudioCallback
 {
     const int16_t pcm[] = {5, 9, 5};

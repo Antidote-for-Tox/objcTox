@@ -36,18 +36,6 @@
 - (void)toxAV:(OCTToxAV *)toxAV callStateChanged:(OCTToxAVCallState)state friendNumber:(OCTToxFriendNumber)friendNumber;
 
 /**
- * The event is triggered when the network becomes too saturated for
- * current bit rates at which point core suggests new bit rates.
- * @param friendNumber The friend number of the friend for which to set the
- * bit rate.
- * @param audio_bit_rate Suggested maximum audio bit rate in Kb/sec.
- * @param video_bit_rate Suggested maximum video bit rate in Kb/sec.
- */
-- (void)   toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
-    audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
-    videoBitRate:(OCTToxAVVideoBitRate)videoBitrate;
-
-/**
  * Received audio frame from friend.
  * @param pcm An array of audio samples (sample_count * channels elements).
  * @param sampleCount The number of audio samples per channel in the PCM array.

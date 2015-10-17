@@ -634,11 +634,7 @@ void bitRateStatusCallback(ToxAV *cToxAV,
 
     dispatch_async(dispatch_get_main_queue(), ^{
         DDLogCInfo(@"%@: bitRateStatusCallback from friend %d audioBitRate: %d videoBitRate: %d", toxAV, friendNumber, audio_bit_rate, video_bit_rate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:bitrateStatusForFriendNumber:audioBitRate:videoBitRate:)]) {
-            [toxAV.delegate toxAV:toxAV bitrateStatusForFriendNumber:friendNumber
-                     audioBitRate:audio_bit_rate
-                     videoBitRate:video_bit_rate];
-        }
+        //TODO https://github.com/Antidote-for-Tox/objcTox/issues/88
     });
 }
 

@@ -480,11 +480,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     [self.audioEngine provideAudioFrames:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate fromFriend:friendNumber];
 }
 
-- (void)   toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
-    audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
-    videoBitRate:(OCTToxAVVideoBitRate)videoBitrate
-{}
-
 - (void)                 toxAV:(OCTToxAV *)toxAV
     receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
                         yPlane:(OCTToxAVPlaneData *)yPlane uPlane:(OCTToxAVPlaneData *)uPlane
