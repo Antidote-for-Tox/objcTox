@@ -483,7 +483,9 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 - (void)   toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
     audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
     videoBitRate:(OCTToxAVVideoBitRate)videoBitrate
-{}
+{
+    // TODO https://github.com/Antidote-for-Tox/objcTox/issues/88
+}
 
 - (void)                 toxAV:(OCTToxAV *)toxAV
     receiveVideoFrameWithWidth:(OCTToxAVVideoWidth)width height:(OCTToxAVVideoHeight)height
