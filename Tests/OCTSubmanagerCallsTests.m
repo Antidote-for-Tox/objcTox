@@ -515,21 +515,6 @@
                                                     friendNumber:444]);
 }
 
-- (void)testReceiveUnstableBitrate
-{
-    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:48 stable:NO friendNumber:1234];
-    OCMVerify([self.mockedToxAV setAudioBitRate:32 force:NO forFriend:1234 error:nil]);
-
-    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:32 stable:NO friendNumber:1234];
-    OCMVerify([self.mockedToxAV setAudioBitRate:24 force:NO forFriend:1234 error:nil]);
-
-    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:24 stable:NO friendNumber:1234];
-    OCMVerify([self.mockedToxAV setAudioBitRate:16 force:NO forFriend:1234 error:nil]);
-
-    [self.callManager toxAV:self.mockedToxAV audioBitRateChanged:16 stable:NO friendNumber:1234];
-    OCMVerify([self.mockedToxAV setAudioBitRate:8 force:NO forFriend:1234 error:nil]);
-}
-
 #pragma mark Test helper methods
 - (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {

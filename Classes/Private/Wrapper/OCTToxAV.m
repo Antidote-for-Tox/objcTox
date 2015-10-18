@@ -27,8 +27,8 @@ bool (*_toxav_call)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rat
 bool (*_toxav_answer)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, uint32_t video_bit_rate, TOXAV_ERR_ANSWER *error);
 bool (*_toxav_call_control)(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
 
-bool (*_toxav_audio_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
-bool (*_toxav_video_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, uint32_t audio_bit_rate, bool force, TOXAV_ERR_SET_BIT_RATE *error);
+bool (*_toxav_bit_rate_set)(ToxAV *toxAV, uint32_t friend_number, int32_t audio_bit_rate,
+                            int32_t video_bit_rate, TOXAV_ERR_BIT_RATE_SET *error);
 
 bool (*_toxav_audio_send_frame)(ToxAV *toxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error);
 bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, TOXAV_ERR_SEND_FRAME *error);
@@ -216,9 +216,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 - (BOOL)setAudioBitRate:(OCTToxAVAudioBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
-    TOXAV_ERR_SET_BIT_RATE cError;
+    TOXAV_ERR_BIT_RATE_SET cError;
 
-    BOOL status = _toxav_audio_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+    BOOL status = _toxav_bit_rate_set(self.toxAV, friendNumber, bitRate, kOCTToxAVBitRateUnchanged, &cError);
 
     [self fillError:error withCErrorSetBitRate:cError];
 
@@ -229,9 +229,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 - (BOOL)setVideoBitRate:(OCTToxAVVideoBitRate)bitRate force:(BOOL)force forFriend:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
-    TOXAV_ERR_SET_BIT_RATE cError;
+    TOXAV_ERR_BIT_RATE_SET cError;
 
-    BOOL status = _toxav_video_bit_rate_set(self.toxAV, friendNumber, bitRate, force, &cError);
+    BOOL status = _toxav_bit_rate_set(self.toxAV, friendNumber, kOCTToxAVBitRateUnchanged, bitRate, &cError);
 
     [self fillError:error withCErrorSetBitRate:cError];
 
@@ -287,8 +287,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     _toxav_answer = toxav_answer;
     _toxav_call_control = toxav_call_control;
 
-    _toxav_audio_bit_rate_set = toxav_audio_bit_rate_set;
-    _toxav_video_bit_rate_set = toxav_video_bit_rate_set;
+    _toxav_bit_rate_set = toxav_bit_rate_set;
 
     _toxav_audio_send_frame = toxav_audio_send_frame;
     _toxav_video_send_frame = toxav_video_send_frame;
@@ -298,8 +297,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 {
     toxav_callback_call(_toxAV, callIncomingCallback, (__bridge void *)(self));
     toxav_callback_call_state(_toxAV, callStateCallback, (__bridge void *)(self));
-    toxav_callback_audio_bit_rate_status(_toxAV, audioBitRateStatusCallback, (__bridge void *)(self));
-    toxav_callback_video_bit_rate_status(_toxAV, videoBitRateStatusCallback, (__bridge void *)(self));
+    toxav_callback_bit_rate_status(_toxAV, bitRateStatusCallback, (__bridge void *)(self));
     toxav_callback_audio_receive_frame(_toxAV, receiveAudioFrameCallback, (__bridge void *)(self));
     toxav_callback_video_receive_frame(_toxAV, receiveVideoFrameCallback, (__bridge void *)(self));
 }
@@ -354,6 +352,10 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             code = OCTToxAVErrorCallMalloc;
             failureReason = @"A resource allocation error occured while trying to create the structures required for the call.";
             break;
+        case TOXAV_ERR_CALL_SYNC:
+            code = OCTToxAVErrorCallSync;
+            failureReason = @"Synchronization error occurred.";
+            break;
         case TOXAV_ERR_CALL_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorCallFriendNotFound;
             failureReason = @"The friend number did not designate a valid friend.";
@@ -391,6 +393,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         case TOXAV_ERR_ANSWER_OK:
             NSAssert(NO, @"We shouldn't be here!");
             break;
+        case TOXAV_ERR_ANSWER_SYNC:
+            code = OCTToxAVErrorAnswerSync;
+            break;
         case TOXAV_ERR_ANSWER_CODEC_INITIALIZATION:
             code = OCTToxAVErrorAnswerCodecInitialization;
             break;
@@ -424,6 +429,10 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         case TOXAV_ERR_CALL_CONTROL_OK:
             NSAssert(NO, @"We shouldn't be here!");
             break;
+        case TOXAV_ERR_CALL_CONTROL_SYNC:
+            code = OCTToxAVErrorControlSync;
+            failureReason = @"Synchronization error occurred.";
+            break;
         case TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorControlFriendNotFound;
             failureReason = @"The friend number passed did not designate a valid friend.";
@@ -443,9 +452,9 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     return YES;
 }
 
-- (BOOL)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_SET_BIT_RATE)cError
+- (BOOL)fillError:(NSError **)error withCErrorSetBitRate:(TOXAV_ERR_BIT_RATE_SET)cError
 {
-    if (! error || (cError == TOXAV_ERR_SET_BIT_RATE_OK)) {
+    if (! error || (cError == TOXAV_ERR_BIT_RATE_SET_OK)) {
         return NO;
     }
 
@@ -454,18 +463,26 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
     NSString *failureReason = nil;
 
     switch (cError) {
-        case TOXAV_ERR_SET_BIT_RATE_OK:
+        case TOXAV_ERR_BIT_RATE_SET_OK:
             NSAssert(NO, @"We shouldn't be here!");
             break;
-        case TOXAV_ERR_SET_BIT_RATE_INVALID:
-            code = OCTToxAVErrorSetBitRateInvalid;
-            failureReason = @"The bit rate passed was not one of the supported values.";
+        case TOXAV_ERR_BIT_RATE_SET_SYNC:
+            code = OCTToxAVErrorSetBitRateSync;
+            failureReason = @"Synchronization error occurred.";
             break;
-        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_FOUND:
+        case TOXAV_ERR_BIT_RATE_SET_INVALID_AUDIO_BIT_RATE:
+            code = OCTToxAVErrorSetBitRateInvalidAudioBitRate;
+            failureReason = @"The audio bit rate passed was not one of the supported values.";
+            break;
+        case TOXAV_ERR_BIT_RATE_SET_INVALID_VIDEO_BIT_RATE:
+            code = OCTToxAVErrorSetBitRateInvalidVideoBitRate;
+            failureReason = @"The video bit rate passed was not one of the supported values.";
+            break;
+        case TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_FOUND:
             code = OCTToxAVErrorSetBitRateFriendNotFound;
             failureReason = @"The friend number passed did not designate a valid friend";
             break;
-        case TOXAV_ERR_SET_BIT_RATE_FRIEND_NOT_IN_CALL:
+        case TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL:
             code = OCTToxAVErrorSetBitRateFriendNotInCall;
             failureReason = @"This client is currently not in a call with the friend";
             break;
@@ -607,34 +624,20 @@ void callStateCallback(ToxAV *cToxAV,
     });
 }
 
-void audioBitRateStatusCallback(ToxAV *cToxAV,
-                                uint32_t friendNumber,
-                                bool stable,
-                                uint32_t bitRate,
-                                void *userData)
+void bitRateStatusCallback(ToxAV *cToxAV,
+                           uint32_t friendNumber,
+                           uint32_t audio_bit_rate,
+                           uint32_t video_bit_rate,
+                           void *userData)
 {
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: audioBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:audioBitRateChanged:stable:friendNumber:)]) {
-            [toxAV.delegate toxAV:toxAV audioBitRateChanged:bitRate stable:stable friendNumber:friendNumber];
-        }
-    });
-}
-
-void videoBitRateStatusCallback(ToxAV *cToxAV,
-                                uint32_t friendNumber,
-                                bool stable,
-                                uint32_t bitRate,
-                                void *userData)
-{
-    OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: videoBitRateStatusCallback from friend %d stable: %d bitRate: %d", toxAV, friendNumber, stable, bitRate);
-        if ([toxAV.delegate respondsToSelector:@selector(toxAV:videoBitRateChanged:friendNumber:stable:)]) {
-            [toxAV.delegate toxAV:toxAV videoBitRateChanged:bitRate friendNumber:friendNumber stable:stable];
+        DDLogCInfo(@"%@: bitRateStatusCallback from friend %d audioBitRate: %d videoBitRate: %d", toxAV, friendNumber, audio_bit_rate, video_bit_rate);
+        if ([toxAV.delegate respondsToSelector:@selector(toxAV:bitrateStatusForFriendNumber:audioBitRate:videoBitRate:)]) {
+            [toxAV.delegate toxAV:toxAV bitrateStatusForFriendNumber:friendNumber
+                     audioBitRate:audio_bit_rate
+                     videoBitRate:video_bit_rate];
         }
     });
 }

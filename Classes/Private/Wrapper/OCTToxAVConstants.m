@@ -9,5 +9,6 @@
 #import "OCTToxAVConstants.h"
 
 const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable = 0;
+const uint32_t kOCTToxAVBitRateUnchanged = -1;
 
 NSString *const kOCTToxAVErrorDomain = @"me.dvor.objcTox.ErrorDomain";
