@@ -12,7 +12,7 @@
 /**
  * Represents the current state of the FRC cache
  */
-typedef NS_ENUM(NSUInteger, RBQControllerCacheState) {
+typedef NS_ENUM(NSInteger, RBQControllerCacheState) {
     /**
      * Cache is ready
      */

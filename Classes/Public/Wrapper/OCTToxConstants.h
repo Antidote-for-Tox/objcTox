@@ -46,7 +46,7 @@ extern const NSUInteger kOCTToxMaxFileNameLength;
 extern const NSUInteger kOCTToxHashLength;
 extern const NSUInteger kOCTToxFileIdLength;
 
-typedef NS_ENUM(NSUInteger, OCTToxProxyType) {
+typedef NS_ENUM(NSInteger, OCTToxProxyType) {
     OCTToxProxyTypeNone,
     OCTToxProxyTypeSocks5,
     OCTToxProxyTypeHTTP,
@@ -103,7 +103,7 @@ typedef NS_ENUM(NSInteger, OCTToxMessageType) {
     OCTToxMessageTypeAction,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxFileKind) {
+typedef NS_ENUM(NSInteger, OCTToxFileKind) {
     /**
      * Arbitrary file data. Clients can choose to handle it based on the file name
      * or magic or any other way they choose.
@@ -133,7 +133,7 @@ typedef NS_ENUM(NSUInteger, OCTToxFileKind) {
     OCTToxFileKindAvatar,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
+typedef NS_ENUM(NSInteger, OCTToxFileControl) {
     /**
      * Sent by the receiving side to accept a file send request. Also sent after a
      * OCTToxFileControlPause command to continue sending or receiving.
@@ -165,7 +165,7 @@ typedef NS_ENUM(NSUInteger, OCTToxFileControl) {
 /**
  * Error codes for init method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorInitCode) {
+typedef NS_ENUM(NSInteger, OCTToxErrorInitCode) {
     OCTToxErrorInitCodeUnknown,
     /**
      * Was unable to allocate enough memory to store the internal structures for the Tox object.
@@ -216,7 +216,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorInitCode) {
 /**
  * Error codes for bootstrap and addTCPRelay methods.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorBootstrapCode) {
+typedef NS_ENUM(NSInteger, OCTToxErrorBootstrapCode) {
     OCTToxErrorBootstrapCodeUnknown,
 
     /**
@@ -233,7 +233,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorBootstrapCode) {
 /**
  * Common error codes for all methods that set a piece of user-visible client information.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorSetInfoCode) {
+typedef NS_ENUM(NSInteger, OCTToxErrorSetInfoCode) {
     OCTToxErrorSetInfoCodeUnknow,
 
     /**
@@ -245,7 +245,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorSetInfoCode) {
 /**
  * Error codes for addFriend method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendAdd) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendAdd) {
     OCTToxErrorFriendAddUnknown,
 
     /**
@@ -288,7 +288,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendAdd) {
 /**
  * Error codes for deleteFriend method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendDelete) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendDelete) {
     /**
      * There was no friend with the given friend number. No friends were deleted.
      */
@@ -298,7 +298,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendDelete) {
 /**
  * Error codes for friendNumberWithPublicKey
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendByPublicKey) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendByPublicKey) {
     OCTToxErrorFriendByPublicKeyUnknown,
 
     /**
@@ -310,7 +310,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendByPublicKey) {
 /**
  * Error codes for publicKeyFromFriendNumber.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetPublicKey) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendGetPublicKey) {
     /**
      * No friend with the given number exists on the friend list.
      */
@@ -320,7 +320,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetPublicKey) {
 /**
  * Error codes for last online methods.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetLastOnline) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendGetLastOnline) {
     /**
      * No friend with the given number exists on the friend list.
      */
@@ -330,7 +330,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendGetLastOnline) {
 /**
  * Error codes for friend state query methods.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendQuery) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendQuery) {
     OCTToxErrorFriendQueryUnknown,
 
     /**
@@ -342,7 +342,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendQuery) {
 /**
  * Error codes for changing isTyping.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorSetTyping) {
+typedef NS_ENUM(NSInteger, OCTToxErrorSetTyping) {
     /**
      * The friend number did not designate a valid friend.
      */
@@ -352,7 +352,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorSetTyping) {
 /**
  * Error codes for sending message.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFriendSendMessage) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFriendSendMessage) {
     OCTToxErrorFriendSendMessageUnknown,
 
     /**
@@ -384,7 +384,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFriendSendMessage) {
 /**
  * Error codes for sending file control.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFileControl) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFileControl) {
     /**
      * The friendNumber passed did not designate a valid friend.
      */
@@ -425,7 +425,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileControl) {
 /**
  * Error codes for file seek method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFileSeek) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFileSeek) {
     /**
      * The friendNumber passed did not designate a valid friend.
      */
@@ -460,7 +460,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileSeek) {
 /**
  * Error codes for fileGetFileId method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFileGet) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFileGet) {
     /**
      * Internal error.
      **/
@@ -480,7 +480,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileGet) {
 /**
  * Error codes for fileSend method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFileSend) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFileSend) {
     OCTToxErrorFileSendUnknown,
 
     /**
@@ -508,7 +508,7 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileSend) {
 /**
  * Error codes for fileSendChunk method.
  */
-typedef NS_ENUM(NSUInteger, OCTToxErrorFileSendChunk) {
+typedef NS_ENUM(NSInteger, OCTToxErrorFileSendChunk) {
     OCTToxErrorFileSendChunkUnknown,
 
     /**

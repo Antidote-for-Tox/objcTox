@@ -6,12 +6,12 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-typedef NS_ENUM(NSUInteger, OCTToxEncryptSaveKeyDerivationError) {
+typedef NS_ENUM(NSInteger, OCTToxEncryptSaveKeyDerivationError) {
     OCTToxEncryptSaveKeyDerivationErrorNone,
     OCTToxEncryptSaveKeyDerivationErrorFailed,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxEncryptSaveEncryptionError) {
+typedef NS_ENUM(NSInteger, OCTToxEncryptSaveEncryptionError) {
     OCTToxEncryptSaveEncryptionErrorNone,
 
     /**
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, OCTToxEncryptSaveEncryptionError) {
     OCTToxEncryptSaveEncryptionErrorFailed,
 };
 
-typedef NS_ENUM(NSUInteger, OCTToxEncryptSaveDecryptionError) {
+typedef NS_ENUM(NSInteger, OCTToxEncryptSaveDecryptionError) {
     OCTToxEncryptSaveDecryptionErrorNone,
 
     /**

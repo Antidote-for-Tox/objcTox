@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
-typedef NS_ENUM(NSUInteger, OCTFetchRequestType) {
+typedef NS_ENUM(NSInteger, OCTFetchRequestType) {
     OCTFetchRequestTypeFriend,
     OCTFetchRequestTypeFriendRequest,
     OCTFetchRequestTypeChat,
@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, OCTMessageFileType) {
 
 extern NSString *const kOCTManagerErrorDomain;
 
-typedef NS_ENUM(NSUInteger, OCTManagerInitError) {
+typedef NS_ENUM(NSInteger, OCTManagerInitError) {
     /**
      * Cannot create symmetric key from given passphrase.
      */
@@ -139,7 +139,7 @@ typedef NS_ENUM(NSUInteger, OCTManagerInitError) {
     OCTManagerInitErrorCreateToxBadFormat,
 };
 
-typedef NS_ENUM(NSUInteger, OCTDNSError) {
+typedef NS_ENUM(NSInteger, OCTDNSError) {
     /**
      * Given string for DNS discovery is wrong.
      */
