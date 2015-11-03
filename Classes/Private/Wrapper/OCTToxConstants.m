@@ -7,7 +7,7 @@
 //
 
 #import "OCTToxConstants.h"
-#import "tox.h"
+#import <toxcore/tox.h>
 
 const OCTToxFriendNumber kOCTToxFriendNumberFailure = UINT32_MAX;
 const OCTToxFileNumber kOCTToxFileNumberFailure = UINT32_MAX;

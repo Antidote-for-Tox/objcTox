@@ -7,7 +7,7 @@
 //
 
 #import "OCTTox.h"
-#import "tox.h"
+#import <toxcore/tox.h>
 
 /**
  * Tox functions

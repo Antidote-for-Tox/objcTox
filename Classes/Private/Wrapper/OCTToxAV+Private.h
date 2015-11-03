@@ -7,7 +7,7 @@
 //
 
 #import "OCTToxAV.h"
-#import "toxav.h"
+#import <toxcore/toxav/toxav.h>
 
 /**
  * ToxAV functions
