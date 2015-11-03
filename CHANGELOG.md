@@ -3,11 +3,17 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.4.0] - 2015-11-03
+### Added
+- Audio and video calls.
+
 ### Changes
-- toxcore was updated to 0.0.0-6120b0e.
+- toxcore was updated to 0.0.1-542338a.
 
 ### Fixes
 - Build issue on Xcode 7.
+- Call tox_iterate_interval after every tox_iterate.
 
 ## [0.3.0] - 2015-09-22
 ### Added
@@ -69,7 +75,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.3.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.4.0...master
+[0.4.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.1.0...0.2.0

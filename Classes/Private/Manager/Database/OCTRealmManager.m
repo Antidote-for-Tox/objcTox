@@ -24,7 +24,7 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-static const uint64_t kCurrentSchemeVersion = 2;
+static const uint64_t kCurrentSchemeVersion = 3;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -409,6 +409,10 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
                if (oldSchemaVersion < 2) {
                    // objcTox version 0.2.1
+               }
+
+               if (oldSchemaVersion < 3) {
+                   // objcTox version 0.4.0
                }
     };
 }
