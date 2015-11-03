@@ -15,6 +15,7 @@
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerDNS+Private.h"
 #import "OCTSubmanagerFiles+Private.h"
@@ -30,6 +31,7 @@
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
+@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
@@ -337,6 +339,11 @@
     _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
     _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
     _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
+
+    OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
+    calls.dataSource = self;
+    _calls = calls;
+    [_calls setupWithError:nil];
 }
 
 - (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class

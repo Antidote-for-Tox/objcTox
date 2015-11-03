@@ -12,6 +12,7 @@
 #import "OCTManager.h"
 #import "OCTManagerConstants.h"
 #import "OCTTox.h"
+#import "OCTToxAV.h"
 #import "OCTToxEncryptSave.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
@@ -23,11 +24,13 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
 
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
+@property (strong, nonatomic, readonly) OCTToxAV *toxAV;
 @property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
@@ -58,7 +61,9 @@
 @interface OCTManagerTests : XCTestCase
 
 @property (strong, nonatomic) OCTManager *manager;
+@property (nonatomic, assign) id mockedCallManager;
 @property (strong, nonatomic) id tox;
+@property (strong, nonatomic) id toxAV;
 
 @end
 
@@ -68,10 +73,15 @@
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
 
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.tox alloc]).andReturn(self.tox);
     OCMStub([self.tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.tox);
+
+    self.toxAV = OCMClassMock([OCTToxAV class]);
+    OCMStub([self.toxAV alloc]).andReturn(self.toxAV);
+    OCMStub([self.toxAV initWithTox:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.toxAV);
 
     id data = OCMClassMock([NSData class]);
 
@@ -84,7 +94,12 @@
     [self.tox stopMocking];
     self.tox = nil;
 
+    [self.toxAV stopMocking];
+    self.toxAV = nil;
+
     self.manager = nil;
+    [self.mockedCallManager stopMocking];
+    self.mockedCallManager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
@@ -463,6 +478,7 @@
 
 - (void)createManager
 {
+    OCMStub([[self.mockedCallManager alloc] initWithTox:[OCMArg anyPointer]]).andReturn(nil);
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 }

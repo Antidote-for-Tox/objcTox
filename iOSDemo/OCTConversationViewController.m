@@ -16,6 +16,7 @@
 #import "OCTMessageAbstract.h"
 #import "OCTSubmanagerObjects.h"
 #import "OCTSubmanagerChats.h"
+#import "OCTSubmanagerCalls.h"
 
 @interface OCTConversationViewController () <RBQFetchedResultsControllerDelegate>
 
@@ -138,12 +139,18 @@
         [sheet bk_addButtonWithTitle:@"Send message" handler:^{
             [weakSelf sendMessage];
         }];
+
+        [sheet bk_addButtonWithTitle:@"Call friend" handler:^{
+            [weakSelf callFriend];
+        }];
     }];
 }
 
+
+
 - (void)sendMessage
 {
-    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"Send friend request" message:nil];
+    UIAlertView *alert = [UIAlertView bk_alertViewWithTitle:@"Send message" message:nil];
 
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     UITextField *messageField = [alert textFieldAtIndex:0];
@@ -158,6 +165,18 @@
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];
 
     [alert show];
+}
+
+#pragma mark - Call methods
+
+- (void)callFriend
+{
+    NSError *error;
+    OCTCall *call = [self.manager.calls callToChat:self.chat enableAudio:YES enableVideo:NO error:&error];
+
+    if (! call) {
+        NSLog(@"Unable to create call, %@", error.localizedFailureReason);
+    }
 }
 
 @end

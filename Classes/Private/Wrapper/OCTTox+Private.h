@@ -2,12 +2,12 @@
 //  OCTTox+Private.h
 //  objcTox
 //
-//  Created by Dmytro Vorobiov on 05.06.15.
+//  Created by Chuong Vu on 6/2/15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
 #import "OCTTox.h"
-#import "tox.h"
+#import <toxcore/tox.h>
 
 /**
  * Tox functions

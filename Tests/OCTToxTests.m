@@ -12,7 +12,7 @@
 #import "OCTTox+Private.h"
 #import "OCTCAsserts.h"
 
-void *refToSelf;
+static void *refToSelf;
 
 void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
 

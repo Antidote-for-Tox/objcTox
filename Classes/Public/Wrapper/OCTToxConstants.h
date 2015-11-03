@@ -475,6 +475,11 @@ typedef NS_ENUM(NSUInteger, OCTToxErrorFileGet) {
      * No file transfer with the given file number was found for the given friend.
      */
     OCTToxErrorFileGetNotFound,
+
+    /**
+     * One of the arguments to the function was NULL when it was not expected.
+     */
+    OCTToxErrorFileGetNULL,
 };
 
 /**

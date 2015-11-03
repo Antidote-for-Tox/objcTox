@@ -7,7 +7,7 @@
 //
 
 #import "OCTToxDNS.h"
-#import "toxdns.h"
+#import <toxcore/toxdns/toxdns.h>
 
 /**
  * toxdns functions

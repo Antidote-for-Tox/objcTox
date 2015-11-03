@@ -7,7 +7,7 @@
 //
 
 #import "OCTToxEncryptSave.h"
-#import "toxencryptsave.h"
+#import <toxcore/toxencryptsave/toxencryptsave.h>
 #import "OCTToxEncryptSaveConstants.h"
 #import "OCTTox+Private.h"
 

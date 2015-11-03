@@ -37,10 +37,16 @@
 
 - (void)tearDown
 {
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm deleteAllObjects];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [(id)self.realmManager stopMocking];
+    self.realmManager = nil;
+
     [self.realmMock stopMocking];
     self.realmMock = nil;
 
-    self.realmManager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
