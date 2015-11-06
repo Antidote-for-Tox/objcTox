@@ -12,6 +12,8 @@
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
 #import "OCTChatsViewController.h"
+#import "OCTCallsViewController.h"
+#import "OCTTabBarControllerViewController.h"
 #import "AppDelegate.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerBootstrap.h"
@@ -112,15 +114,17 @@ typedef NS_ENUM(NSUInteger, Row) {
 {
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:self.configuration error:nil];
 
-    UITabBarController *tabBar = [UITabBarController new];
+    OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
     tabBar.viewControllers = @[
         NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
         NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
         NAVIGATION_WITH_CONTROLLER(OCTChatsViewController),
+        NAVIGATION_WITH_CONTROLLER(OCTCallsViewController),
     ];
 
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.window.rootViewController = tabBar;
+    manager.calls.delegate = tabBar;
 
     [manager.bootstrap addPredefinedNodes];
     [manager.bootstrap bootstrap];

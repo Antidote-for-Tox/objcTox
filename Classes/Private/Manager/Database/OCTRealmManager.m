@@ -13,16 +13,18 @@
 #import "RBQRealmNotificationManager.h"
 #import "OCTFriend.h"
 #import "OCTChat.h"
+#import "OCTCall.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTMessageFile.h"
+#import "OCTMessageCall.h"
 #import "OCTSettingsStorageObject.h"
 
 #import "DDLog.h"
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-static const uint64_t kCurrentSchemeVersion = 2;
+static const uint64_t kCurrentSchemeVersion = 3;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -58,6 +60,8 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         [strongSelf createRealmWithPath:path];
         [strongSelf createSettingsStorage];
     });
+
+    [self convertAllCallsToMessages];
 
     return self;
 }
@@ -238,6 +242,45 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     return chat;
 }
 
+- (OCTCall *)createCallWithChat:(OCTChat *)chat status:(OCTCallStatus)status
+{
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
+
+        if (call) {
+            return;
+        }
+
+        DDLogInfo(@"OCTRealmManager: creating call with chat %@", chat);
+
+        call = [OCTCall new];
+        call.status = status;
+        call.chat = chat;
+
+        [self.realm beginWriteTransaction];
+        [self.realm addObject:call];
+        [[self logger] didAddObject:call];
+        [self.realm commitWriteTransaction];
+    });
+
+    return call;
+}
+
+- (OCTCall *)getCurrentCallForChat:(OCTChat *)chat
+{
+    __block OCTCall *call = nil;
+
+    dispatch_sync(self.queue, ^{
+
+        call = [[OCTCall objectsInRealm:self.realm where:@"chat == %@", chat] firstObject];
+    });
+
+    return call;
+}
+
 - (void)removeChatWithAllMessages:(OCTChat *)chat
 {
     NSParameterAssert(chat);
@@ -268,6 +311,24 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
         [self.realm commitWriteTransaction];
     });
+}
+
+- (void)convertAllCallsToMessages
+{
+    RLMResults *calls = [OCTCall allObjectsInRealm:self.realm];
+
+    DDLogInfo(@"OCTRealmManager: removing %lu calls", (unsigned long)calls.count);
+
+    RBQRealmChangeLogger *logger = [self logger];
+
+    for (OCTCall *call in calls) {
+        [self addMessageCall:call];
+    }
+
+    [self.realm beginWriteTransaction];
+    [logger willDeleteObjects:calls];
+    [self.realm deleteObjects:calls];
+    [self.realm commitWriteTransaction];
 }
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
@@ -303,6 +364,40 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     return messageAbstract;
 }
 
+- (void)addMessageCall:(OCTCall *)call
+{
+    NSParameterAssert(call);
+    DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
+
+    OCTMessageCallEvent event;
+    switch (call.status) {
+        case OCTCallStatusDialing:
+        case OCTCallStatusRinging:
+            event = OCTMessageCallEventUnanswered;
+            break;
+        case OCTCallStatusActive:
+            event = OCTMessageCallEventAnswered;
+            break;
+    }
+
+    OCTMessageCall *messageCall = [OCTMessageCall new];
+    messageCall.callDuration = call.callDuration;
+    messageCall.callEvent = event;
+
+    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
+    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
+    messageAbstract.chat = call.chat;
+    messageAbstract.messageCall = messageCall;
+    messageAbstract.sender = call.caller;
+
+    [self addObject:messageAbstract];
+
+    [self updateObject:call.chat withBlock:^(OCTChat *theChat) {
+        theChat.lastMessage = messageAbstract;
+        theChat.lastActivityDateInterval = messageAbstract.dateInterval;
+    }];
+}
+
 #pragma mark -  Private
 
 - (RLMMigrationBlock)realmMigrationBlock
@@ -314,6 +409,10 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
                if (oldSchemaVersion < 2) {
                    // objcTox version 0.2.1
+               }
+
+               if (oldSchemaVersion < 3) {
+                   // objcTox version 0.4.0
                }
     };
 }

@@ -15,6 +15,7 @@
 
 @class OCTSubmanagerAvatars;
 @class OCTSubmanagerBootstrap;
+@class OCTSubmanagerCalls;
 @class OCTSubmanagerChats;
 @class OCTSubmanagerDNS;
 @class OCTSubmanagerFiles;
@@ -33,6 +34,11 @@
  * Submanager responsible for connecting to other nodes.
  */
 @property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
+
+/**
+ * Submanager with all video/calling methods.
+ */
+@property (strong, nonatomic, readonly) OCTSubmanagerCalls *calls;
 
 /**
  * Submanager with all chats methods.

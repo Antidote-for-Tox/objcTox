@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTToxConstants.h"
+#import "OCTManagerConstants.h"
 
 @class RBQFetchRequest;
 @class OCTObject;
 @class OCTFriendRequest;
 @class OCTFriend;
 @class OCTChat;
+@class OCTCall;
 @class OCTMessageAbstract;
 @class OCTMessageText;
 @class OCTMessageFile;
@@ -57,6 +59,15 @@
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
+- (OCTCall *)createCallWithChat:(OCTChat *)chat status:(OCTCallStatus)status;
+
+/**
+ * Gets the current call for the chat if and only if it exists.
+ * This will not create a call object.
+ * @param chat The chat that is related to the call.
+ * @return A call object if it exists, nil if no call is session for this call.
+ */
+- (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
@@ -64,5 +75,7 @@
                                       chat:(OCTChat *)chat
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
+
+- (void)addMessageCall:(OCTCall *)call;
 
 @end

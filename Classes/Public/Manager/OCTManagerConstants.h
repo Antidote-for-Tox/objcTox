@@ -10,6 +10,7 @@ typedef NS_ENUM(NSInteger, OCTFetchRequestType) {
     OCTFetchRequestTypeFriend,
     OCTFetchRequestTypeFriendRequest,
     OCTFetchRequestTypeChat,
+    OCTFetchRequestTypeCall,
     OCTFetchRequestTypeMessageAbstract,
 };
 
@@ -156,4 +157,50 @@ typedef NS_ENUM(NSInteger, OCTDNSError) {
      * Error occurred during dns discovery.
      */
     OCTDNSErrorDNSQueryError,
+};
+
+typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
+    /**
+     * Call was answered.
+     */
+    OCTMessageCallEventAnswered,
+
+    /**
+     * Call was unanswered.
+     */
+    OCTMessageCallEventUnanswered,
+};
+
+typedef NS_ENUM(NSInteger, OCTCallStatus) {
+    /**
+     * Call is currently ringing.
+     */
+    OCTCallStatusRinging,
+
+    /**
+     * Call is currently dialing a chat.
+     */
+    OCTCallStatusDialing,
+
+    /**
+     * Call is currently active in session.
+     */
+    OCTCallStatusActive,
+};
+
+typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
+    /**
+     * Call is not paused
+     */
+    OCTCallPausedStatusNone = 0,
+
+    /**
+     * Call is paused by the user
+     */
+    OCTCallPausedStatusByUser = 1 << 0,
+
+        /**
+         * Call is paused by friend
+         */
+        OCTCallPausedStatusByFriend = 1 << 1,
 };

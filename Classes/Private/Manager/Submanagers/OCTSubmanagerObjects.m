@@ -11,6 +11,7 @@
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTChat.h"
+#import "OCTCall.h"
 #import "OCTMessageAbstract.h"
 
 @interface OCTSubmanagerObjects ()
@@ -84,6 +85,8 @@
             return [OCTFriendRequest class];
         case OCTFetchRequestTypeChat:
             return [OCTChat class];
+        case OCTFetchRequestTypeCall:
+            return [OCTCall class];
         case OCTFetchRequestTypeMessageAbstract:
             return [OCTMessageAbstract class];
     }
