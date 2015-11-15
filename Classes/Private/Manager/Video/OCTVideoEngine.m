@@ -48,7 +48,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     DDLogVerbose(@"%@: init", self);
 
     _captureSession = [AVCaptureSession new];
-    _captureSession.sessionPreset = AVCaptureSessionPresetLow;
+    _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
     _pixelPool = [[OCTPixelBufferPool alloc] initWithFormat:kPixelFormat];
