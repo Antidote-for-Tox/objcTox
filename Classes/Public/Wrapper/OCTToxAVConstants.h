@@ -260,6 +260,11 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSendFrame) {
     OCTToxAVErrorSendFrameFriendNotInCall,
 
     /**
+     * Synchronization error occurred.
+     */
+    OCTToxAVErrorSendFrameSync,
+
+    /**
      * One of the frame parameters was invalid. E.g. the resolution may be too
      * small or too large, or the audio sampling rate may be unsupported.
      */

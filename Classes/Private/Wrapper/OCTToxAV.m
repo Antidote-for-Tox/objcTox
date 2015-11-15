@@ -518,6 +518,10 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
             code = OCTToxAVErrorSendFrameFriendNotInCall;
             failureReason = @"This client is currently not in a call with the friend";
             break;
+        case TOXAV_ERR_SEND_FRAME_SYNC:
+            code = OCTToxAVErrorSendFrameSync;
+            failureReason = @"Synchronization error occurred";
+            break;
         case TOXAV_ERR_SEND_FRAME_INVALID:
             code = OCTToxAVErrorSendFrameInvalid;
             failureReason = @"One of the frame parameters was invalid. E.g. the resolution may be too small or too large, or the audio sampling rate may be unsupported";
