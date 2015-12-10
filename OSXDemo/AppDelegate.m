@@ -7,17 +7,27 @@
 //
 
 #import "AppDelegate.h"
+#import "OCTMainWindowController.h"
+
+#import "DDLog.h"
+#import "DDASLLogger.h"
+#import "DDTTYLogger.h"
 
 @interface AppDelegate ()
 
-@property (weak) IBOutlet NSWindow *window;
+@property (strong, nonatomic) IBOutlet OCTMainWindowController *window;
+
 @end
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    [DDLog addLogger:[DDASLLogger sharedInstance]];
+    [DDLog addLogger:[DDTTYLogger sharedInstance]];
+
+    self.window = [[OCTMainWindowController alloc] initWithWindowNibName:@"MainWindow"];
+    [self.window showWindow:self];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
