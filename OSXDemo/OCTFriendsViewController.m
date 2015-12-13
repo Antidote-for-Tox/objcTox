@@ -11,16 +11,23 @@
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTSubmanagerObjects.h"
+#import "OCTSubmanagerFriends.h"
 
 static NSString *const kNibName = @"OCTFriendsViewController";
 static NSString *const kFriendIdentifier = @"friendIdent";
 static NSString *const kRequestIdentifier = @"RequestIdent";
 
-@interface OCTFriendsViewController () <NSTableViewDataSource, NSTableViewDelegate>
+@interface OCTFriendsViewController () <NSTableViewDataSource,
+                                        NSTableViewDelegate,
+                                        RBQFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *friendResultsController;
 @property (strong, nonatomic) RBQFetchedResultsController *friendRequestResultsController;
+
+@property (weak) IBOutlet NSButton *acceptButton;
+@property (weak) IBOutlet NSButton *rejectButton;
+@property (weak) IBOutlet NSTextField *friendInfoLabel;
 
 @property (weak) IBOutlet NSTableView *friendsTableView;
 @property (weak) IBOutlet NSTableView *requestsTableView;
@@ -47,8 +54,8 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
                                 initWithFetchRequest:fetchRequest
                                 sectionNameKeyPath:nil
                                 cacheName:nil];
-
-    [_friendRequestResultsController performFetch];
+    _friendResultsController.delegate = self;
+    [_friendResultsController performFetch];
 
     fetchRequest = [self.manager.objects
                     fetchRequestForType:OCTFetchRequestTypeFriendRequest
@@ -58,7 +65,7 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
                                 initWithFetchRequest:fetchRequest
                                 sectionNameKeyPath:nil
                                 cacheName:nil];
-
+    _friendRequestResultsController.delegate = self;
     [_friendRequestResultsController performFetch];
 
     return self;
@@ -67,6 +74,16 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    [self setupRejectAcceptButtons];
+}
+
+- (void)setupRejectAcceptButtons
+{
+    self.acceptButton.target = self;
+    self.acceptButton.action = @selector(acceptFriendRequests);
+    self.rejectButton.target = self;
+    self.rejectButton.action = @selector(rejectFriendRequests);
 }
 
 #pragma mark - NSTableViewDataSource
@@ -89,26 +106,123 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
                   row:(NSInteger)row
 {
     if (tableView == self.friendsTableView) {
-        NSTextField *field = [tableView makeViewWithIdentifier:kFriendIdentifier owner:self];
+        NSButton *field = [tableView
+                           makeViewWithIdentifier:kFriendIdentifier
+                           owner:self];
 
         if (! field) {
-            field = [NSTextField new];
+            field = [NSButton new];
             field.identifier = kFriendIdentifier;
         }
 
         NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
-        field.stringValue = friend.name;
+        field.title = friend.name;
+
+        return field;
     }
 
-    NSButton *button = [NSButton new];
+    NSTextField *field = [tableView makeViewWithIdentifier:kRequestIdentifier owner:self];
+    if (! field) {
+        field = [NSTextField new];
+        field.identifier = kRequestIdentifier;
+    }
     NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
     OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
-    button.title = request.publicKey;
+    field.stringValue = request.publicKey;
+
+    return field;
+}
+
+#pragma mark -  RBQFetchedResultsControllerDelegate
+
+- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
+{
+    NSTableView *tableView = (controller == self.friendRequestResultsController) ? self.requestsTableView : self.friendsTableView;
+
+    [tableView beginUpdates];
+}
+
+- (void) controller:(RBQFetchedResultsController *)controller
+    didChangeObject:(RBQSafeRealmObject *)anObject
+        atIndexPath:(NSIndexPath *)indexPath
+      forChangeType:(RBQFetchedResultsChangeType)type
+       newIndexPath:(NSIndexPath *)newIndexPath
+{
+    NSTableView *tableView = (controller == self.friendRequestResultsController) ? self.requestsTableView : self.friendsTableView;
+
+    NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
+    NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
+    NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
 
 
-    return button;
+    switch (type) {
+        case RBQFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+            break;
+        case RBQFetchedResultsChangeDelete:
+            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
+            break;
+        case RBQFetchedResultsChangeUpdate:
+            [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
+            break;
+        case RBQFetchedResultsChangeMove:
+            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
+            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+            break;
+    }
+}
+
+- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
+{
+    NSTableView *tableView = (controller == self.friendRequestResultsController) ? self.requestsTableView : self.friendsTableView;
+
+    @try {
+        [tableView endUpdates];
+    }
+    @catch (NSException *ex) {
+        [controller reset];
+        [tableView reloadData];
+    }
+}
+
+#pragma mark - Private
+
+- (void)acceptFriendRequests
+{
+    NSInteger selectedRow = self.requestsTableView.selectedRow;
+
+    if (selectedRow == -1) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
+
+    [self.manager.friends approveFriendRequest:request error:nil];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.requestsTableView reloadData];
+    });
+}
+
+- (void)rejectFriendRequests
+{
+    NSInteger selectedRow = self.requestsTableView.selectedRow;
+
+    if (selectedRow == -1) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
+
+    [self.manager.friends removeFriendRequest:request];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.requestsTableView reloadData];
+    });
 }
 
 @end

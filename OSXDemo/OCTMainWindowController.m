@@ -90,8 +90,6 @@ const NSInteger kChatsTag = 2;
             [self switchToFriendWindow];
             break;
     }
-
-
 }
 
 - (void)switchToUsersWindow
@@ -99,7 +97,7 @@ const NSInteger kChatsTag = 2;
     OCTUserViewController *userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
     self.currentViewController = userViewController;
     [self.mainView addSubview:self.currentViewController.view];
-    [self.currentViewController.view setFrame:self.mainView.bounds];
+    self.currentViewController.view.frame = self.mainView.bounds;
 }
 
 - (void)switchToChatWindow
@@ -110,7 +108,22 @@ const NSInteger kChatsTag = 2;
     OCTFriendsViewController *friendsViewController = [[OCTFriendsViewController alloc] initWithManager:self.manager];
     self.currentViewController = friendsViewController;
     [self.mainView addSubview:self.currentViewController.view];
-    [self.currentViewController.view setFrame:self.mainView.bounds];
+
+    NSView *view = self.currentViewController.view;
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(view);
+    [self.mainView addConstraints:[NSLayoutConstraint
+                                              constraintsWithVisualFormat:@"V:|[view]|"
+                                                                options:0
+                                                                metrics:nil
+                                                                views:viewsDictionary]];
+
+    [self.mainView addConstraints:[NSLayoutConstraint
+                                              constraintsWithVisualFormat:@"H:|[view]|"
+                                              options:0
+                                              metrics:nil
+                                              views:viewsDictionary]];
+
+    self.currentViewController.view.frame = self.mainView.bounds;
 }
 
 @end

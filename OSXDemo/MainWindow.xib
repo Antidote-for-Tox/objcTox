@@ -44,12 +44,13 @@
                     </popUpButton>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="R2n-Dr-69O" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="0Lf-Kq-qPY"/>
                     <constraint firstItem="R2n-Dr-69O" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="E2o-lz-EFs"/>
                     <constraint firstAttribute="bottom" secondItem="CNW-XF-8dg" secondAttribute="bottom" constant="20" id="hpM-AG-WYC"/>
+                    <constraint firstAttribute="trailing" secondItem="R2n-Dr-69O" secondAttribute="trailing" id="lU8-U6-IfI"/>
                     <constraint firstItem="R2n-Dr-69O" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="ljm-uX-CRn"/>
                     <constraint firstItem="CNW-XF-8dg" firstAttribute="top" secondItem="R2n-Dr-69O" secondAttribute="bottom" constant="13" id="mIS-ZS-jBL"/>
                     <constraint firstItem="CNW-XF-8dg" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="mTi-kE-v3j"/>
-                    <constraint firstItem="R2n-Dr-69O" firstAttribute="width" secondItem="EiT-Mj-1SZ" secondAttribute="width" id="uyx-Ga-Ii9"/>
                 </constraints>
             </view>
             <point key="canvasLocation" x="407.5" y="432"/>
