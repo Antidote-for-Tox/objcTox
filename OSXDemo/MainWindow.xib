@@ -22,17 +22,17 @@
                 <rect key="frame" x="0.0" y="0.0" width="549" height="390"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R2n-Dr-69O">
-                        <rect key="frame" x="20" y="54" width="430" height="316"/>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="R2n-Dr-69O">
+                        <rect key="frame" x="0.0" y="54" width="549" height="336"/>
                     </customView>
-                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CNW-XF-8dg">
-                        <rect key="frame" x="466" y="51" width="76" height="26"/>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CNW-XF-8dg">
+                        <rect key="frame" x="234" y="17" width="82" height="26"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="d6o-Vl-aIj">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" id="cW9-rl-L4K">
                                 <items>
-                                    <menuItem title="User" state="on" id="FkI-U7-Nc7"/>
+                                    <menuItem title="User" id="FkI-U7-Nc7"/>
                                     <menuItem title="Friends" tag="1" id="ki4-5f-Pc6"/>
                                     <menuItem title="Chat" tag="2" id="WDJ-Uw-UBK"/>
                                 </items>
@@ -43,6 +43,14 @@
                         </popUpButtonCell>
                     </popUpButton>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="R2n-Dr-69O" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="E2o-lz-EFs"/>
+                    <constraint firstAttribute="bottom" secondItem="CNW-XF-8dg" secondAttribute="bottom" constant="20" id="hpM-AG-WYC"/>
+                    <constraint firstItem="R2n-Dr-69O" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="ljm-uX-CRn"/>
+                    <constraint firstItem="CNW-XF-8dg" firstAttribute="top" secondItem="R2n-Dr-69O" secondAttribute="bottom" constant="13" id="mIS-ZS-jBL"/>
+                    <constraint firstItem="CNW-XF-8dg" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="mTi-kE-v3j"/>
+                    <constraint firstItem="R2n-Dr-69O" firstAttribute="width" secondItem="EiT-Mj-1SZ" secondAttribute="width" id="uyx-Ga-Ii9"/>
+                </constraints>
             </view>
             <point key="canvasLocation" x="407.5" y="432"/>
         </window>

@@ -67,7 +67,6 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
 }
 
 #pragma mark - NSTableViewDataSource
