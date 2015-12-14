@@ -7,8 +7,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="OCTMainWindowController">
             <connections>
-                <outlet property="dropDownButton" destination="CNW-XF-8dg" id="2BU-T3-xVR"/>
-                <outlet property="mainView" destination="R2n-Dr-69O" id="aWP-Qg-i4X"/>
+                <outlet property="mainView" destination="EiT-Mj-1SZ" id="s3w-x8-007"/>
+                <outlet property="tabView" destination="dee-pV-kUQ" id="jA8-zB-DNG"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -22,35 +22,36 @@
                 <rect key="frame" x="0.0" y="0.0" width="549" height="390"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="R2n-Dr-69O">
-                        <rect key="frame" x="0.0" y="54" width="549" height="336"/>
-                    </customView>
-                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CNW-XF-8dg">
-                        <rect key="frame" x="234" y="17" width="82" height="26"/>
-                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="d6o-Vl-aIj">
-                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
-                            <menu key="menu" id="cW9-rl-L4K">
-                                <items>
-                                    <menuItem title="User" id="FkI-U7-Nc7"/>
-                                    <menuItem title="Friends" tag="1" id="ki4-5f-Pc6"/>
-                                    <menuItem title="Chat" tag="2" id="WDJ-Uw-UBK"/>
-                                </items>
-                            </menu>
-                            <connections>
-                                <action selector="changeViewSelected:" target="-2" id="JOa-rT-TSL"/>
-                            </connections>
-                        </popUpButtonCell>
-                    </popUpButton>
+                    <tabView initialItem="Vfd-vl-afF" translatesAutoresizingMaskIntoConstraints="NO" id="dee-pV-kUQ">
+                        <rect key="frame" x="-7" y="-10" width="563" height="406"/>
+                        <font key="font" metaFont="system"/>
+                        <tabViewItems>
+                            <tabViewItem label="User" identifier="1" id="Vfd-vl-afF">
+                                <view key="view" id="sND-HD-MEq">
+                                    <rect key="frame" x="10" y="33" width="543" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Friends" identifier="2" id="bll-Ay-CiL">
+                                <view key="view" id="ob7-g2-Mql">
+                                    <rect key="frame" x="10" y="33" width="543" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Chats" identifier="" id="R09-Ir-Pqw">
+                                <view key="view" id="0G4-8E-wi5">
+                                    <rect key="frame" x="10" y="33" width="543" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                        </tabViewItems>
+                    </tabView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="R2n-Dr-69O" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="0Lf-Kq-qPY"/>
-                    <constraint firstItem="R2n-Dr-69O" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="E2o-lz-EFs"/>
-                    <constraint firstAttribute="bottom" secondItem="CNW-XF-8dg" secondAttribute="bottom" constant="20" id="hpM-AG-WYC"/>
-                    <constraint firstAttribute="trailing" secondItem="R2n-Dr-69O" secondAttribute="trailing" id="lU8-U6-IfI"/>
-                    <constraint firstItem="R2n-Dr-69O" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="ljm-uX-CRn"/>
-                    <constraint firstItem="CNW-XF-8dg" firstAttribute="top" secondItem="R2n-Dr-69O" secondAttribute="bottom" constant="13" id="mIS-ZS-jBL"/>
-                    <constraint firstItem="CNW-XF-8dg" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="mTi-kE-v3j"/>
+                    <constraint firstItem="dee-pV-kUQ" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="BwN-kJ-2AQ"/>
+                    <constraint firstItem="dee-pV-kUQ" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="Ege-PX-Ga5"/>
+                    <constraint firstAttribute="trailing" secondItem="dee-pV-kUQ" secondAttribute="trailing" id="Fd3-L2-rxc"/>
+                    <constraint firstAttribute="bottom" secondItem="dee-pV-kUQ" secondAttribute="bottom" id="NTS-88-QqR"/>
                 </constraints>
             </view>
             <point key="canvasLocation" x="407.5" y="432"/>
