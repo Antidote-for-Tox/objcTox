@@ -14,8 +14,7 @@
 #import "OCTSubmanagerFriends.h"
 
 static NSString *const kNibName = @"OCTFriendsViewController";
-static NSString *const kFriendIdentifier = @"friendIdent";
-static NSString *const kRequestIdentifier = @"RequestIdent";
+static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTFriendsViewController () <NSTableViewDataSource,
                                         NSTableViewDelegate,
@@ -105,34 +104,39 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
+    NSTextField *field = [tableView
+                          makeViewWithIdentifier:kCellIdent
+                          owner:self];
+
+    if (! field) {
+        field = [NSTextField new];
+        field.identifier = kCellIdent;
+    }
+
+    field.selectable = YES;
+    field.editable = NO;
+
     if (tableView == self.friendsTableView) {
-        NSButton *field = [tableView
-                           makeViewWithIdentifier:kFriendIdentifier
-                           owner:self];
-
-        if (! field) {
-            field = [NSButton new];
-            field.identifier = kFriendIdentifier;
-        }
-
         NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
-        field.title = friend.name;
+        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat:@"%@ : Online", friend.name] : friend.name;
+
+        field.stringValue = titleString;
 
         return field;
     }
 
-    NSTextField *field = [tableView makeViewWithIdentifier:kRequestIdentifier owner:self];
-    if (! field) {
-        field = [NSTextField new];
-        field.identifier = kRequestIdentifier;
-    }
     NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
     OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
     field.stringValue = request.publicKey;
 
     return field;
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+
 }
 
 #pragma mark -  RBQFetchedResultsControllerDelegate
