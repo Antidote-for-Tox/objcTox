@@ -173,20 +173,30 @@
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="36g-42-IRz">
                     <rect key="frame" x="397" y="228" width="264" height="228"/>
                     <subviews>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iTV-0E-fau">
+                            <rect key="frame" x="69" y="3" width="128" height="32"/>
+                            <buttonCell key="cell" type="push" title="Remove friend" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FwX-AA-flk">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="removeFriendButtonPressed:" target="-2" id="gSY-dA-NDk"/>
+                            </connections>
+                        </button>
                         <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hxk-L9-rxu" userLabel="friendInfoView">
-                            <rect key="frame" x="0.0" y="114" width="264" height="114"/>
+                            <rect key="frame" x="0.0" y="41" width="264" height="187"/>
                             <clipView key="contentView" id="QkX-iq-Jsn">
-                                <rect key="frame" x="1" y="1" width="247" height="112"/>
+                                <rect key="frame" x="1" y="1" width="247" height="185"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <textView editable="NO" importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="sxe-3t-ZJw">
-                                        <rect key="frame" x="0.0" y="0.0" width="247" height="112"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="247" height="185"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <size key="minSize" width="247" height="112"/>
+                                        <size key="minSize" width="247" height="185"/>
                                         <size key="maxSize" width="463" height="10000000"/>
                                         <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <size key="minSize" width="247" height="112"/>
+                                        <size key="minSize" width="247" height="185"/>
                                         <size key="maxSize" width="463" height="10000000"/>
                                     </textView>
                                 </subviews>
@@ -197,20 +207,22 @@
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
                             <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="0kP-1A-VQQ">
-                                <rect key="frame" x="248" y="1" width="15" height="112"/>
+                                <rect key="frame" x="248" y="1" width="15" height="185"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
                         </scrollView>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="Hxk-L9-rxu" firstAttribute="height" secondItem="36g-42-IRz" secondAttribute="height" multiplier="0.5" id="HwR-zA-tJs"/>
+                        <constraint firstItem="iTV-0E-fau" firstAttribute="top" secondItem="Hxk-L9-rxu" secondAttribute="bottom" constant="10" id="BAH-yo-hGN"/>
                         <constraint firstItem="Hxk-L9-rxu" firstAttribute="leading" secondItem="36g-42-IRz" secondAttribute="leading" id="MEA-UR-jqW"/>
                         <constraint firstItem="Hxk-L9-rxu" firstAttribute="top" secondItem="36g-42-IRz" secondAttribute="top" id="PUR-S1-LbY"/>
                         <constraint firstAttribute="trailing" secondItem="Hxk-L9-rxu" secondAttribute="trailing" id="a4U-bh-fuR"/>
+                        <constraint firstItem="iTV-0E-fau" firstAttribute="centerX" secondItem="36g-42-IRz" secondAttribute="centerX" id="bEH-8I-hRg"/>
+                        <constraint firstAttribute="bottom" secondItem="iTV-0E-fau" secondAttribute="bottom" constant="10" id="kG1-PE-oNe"/>
                     </constraints>
                 </customView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="34D-L0-nbV">
-                    <rect key="frame" x="416" y="111" width="225" height="22"/>
+                    <rect key="frame" x="417" y="111" width="224" height="22"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="add friend" drawsBackground="YES" id="rnC-rt-okl">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>

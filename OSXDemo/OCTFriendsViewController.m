@@ -120,7 +120,7 @@ static NSString *const kCellIdent = @"cellIdent";
         NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
-        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat:@"%@ : Online", friend.name] : friend.name;
+        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat:@"%@ : Online", friend.nickname] : friend.nickname;
 
         field.stringValue = titleString;
 
@@ -141,7 +141,7 @@ static NSString *const kCellIdent = @"cellIdent";
         NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
-        self.friendInfoTextField.string = [NSString stringWithFormat:@"Friend\n"
+        self.friendInfoTextField.string = [NSString stringWithFormat:
                                             @"friendNumber %u\n"
                                             @"publicKey %@\n"
                                             @"name %@\n"
@@ -219,12 +219,27 @@ static NSString *const kCellIdent = @"cellIdent";
 }
 
 #pragma mark - Actions
+
 - (IBAction)addFriendReturn:(NSTextField *)sender
 {
     [self.manager.friends
      sendFriendRequestToAddress:sender.stringValue
      message:@"Friend request from objcTox Mac OSX Demo"
      error:nil];
+}
+
+- (IBAction)removeFriendButtonPressed:(NSButton *)sender
+{
+    NSInteger selectedRow = self.friendsTableView.selectedRow;
+
+    if (selectedRow == -1) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
+
+    [self.manager.friends removeFriend:friend error:nil];
 }
 
 #pragma mark - Private
