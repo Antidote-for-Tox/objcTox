@@ -57,15 +57,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
     self.userManager = userManager;
     self.userManager.delegate = self;
 
-    self.title = @"User";
-
     return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
 }
 
 #pragma mark - NSTableViewDataSource
@@ -83,7 +75,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 {
     NSTextField *textField = [tableView makeViewWithIdentifier:kTableViewIdentifier owner:self];
 
-    if (textField == nil) {
+    if (! textField) {
         textField = [NSTextField new];
         textField.identifier = kTableViewIdentifier;
     }
@@ -105,8 +97,6 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 
             return popUpButton;
         }
-
-        if (row == RowNospam) {}
         textField.stringValue = [self descriptionLabelForRow:row];
         textField.delegate = self;
         textField.selectable = (row < 3);

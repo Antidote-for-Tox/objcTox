@@ -33,13 +33,6 @@ static NSString *const kNibName = @"OCTBootStrap";
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    self.title = @"Start";
-}
-
 #pragma mark - Private
 
 - (IBAction)bootstrapButtonTapped:(NSButton *)sender

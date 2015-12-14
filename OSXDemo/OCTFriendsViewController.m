@@ -47,23 +47,23 @@ static NSString *const kCellIdent = @"cellIdent";
 
     RBQFetchRequest *fetchRequest = [self.manager.objects
                                      fetchRequestForType:OCTFetchRequestTypeFriend
-                                     withPredicate:nil];
+                                           withPredicate:nil];
 
     _friendResultsController = [[RBQFetchedResultsController alloc]
                                 initWithFetchRequest:fetchRequest
-                                sectionNameKeyPath:nil
-                                cacheName:nil];
+                                  sectionNameKeyPath:nil
+                                           cacheName:nil];
     _friendResultsController.delegate = self;
     [_friendResultsController performFetch];
 
     fetchRequest = [self.manager.objects
                     fetchRequestForType:OCTFetchRequestTypeFriendRequest
-                    withPredicate:nil];
+                          withPredicate:nil];
 
     _friendRequestResultsController = [[RBQFetchedResultsController alloc]
-                                initWithFetchRequest:fetchRequest
-                                sectionNameKeyPath:nil
-                                cacheName:nil];
+                                       initWithFetchRequest:fetchRequest
+                                         sectionNameKeyPath:nil
+                                                  cacheName:nil];
     _friendRequestResultsController.delegate = self;
     [_friendRequestResultsController performFetch];
 
@@ -100,13 +100,13 @@ static NSString *const kCellIdent = @"cellIdent";
 
 #pragma mark - NSTableViewDelegate
 
-- (NSView *)tableView:(NSTableView *)tableView
-   viewForTableColumn:(NSTableColumn *)tableColumn
-                  row:(NSInteger)row
+- (NSView *) tableView:(NSTableView *)tableView
+    viewForTableColumn:(NSTableColumn *)tableColumn
+                   row:(NSInteger)row
 {
     NSTextField *field = [tableView
                           makeViewWithIdentifier:kCellIdent
-                          owner:self];
+                                           owner:self];
 
     if (! field) {
         field = [NSTextField new];
@@ -120,7 +120,7 @@ static NSString *const kCellIdent = @"cellIdent";
         NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
-        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat:@"%@ : Online", friend.nickname] : friend.nickname;
+        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
 
         field.stringValue = titleString;
 
@@ -142,26 +142,26 @@ static NSString *const kCellIdent = @"cellIdent";
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
         self.friendInfoTextField.string = [NSString stringWithFormat:
-                                            @"friendNumber %u\n"
-                                            @"publicKey %@\n"
-                                            @"name %@\n"
-                                            @"nickname %@\n"
-                                            @"statusMessage %@\n"
-                                            @"status %@\n"
-                                            @"isConnected %d\n"
-                                            @"connectionStatus %@\n"
-                                            @"lastSeenOnline %@\n"
-                                            @"isTyping %d",
-                                            friend.friendNumber,
-                                            friend.publicKey,
-                                            friend.name,
-                                            friend.nickname,
-                                            friend.statusMessage,
-                                            [self stringFromUserStatus:friend.status],
-                                            friend.isConnected,
-                                            [self stringFromConnectionStatus:friend.connectionStatus],
-                                            friend.lastSeenOnline,
-                                            friend.isTyping];
+                                           @"friendNumber %u\n"
+                                           @"publicKey %@\n"
+                                           @"name %@\n"
+                                           @"nickname %@\n"
+                                           @"statusMessage %@\n"
+                                           @"status %@\n"
+                                           @"isConnected %d\n"
+                                           @"connectionStatus %@\n"
+                                           @"lastSeenOnline %@\n"
+                                           @"isTyping %d",
+                                           friend.friendNumber,
+                                           friend.publicKey,
+                                           friend.name,
+                                           friend.nickname,
+                                           friend.statusMessage,
+                                           [self stringFromUserStatus:friend.status],
+                                           friend.isConnected,
+                                           [self stringFromConnectionStatus:friend.connectionStatus],
+                                           friend.lastSeenOnline,
+                                           friend.isTyping];
 
     }
 }
@@ -224,8 +224,8 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     [self.manager.friends
      sendFriendRequestToAddress:sender.stringValue
-     message:@"Friend request from objcTox Mac OSX Demo"
-     error:nil];
+                        message:@"Friend request from objcTox Mac OSX Demo"
+                          error:nil];
 }
 
 - (IBAction)removeFriendButtonPressed:(NSButton *)sender
