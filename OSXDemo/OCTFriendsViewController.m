@@ -187,6 +187,15 @@ static NSString *const kRequestIdentifier = @"RequestIdent";
     }
 }
 
+#pragma mark - Actions
+- (IBAction)addFriendReturn:(NSTextField *)sender
+{
+    [self.manager.friends
+     sendFriendRequestToAddress:sender.stringValue
+     message:@"Friend request from objcTox Mac OSX Demo"
+     error:nil];
+}
+
 #pragma mark - Private
 
 - (void)acceptFriendRequests
