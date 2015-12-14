@@ -9,7 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="OCTFriendsViewController">
             <connections>
                 <outlet property="acceptButton" destination="9Vs-Kt-TIN" id="JpX-Jp-nEt"/>
-                <outlet property="friendInfoLabel" destination="WUd-Wa-DFB" id="ELS-Fg-hLT"/>
+                <outlet property="friendInfoTextField" destination="sxe-3t-ZJw" id="J6k-wW-fnB"/>
                 <outlet property="friendsTableView" destination="ESn-Kc-Dww" id="pgH-Bb-Cjo"/>
                 <outlet property="rejectButton" destination="o0o-3n-uC8" id="6za-Q1-V9J"/>
                 <outlet property="requestsTableView" destination="RSW-Mi-6sH" id="Ffd-m4-9gC"/>
@@ -173,20 +173,40 @@
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="36g-42-IRz">
                     <rect key="frame" x="397" y="228" width="264" height="228"/>
                     <subviews>
-                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="WUd-Wa-DFB">
-                            <rect key="frame" x="8" y="191" width="248" height="17"/>
-                            <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="center" title="Multiline Label" id="vft-Ri-K1y">
-                                <font key="font" metaFont="system"/>
-                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
+                        <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hxk-L9-rxu" userLabel="friendInfoView">
+                            <rect key="frame" x="0.0" y="114" width="264" height="114"/>
+                            <clipView key="contentView" id="QkX-iq-Jsn">
+                                <rect key="frame" x="1" y="1" width="247" height="112"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textView editable="NO" importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="sxe-3t-ZJw">
+                                        <rect key="frame" x="0.0" y="0.0" width="247" height="112"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <size key="minSize" width="247" height="112"/>
+                                        <size key="maxSize" width="463" height="10000000"/>
+                                        <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <size key="minSize" width="247" height="112"/>
+                                        <size key="maxSize" width="463" height="10000000"/>
+                                    </textView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </clipView>
+                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="58C-9n-sHX">
+                                <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </scroller>
+                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="0kP-1A-VQQ">
+                                <rect key="frame" x="248" y="1" width="15" height="112"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </scroller>
+                        </scrollView>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="WUd-Wa-DFB" firstAttribute="leading" secondItem="36g-42-IRz" secondAttribute="leading" constant="10" id="167-Nc-zTm"/>
-                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="WUd-Wa-DFB" secondAttribute="bottom" constant="20" id="EDd-1R-5Hw"/>
-                        <constraint firstAttribute="trailing" secondItem="WUd-Wa-DFB" secondAttribute="trailing" constant="10" id="W1f-Ea-BNH"/>
-                        <constraint firstItem="WUd-Wa-DFB" firstAttribute="top" secondItem="36g-42-IRz" secondAttribute="top" constant="20" id="u0Z-Fp-i5o"/>
+                        <constraint firstItem="Hxk-L9-rxu" firstAttribute="height" secondItem="36g-42-IRz" secondAttribute="height" multiplier="0.5" id="HwR-zA-tJs"/>
+                        <constraint firstItem="Hxk-L9-rxu" firstAttribute="leading" secondItem="36g-42-IRz" secondAttribute="leading" id="MEA-UR-jqW"/>
+                        <constraint firstItem="Hxk-L9-rxu" firstAttribute="top" secondItem="36g-42-IRz" secondAttribute="top" id="PUR-S1-LbY"/>
+                        <constraint firstAttribute="trailing" secondItem="Hxk-L9-rxu" secondAttribute="trailing" id="a4U-bh-fuR"/>
                     </constraints>
                 </customView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="34D-L0-nbV">

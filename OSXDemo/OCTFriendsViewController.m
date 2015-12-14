@@ -26,7 +26,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @property (weak) IBOutlet NSButton *acceptButton;
 @property (weak) IBOutlet NSButton *rejectButton;
-@property (weak) IBOutlet NSTextField *friendInfoLabel;
+@property (unsafe_unretained) IBOutlet NSTextView *friendInfoTextField;
 
 @property (weak) IBOutlet NSTableView *friendsTableView;
 @property (weak) IBOutlet NSTableView *requestsTableView;
@@ -136,7 +136,34 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
+    if (notification.object == self.friendsTableView) {
+        NSInteger selectedRow = self.friendsTableView.selectedRow;
+        NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+        OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
+        self.friendInfoTextField.string = [NSString stringWithFormat:@"Friend\n"
+                                            @"friendNumber %u\n"
+                                            @"publicKey %@\n"
+                                            @"name %@\n"
+                                            @"nickname %@\n"
+                                            @"statusMessage %@\n"
+                                            @"status %@\n"
+                                            @"isConnected %d\n"
+                                            @"connectionStatus %@\n"
+                                            @"lastSeenOnline %@\n"
+                                            @"isTyping %d",
+                                            friend.friendNumber,
+                                            friend.publicKey,
+                                            friend.name,
+                                            friend.nickname,
+                                            friend.statusMessage,
+                                            [self stringFromUserStatus:friend.status],
+                                            friend.isConnected,
+                                            [self stringFromConnectionStatus:friend.connectionStatus],
+                                            friend.lastSeenOnline,
+                                            friend.isTyping];
+
+    }
 }
 
 #pragma mark -  RBQFetchedResultsControllerDelegate
@@ -236,6 +263,30 @@ static NSString *const kCellIdent = @"cellIdent";
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.requestsTableView reloadData];
     });
+}
+
+- (NSString *)stringFromUserStatus:(OCTToxUserStatus)status
+{
+    switch (status) {
+        case OCTToxUserStatusNone:
+            return @"None";
+        case OCTToxUserStatusAway:
+            return @"Away";
+        case OCTToxUserStatusBusy:
+            return @"Busy";
+    }
+}
+
+- (NSString *)stringFromConnectionStatus:(OCTToxConnectionStatus)status
+{
+    switch (status) {
+        case OCTToxConnectionStatusNone:
+            return @"None";
+        case OCTToxConnectionStatusTCP:
+            return @"TCP";
+        case OCTToxConnectionStatusUDP:
+            return @"UDP";
+    }
 }
 
 @end
