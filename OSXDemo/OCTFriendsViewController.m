@@ -70,21 +70,6 @@ static NSString *const kCellIdent = @"cellIdent";
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    [self setupRejectAcceptButtons];
-}
-
-- (void)setupRejectAcceptButtons
-{
-    self.acceptButton.target = self;
-    self.acceptButton.action = @selector(acceptFriendRequests);
-    self.rejectButton.target = self;
-    self.rejectButton.action = @selector(rejectFriendRequests);
-}
-
 #pragma mark - NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -93,9 +78,11 @@ static NSString *const kCellIdent = @"cellIdent";
     if (tableView == self.friendsTableView) {
         return [self.friendResultsController numberOfRowsForSectionIndex:0];
     }
+    else if (tableView == self.requestsTableView) {
+        return [self.friendRequestResultsController numberOfRowsForSectionIndex:0];
+    }
 
-    return [self.friendRequestResultsController numberOfRowsForSectionIndex:0];
-
+    return 0;
 }
 
 #pragma mark - NSTableViewDelegate
@@ -116,20 +103,20 @@ static NSString *const kCellIdent = @"cellIdent";
     field.selectable = YES;
     field.editable = NO;
 
-    if (tableView == self.friendsTableView) {
-        NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
-        OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
-
-        NSString *titleString = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
-
-        field.stringValue = titleString;
-
-        return field;
-    }
 
     NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
-    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
-    field.stringValue = request.publicKey;
+
+    if (tableView == self.friendsTableView) {
+
+        OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
+        field.stringValue = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
+
+    }
+    else if (tableView == self.requestsTableView) {
+        OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
+        field.stringValue = request.publicKey;
+
+    }
 
     return field;
 }
@@ -232,7 +219,7 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     NSInteger selectedRow = self.friendsTableView.selectedRow;
 
-    if (selectedRow == -1) {
+    if (selectedRow < 0) {
         return;
     }
 
@@ -243,12 +230,11 @@ static NSString *const kCellIdent = @"cellIdent";
 }
 
 #pragma mark - Private
-
-- (void)acceptFriendRequests
+- (IBAction)acceptFriendRequests:(NSButton *)sender
 {
     NSInteger selectedRow = self.requestsTableView.selectedRow;
 
-    if (selectedRow == -1) {
+    if (selectedRow < 0) {
         return;
     }
 
@@ -261,12 +247,11 @@ static NSString *const kCellIdent = @"cellIdent";
         [self.requestsTableView reloadData];
     });
 }
-
-- (void)rejectFriendRequests
+- (IBAction)rejectFriendRequests:(NSButton *)sender
 {
     NSInteger selectedRow = self.requestsTableView.selectedRow;
 
-    if (selectedRow == -1) {
+    if (selectedRow < 0) {
         return;
     }
 
@@ -278,6 +263,7 @@ static NSString *const kCellIdent = @"cellIdent";
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.requestsTableView reloadData];
     });
+
 }
 
 - (NSString *)stringFromUserStatus:(OCTToxUserStatus)status
