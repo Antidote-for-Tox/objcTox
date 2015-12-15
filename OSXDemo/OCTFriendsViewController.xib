@@ -163,7 +163,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="acceptFriendRequests:" target="-2" id="DqQ-aM-495"/>
+                        <action selector="proceedWithFriendRequest:" target="-2" id="AkD-0D-685"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o0o-3n-uC8" userLabel="rejectButton">
@@ -173,7 +173,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="rejectFriendRequests:" target="-2" id="FMo-Ox-cOA"/>
+                        <action selector="proceedWithFriendRequest:" target="-2" id="f5k-EF-Ube"/>
                     </connections>
                 </button>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="36g-42-IRz">

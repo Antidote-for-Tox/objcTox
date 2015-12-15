@@ -229,42 +229,30 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.manager.friends removeFriend:friend error:nil];
 }
 
+- (IBAction)proceedWithFriendRequest:(NSButton *)sender
+{
+    NSInteger selectedRow = self.requestsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
+
+    if (sender == self.acceptButton) {
+        [self.manager.friends approveFriendRequest:request error:nil];
+    }
+    else {
+        [self.manager.friends removeFriendRequest:request];
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.requestsTableView reloadData];
+    });
+}
+
 #pragma mark - Private
-- (IBAction)acceptFriendRequests:(NSButton *)sender
-{
-    NSInteger selectedRow = self.requestsTableView.selectedRow;
-
-    if (selectedRow < 0) {
-        return;
-    }
-
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
-
-    [self.manager.friends approveFriendRequest:request error:nil];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.requestsTableView reloadData];
-    });
-}
-- (IBAction)rejectFriendRequests:(NSButton *)sender
-{
-    NSInteger selectedRow = self.requestsTableView.selectedRow;
-
-    if (selectedRow < 0) {
-        return;
-    }
-
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:path];
-
-    [self.manager.friends removeFriendRequest:request];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.requestsTableView reloadData];
-    });
-
-}
 
 - (NSString *)stringFromUserStatus:(OCTToxUserStatus)status
 {
