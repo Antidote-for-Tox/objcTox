@@ -54,8 +54,8 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
         @(RowStatusMessage),
     ];
 
-    self.userManager = userManager;
-    self.userManager.delegate = self;
+    _userManager = userManager;
+    userManager.delegate = self;
 
     return self;
 }
