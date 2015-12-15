@@ -28,7 +28,7 @@ static NSString *const kNibName = @"OCTBootStrap";
         return nil;
     }
 
-    self.configuration = configuration;
+    _configuration = configuration;
 
     return self;
 }
