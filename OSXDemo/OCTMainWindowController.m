@@ -14,10 +14,6 @@
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
 
-const NSInteger kUserTag = 0;
-const NSInteger kFriendsTag = 1;
-const NSInteger kChatsTag = 2;
-
 @interface OCTMainWindowController () <OCTBootStrapViewDelegate>
 
 @property (weak) IBOutlet NSView *mainView;
