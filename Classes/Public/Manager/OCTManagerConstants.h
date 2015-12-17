@@ -204,3 +204,17 @@ typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
          */
         OCTCallPausedStatusByFriend = 1 << 1,
 };
+
+/**
+ * Shortcuts for iPhone OS where there is less choice in audio devices.
+ * Not available on Mac OS X - you must specify a real device ID.
+ */
+
+/* Output to the iPhone speaker. */
+extern NSString *const OCTOutputDeviceSpeaker;
+extern NSString *const OCTOutputDeviceSymphogear;
+
+/* Back camera */
+extern NSString *const OCTInputDeviceBackCamera;
+/* FaceTime camera */
+extern NSString *const OCTInputDeviceFrontCamera;

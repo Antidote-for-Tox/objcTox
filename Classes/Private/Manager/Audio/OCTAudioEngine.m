@@ -5,6 +5,7 @@
 //  Created by Chuong Vu on 5/24/15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
+#if TARGET_OS_IOS
 
 #import "OCTAudioEngine+Private.h"
 #import "OCTToxAV+Private.h"
@@ -539,3 +540,5 @@ OSStatus outputRenderCallBack(void *inRefCon,
 }
 
 @end
+
+#endif
