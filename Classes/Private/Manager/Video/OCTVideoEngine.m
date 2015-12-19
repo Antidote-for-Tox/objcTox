@@ -75,7 +75,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (BOOL)setupWithError:(NSError **)error
 {
     DDLogVerbose(@"%@: setupWithError", self);
+#if TARGET_OS_IPHONE
     AVCaptureDevice *videoCaptureDevice = [self getDeviceForPosition:AVCaptureDevicePositionFront];
+#else
+    AVCaptureDevice *videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+#endif
     AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:videoCaptureDevice error:error];
 
     if (! videoInput) {
@@ -418,7 +422,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
 #else
-#warning TODO audio OSX
 #endif
 }
 
@@ -450,7 +453,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     conn.videoOrientation = orientation;
     self.previewLayer.connection.videoOrientation = orientation;
 #else
-#warning TODO audio OSX
 #endif
 }
 

@@ -147,8 +147,6 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
         [self checkForCurrentActiveCallAndPause];
 
-        [self startEnginesAndTimer:YES forCall:call];
-
         OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
         [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
             call.status = OCTCallStatusActive;
@@ -156,6 +154,7 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
         }];
 
         self.enableMicrophone = YES;
+        [self startEnginesAndTimer:YES forCall:call];
 
         return YES;
     }
