@@ -17,7 +17,8 @@ static const int kDefaultSampleRate = 48000;
 static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
 static const int kFramesPerPacket = 1;
-static const UInt32 kBytesPerSample = sizeof(SInt16);
+static const int kBytesPerSample = sizeof(SInt16);
+static const int kNumberOfAudioQueueBuffers = 2;
 
 @interface OCTAudioQueue ()
 
@@ -29,7 +30,7 @@ static const UInt32 kBytesPerSample = sizeof(SInt16);
 @end
 
 @implementation OCTAudioQueue {
-    AudioQueueBufferRef _AQBuffers[2];
+    AudioQueueBufferRef _AQBuffers[kNumberOfAudioQueueBuffers];
 }
 
 - (instancetype)initWithInputDeviceID:(NSString *)devID
@@ -94,23 +95,27 @@ static const UInt32 kBytesPerSample = sizeof(SInt16);
 
 - (void)begin
 {
-    for (int i = 0; i < 2; ++i) {
+    NSLog(@"OCTAudioQueue begin");
+    for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
         AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels, &(_AQBuffers[i]));
         AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
     }
 
+    NSLog(@"Allocated buffers; starting now!");
     AudioQueueStart(self.audioQueue, NULL);
     self.running = YES;
 }
 
 - (void)stop
 {
+    NSLog(@"OCTAudioQueue stop");
     AudioQueueStop(self.audioQueue, true);
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
         AudioQueueFreeBuffer(self.audioQueue, _AQBuffers[i]);
     }
 
+    NSLog(@"Freed buffers");
     self.running = NO;
 }
 
@@ -130,6 +135,7 @@ static const UInt32 kBytesPerSample = sizeof(SInt16);
     }
     else {
         _deviceID = deviceID;
+        NSLog(@"Successfully set the device id to %@", deviceID);
     }
 
     [self begin];
