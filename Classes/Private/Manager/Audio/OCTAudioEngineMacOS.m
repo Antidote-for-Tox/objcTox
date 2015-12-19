@@ -59,10 +59,11 @@
 
 - (BOOL)startAudioFlow:(NSError *__autoreleasing *)error
 {
-    // TODO: use user-supplied devices!!
     // TODO: handle iOS device model
-    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"AppleHDAEngineOutput:1B,0,1,2:0"];
-    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:@"SoundflowerEngine:0"];
+    // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
+    // we don't set the device explicitly, and the default is used.
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID];
 
     OCTAudioEngine *__weak welf = self;
     self.inputQueue.sendDataBlock = ^(void *data, OCTToxAVSampleCount samples, OCTToxAVSampleRate rate, OCTToxAVChannels channelCount) {

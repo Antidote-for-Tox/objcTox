@@ -17,6 +17,7 @@ static const int kDefaultSampleRate = 48000;
 static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
 static const int kFramesPerPacket = 1;
+static const UInt32 kBytesPerSample = sizeof(SInt16);
 
 @interface OCTAudioQueue ()
 
@@ -27,19 +28,20 @@ static const int kFramesPerPacket = 1;
 
 @end
 
-@implementation OCTAudioQueue
+@implementation OCTAudioQueue {
+    AudioQueueBufferRef _AQBuffers[2];
+}
 
 - (instancetype)initWithInputDeviceID:(NSString *)devID
 {
-    UInt32 bytesPerSample = sizeof(SInt16);
     _streamFmt.mSampleRate = kDefaultSampleRate;
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
     _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;
-    _streamFmt.mBytesPerFrame = bytesPerSample * kNumberOfInputChannels;
-    _streamFmt.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfInputChannels;
+    _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
-    _streamFmt.mBytesPerPacket = bytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
@@ -54,26 +56,19 @@ static const int kFramesPerPacket = 1;
         AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
-    for (int i = 0; i < 2; ++i) {
-        AudioQueueBufferRef newBuf;
-        AudioQueueAllocateBuffer(self.audioQueue, bytesPerSample * kNumberOfInputChannels, &newBuf);
-        AudioQueueEnqueueBuffer(self.audioQueue, newBuf, 0, NULL);
-    }
-
     return self;
 }
 
 - (instancetype)initWithOutputDeviceID:(NSString *)devID
 {
-    UInt32 bytesPerSample = sizeof(SInt16);
     _streamFmt.mSampleRate = kDefaultSampleRate;
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
     _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;
-    _streamFmt.mBytesPerFrame = bytesPerSample * kNumberOfInputChannels;
-    _streamFmt.mBitsPerChannel = kBitsPerByte * bytesPerSample;
+    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfInputChannels;
+    _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
-    _streamFmt.mBytesPerPacket = bytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
@@ -88,12 +83,6 @@ static const int kFramesPerPacket = 1;
         AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
-    for (int i = 0; i < 2; ++i) {
-        AudioQueueBufferRef newBuf;
-        AudioQueueAllocateBuffer(self.audioQueue, bytesPerSample * kNumberOfInputChannels, &newBuf);
-        AudioQueueEnqueueBuffer(self.audioQueue, newBuf, 0, NULL);
-    }
-
     return self;
 }
 
@@ -105,6 +94,11 @@ static const int kFramesPerPacket = 1;
 
 - (void)begin
 {
+    for (int i = 0; i < 2; ++i) {
+        AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels, &(_AQBuffers[i]));
+        AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
+    }
+
     AudioQueueStart(self.audioQueue, NULL);
     self.running = YES;
 }
@@ -112,6 +106,11 @@ static const int kFramesPerPacket = 1;
 - (void)stop
 {
     AudioQueueStop(self.audioQueue, true);
+
+    for (int i = 0; i < 2; ++i) {
+        AudioQueueFreeBuffer(self.audioQueue, _AQBuffers[i]);
+    }
+
     self.running = NO;
 }
 
@@ -122,7 +121,9 @@ static const int kFramesPerPacket = 1;
 
 - (void)setDeviceID:(NSString *)deviceID
 {
-    OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
+    // we need to pause the queue for a sec
+    [self stop];
+    OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &deviceID, sizeof(CFStringRef));
 
     if (ok != 0) {
         NSLog(@"OCTAudioQueue setDeviceID: Error while live setting device to '%@': %d", deviceID, ok);
@@ -130,6 +131,8 @@ static const int kFramesPerPacket = 1;
     else {
         _deviceID = deviceID;
     }
+
+    [self begin];
 }
 
 - (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels
