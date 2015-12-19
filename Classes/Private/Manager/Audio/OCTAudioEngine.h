@@ -11,6 +11,9 @@
 
 @interface OCTAudioEngine : NSObject
 
+@property (copy, nonatomic) NSString *inputDeviceID;
+@property (copy, nonatomic) NSString *outputDeviceID;
+
 @property (weak, nonatomic) OCTToxAV *toxav;
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
 

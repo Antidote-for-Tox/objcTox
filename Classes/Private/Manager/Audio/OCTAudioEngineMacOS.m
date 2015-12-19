@@ -45,6 +45,18 @@
 
 #pragma mark - SPI
 
+- (void)setInputDeviceID:(NSString *)inputDeviceID
+{
+    _inputDeviceID = [inputDeviceID copy];
+    [self.inputQueue setDeviceID:inputDeviceID];
+}
+
+- (void)setOutputDeviceID:(NSString *)outputDeviceID
+{
+    _outputDeviceID = [outputDeviceID copy];
+    [self.outputQueue setDeviceID:outputDeviceID];
+}
+
 - (BOOL)startAudioFlow:(NSError *__autoreleasing *)error
 {
     // TODO: use user-supplied devices!!

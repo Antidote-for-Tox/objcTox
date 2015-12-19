@@ -88,7 +88,8 @@
  * @return YES if successful, otherwise NO.
  */
 - (BOOL)routeAudioToSpeaker:(BOOL)speaker
-                      error:(NSError *__nullable *__nullable)error;
+                      error:(NSError *__nullable *__nullable)error
+    DEPRECATED_MSG_ATTRIBUTE("Use setAudioOutputDevice:.");
 
 /**
  * Send call control to call.
@@ -122,5 +123,16 @@
  * @param error Pointer to error object if there's an issue setting the bitrate.
  */
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(nonnull OCTCall *)call error:(NSError *__nullable *__nullable)error;
+
+/**
+ * Set input source and output targets for A/V.
+ *
+ * On iPhone OS, you must pass one of the OCT[Input|Output]Device...  constants
+ * as the deviceUniqueID.
+ * On OS X, you can get valid deviceUniqueID values from AVFoundation
+ * (AVCaptureDevice uniqueID) or Core Audio (kAudioDevicePropertyDeviceUID).
+ */
+- (BOOL)setAudioInputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
+- (BOOL)setAudioOutputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
 
 @end

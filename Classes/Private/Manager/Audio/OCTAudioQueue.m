@@ -120,6 +120,18 @@ static const int kFramesPerPacket = 1;
     return &_buffer;
 }
 
+- (void)setDeviceID:(NSString *)deviceID
+{
+    OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
+
+    if (ok != 0) {
+        NSLog(@"OCTAudioQueue setDeviceID: Error while live setting device to '%@': %d", deviceID, ok);
+    }
+    else {
+        _deviceID = deviceID;
+    }
+}
+
 - (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels
 {
     AudioQueueSetProperty(self.audioQueue, kAudioQueueDeviceProperty_SampleRate, &sampleRate, sizeof(Float64));

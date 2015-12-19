@@ -244,6 +244,20 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     }
 }
 
+#pragma mark - Setting IO devices
+
+- (BOOL)setAudioInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    self.audioEngine.inputDeviceID = deviceUniqueID;
+    return YES;
+}
+
+- (BOOL)setAudioOutputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    self.audioEngine.outputDeviceID = deviceUniqueID;
+    return YES;
+}
+
 #pragma mark Private methods
 - (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status
 {
