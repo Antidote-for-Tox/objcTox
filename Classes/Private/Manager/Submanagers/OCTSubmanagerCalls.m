@@ -10,6 +10,8 @@
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
+NSString *const OCTInputDeviceBackCamera = @"OCTInputDeviceBackCamera";
+NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 
@@ -61,7 +63,8 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 - (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
 {
-    return [self.videoEngine switchToCameraFront:front error:error];
+    NSLog(@"OCTSubmanagerCalls warning: switchToCameraFront:error: is deprecated. Please use setVideoInputDevice:error: instead.");
+    return [self setVideoInputDevice:front ? OCTInputDeviceFrontCamera : OCTInputDeviceBackCamera error:error];
 }
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
@@ -255,6 +258,12 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 - (BOOL)setAudioOutputDevice:(NSString *)deviceUniqueID error:(NSError **)error
 {
     self.audioEngine.outputDeviceID = deviceUniqueID;
+    return YES;
+}
+
+- (BOOL)setVideoInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    [self.videoEngine switchToCamera:deviceUniqueID error:error];
     return YES;
 }
 

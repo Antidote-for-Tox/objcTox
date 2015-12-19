@@ -30,12 +30,11 @@
 
 /**
  * Use a different camera for input.
- * @param front YES to use the front camera, NO to use the
- * rear camera. Front camera is used by default.
- * @error Pointer to error object.
+ * @param camera The camera's AVFoundation device ID.
+ * @param error Pointer to error object.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error;
+- (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error;
 
 /**
  * Start sending video data.

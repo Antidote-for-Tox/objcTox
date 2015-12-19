@@ -40,7 +40,8 @@
  * @error Pointer to error object.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error;
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error
+    DEPRECATED_MSG_ATTRIBUTE("Use setVideoInputDevice:.");
 
 /**
  * This class is responsible for telling the end-user what calls we have available.
@@ -134,5 +135,6 @@
  */
 - (BOOL)setAudioInputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
 - (BOOL)setAudioOutputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
+- (BOOL)setVideoInputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
 
 @end

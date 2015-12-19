@@ -9,6 +9,7 @@
 #import "OCTVideoEngine.h"
 #import "OCTVideoView.h"
 #import "OCTPixelBufferPool.h"
+#import "OCTManagerConstants.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -102,18 +103,31 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     return YES;
 }
 
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
+- (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error
 {
-    DDLogVerbose(@"%@: switchToCameraFront %d", self, front);
+    AVCaptureDevice *dev = nil;
 
-    AVCaptureDevicePosition position = front ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+    if ((camera == OCTInputDeviceBackCamera) || (camera == OCTInputDeviceFrontCamera)) {
+        AVCaptureDevicePosition position = (camera == OCTInputDeviceBackCamera) ? AVCaptureDevicePositionBack : AVCaptureDevicePositionFront;
+        dev = [self getDeviceForPosition:position];
+    }
+    else {
+        dev = [AVCaptureDevice deviceWithUniqueID:camera];
+    }
+
+    return [self actuallySetCamera:dev error:error];
+}
+
+- (BOOL)actuallySetCamera:(AVCaptureDevice *)dev error:(NSError **)error
+{
+    DDLogVerbose(@"%@: actuallySetCamera: %@", self, dev);
 
     NSArray *inputs = [self.captureSession inputs];
 
     AVCaptureInput *current = [inputs firstObject];
     if ([current isKindOfClass:[AVCaptureDeviceInput class]]) {
         AVCaptureDeviceInput *inputDevice = (AVCaptureDeviceInput *)current;
-        if (inputDevice.device.position == position) {
+        if ([inputDevice.device.uniqueID isEqualToString:dev.uniqueID]) {
             return YES;
         }
     }
@@ -122,9 +136,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         [self.captureSession removeInput:input];
     }
 
-    AVCaptureDevice *camera = [self getDeviceForPosition:position];
-
-    AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:camera error:error];
+    AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:dev error:error];
 
     if (! videoInput) {
         return NO;
