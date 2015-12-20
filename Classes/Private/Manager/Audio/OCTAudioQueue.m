@@ -20,8 +20,39 @@ static const int kFramesPerPacket = 1;
 static const int kBytesPerSample = sizeof(SInt16);
 static const int kNumberOfAudioQueueBuffers = 8;
 
+static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
+{
+    AudioDeviceID devID = 0;
+    OSStatus ok = 0;
+    UInt32 size = sizeof(AudioDeviceID);
+    AudioObjectPropertyAddress address = {
+        .mSelector = sel,
+        .mScope = kAudioObjectPropertyScopeGlobal,
+        .mElement = kAudioObjectPropertyElementMaster
+    };
+
+    ok = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
+    if (ok != kAudioHardwareNoError) {
+        NSLog(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
+        return nil;
+    }
+
+    address.mSelector = kAudioDevicePropertyDeviceUID;
+    CFStringRef unique = NULL;
+    size = sizeof(unique);
+    ok = AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
+    if (ok != kAudioHardwareNoError) {
+        NSLog(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
+        return nil;
+    }
+
+    return (__bridge NSString *)unique;
+}
+
 @interface OCTAudioQueue ()
 
+// use this to track what nil means in terms of audio device
+@property BOOL isOutput;
 @property AudioStreamBasicDescription streamFmt;
 @property AudioQueueRef audioQueue;
 @property (nonatomic) TPCircularBuffer buffer;
@@ -48,6 +79,7 @@ static const int kNumberOfAudioQueueBuffers = 8;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
     _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _isOutput = NO;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
@@ -75,6 +107,7 @@ static const int kNumberOfAudioQueueBuffers = 8;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
     _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _isOutput = YES;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
@@ -131,6 +164,13 @@ static const int kNumberOfAudioQueueBuffers = 8;
 
 - (void)setDeviceID:(NSString *)deviceID
 {
+    if (deviceID == nil) {
+        NSLog(@"using the default device because nil passed to OCTAudioQueue setDeviceID:");
+        deviceID = _OCTGetSystemAudioDevice(self.isOutput ?
+                                            kAudioHardwarePropertyDefaultOutputDevice :
+                                            kAudioHardwarePropertyDefaultInputDevice);
+    }
+
     // we need to pause the queue for a sec
     [self stop];
     OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &deviceID, sizeof(CFStringRef));

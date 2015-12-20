@@ -15,8 +15,8 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-NSString *const OCTInputDeviceDefault = @"OCTInputDeviceDefault";
-NSString *const OCTOutputDeviceDefault = @"OCTOutputDeviceDefault";
+NSString *const OCTInputDeviceDefault = nil;
+NSString *const OCTOutputDeviceDefault = nil;
 NSString *const OCTOutputDeviceSpeaker = @"OCTOutputDeviceSpeaker";
 NSString *const OCTInputDeviceBackCamera = @"OCTInputDeviceBackCamera";
 NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
