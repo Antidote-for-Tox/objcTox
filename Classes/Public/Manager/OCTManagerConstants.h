@@ -206,15 +206,24 @@ typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
 };
 
 /**
- * Shortcuts for iPhone OS where there is less choice in audio devices.
+ * Output to the iPhone speaker.
  * Not available on Mac OS X - you must specify a real device ID.
  */
-
-/* Output to the iPhone speaker. */
 extern NSString *const OCTOutputDeviceSpeaker;
-extern NSString *const OCTOutputDeviceSymphogear;
+/**
+ * Reset the output destination.
+ * On OS X, this represents the output device configured in System Preferences.
+ */
+extern NSString *const OCTOutputDeviceDefault;
+extern NSString *const OCTInputDeviceDefault;
 
-/* Back camera */
+/**
+ * Back camera.
+ * Not available on Mac OS X.
+ */
 extern NSString *const OCTInputDeviceBackCamera;
-/* FaceTime camera */
+/**
+ * Front (FaceTime) camera.
+ * Not available on Mac OS X.
+ */
 extern NSString *const OCTInputDeviceFrontCamera;

@@ -35,7 +35,12 @@ static const int kNumberOfAudioQueueBuffers = 8;
 
 - (instancetype)initWithInputDeviceID:(NSString *)devID
 {
+#if TARGET_OS_IPHONE
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    _streamFmt.mSampleRate = session.sampleRate;
+#else
     _streamFmt.mSampleRate = kDefaultSampleRate;
+#endif
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
     _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;

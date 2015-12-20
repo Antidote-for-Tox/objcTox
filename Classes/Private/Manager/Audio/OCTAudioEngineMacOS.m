@@ -15,6 +15,12 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
+NSString *const OCTInputDeviceDefault = @"OCTInputDeviceDefault";
+NSString *const OCTOutputDeviceDefault = @"OCTOutputDeviceDefault";
+NSString *const OCTOutputDeviceSpeaker = @"OCTOutputDeviceSpeaker";
+NSString *const OCTInputDeviceBackCamera = @"OCTInputDeviceBackCamera";
+NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
+
 @import AVFoundation;
 
 @interface OCTAudioEngine ()
@@ -47,18 +53,50 @@
 
 - (void)setInputDeviceID:(NSString *)inputDeviceID
 {
-    _inputDeviceID = [inputDeviceID copy];
+#if TARGET_OS_IPHONE
+    [NSException raise:NSGenericException format:@"setInputDeviceID: is not available on iOS."];
+#else
+    _inputDeviceID = inputDeviceID;
     [self.inputQueue setDeviceID:inputDeviceID];
+#endif
 }
 
 - (void)setOutputDeviceID:(NSString *)outputDeviceID
 {
-    _outputDeviceID = [outputDeviceID copy];
+#if TARGET_OS_IPHONE
+    _outputDeviceID = outputDeviceID;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    AVAudioSessionPortOverride override;
+    if (outputDeviceID == OCTOutputDeviceSpeaker) {
+        override = AVAudioSessionPortOverrideSpeaker
+    }
+    else {
+        override = AVAudioSessionPortOverrideNone;
+    }
+
+    // TODO: error parameters!
+    [session overrideOutputAudioPort:override error:nil];
+#else
+    _outputDeviceID = outputDeviceID;
     [self.outputQueue setDeviceID:outputDeviceID];
+#endif
 }
 
 - (BOOL)startAudioFlow:(NSError *__autoreleasing *)error
 {
+#if TARGET_OS_IPHONE
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    if (!
+        [session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+        [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
+        [session setMode:AVAudioSessionModeVoiceChat error:error] &&
+        [session setActive:YES error:error]) {
+        return NO;
+    }
+#endif
+
     // TODO: handle iOS device model
     // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
     // we don't set the device explicitly, and the default is used.
@@ -90,7 +128,14 @@
     [self.inputQueue stop];
     [self.outputQueue stop];
 
-    return YES;
+#if TARGET_OS_IPHONE
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    BOOL ret = [session setActive:NO error:error];
+#else
+    BOOL ret = YES;
+#endif
+
+    return ret;
 }
 
 - (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate fromFriend:(OCTToxFriendNumber)friendNumber
@@ -105,6 +150,7 @@
 
 - (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError *__autoreleasing *)error
 {
+    [self setOutputDeviceID:speaker ? OCTOutputDeviceSpeaker : OCTOutputDeviceDefault];
     return YES;
 }
 

@@ -10,8 +10,6 @@
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
-NSString *const OCTInputDeviceBackCamera = @"OCTInputDeviceBackCamera";
-NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 @interface OCTSubmanagerCalls () <OCTToxAVDelegate>
 

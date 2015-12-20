@@ -11,6 +11,15 @@
 
 @import AVFoundation;
 
+extern int kBufferLength;
+extern int kNumberOfInputChannels;
+extern int kDefaultSampleRate;
+extern int kSampleCount;
+extern int kBitsPerByte;
+extern int kFramesPerPacket;
+extern int kBytesPerSample;
+extern int kNumberOfAudioQueueBuffers;
+
 /**
  * OCTAudioEngine functions
  */
