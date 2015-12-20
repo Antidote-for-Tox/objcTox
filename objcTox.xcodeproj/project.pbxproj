@@ -298,6 +298,8 @@
 		F09D0A471C1B9877008E74AF /* OCTUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09D0A451C1B9877008E74AF /* OCTUserViewController.xib */; };
 		F0EAD8431C1A38DA0056587D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8421C1A38DA0056587D /* MainWindow.xib */; };
 		F0EAD8451C1A58B20056587D /* OCTBootStrap.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8441C1A58B20056587D /* OCTBootStrap.xib */; };
+		F5F6FA1F1C268B5000607306 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
+		F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -549,6 +551,8 @@
 		F5BC99BF1C2A1C4600425CE3 /* test_stride13p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_stride13p.h; sourceTree = "<group>"; };
 		F5BC99C01C2A1E2500425CE3 /* test_backwards_stride13p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_backwards_stride13p.h; sourceTree = "<group>"; };
 		F5BC99C11C2A1EAB00425CE3 /* test_backwards_3p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_backwards_3p.h; sourceTree = "<group>"; };
+		F5F6FA1D1C268B5000607306 /* OCTAudioQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTAudioQueue.h; sourceTree = "<group>"; };
+		F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTAudioQueue.m; sourceTree = "<group>"; };
 		F967399BFF7F28425C5194F0E5552BCA /* OCTManagerConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerConfiguration.h; sourceTree = "<group>"; };
 		FE517D2AD019ACD3B88B8A455D827F22 /* libPods-objcToxDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -604,6 +608,8 @@
 				11D650CE1B89225400C3DD23 /* OCTAudioEngine.h */,
 				11D650CF1B89225400C3DD23 /* OCTAudioEngine.m */,
 				11D651311B8924DA00C3DD23 /* OCTAudioEngine+Private.h */,
+				F5F6FA1D1C268B5000607306 /* OCTAudioQueue.h */,
+				F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -1490,6 +1496,7 @@
 				9CB44BFC1B84D9E1007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44BE31B84D9E1007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44BF61B84D9E1007FA7B6 /* OCTManagerConstants.m in Sources */,
+				F5F6FA1F1C268B5000607306 /* OCTAudioQueue.m in Sources */,
 				9CB44BF91B84D9E1007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C051B84D9E1007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44C041B84D9E1007FA7B6 /* RLMArray+Utilities.m in Sources */,
@@ -1620,6 +1627,7 @@
 				11E80D851B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */,
 				9CB44C391B84DCCC007FA7B6 /* main.m in Sources */,
 				9CB44C681B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
+				F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */,
 				119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 				9CB44C5F1B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
 				9CB44C6C1B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
