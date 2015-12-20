@@ -12,6 +12,7 @@
 #import "OCTFriendRequest.h"
 #import "OCTSubmanagerObjects.h"
 #import "OCTSubmanagerFriends.h"
+#import "OCTSubmanagerChats.h"
 
 static NSString *const kNibName = @"OCTFriendsViewController";
 static NSString *const kCellIdent = @"cellIdent";
@@ -227,6 +228,20 @@ static NSString *const kCellIdent = @"cellIdent";
     OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
     [self.manager.friends removeFriend:friend error:nil];
+}
+
+- (IBAction)createChatButtonPressed:(NSButton *)sender
+{
+    NSInteger selectedRow = self.friendsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
+
+    [self.manager.chats getOrCreateChatWithFriend:friend];
 }
 
 - (IBAction)proceedWithFriendRequest:(NSButton *)sender
