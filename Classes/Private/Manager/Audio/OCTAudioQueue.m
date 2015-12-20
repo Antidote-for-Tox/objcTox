@@ -9,7 +9,9 @@
 #import "OCTToxAV.h"
 #import "OCTAudioQueue.h"
 #import "TPCircularBuffer.h"
-#import <AudioToolbox/AudioToolbox.h>
+
+@import AVFoundation;
+@import AudioToolbox;
 
 static const int kBufferLength = 384000;
 static const int kNumberOfInputChannels = 2;
@@ -20,6 +22,7 @@ static const int kFramesPerPacket = 1;
 static const int kBytesPerSample = sizeof(SInt16);
 static const int kNumberOfAudioQueueBuffers = 8;
 
+#if !TARGET_OS_IPHONE
 static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     AudioDeviceID devID = 0;
@@ -48,6 +51,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
     return (__bridge NSString *)unique;
 }
+#endif
 
 @interface OCTAudioQueue ()
 
@@ -164,6 +168,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
 - (void)setDeviceID:(NSString *)deviceID
 {
+#if !TARGET_OS_IPHONE
     if (deviceID == nil) {
         NSLog(@"using the default device because nil passed to OCTAudioQueue setDeviceID:");
         deviceID = _OCTGetSystemAudioDevice(self.isOutput ?
@@ -184,6 +189,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     [self begin];
+#endif
 }
 
 - (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels
