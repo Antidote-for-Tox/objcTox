@@ -26,7 +26,7 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 @property (nonatomic, strong) OCTAudioQueue *outputQueue;
 @property (nonatomic, strong) OCTAudioQueue *inputQueue;
 
-@property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
+// @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 @property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
 
@@ -143,6 +143,9 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
         [self.outputQueue updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)channels];
+
+        self.outputSampleRate = sampleRate;
+        self.outputNumberOfChannels = channels;
     }
 }
 
