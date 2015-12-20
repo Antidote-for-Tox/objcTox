@@ -18,7 +18,7 @@ static const int kSampleCount = 1920;
 static const int kBitsPerByte = 8;
 static const int kFramesPerPacket = 1;
 static const int kBytesPerSample = sizeof(SInt16);
-static const int kNumberOfAudioQueueBuffers = 2;
+static const int kNumberOfAudioQueueBuffers = 8;
 
 @interface OCTAudioQueue ()
 
