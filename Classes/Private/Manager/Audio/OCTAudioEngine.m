@@ -67,7 +67,7 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
     AVAudioSessionPortOverride override;
     if (outputDeviceID == OCTOutputDeviceSpeaker) {
-        override = AVAudioSessionPortOverrideSpeaker
+        override = AVAudioSessionPortOverrideSpeaker;
     }
     else {
         override = AVAudioSessionPortOverrideNone;

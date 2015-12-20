@@ -13,16 +13,16 @@
 @import AVFoundation;
 @import AudioToolbox;
 
-static const int kBufferLength = 384000;
-static const int kNumberOfInputChannels = 2;
-static const int kDefaultSampleRate = 48000;
-static const int kSampleCount = 1920;
-static const int kBitsPerByte = 8;
-static const int kFramesPerPacket = 1;
-static const int kBytesPerSample = sizeof(SInt16);
-static const int kNumberOfAudioQueueBuffers = 8;
+const int kBufferLength = 384000;
+const int kNumberOfInputChannels = 2;
+const int kDefaultSampleRate = 48000;
+const int kSampleCount = 1920;
+const int kBitsPerByte = 8;
+const int kFramesPerPacket = 1;
+const int kBytesPerSample = sizeof(SInt16);
+const int kNumberOfAudioQueueBuffers = 8;
 
-#if !TARGET_OS_IPHONE
+#if ! TARGET_OS_IPHONE
 static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     AudioDeviceID devID = 0;
@@ -168,7 +168,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
 - (void)setDeviceID:(NSString *)deviceID
 {
-#if !TARGET_OS_IPHONE
+#if ! TARGET_OS_IPHONE
     if (deviceID == nil) {
         NSLog(@"using the default device because nil passed to OCTAudioQueue setDeviceID:");
         deviceID = _OCTGetSystemAudioDevice(self.isOutput ?
