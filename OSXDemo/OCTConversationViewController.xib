@@ -19,19 +19,19 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="29" horizontalPageScroll="10" verticalLineScroll="29" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LtX-5e-me2">
-                    <rect key="frame" x="0.0" y="0.0" width="239" height="272"/>
+                    <rect key="frame" x="0.0" y="41" width="239" height="231"/>
                     <clipView key="contentView" id="k81-ad-n1w">
-                        <rect key="frame" x="1" y="0.0" width="237" height="271"/>
+                        <rect key="frame" x="1" y="0.0" width="237" height="230"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="27" rowSizeStyle="automatic" headerView="mzu-O4-OBb" viewBased="YES" id="PwP-zX-WIB">
-                                <rect key="frame" x="0.0" y="0.0" width="237" height="248"/>
+                                <rect key="frame" x="0.0" y="0.0" width="237" height="207"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn width="116" minWidth="40" maxWidth="1000" id="K5L-L6-3yD">
+                                    <tableColumn width="234" minWidth="40" maxWidth="1000" id="K5L-L6-3yD">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Chats">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -45,7 +45,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="vyZ-eB-mdi">
-                                                <rect key="frame" x="1" y="1" width="116" height="27"/>
+                                                <rect key="frame" x="1" y="1" width="234" height="27"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ndp-hY-Dej">
@@ -88,11 +88,23 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="l4O-Ce-roz">
+                    <rect key="frame" x="64" y="3" width="112" height="32"/>
+                    <buttonCell key="cell" type="push" title="Delete Chat" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YQ5-VB-gcm">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="deleteChatButtonPressed:" target="-2" id="HWv-Rg-jEq"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="LtX-5e-me2" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="3o0-ex-7Yz"/>
-                <constraint firstAttribute="bottom" secondItem="LtX-5e-me2" secondAttribute="bottom" id="PcP-A8-eSS"/>
+                <constraint firstItem="l4O-Ce-roz" firstAttribute="centerX" secondItem="PwP-zX-WIB" secondAttribute="centerX" id="EEF-bg-96g"/>
+                <constraint firstAttribute="bottom" secondItem="l4O-Ce-roz" secondAttribute="bottom" constant="10" id="EXT-aC-ip0"/>
                 <constraint firstItem="LtX-5e-me2" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="bl3-3C-KbC"/>
+                <constraint firstItem="l4O-Ce-roz" firstAttribute="top" secondItem="LtX-5e-me2" secondAttribute="bottom" constant="10" id="cNY-6x-4aP"/>
             </constraints>
         </customView>
     </objects>

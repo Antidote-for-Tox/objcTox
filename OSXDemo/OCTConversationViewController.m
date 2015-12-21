@@ -57,6 +57,18 @@ static NSString *const kCellIdent = @"cellIdent";
     [super viewDidLoad];
 }
 
+#pragma mark - Actions
+
+- (IBAction)deleteChatButtonPressed:(NSButton *)sender
+{
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+    [self.manager.chats removeChatWithAllMessages:chat];
+}
+
+
 #pragma mark - NSTableViewDelegate
 
 - (NSView *) tableView:(NSTableView *)tableView
