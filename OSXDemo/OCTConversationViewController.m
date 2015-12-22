@@ -12,6 +12,8 @@
 #import "OCTSubmanagerChats.h"
 #import "OCTFriend.h"
 #import "OCTChat.h"
+#import "OCTMessageAbstract.h"
+#import "OCTMessageText.h"
 
 static NSString *const kCellIdent = @"cellIdent";
 
@@ -22,7 +24,9 @@ static NSString *const kCellIdent = @"cellIdent";
 @property (weak) IBOutlet NSTableView *chatsViewController;
 @property (strong, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *chatResultsController;
+@property (strong, nonatomic) RBQFetchedResultsController *conversationResultsController;
 @property (weak) IBOutlet NSTableView *chatsTableView;
+@property (weak) IBOutlet NSTableView *conversationTableView;
 
 @end
 
@@ -49,6 +53,8 @@ static NSString *const kCellIdent = @"cellIdent";
     _chatResultsController.delegate = self;
     [_chatResultsController performFetch];
 
+    _conversationResultsController = [RBQFetchedResultsController new];
+
     return self;
 }
 
@@ -68,6 +74,27 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.manager.chats removeChatWithAllMessages:chat];
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    if (notification.object != self.chatsTableView) {
+        return;
+    }
+
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
+    [self.conversationResultsController updateFetchRequest:fetchRequest
+                                        sectionNameKeyPath:nil
+                                            andPeformFetch:YES];
+}
 
 #pragma mark - NSTableViewDelegate
 
@@ -98,6 +125,12 @@ static NSString *const kCellIdent = @"cellIdent";
         field.stringValue = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
 
     }
+    else {
+        OCTMessageAbstract *messageAbstract = [self.conversationResultsController objectAtIndexPath:path];
+        if (messageAbstract.messageText) {
+            field.stringValue = messageAbstract.messageText.description;
+        }
+    }
 
     return field;
 }
@@ -109,6 +142,10 @@ static NSString *const kCellIdent = @"cellIdent";
     if (tableView == self.chatsTableView) {
         return [self.chatResultsController numberOfRowsForSectionIndex:0];
     }
+    else {
+        return [self.conversationResultsController numberOfRowsForSectionIndex:0];
+    }
+
     return 0;
 }
 
@@ -125,7 +162,7 @@ static NSString *const kCellIdent = @"cellIdent";
       forChangeType:(RBQFetchedResultsChangeType)type
        newIndexPath:(NSIndexPath *)newIndexPath
 {
-    NSTableView *tableView = self.chatsTableView;
+    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
 
     NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
     NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
