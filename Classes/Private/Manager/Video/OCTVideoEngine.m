@@ -215,7 +215,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     OCTVideoView *feed = self.videoView;
 
     if (! feed) {
-        feed = [[OCTVideoView alloc] initWithFrame:CGRectZero];
+        feed = [OCTVideoView view];
         self.videoView = feed;
     }
 
@@ -421,7 +421,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                              selector:@selector(orientationChanged)
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
-#else
 #endif
 }
 
@@ -452,7 +451,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     conn.videoOrientation = orientation;
     self.previewLayer.connection.videoOrientation = orientation;
-#else
 #endif
 }
 
