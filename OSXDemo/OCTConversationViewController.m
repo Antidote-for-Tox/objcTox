@@ -60,11 +60,6 @@ static NSString *const kCellIdent = @"cellIdent";
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
 #pragma mark - Actions
 
 - (IBAction)deleteChatButtonPressed:(NSButton *)sender

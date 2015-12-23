@@ -71,10 +71,6 @@
 
 - (void)setupTabControllers
 {
-    NSTabViewItem *userViewItem = [self.tabView tabViewItemAtIndex:0];
-    self.userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
-    userViewItem.view = self.userViewController.view;
-
     NSTabViewItem *friendViewItem = [self.tabView tabViewItemAtIndex:1];
     self.friendUserViewController = [[OCTFriendsViewController alloc] initWithManager:self.manager];
     friendViewItem.view = self.friendUserViewController.view;
@@ -82,6 +78,10 @@
     NSTabViewItem *conversationViewItem = [self.tabView tabViewItemAtIndex:2];
     self.conversationViewController = [[OCTConversationViewController alloc] initWithManager:self.manager];
     conversationViewItem.view = self.conversationViewController.view;
+
+    NSTabViewItem *userViewItem = [self.tabView tabViewItemAtIndex:0];
+    self.userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
+    userViewItem.view = self.userViewController.view;
 }
 
 @end
