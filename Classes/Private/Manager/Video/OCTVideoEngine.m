@@ -236,6 +236,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     CVPixelBufferLockBaseAddress(bufferRef, 0);
 
     OCTToxAVPlaneData *ySource = yPlane;
+    // if stride is negative, start reading from the left of the last row
+    if (yStride < 0) {
+        ySource = ySource + ((-yStride) * (height - 1));
+    }
+
     uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
 
     /* Copy yPlane data */
@@ -248,7 +253,15 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     /* Interweave U and V */
     uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
     OCTToxAVPlaneData *uSource = uPlane;
+    if (uStride < 0) {
+        uSource = uSource + ((-uStride) * ((height / 2) - 1));
+    }
+
     OCTToxAVPlaneData *vSource = vPlane;
+    if (vStride < 0) {
+        vSource = vSource + ((-vStride) * ((height / 2) - 1));
+    }
+
     for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
         for (size_t index = 0; index < uvBytesPerRow; index++) {
             uvDestinationPlane[index * 2] = uSource[index];

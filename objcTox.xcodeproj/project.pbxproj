@@ -539,6 +539,11 @@
 		F09D0A451C1B9877008E74AF /* OCTUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTUserViewController.xib; sourceTree = "<group>"; };
 		F0EAD8421C1A38DA0056587D /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F0EAD8441C1A58B20056587D /* OCTBootStrap.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTBootStrap.xib; sourceTree = "<group>"; };
+		F5BC99BD1C2A175700425CE3 /* test_straight3p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_straight3p.h; sourceTree = "<group>"; };
+		F5BC99BE1C2A1AB800425CE3 /* test_good.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_good.h; sourceTree = "<group>"; };
+		F5BC99BF1C2A1C4600425CE3 /* test_stride13p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_stride13p.h; sourceTree = "<group>"; };
+		F5BC99C01C2A1E2500425CE3 /* test_backwards_stride13p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_backwards_stride13p.h; sourceTree = "<group>"; };
+		F5BC99C11C2A1EAB00425CE3 /* test_backwards_3p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_backwards_3p.h; sourceTree = "<group>"; };
 		F967399BFF7F28425C5194F0E5552BCA /* OCTManagerConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerConfiguration.h; sourceTree = "<group>"; };
 		FE517D2AD019ACD3B88B8A455D827F22 /* libPods-objcToxDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objcToxDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -992,6 +997,7 @@
 				112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */,
 				9CB44CAF1B84DF46007FA7B6 /* OCTToxTests.m */,
 				11D6512E1B89238F00C3DD23 /* OCTVideoEngineTests.m */,
+				F5BC99BC1C2A171D00425CE3 /* YUVPlanes */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1072,6 +1078,18 @@
 				EEE0165339DE12FD2EE1821ACE3E19B8 /* OCTToxOptions.h */,
 			);
 			path = Wrapper;
+			sourceTree = "<group>";
+		};
+		F5BC99BC1C2A171D00425CE3 /* YUVPlanes */ = {
+			isa = PBXGroup;
+			children = (
+				F5BC99C01C2A1E2500425CE3 /* test_backwards_stride13p.h */,
+				F5BC99C11C2A1EAB00425CE3 /* test_backwards_3p.h */,
+				F5BC99BF1C2A1C4600425CE3 /* test_stride13p.h */,
+				F5BC99BE1C2A1AB800425CE3 /* test_good.h */,
+				F5BC99BD1C2A175700425CE3 /* test_straight3p.h */,
+			);
+			path = YUVPlanes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
