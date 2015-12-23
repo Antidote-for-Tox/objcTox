@@ -13,6 +13,7 @@
 #import "OCTFriend.h"
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
+#import "OCTSubmanagerUser.h"
 #import "OCTMessageText.h"
 
 static NSString *const kCellIdent = @"cellIdent";
@@ -156,7 +157,12 @@ static NSString *const kCellIdent = @"cellIdent";
     else {
         OCTMessageAbstract *messageAbstract = [self.conversationResultsController objectAtIndexPath:path];
         if (messageAbstract.messageText) {
-            field.stringValue = messageAbstract.messageText.text;
+            if (messageAbstract.sender) {
+                field.stringValue = [NSString stringWithFormat:@"%@: %@", messageAbstract.sender.nickname, messageAbstract.messageText.text];
+            }
+            else {
+                field.stringValue = [NSString stringWithFormat:@"%@: %@", self.manager.user.userName, messageAbstract.messageText.text];
+            }
         }
     }
 
