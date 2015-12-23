@@ -158,8 +158,6 @@
     self.videoEngine.videoView = OCMClassMock([OCTVideoView class]);
     id ciMock = OCMClassMock([CIImage class]);
 
-    __block BOOL pass = NO;
-
     OCMStub([ciMock imageWithCVPixelBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
         CVPixelBufferRef pb = NULL;
         [invocation getArgument:&pb atIndex:2];
@@ -174,8 +172,6 @@
 
         XCTAssertEqual(memcmp(y, test_good_y, sizeof(test_good_y)), 0);
         XCTAssertEqual(memcmp(uv, test_good_uv, sizeof(test_good_uv)), 0);
-
-        pass = YES;
 
         void *ret = nil;
         [invocation setReturnValue:&ret];
@@ -192,7 +188,7 @@
                                     friendNumber:10];
 
     dispatch_sync(self.videoEngine.processingQueue, ^{
-        XCTAssertTrue(pass);
+        OCMVerify([ciMock imageWithCVPixelBuffer:[OCMArg anyPointer]]);
     });
 }
 
