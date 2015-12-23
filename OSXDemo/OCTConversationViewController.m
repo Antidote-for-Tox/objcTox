@@ -19,7 +19,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTConversationViewController () <NSTableViewDataSource,
                                              NSTableViewDelegate,
-                                             RBQFetchedResultsControllerDelegate>
+                                             RBQFetchedResultsControllerDelegate, NSTextFieldDelegate>
 
 @property (weak) IBOutlet NSTableView *chatsViewController;
 @property (strong, nonatomic) OCTManager *manager;
@@ -54,6 +54,7 @@ static NSString *const kCellIdent = @"cellIdent";
     [_chatResultsController performFetch];
 
     _conversationResultsController = [RBQFetchedResultsController new];
+    _conversationResultsController.delegate = self;
 
     return self;
 }
@@ -68,9 +69,15 @@ static NSString *const kCellIdent = @"cellIdent";
 - (IBAction)deleteChatButtonPressed:(NSButton *)sender
 {
     NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
     NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
 
     OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
     [self.manager.chats removeChatWithAllMessages:chat];
 }
 
@@ -89,11 +96,32 @@ static NSString *const kCellIdent = @"cellIdent";
     NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
     OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
-    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
-    [self.conversationResultsController updateFetchRequest:fetchRequest
-                                        sectionNameKeyPath:nil
-                                            andPeformFetch:YES];
+    [self updateConversationControllerForChat:chat];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.conversationTableView reloadData];
+    });
+}
+
+#pragma mark - NSTextFieldDelegate
+
+- (IBAction)chatTextFieldEntered:(NSTextField *)sender
+{
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
+    [self.manager.chats sendMessageToChat:chat
+                                     text:sender.stringValue
+                                     type:OCTToxMessageTypeNormal
+                                    error:nil];
+    sender.stringValue = @"";
+
 }
 
 #pragma mark - NSTableViewDelegate
@@ -128,11 +156,16 @@ static NSString *const kCellIdent = @"cellIdent";
     else {
         OCTMessageAbstract *messageAbstract = [self.conversationResultsController objectAtIndexPath:path];
         if (messageAbstract.messageText) {
-            field.stringValue = messageAbstract.messageText.description;
+            field.stringValue = messageAbstract.messageText.text;
         }
     }
 
     return field;
+}
+
+- (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
+{
+    return 50.0;
 }
 
 #pragma mark - NSTableViewDataSource
@@ -153,7 +186,8 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
 {
-    [self.chatsTableView beginUpdates];
+    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
+    [tableView beginUpdates];
 }
 
 - (void) controller:(RBQFetchedResultsController *)controller
@@ -164,32 +198,37 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
 
-    NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
-    NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
-    NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
+        NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
+        NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
 
 
-    switch (type) {
-        case RBQFetchedResultsChangeInsert:
-            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-        case RBQFetchedResultsChangeDelete:
-            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-            break;
-        case RBQFetchedResultsChangeUpdate:
-            [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
-            break;
-        case RBQFetchedResultsChangeMove:
-            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-    }
+        switch (type) {
+            case RBQFetchedResultsChangeInsert:
+                [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+                break;
+            case RBQFetchedResultsChangeDelete:
+                if (tableView == self.chatsViewController) {
+                    [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
+                    [self selectFirstChat];
+                }
+                break;
+            case RBQFetchedResultsChangeUpdate:
+                [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
+                break;
+            case RBQFetchedResultsChangeMove:
+                [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
+                [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+                break;
+        }
+    });
 }
 
 - (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
 {
 
-    NSTableView *tableView = self.chatsTableView;
+    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
 
     @try {
         [tableView endUpdates];
@@ -200,5 +239,25 @@ static NSString *const kCellIdent = @"cellIdent";
     }
 }
 
+#pragma mark - Private
 
+- (void)updateConversationControllerForChat:(OCTChat *)chat
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
+    [self.conversationResultsController updateFetchRequest:fetchRequest
+                                        sectionNameKeyPath:nil
+                                            andPeformFetch:YES];
+}
+
+- (void)selectFirstChat
+{
+    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
+    if (chat) {
+        NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex:0];
+        [self.chatsTableView selectRowIndexes:indexSet byExtendingSelection:NO];
+    }
+}
 @end
