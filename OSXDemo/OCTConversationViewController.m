@@ -77,28 +77,6 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.manager.chats removeChatWithAllMessages:chat];
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)notification
-{
-    if (notification.object != self.chatsTableView) {
-        return;
-    }
-
-    NSInteger selectedRow = self.chatsTableView.selectedRow;
-
-    if (selectedRow < 0) {
-        return;
-    }
-
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
-
-    [self updateConversationControllerForChat:chat];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.conversationTableView reloadData];
-    });
-}
-
 #pragma mark - NSTextFieldDelegate
 
 - (IBAction)chatTextFieldEntered:(NSTextField *)sender
@@ -164,6 +142,26 @@ static NSString *const kCellIdent = @"cellIdent";
     return field;
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    if (notification.object != self.chatsTableView) {
+        return;
+    }
+
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
+    [self updateConversationControllerForChat:chat];
+
+    [self.conversationTableView reloadData];
+}
+
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
     return 50.0;
@@ -199,31 +197,29 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
-        NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
-        NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
+    NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
+    NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
+    NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
 
 
-        switch (type) {
-            case RBQFetchedResultsChangeInsert:
-                [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-                break;
-            case RBQFetchedResultsChangeDelete:
-                if (tableView == self.chatsViewController) {
-                    [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-                    [self selectFirstChat];
-                }
-                break;
-            case RBQFetchedResultsChangeUpdate:
-                [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
-                break;
-            case RBQFetchedResultsChangeMove:
+    switch (type) {
+        case RBQFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+            break;
+        case RBQFetchedResultsChangeDelete:
+            if (tableView == self.chatsViewController) {
                 [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-                [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-                break;
-        }
-    });
+                [self selectFirstChat];
+            }
+            break;
+        case RBQFetchedResultsChangeUpdate:
+            [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
+            break;
+        case RBQFetchedResultsChangeMove:
+            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
+            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
+            break;
+    }
 }
 
 - (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
@@ -258,7 +254,9 @@ static NSString *const kCellIdent = @"cellIdent";
 
     if (chat) {
         NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex:0];
-        [self.chatsTableView selectRowIndexes:indexSet byExtendingSelection:NO];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.chatsTableView selectRowIndexes:indexSet byExtendingSelection:NO];
+        });
     }
 }
 @end
