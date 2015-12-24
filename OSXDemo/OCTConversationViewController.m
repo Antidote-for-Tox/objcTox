@@ -254,6 +254,8 @@ static NSString *const kCellIdent = @"cellIdent";
 
     if (chat) {
         NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex:0];
+        // workaround for deadlock in objcTox
+        // https://github.com/Antidote-for-Tox/objcTox/issues/51
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.chatsTableView selectRowIndexes:indexSet byExtendingSelection:NO];
         });
