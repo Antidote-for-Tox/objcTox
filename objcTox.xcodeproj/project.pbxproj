@@ -290,6 +290,8 @@
 		AF6F69C5854990AC68609AC4 /* libPods-OSXDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C8675AE3CA95C16D39FCB3D /* libPods-OSXDemoTests.a */; };
 		F009D9AA1C195D77008243EF /* OCTMainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F009D9A91C195D77008243EF /* OCTMainWindowController.m */; };
 		F009D9AE1C195DBA008243EF /* OCTBootStrapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F009D9AC1C195DBA008243EF /* OCTBootStrapViewController.m */; };
+		F019291B1C2797D2001A5F45 /* OCTConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01929191C2797D2001A5F45 /* OCTConversationViewController.m */; };
+		F019291C1C2797D2001A5F45 /* OCTConversationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F019291A1C2797D2001A5F45 /* OCTConversationViewController.xib */; };
 		F02C7EB31C1CCF1200D144BD /* OCTFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02C7EB11C1CCF1200D144BD /* OCTFriendsViewController.m */; };
 		F02C7EB41C1CCF1200D144BD /* OCTFriendsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F02C7EB21C1CCF1200D144BD /* OCTFriendsViewController.xib */; };
 		F09D0A461C1B9877008E74AF /* OCTUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D0A441C1B9877008E74AF /* OCTUserViewController.m */; };
@@ -531,6 +533,9 @@
 		F009D9A91C195D77008243EF /* OCTMainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTMainWindowController.m; sourceTree = "<group>"; };
 		F009D9AB1C195DBA008243EF /* OCTBootStrapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTBootStrapViewController.h; sourceTree = "<group>"; };
 		F009D9AC1C195DBA008243EF /* OCTBootStrapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTBootStrapViewController.m; sourceTree = "<group>"; };
+		F01929181C2797D2001A5F45 /* OCTConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTConversationViewController.h; sourceTree = "<group>"; };
+		F01929191C2797D2001A5F45 /* OCTConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTConversationViewController.m; sourceTree = "<group>"; };
+		F019291A1C2797D2001A5F45 /* OCTConversationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTConversationViewController.xib; sourceTree = "<group>"; };
 		F02C7EB01C1CCF1200D144BD /* OCTFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFriendsViewController.h; sourceTree = "<group>"; };
 		F02C7EB11C1CCF1200D144BD /* OCTFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriendsViewController.m; sourceTree = "<group>"; };
 		F02C7EB21C1CCF1200D144BD /* OCTFriendsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTFriendsViewController.xib; sourceTree = "<group>"; };
@@ -939,6 +944,9 @@
 				F02C7EB01C1CCF1200D144BD /* OCTFriendsViewController.h */,
 				F02C7EB11C1CCF1200D144BD /* OCTFriendsViewController.m */,
 				F02C7EB21C1CCF1200D144BD /* OCTFriendsViewController.xib */,
+				F01929181C2797D2001A5F45 /* OCTConversationViewController.h */,
+				F01929191C2797D2001A5F45 /* OCTConversationViewController.m */,
+				F019291A1C2797D2001A5F45 /* OCTConversationViewController.xib */,
 			);
 			path = OSXDemo;
 			sourceTree = "<group>";
@@ -1245,6 +1253,7 @@
 			files = (
 				F0EAD8431C1A38DA0056587D /* MainWindow.xib in Resources */,
 				F02C7EB41C1CCF1200D144BD /* OCTFriendsViewController.xib in Resources */,
+				F019291C1C2797D2001A5F45 /* OCTConversationViewController.xib in Resources */,
 				F09D0A471C1B9877008E74AF /* OCTUserViewController.xib in Resources */,
 				9CB44C3B1B84DCCC007FA7B6 /* Images.xcassets in Resources */,
 				9CB44C3E1B84DCCC007FA7B6 /* MainMenu.xib in Resources */,
@@ -1662,6 +1671,7 @@
 				11D651011B89229B00C3DD23 /* OCTVideoView.m in Sources */,
 				11D6510C1B8922AF00C3DD23 /* OCTToxAVConstants.m in Sources */,
 				9CB44C6D1B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */,
+				F019291B1C2797D2001A5F45 /* OCTConversationViewController.m in Sources */,
 				9CB44C601B84DCFB007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

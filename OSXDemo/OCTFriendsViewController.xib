@@ -77,7 +77,7 @@
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </clipView>
                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="S0z-Ra-5dY">
-                        <rect key="frame" x="1" y="120" width="291" height="15"/>
+                        <rect key="frame" x="1" y="212" width="395" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Npz-qZ-jct">
@@ -143,8 +143,8 @@
                         </subviews>
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="ahG-Mq-14A">
-                        <rect key="frame" x="1" y="120" width="290" height="15"/>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="ahG-Mq-14A">
+                        <rect key="frame" x="1" y="212" width="395" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="YPz-FR-Tol">
@@ -180,7 +180,7 @@
                     <rect key="frame" x="397" y="228" width="264" height="228"/>
                     <subviews>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iTV-0E-fau">
-                            <rect key="frame" x="69" y="3" width="128" height="32"/>
+                            <rect key="frame" x="4" y="3" width="128" height="32"/>
                             <buttonCell key="cell" type="push" title="Remove friend" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FwX-AA-flk">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -217,14 +217,29 @@
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
                         </scrollView>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="37h-6U-FC5" userLabel="createChat">
+                            <rect key="frame" x="132" y="3" width="128" height="32"/>
+                            <buttonCell key="cell" type="push" title="Create chat" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VgA-0v-apv">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="createChatButtonPressed:" target="-2" id="M4S-Od-F4R"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <constraints>
+                        <constraint firstItem="37h-6U-FC5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="iTV-0E-fau" secondAttribute="trailing" constant="10" id="6pX-QM-g2t"/>
+                        <constraint firstItem="iTV-0E-fau" firstAttribute="leading" secondItem="36g-42-IRz" secondAttribute="leading" constant="10" id="7qO-T4-28w"/>
                         <constraint firstItem="iTV-0E-fau" firstAttribute="top" secondItem="Hxk-L9-rxu" secondAttribute="bottom" constant="10" id="BAH-yo-hGN"/>
+                        <constraint firstItem="37h-6U-FC5" firstAttribute="width" secondItem="iTV-0E-fau" secondAttribute="width" id="F8k-J2-R0s"/>
                         <constraint firstItem="Hxk-L9-rxu" firstAttribute="leading" secondItem="36g-42-IRz" secondAttribute="leading" id="MEA-UR-jqW"/>
                         <constraint firstItem="Hxk-L9-rxu" firstAttribute="top" secondItem="36g-42-IRz" secondAttribute="top" id="PUR-S1-LbY"/>
                         <constraint firstAttribute="trailing" secondItem="Hxk-L9-rxu" secondAttribute="trailing" id="a4U-bh-fuR"/>
-                        <constraint firstItem="iTV-0E-fau" firstAttribute="centerX" secondItem="36g-42-IRz" secondAttribute="centerX" id="bEH-8I-hRg"/>
+                        <constraint firstAttribute="bottom" secondItem="37h-6U-FC5" secondAttribute="bottom" constant="10" id="gad-s0-eVd"/>
                         <constraint firstAttribute="bottom" secondItem="iTV-0E-fau" secondAttribute="bottom" constant="10" id="kG1-PE-oNe"/>
+                        <constraint firstItem="37h-6U-FC5" firstAttribute="top" secondItem="Hxk-L9-rxu" secondAttribute="bottom" constant="10" id="rM4-nR-Bjh"/>
+                        <constraint firstAttribute="trailing" secondItem="37h-6U-FC5" secondAttribute="trailing" constant="10" id="zu0-o5-FPq"/>
                     </constraints>
                 </customView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="34D-L0-nbV">
