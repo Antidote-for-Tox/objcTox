@@ -151,7 +151,7 @@
     });
 }
 
-- (void)_performYUVCheckWithPlanes:(uint8_t * [3])planes strides:(OCTToxAVStrideData[3])strides
+- (void)performYUVCheckWithPlanes:(uint8_t * [3])planes strides:(OCTToxAVStrideData[3])strides
 {
     OCTToxAVVideoWidth width = 30;
     OCTToxAVVideoHeight height = 30;
@@ -197,7 +197,7 @@
     uint8_t *planes[3] = {test_str83p_y, test_str83p_u, test_str83p_v};
     OCTToxAVStrideData strides[3] = {30, 15, 15};
 
-    [self _performYUVCheckWithPlanes:planes strides:strides];
+    [self performYUVCheckWithPlanes:planes strides:strides];
 }
 
 - (void)testReceiveStridedVideoFrame
@@ -205,7 +205,7 @@
     uint8_t *planes[3] = {test_stride13p_y, test_stride13p_u, test_stride13p_v};
     OCTToxAVStrideData strides[3] = {31, 16, 16};
 
-    [self _performYUVCheckWithPlanes:planes strides:strides];
+    [self performYUVCheckWithPlanes:planes strides:strides];
 }
 
 - (void)testReceiveUpsideDownStridedVideoFrame
@@ -213,7 +213,7 @@
     uint8_t *planes[3] = {test_backwards_stride13p_y, test_backwards_stride13p_u, test_backwards_stride13p_v};
     OCTToxAVStrideData strides[3] = {-31, -16, -16};
 
-    [self _performYUVCheckWithPlanes:planes strides:strides];
+    [self performYUVCheckWithPlanes:planes strides:strides];
 }
 
 - (void)testReceiveUpsideDownVideoFrame
@@ -221,7 +221,7 @@
     uint8_t *planes[3] = {test_backwards_3p_y, test_backwards_3p_u, test_backwards_3p_v};
     OCTToxAVStrideData strides[3] = {-30, -15, -15};
 
-    [self _performYUVCheckWithPlanes:planes strides:strides];
+    [self performYUVCheckWithPlanes:planes strides:strides];
 }
 
 @end
