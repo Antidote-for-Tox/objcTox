@@ -226,8 +226,6 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _streamFmt.mSampleRate = sampleRate;
     _streamFmt.mChannelsPerFrame = numberOfChannels;
     _streamFmt.mBytesPerFrame = kBytesPerSample * numberOfChannels;
-    _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
-    _streamFmt.mFramesPerPacket = kFramesPerPacket;
     _streamFmt.mBytesPerPacket = kBytesPerSample * numberOfChannels * kFramesPerPacket;
 
     OSStatus err = [self createAudioQueue];
