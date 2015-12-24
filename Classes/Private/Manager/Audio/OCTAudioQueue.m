@@ -19,6 +19,9 @@ const int kDefaultSampleRate = 48000;
 const int kSampleCount = 1920;
 const int kBitsPerByte = 8;
 const int kFramesPerPacket = 1;
+// if you make this too small, the output queue will silently not play,
+// but you will still get fill callbacks; it's really weird
+const int kFramesPerOutputBuffer = kSampleCount / 4;
 const int kBytesPerSample = sizeof(SInt16);
 const int kNumberOfAudioQueueBuffers = 8;
 
@@ -87,15 +90,8 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    OSStatus err = AudioQueueNewInput(&_streamFmt, (void *)&InputAvailable, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
-
-    if (err != 0) {
-        // TPCircularBufferCleanup(&_buffer);
+    if ([self createAudioQueue] != 0) {
         return nil;
-    }
-
-    if (_deviceID) {
-        AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
     return self;
@@ -105,7 +101,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     _streamFmt.mSampleRate = kDefaultSampleRate;
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
-    _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
     _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;
     _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfInputChannels;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
@@ -115,15 +111,8 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    OSStatus err = AudioQueueNewOutput(&_streamFmt, (void *)&FillOutputBuffer, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
-
-    if (err != 0) {
-        // TPCircularBufferCleanup(&_buffer);
+    if ([self createAudioQueue] != 0) {
         return nil;
-    }
-
-    if (_deviceID) {
-        AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
     return self;
@@ -131,16 +120,49 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
 - (void)dealloc
 {
-    AudioQueueDispose(self.audioQueue, true);
+    if (self.audioQueue) {
+        AudioQueueDispose(self.audioQueue, true);
+    }
     TPCircularBufferCleanup(&_buffer);
+}
+
+- (OSStatus)createAudioQueue
+{
+    OSStatus err;
+    if (self.isOutput) {
+        err = AudioQueueNewOutput(&_streamFmt, (void *)&FillOutputBuffer, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
+    }
+    else {
+        err = AudioQueueNewInput(&_streamFmt, (void *)&InputAvailable, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
+    }
+
+    if (err != 0) {
+        return err;
+    }
+
+    if (_deviceID) {
+        AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
+    }
+
+    return err;
 }
 
 - (void)begin
 {
     NSLog(@"OCTAudioQueue begin");
+
+    int framesPerBuffer = 1;
+    if (self.isOutput) {
+        framesPerBuffer = kFramesPerOutputBuffer;
+    }
+
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
-        AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels, &(_AQBuffers[i]));
+        AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * framesPerBuffer, &(_AQBuffers[i]));
         AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
+        if (self.isOutput) {
+            // For some reason we have to fill it with zero or the callback never gets called.
+            FillOutputBuffer(self, self.audioQueue, _AQBuffers[i]);
+        }
     }
 
     NSLog(@"Allocated buffers; starting now!");
@@ -194,8 +216,27 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
 - (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels
 {
-    AudioQueueSetProperty(self.audioQueue, kAudioQueueDeviceProperty_SampleRate, &sampleRate, sizeof(Float64));
-    AudioQueueSetProperty(self.audioQueue, kAudioQueueDeviceProperty_NumberChannels, &numberOfChannels, sizeof(UInt32));
+    NSLog(@"updateSampleRate %lf, %u", sampleRate, numberOfChannels);
+
+    [self stop];
+    AudioQueueRef aq = self.audioQueue;
+    self.audioQueue = nil;
+    AudioQueueDispose(aq, true);
+
+    _streamFmt.mSampleRate = sampleRate;
+    _streamFmt.mChannelsPerFrame = numberOfChannels;
+    _streamFmt.mBytesPerFrame = kBytesPerSample * numberOfChannels;
+    _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
+    _streamFmt.mFramesPerPacket = kFramesPerPacket;
+    _streamFmt.mBytesPerPacket = kBytesPerSample * numberOfChannels * kFramesPerPacket;
+
+    OSStatus err = [self createAudioQueue];
+    if (err != 0) {
+        NSLog(@"oops, could not recreate the audio queue: %d after samplerate/nc change. enjoy your overflowing buffer", err);
+    }
+    else {
+        [self begin];
+    }
 }
 
 // avoid annoying bridge cast in 1st param!
@@ -228,18 +269,27 @@ static void FillOutputBuffer(OCTAudioQueue *__unsafe_unretained context,
                              AudioQueueRef inAQ,
                              AudioQueueBufferRef inBuffer)
 {
-    int32_t targetBufferSize = inBuffer->mAudioDataByteSize;
+    int32_t targetBufferSize = inBuffer->mAudioDataBytesCapacity;
     SInt16 *targetBuffer = inBuffer->mAudioData;
 
     int32_t availableBytes;
     SInt16 *buffer = TPCircularBufferTail(&context->_buffer, &availableBytes);
+    // NSLog(@"%d %d %d", availableBytes, targetBufferSize, availableBytes < targetBufferSize);
 
-    if (availableBytes < targetBufferSize) {
-        memset(targetBuffer, 0, targetBufferSize);
+    if (buffer) {
+        uint32_t cpy = MIN(availableBytes, targetBufferSize);
+        memcpy(targetBuffer, buffer, cpy);
+        TPCircularBufferConsume(&context->_buffer, cpy);
+
+        if (cpy != targetBufferSize) {
+            memset(targetBuffer + cpy, 0, targetBufferSize - cpy);
+            NSLog(@"warning not enough frames!!!");
+        }
+        inBuffer->mAudioDataByteSize = targetBufferSize;
     }
     else {
-        memcpy(targetBuffer, buffer, targetBufferSize);
-        TPCircularBufferConsume(&context->_buffer, targetBufferSize);
+        memset(targetBuffer, 0, targetBufferSize);
+        inBuffer->mAudioDataByteSize = targetBufferSize;
     }
 
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
