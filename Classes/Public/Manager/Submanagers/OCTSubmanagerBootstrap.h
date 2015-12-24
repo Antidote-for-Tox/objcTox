@@ -36,7 +36,7 @@
 /**
  * You HAVE TO call this method on startup to connect to Tox network.
  *
- * Before call this method add nodes to bootstrap with.
+ * Before calling this method add nodes to bootstrap with.
  *
  * After calling this method
  * - if manager wasn't connected before it will start bootstrapping immediately.
