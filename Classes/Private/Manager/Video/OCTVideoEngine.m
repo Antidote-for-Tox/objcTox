@@ -275,17 +275,12 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     CVPixelBufferUnlockBaseAddress(bufferRef, 0);
 
     dispatch_async(self.processingQueue, ^{
-
         /* Create Core Image */
-#if TARGET_OS_IPHONE
         CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
 
         CVPixelBufferRelease(bufferRef);
 
         self.videoView.image = coreImage;
-#else
-#warning TODO audio OSX
-#endif
     });
 }
 
