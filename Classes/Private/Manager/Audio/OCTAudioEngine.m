@@ -154,7 +154,10 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 - (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate fromFriend:(OCTToxFriendNumber)friendNumber
 {
     int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
-    TPCircularBufferProduceBytes([self.outputQueue getBufferPointer], pcm, len);
+    TPCircularBuffer *buf = [self.outputQueue getBufferPointer];
+    if (buf) {
+        TPCircularBufferProduceBytes(buf, pcm, len);
+    }
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
         // failure is logged by OCTAudioQueue.

@@ -29,6 +29,17 @@ const int kFramesPerOutputBuffer = kSampleCount / 4;
 const int kBytesPerSample = sizeof(SInt16);
 const int kNumberOfAudioQueueBuffers = 8;
 
+OSStatus (*_AudioQueueAllocateBuffer)( AudioQueueRef inAQ, UInt32 inBufferByteSize, AudioQueueBufferRef  *outBuffer ) = AudioQueueAllocateBuffer;
+OSStatus (*_AudioQueueDispose)( AudioQueueRef inAQ, Boolean inImmediate ) = AudioQueueDispose;
+OSStatus (*_AudioQueueEnqueueBuffer)( AudioQueueRef inAQ, AudioQueueBufferRef inBuffer, UInt32 inNumPacketDescs, const AudioStreamPacketDescription *inPacketDescs ) = AudioQueueEnqueueBuffer;
+OSStatus (*_AudioQueueFreeBuffer)( AudioQueueRef inAQ, AudioQueueBufferRef inBuffer ) = AudioQueueFreeBuffer;
+OSStatus (*_AudioQueueNewInput)( const AudioStreamBasicDescription *inFormat, AudioQueueInputCallback inCallbackProc, void *inUserData, CFRunLoopRef inCallbackRunLoop, CFStringRef inCallbackRunLoopMode, UInt32 inFlags, AudioQueueRef  *outAQ ) = AudioQueueNewInput;
+OSStatus (*_AudioQueueNewOutput)( const AudioStreamBasicDescription *inFormat, AudioQueueOutputCallback inCallbackProc, void *inUserData, CFRunLoopRef inCallbackRunLoop, CFStringRef inCallbackRunLoopMode, UInt32 inFlags, AudioQueueRef  *outAQ ) = AudioQueueNewOutput;
+OSStatus (*_AudioQueueSetProperty)( AudioQueueRef inAQ, AudioQueuePropertyID inID, const void *inData, UInt32 inDataSize ) = AudioQueueSetProperty;
+OSStatus (*_AudioQueueStart)( AudioQueueRef inAQ, const AudioTimeStamp *inStartTime ) = AudioQueueStart;
+OSStatus (*_AudioQueueStop)( AudioQueueRef inAQ, Boolean inImmediate ) = AudioQueueStop;
+OSStatus (*_AudioObjectGetPropertyData)( AudioObjectID inObjectID, const AudioObjectPropertyAddress *inAddress,                           UInt32 inQualifierDataSize,                           const void *inQualifierData,                           UInt32 *ioDataSize,                           void *outData) = AudioObjectGetPropertyData;
+
 static NSError *OCTErrorFromCoreAudioCode(OSStatus resultCode)
 {
     return [NSError errorWithDomain:NSOSStatusErrorDomain
@@ -48,7 +59,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
         .mElement = kAudioObjectPropertyElementMaster
     };
 
-    ok = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
+    ok = _AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
         return nil;
@@ -57,7 +68,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     address.mSelector = kAudioDevicePropertyDeviceUID;
     CFStringRef unique = NULL;
     size = sizeof(unique);
-    ok = AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
+    ok = _AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
         return nil;
@@ -132,7 +143,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 - (void)dealloc
 {
     if (self.audioQueue) {
-        AudioQueueDispose(self.audioQueue, true);
+        _AudioQueueDispose(self.audioQueue, true);
     }
     TPCircularBufferCleanup(&_buffer);
 }
@@ -141,10 +152,10 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     OSStatus err;
     if (self.isOutput) {
-        err = AudioQueueNewOutput(&_streamFmt, (void *)&FillOutputBuffer, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
+        err = _AudioQueueNewOutput(&_streamFmt, (void *)&FillOutputBuffer, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
     }
     else {
-        err = AudioQueueNewInput(&_streamFmt, (void *)&InputAvailable, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
+        err = _AudioQueueNewInput(&_streamFmt, (void *)&InputAvailable, (__bridge void *)self, NULL, kCFRunLoopCommonModes, 0, &_audioQueue);
     }
 
     if (err != 0) {
@@ -152,7 +163,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     if (_deviceID) {
-        AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
+        _AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
     return err;
@@ -168,8 +179,8 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
-        AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * framesPerBuffer, &(_AQBuffers[i]));
-        AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
+        _AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * framesPerBuffer, &(_AQBuffers[i]));
+        _AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
         if (self.isOutput) {
             // For some reason we have to fill it with zero or the callback never gets called.
             FillOutputBuffer(self, self.audioQueue, _AQBuffers[i]);
@@ -177,7 +188,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     DDLogVerbose(@"Allocated buffers; starting now!");
-    OSStatus res = AudioQueueStart(self.audioQueue, NULL);
+    OSStatus res = _AudioQueueStart(self.audioQueue, NULL);
     if (res != 0) {
         if (error) {
             *error = OCTErrorFromCoreAudioCode(res);
@@ -192,7 +203,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 - (BOOL)stop:(NSError **)error
 {
     DDLogVerbose(@"OCTAudioQueue stop");
-    OSStatus res = AudioQueueStop(self.audioQueue, true);
+    OSStatus res = _AudioQueueStop(self.audioQueue, true);
     if (! res) {
         if (error) {
             *error = OCTErrorFromCoreAudioCode(res);
@@ -201,7 +212,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
-        AudioQueueFreeBuffer(self.audioQueue, _AQBuffers[i]);
+        _AudioQueueFreeBuffer(self.audioQueue, _AQBuffers[i]);
     }
 
     DDLogVerbose(@"Freed buffers");
@@ -230,7 +241,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
         return NO;
     }
 
-    OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &deviceID, sizeof(CFStringRef));
+    OSStatus ok = _AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &deviceID, sizeof(CFStringRef));
 
     if (ok != 0) {
         DDLogError(@"OCTAudioQueue setDeviceID: Error while live setting device to '%@': %d", deviceID, ok);
@@ -264,7 +275,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
     AudioQueueRef aq = self.audioQueue;
     self.audioQueue = nil;
-    AudioQueueDispose(aq, true);
+    _AudioQueueDispose(aq, true);
 
     _streamFmt.mSampleRate = sampleRate;
     _streamFmt.mChannelsPerFrame = numberOfChannels;
@@ -307,7 +318,7 @@ static void InputAvailable(OCTAudioQueue *__unsafe_unretained context,
         tail = TPCircularBufferTail(&context->_buffer, &availableBytesToConsume);
     }
 
-    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    _AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
 }
 
 static void FillOutputBuffer(OCTAudioQueue *__unsafe_unretained context,
@@ -336,7 +347,7 @@ static void FillOutputBuffer(OCTAudioQueue *__unsafe_unretained context,
         inBuffer->mAudioDataByteSize = targetBufferSize;
     }
 
-    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    _AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
 }
 
 @end

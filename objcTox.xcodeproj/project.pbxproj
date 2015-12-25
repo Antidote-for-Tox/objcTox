@@ -298,6 +298,8 @@
 		F09D0A471C1B9877008E74AF /* OCTUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09D0A451C1B9877008E74AF /* OCTUserViewController.xib */; };
 		F0EAD8431C1A38DA0056587D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8421C1A38DA0056587D /* MainWindow.xib */; };
 		F0EAD8451C1A58B20056587D /* OCTBootStrap.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8441C1A58B20056587D /* OCTBootStrap.xib */; };
+		F5BF42781C2D1F75008283E0 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
+		F5BF42791C2D1F7D008283E0 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 		F5F6FA1F1C268B5000607306 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 		F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 /* End PBXBuildFile section */
@@ -1536,6 +1538,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5BF42781C2D1F75008283E0 /* OCTAudioQueue.m in Sources */,
 				11D6510B1B8922AF00C3DD23 /* OCTToxAVConstants.m in Sources */,
 				9CB44C181B84DBA3007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				11D650F81B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
@@ -1688,6 +1691,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5BF42791C2D1F7D008283E0 /* OCTAudioQueue.m in Sources */,
 				11D6510D1B8922AF00C3DD23 /* OCTToxAVConstants.m in Sources */,
 				9CB44C981B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				11D650FA1B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,

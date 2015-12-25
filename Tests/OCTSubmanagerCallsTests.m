@@ -272,13 +272,6 @@
     XCTAssertTrue(call.friendAcceptingVideo);
 }
 
-- (void)testRouteAudioToSpeaker
-{
-    [self.callManager routeAudioToSpeaker:YES error:nil];
-
-    OCMVerify([self.mockedAudioEngine routeAudioToSpeaker:YES error:nil]);
-}
-
 - (void)testEnableMicrophone
 {
     [self.callManager setEnableMicrophone:NO];

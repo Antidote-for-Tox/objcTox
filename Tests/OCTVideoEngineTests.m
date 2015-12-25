@@ -114,8 +114,7 @@
 - (void)testVideoFeed
 {
     id mockedVideoView = OCMClassMock([OCTVideoView class]);
-    OCMStub([mockedVideoView alloc]).andReturn(mockedVideoView);
-    OCMStub([mockedVideoView initWithFrame:CGRectZero]).andReturn(mockedVideoView);
+    OCMStub([mockedVideoView view]).andReturn(mockedVideoView);
 
     OCTView *view = [self.videoEngine videoFeed];
 
