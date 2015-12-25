@@ -93,7 +93,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     AudioQueueBufferRef _AQBuffers[kNumberOfAudioQueueBuffers];
 }
 
-- (instancetype)initWithInputDeviceID:(NSString *)devID
+- (instancetype)initWithInputDeviceID:(NSString *)devID error:(NSError **)error
 {
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -112,14 +112,18 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    if ([self createAudioQueue] != 0) {
+    OSStatus res = 0;
+    if ((res = [self createAudioQueue]) != 0) {
+        if (error) {
+            *error = OCTErrorFromCoreAudioCode(res);
+        }
         return nil;
     }
 
     return self;
 }
 
-- (instancetype)initWithOutputDeviceID:(NSString *)devID
+- (instancetype)initWithOutputDeviceID:(NSString *)devID error:(NSError **)error
 {
     _streamFmt.mSampleRate = kDefaultSampleRate;
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
@@ -133,7 +137,11 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    if ([self createAudioQueue] != 0) {
+    OSStatus res = 0;
+    if ((res = [self createAudioQueue]) != 0) {
+        if (error) {
+            *error = OCTErrorFromCoreAudioCode(res);
+        }
         return nil;
     }
 
@@ -163,7 +171,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     if (_deviceID) {
-        _AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
+        err = _AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &_deviceID, sizeof(CFStringRef));
     }
 
     return err;
@@ -204,7 +212,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     DDLogVerbose(@"OCTAudioQueue stop");
     OSStatus res = _AudioQueueStop(self.audioQueue, true);
-    if (! res) {
+    if (res != 0) {
         if (error) {
             *error = OCTErrorFromCoreAudioCode(res);
         }
@@ -233,7 +241,9 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
         deviceID = OCTGetSystemAudioDevice(self.isOutput ?
                                            kAudioHardwarePropertyDefaultOutputDevice :
                                            kAudioHardwarePropertyDefaultInputDevice);
-        return NO;
+        if (! deviceID) {
+            return NO;
+        }
     }
 
     // we need to pause the queue for a sec

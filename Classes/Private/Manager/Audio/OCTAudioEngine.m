@@ -23,9 +23,6 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 @interface OCTAudioEngine ()
 
-@property (nonatomic, strong) OCTAudioQueue *outputQueue;
-@property (nonatomic, strong) OCTAudioQueue *inputQueue;
-
 // @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 @property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
@@ -55,6 +52,12 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     [NSException raise:NSGenericException format:@"setInputDeviceID: is not available on iOS."];
     return NO;
 #else
+    // if audio is not active, we can't really be bothered to check that the
+    // device exists; we rely on startAudioFlow: to fail later.
+    if (! self.inputQueue) {
+        _inputDeviceID = inputDeviceID;
+        return YES;
+    }
 
     if ([self.inputQueue setDeviceID:inputDeviceID error:error]) {
         _inputDeviceID = inputDeviceID;
@@ -82,6 +85,10 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
     return [session overrideOutputAudioPort:override error:error];
 #else
+    if (! self.outputQueue) {
+        _outputDeviceID = outputDeviceID;
+        return YES;
+    }
 
     if ([self.outputQueue setDeviceID:outputDeviceID error:error]) {
         _outputDeviceID = outputDeviceID;
@@ -110,8 +117,12 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     // TODO: handle iOS device model
     // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
     // we don't set the device explicitly, and the default is used.
-    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID];
-    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID];
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID error:error];
+
+    if (! (self.outputQueue && self.inputQueue)) {
+        return NO;
+    }
 
     OCTAudioEngine *__weak welf = self;
     self.inputQueue.sendDataBlock = ^(void *data, OCTToxAVSampleCount samples, OCTToxAVSampleRate rate, OCTToxAVChannels channelCount) {

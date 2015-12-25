@@ -31,8 +31,8 @@ extern OSStatus (*_AudioObjectGetPropertyData)( AudioObjectID inObjectID, const 
 @property (strong, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
 @property (assign, nonatomic, readonly) BOOL running;
 
-- (instancetype)initWithInputDeviceID:(NSString *)devID;
-- (instancetype)initWithOutputDeviceID:(NSString *)devID;
+- (instancetype)initWithInputDeviceID:(NSString *)devID error:(NSError **)error;
+- (instancetype)initWithOutputDeviceID:(NSString *)devID error:(NSError **)error;
 
 - (TPCircularBuffer *)getBufferPointer;
 - (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err;

@@ -19,3 +19,11 @@ extern int kBitsPerByte;
 extern int kFramesPerPacket;
 extern int kBytesPerSample;
 extern int kNumberOfAudioQueueBuffers;
+
+@class OCTAudioQueue;
+@interface OCTAudioEngine ()
+
+@property (nonatomic, strong) OCTAudioQueue *outputQueue;
+@property (nonatomic, strong) OCTAudioQueue *inputQueue;
+
+@end
