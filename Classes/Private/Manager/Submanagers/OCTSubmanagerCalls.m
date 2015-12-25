@@ -404,7 +404,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
         NSError *error;
         if (! [self.audioEngine startAudioFlow:&error]) {
-            NSLog(@"Error starting audio flow %@", error);
+            DDLogVerbose(@"Error starting audio flow %@", error);
         }
 
 
