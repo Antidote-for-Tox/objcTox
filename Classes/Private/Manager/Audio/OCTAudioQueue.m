@@ -50,7 +50,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
     ok = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
     if (ok != kAudioHardwareNoError) {
-        DDLogError(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
+        DDLogCError(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
         return nil;
     }
 
@@ -59,7 +59,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     size = sizeof(unique);
     ok = AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
     if (ok != kAudioHardwareNoError) {
-        DDLogError(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
+        DDLogCError(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
         return nil;
     }
 
@@ -327,7 +327,7 @@ static void FillOutputBuffer(OCTAudioQueue *__unsafe_unretained context,
 
         if (cpy != targetBufferSize) {
             memset(targetBuffer + cpy, 0, targetBufferSize - cpy);
-            DDLogWarn(@"warning not enough frames!!!");
+            DDLogCWarn(@"warning not enough frames!!!");
         }
         inBuffer->mAudioDataByteSize = targetBufferSize;
     }
