@@ -70,11 +70,11 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 @interface OCTAudioQueue ()
 
 // use this to track what nil means in terms of audio device
-@property BOOL isOutput;
-@property AudioStreamBasicDescription streamFmt;
-@property AudioQueueRef audioQueue;
-@property (nonatomic) TPCircularBuffer buffer;
-@property BOOL running;
+@property (assign, nonatomic) BOOL isOutput;
+@property (assign, nonatomic) AudioStreamBasicDescription streamFmt;
+@property (assign, nonatomic) AudioQueueRef audioQueue;
+@property (assign, nonatomic) TPCircularBuffer buffer;
+@property (assign, nonatomic) BOOL running;
 
 @end
 
