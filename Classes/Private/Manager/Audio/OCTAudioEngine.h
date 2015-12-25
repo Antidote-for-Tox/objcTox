@@ -11,8 +11,8 @@
 
 @interface OCTAudioEngine : NSObject
 
-@property (strong, nonatomic) NSString *inputDeviceID;
-@property (strong, nonatomic) NSString *outputDeviceID;
+@property (strong, nonatomic, readonly) NSString *inputDeviceID;
+@property (strong, nonatomic, readonly) NSString *outputDeviceID;
 
 @property (weak, nonatomic) OCTToxAV *toxav;
 @property (nonatomic, assign) OCTToxFriendNumber friendNumber;
@@ -38,12 +38,14 @@
 - (BOOL)stopAudioFlow:(NSError **)error;
 
 /**
- * Send the audio to the speaker
- * @param speaker YES to send audio to speaker, NO to reset to default.
- * @param error Pointer to error object.
- * @return YES if successful override, otherwise NO.
+ * Set the input device (not available on Mac OS X).
+ * @param inputDeviceID Core Audio's unique ID for the device. See
+ * @param error If this method returns NO, contains more information on the
+ *              underlying error.
+ * @return YES on success, otherwise NO.
  */
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+- (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error;
+- (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error;
 
 /**
  * Checks if the Audio Graph is processing.

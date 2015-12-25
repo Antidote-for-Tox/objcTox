@@ -116,7 +116,12 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         dev = [self getDeviceForPosition:position];
     }
     else {
-        dev = [AVCaptureDevice deviceWithUniqueID:camera];
+        if (! camera) {
+            dev = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        }
+        else {
+            dev = [AVCaptureDevice deviceWithUniqueID:camera];
+        }
     }
 
     return [self actuallySetCamera:dev error:error];

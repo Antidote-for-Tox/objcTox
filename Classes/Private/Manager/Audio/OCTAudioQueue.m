@@ -25,8 +25,15 @@ const int kFramesPerOutputBuffer = kSampleCount / 4;
 const int kBytesPerSample = sizeof(SInt16);
 const int kNumberOfAudioQueueBuffers = 8;
 
+static NSError *OCTErrorFromCoreAudioCode(OSStatus resultCode)
+{
+    return [NSError errorWithDomain:NSOSStatusErrorDomain
+                               code:resultCode
+                           userInfo:@{NSLocalizedDescriptionKey : @"Consult the CoreAudio header files/google for the meaning of the error code."}];
+}
+
 #if ! TARGET_OS_IPHONE
-static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
+static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     AudioDeviceID devID = 0;
     OSStatus ok = 0;
@@ -147,7 +154,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     return err;
 }
 
-- (void)begin
+- (BOOL)begin:(NSError **)error
 {
     NSLog(@"OCTAudioQueue begin");
 
@@ -166,14 +173,28 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     }
 
     NSLog(@"Allocated buffers; starting now!");
-    AudioQueueStart(self.audioQueue, NULL);
+    OSStatus res = AudioQueueStart(self.audioQueue, NULL);
+    if (res != 0) {
+        if (error) {
+            *error = OCTErrorFromCoreAudioCode(res);
+        }
+        return NO;
+    }
+
     self.running = YES;
+    return YES;
 }
 
-- (void)stop
+- (BOOL)stop:(NSError **)error
 {
     NSLog(@"OCTAudioQueue stop");
-    AudioQueueStop(self.audioQueue, true);
+    OSStatus res = AudioQueueStop(self.audioQueue, true);
+    if (! res) {
+        if (error) {
+            *error = OCTErrorFromCoreAudioCode(res);
+        }
+        return NO;
+    }
 
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
         AudioQueueFreeBuffer(self.audioQueue, _AQBuffers[i]);
@@ -181,6 +202,7 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 
     NSLog(@"Freed buffers");
     self.running = NO;
+    return YES;
 }
 
 - (TPCircularBuffer *)getBufferPointer
@@ -188,37 +210,54 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     return &_buffer;
 }
 
-- (void)setDeviceID:(NSString *)deviceID
+- (BOOL)setDeviceID:(NSString *)deviceID error:(NSError **)err
 {
 #if ! TARGET_OS_IPHONE
     if (deviceID == nil) {
         NSLog(@"using the default device because nil passed to OCTAudioQueue setDeviceID:");
-        deviceID = _OCTGetSystemAudioDevice(self.isOutput ?
-                                            kAudioHardwarePropertyDefaultOutputDevice :
-                                            kAudioHardwarePropertyDefaultInputDevice);
+        deviceID = OCTGetSystemAudioDevice(self.isOutput ?
+                                           kAudioHardwarePropertyDefaultOutputDevice :
+                                           kAudioHardwarePropertyDefaultInputDevice);
+        return NO;
     }
 
     // we need to pause the queue for a sec
-    [self stop];
+    if (! [self stop:err]) {
+        return NO;
+    }
+
     OSStatus ok = AudioQueueSetProperty(self.audioQueue, kAudioQueueProperty_CurrentDevice, &deviceID, sizeof(CFStringRef));
 
     if (ok != 0) {
         NSLog(@"OCTAudioQueue setDeviceID: Error while live setting device to '%@': %d", deviceID, ok);
+        if (err) {
+            *err = OCTErrorFromCoreAudioCode(ok);
+        }
     }
     else {
         _deviceID = deviceID;
         NSLog(@"Successfully set the device id to %@", deviceID);
     }
 
-    [self begin];
+    if (! [self begin:err] || (ok != 0)) {
+        return NO;
+    }
+    else {
+        return YES;
+    }
+#else
+    return NO;
 #endif
 }
 
-- (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels
+- (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err
 {
     NSLog(@"updateSampleRate %lf, %u", sampleRate, numberOfChannels);
 
-    [self stop];
+    if (! [self stop:err]) {
+        return NO;
+    }
+
     AudioQueueRef aq = self.audioQueue;
     self.audioQueue = nil;
     AudioQueueDispose(aq, true);
@@ -228,12 +267,16 @@ static NSString *_OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     _streamFmt.mBytesPerFrame = kBytesPerSample * numberOfChannels;
     _streamFmt.mBytesPerPacket = kBytesPerSample * numberOfChannels * kFramesPerPacket;
 
-    OSStatus err = [self createAudioQueue];
-    if (err != 0) {
-        NSLog(@"oops, could not recreate the audio queue: %d after samplerate/nc change. enjoy your overflowing buffer", err);
+    OSStatus res = [self createAudioQueue];
+    if (res != 0) {
+        NSLog(@"oops, could not recreate the audio queue: %d after samplerate/nc change. enjoy your overflowing buffer", res);
+        if (err) {
+            *err = OCTErrorFromCoreAudioCode(res);
+        }
+        return NO;
     }
     else {
-        [self begin];
+        return [self begin:err];
     }
 }
 

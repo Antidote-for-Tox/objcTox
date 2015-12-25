@@ -7,6 +7,10 @@
 //
 
 #import "OCTSubmanagerCalls+Private.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
@@ -61,7 +65,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 - (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
 {
-    NSLog(@"OCTSubmanagerCalls warning: switchToCameraFront:error: is deprecated. Please use setVideoInputDevice:error: instead.");
+    DDLogVerbose(@"OCTSubmanagerCalls warning: switchToCameraFront:error: is deprecated. Please use setVideoInputDevice:error: instead.");
     return [self setVideoInputDevice:front ? OCTInputDeviceFrontCamera : OCTInputDeviceBackCamera error:error];
 }
 
@@ -164,7 +168,8 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 - (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
 {
-    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
+    DDLogVerbose(@"OCTSubmanagerCalls: routeAudioToSpeaker:error: is deprecated.");
+    return [self.audioEngine setOutputDeviceID:OCTOutputDeviceSpeaker error:error];
 }
 
 - (BOOL)enableMicrophone
@@ -248,20 +253,17 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 - (BOOL)setAudioInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
 {
-    self.audioEngine.inputDeviceID = deviceUniqueID;
-    return YES;
+    return [self.audioEngine setInputDeviceID:deviceUniqueID error:error];
 }
 
 - (BOOL)setAudioOutputDevice:(NSString *)deviceUniqueID error:(NSError **)error
 {
-    self.audioEngine.outputDeviceID = deviceUniqueID;
-    return YES;
+    return [self.audioEngine setOutputDeviceID:deviceUniqueID error:error];
 }
 
 - (BOOL)setVideoInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
 {
-    [self.videoEngine switchToCamera:deviceUniqueID error:error];
-    return YES;
+    return [self.videoEngine switchToCamera:deviceUniqueID error:error];
 }
 
 #pragma mark Private methods

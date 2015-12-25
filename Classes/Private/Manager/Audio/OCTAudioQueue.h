@@ -12,7 +12,7 @@
 /* no idea what to name this thing, so here it is */
 @interface OCTAudioQueue : NSObject
 
-@property (strong, nonatomic) NSString *deviceID;
+@property (strong, nonatomic, readonly) NSString *deviceID;
 @property (strong, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
 @property (assign, nonatomic, readonly) BOOL running;
 
@@ -20,9 +20,10 @@
 - (instancetype)initWithOutputDeviceID:(NSString *)devID;
 
 - (TPCircularBuffer *)getBufferPointer;
-- (void)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels;
+- (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err;
+- (BOOL)setDeviceID:(NSString *)deviceID error:(NSError **)err;
 
-- (void)begin;
-- (void)stop;
+- (BOOL)begin:(NSError **)error;
+- (BOOL)stop:(NSError **)error;
 
 @end

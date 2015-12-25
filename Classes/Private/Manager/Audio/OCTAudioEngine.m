@@ -49,17 +49,24 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 #pragma mark - SPI
 
-- (void)setInputDeviceID:(NSString *)inputDeviceID
+- (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error
 {
 #if TARGET_OS_IPHONE
     [NSException raise:NSGenericException format:@"setInputDeviceID: is not available on iOS."];
+    return NO;
 #else
-    _inputDeviceID = inputDeviceID;
-    [self.inputQueue setDeviceID:inputDeviceID];
+
+    if ([self.inputQueue setDeviceID:inputDeviceID error:error]) {
+        _inputDeviceID = inputDeviceID;
+        return YES;
+    }
+    else {
+        return NO;
+    }
 #endif
 }
 
-- (void)setOutputDeviceID:(NSString *)outputDeviceID
+- (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error
 {
 #if TARGET_OS_IPHONE
     _outputDeviceID = outputDeviceID;
@@ -73,15 +80,20 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
         override = AVAudioSessionPortOverrideNone;
     }
 
-    // TODO: error parameters!
-    [session overrideOutputAudioPort:override error:nil];
+    return [session overrideOutputAudioPort:override error:error];
 #else
-    _outputDeviceID = outputDeviceID;
-    [self.outputQueue setDeviceID:outputDeviceID];
+
+    if ([self.outputQueue setDeviceID:outputDeviceID error:error]) {
+        _outputDeviceID = outputDeviceID;
+        return YES;
+    }
+    else {
+        return NO;
+    }
 #endif
 }
 
-- (BOOL)startAudioFlow:(NSError *__autoreleasing *)error
+- (BOOL)startAudioFlow:(NSError **)error
 {
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -115,16 +127,19 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
         }
     };
 
-    [self.inputQueue begin];
-    [self.outputQueue begin];
-
-    return (_outputQueue && _inputQueue) ? YES : NO;
+    if (! [self.inputQueue begin:error] || ! [self.outputQueue begin:error]) {
+        return NO;
+    }
+    else {
+        return YES;
+    }
 }
 
-- (BOOL)stopAudioFlow:(NSError *__autoreleasing *)error
+- (BOOL)stopAudioFlow:(NSError **)error
 {
-    [self.inputQueue stop];
-    [self.outputQueue stop];
+    if (! [self.inputQueue stop:error] || ! [self.outputQueue stop:error]) {
+        return NO;
+    }
 
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -142,17 +157,12 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     TPCircularBufferProduceBytes([self.outputQueue getBufferPointer], pcm, len);
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
-        [self.outputQueue updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)channels];
+        // failure is logged by OCTAudioQueue.
+        [self.outputQueue updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)channels error:nil];
 
         self.outputSampleRate = sampleRate;
         self.outputNumberOfChannels = channels;
     }
-}
-
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError *__autoreleasing *)error
-{
-    [self setOutputDeviceID:speaker ? OCTOutputDeviceSpeaker : OCTOutputDeviceDefault];
-    return YES;
 }
 
 - (BOOL)isAudioRunning:(NSError *__autoreleasing *)error

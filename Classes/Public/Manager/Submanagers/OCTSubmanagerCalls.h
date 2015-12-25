@@ -130,11 +130,14 @@
  *
  * On iPhone OS, you must pass one of the OCT[Input|Output]Device...  constants
  * as the deviceUniqueID.
- * On OS X, you can get valid deviceUniqueID values from AVFoundation
- * (AVCaptureDevice uniqueID) or Core Audio (kAudioDevicePropertyDeviceUID).
+ * On OS X, you can get valid deviceUniqueID values from:
+ *   - AVFoundation: video and audio (inputs only) (AVCaptureDevice uniqueID)
+ *   - Core Audio: audio inputs and outputs (kAudioDevicePropertyDeviceUID).
+ * @param deviceUniqueID The device ID to use. May be nil, in which case
+ *                       a default device will be used
  */
-- (BOOL)setAudioInputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
-- (BOOL)setAudioOutputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
-- (BOOL)setVideoInputDevice:(nonnull NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
+- (BOOL)setAudioInputDevice:(nullable NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
+- (BOOL)setAudioOutputDevice:(nullable NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
+- (BOOL)setVideoInputDevice:(nullable NSString *)deviceUniqueID error:(NSError *__nullable *__nullable)error;
 
 @end
