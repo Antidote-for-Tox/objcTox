@@ -14,6 +14,7 @@
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
 #import "OCTConversationViewController.h"
+#import "OCTCallsViewController.h"
 
 @interface OCTMainWindowController () <OCTBootStrapViewDelegate>
 
@@ -22,6 +23,7 @@
 @property (strong, nonatomic) NSViewController *userViewController;
 @property (strong, nonatomic) NSViewController *friendUserViewController;
 @property (strong, nonatomic) NSViewController *conversationViewController;
+@property (strong, nonatomic) NSViewController *callsViewController;
 
 @property (strong, nonatomic) OCTManagerConfiguration *configuration;
 @property (strong, nonatomic) OCTManager *manager;
@@ -82,6 +84,10 @@
     NSTabViewItem *userViewItem = [self.tabView tabViewItemAtIndex:0];
     self.userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
     userViewItem.view = self.userViewController.view;
+
+    NSTabViewItem *callViewItem = [self.tabView tabViewItemAtIndex:3];
+    self.callsViewController = [[OCTCallsViewController alloc] initWithManager:self.manager];
+    callViewItem.view = self.callsViewController.view;
 }
 
 @end

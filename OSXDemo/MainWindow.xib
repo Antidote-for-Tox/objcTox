@@ -44,6 +44,12 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Calls" identifier="" id="KGw-8l-4aK" userLabel="Calls">
+                                <view key="view" id="gaG-RV-UfY">
+                                    <rect key="frame" x="10" y="33" width="543" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                     </tabView>
                 </subviews>
