@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="OCTCallsViewController">
             <connections>
                 <outlet property="callsTableView" destination="dec-A7-CdC" id="XTP-2r-3Mb"/>
+                <outlet property="videoContainerView" destination="Uaa-qP-bom" id="eWY-Sh-LFb"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -21,7 +22,7 @@
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="64" horizontalPageScroll="10" verticalLineScroll="64" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yg6-pc-aSB">
                     <rect key="frame" x="0.0" y="177" width="480" height="95"/>
                     <clipView key="contentView" id="AvR-rZ-9tn">
-                        <rect key="frame" x="1" y="23" width="478" height="71"/>
+                        <rect key="frame" x="1" y="0.0" width="478" height="94"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="62" rowSizeStyle="automatic" headerView="dEg-2y-3UD" viewBased="YES" id="dec-A7-CdC">
@@ -128,15 +129,22 @@
                         <action selector="sendCallControlSelected:" target="-2" id="WTK-ea-lKu"/>
                     </connections>
                 </popUpButton>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="Uaa-qP-bom" userLabel="videoContainerView">
+                    <rect key="frame" x="0.0" y="50" width="480" height="127"/>
+                </customView>
             </subviews>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="KGi-JU-EyX" secondAttribute="bottom" constant="9" id="6Ah-gJ-nGZ"/>
                 <constraint firstItem="Yg6-pc-aSB" firstAttribute="height" secondItem="Hz6-mo-xeY" secondAttribute="height" multiplier="0.35" id="9iP-U5-WZY"/>
                 <constraint firstItem="Yg6-pc-aSB" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="AFa-j0-7Dl"/>
                 <constraint firstItem="Yg6-pc-aSB" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="Jxm-sQ-HCx"/>
+                <constraint firstItem="Uaa-qP-bom" firstAttribute="top" secondItem="Yg6-pc-aSB" secondAttribute="bottom" id="L6l-T1-axj"/>
                 <constraint firstItem="Ea1-xh-98s" firstAttribute="leading" secondItem="KGi-JU-EyX" secondAttribute="trailing" constant="94" id="Pm5-MR-TwL"/>
+                <constraint firstAttribute="trailing" secondItem="Uaa-qP-bom" secondAttribute="trailing" id="QWD-GP-ZbW"/>
+                <constraint firstItem="Ea1-xh-98s" firstAttribute="top" secondItem="Uaa-qP-bom" secondAttribute="bottom" constant="20" id="Tpj-EY-apX"/>
                 <constraint firstItem="Yg6-pc-aSB" firstAttribute="width" secondItem="Hz6-mo-xeY" secondAttribute="width" id="Vbw-KR-EDS"/>
                 <constraint firstItem="KGi-JU-EyX" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="19" id="tOu-pj-Ayf"/>
+                <constraint firstItem="Uaa-qP-bom" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="uyQ-Ja-D4y"/>
                 <constraint firstItem="Ea1-xh-98s" firstAttribute="centerY" secondItem="KGi-JU-EyX" secondAttribute="centerY" id="zoV-sk-OcT"/>
             </constraints>
         </customView>

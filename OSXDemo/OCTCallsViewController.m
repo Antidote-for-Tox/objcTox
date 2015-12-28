@@ -16,12 +16,14 @@
 static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTCallsViewController () <RBQFetchedResultsControllerDelegate,
-                                                    NSTableViewDataSource,
-                                                        NSTableViewDelegate>
+                                      NSTableViewDataSource,
+                                      NSTableViewDelegate>
 
 @property (strong, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *callsController;
 @property (weak) IBOutlet NSTableView *callsTableView;
+@property (weak) IBOutlet NSView *videoContainerView;
+@property (strong, nonatomic) NSView *videoView;
 
 @end
 
@@ -41,7 +43,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     RBQFetchRequest *fetchRequest = [manager.objects
                                      fetchRequestForType:OCTFetchRequestTypeCall
-                                     withPredicate:nil];
+                                           withPredicate:nil];
 
     _callsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                               sectionNameKeyPath:nil
@@ -50,6 +52,32 @@ static NSString *const kCellIdent = @"cellIdent";
     [_callsController performFetch];
 
     return self;
+}
+
+- (void)setupVideoView
+{
+    if (self.videoView == self.manager.calls.videoFeed) {
+        return;
+    }
+
+    if (self.videoView) {
+        [self.videoView removeFromSuperview];
+        self.videoView = nil;
+    }
+
+    self.videoView = self.manager.calls.videoFeed;
+    [self.videoContainerView addSubview:self.videoView];
+
+    NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:self.videoView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.videoContainerView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
+    NSLayoutConstraint *centerY = [NSLayoutConstraint constraintWithItem:self.videoView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.videoContainerView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.videoView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.videoContainerView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.videoView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.videoContainerView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0];
+
+    self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView setContentHuggingPriority:NSLayoutPriorityDefaultLow forOrientation:NSLayoutConstraintOrientationVertical];
+    [self.videoView setContentHuggingPriority:NSLayoutPriorityDefaultLow forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+    [self.videoContainerView addConstraints:@[centerX, centerY, widthConstraint, heightConstraint]];
 }
 
 #pragma mark - RBQFetchResultsControllerDelegate
@@ -106,6 +134,15 @@ static NSString *const kCellIdent = @"cellIdent";
     return 300.0;
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    [self doSomeThingWithCallWithBlock:^(OCTCall *call) {
+        if (call.videoIsEnabled || call.friendSendingVideo) {
+            [self setupVideoView];
+        }
+    }];
+}
+
 #pragma mark - NSTableViewDataSource
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
@@ -132,7 +169,8 @@ static NSString *const kCellIdent = @"cellIdent";
                              @"friend receiving Video: %d\n",
                              call.caller.name,
                              call.chat.uniqueIdentifier, (long)call.status, call.callDuration, call.friendSendingAudio, call.friendAcceptingAudio,
-                             call.friendSendingVideo, call.friendAcceptingVideo];;
+                             call.friendSendingVideo, call.friendAcceptingVideo];
+    ;
 
     return textField;
 }
@@ -141,33 +179,49 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (IBAction)callActionButtonPressed:(NSButton *)sender
 {
-    NSInteger selectedRow = self.callsTableView.selectedRow;
-
-    if (selectedRow < 0) {
-        return;
-    }
-
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTCall *call = [self.callsController objectAtIndexPath:path];
-
-
-    [self.manager.calls answerCall:call enableAudio:YES enableVideo:NO error:nil];
+    [self doSomeThingWithCallWithBlock:^(OCTCall *call) {
+        [self.manager.calls answerCall:call enableAudio:YES enableVideo:YES error:nil];
+    }];
 }
 
 - (IBAction)sendCallControlSelected:(NSPopUpButton *)sender
 {
+    [self doSomeThingWithCallWithBlock:^(OCTCall *call) {
+        OCTToxAVCallControl control = (OCTToxAVCallControl)[sender indexOfSelectedItem];
+        [self.manager.calls sendCallControl:control toCall:call error:nil];
+    }];
+}
+
+#pragma mark - Private
+
+- (OCTCall *)callForCurrentlySelectedRow
+{
     NSInteger selectedRow = self.callsTableView.selectedRow;
 
     if (selectedRow < 0) {
-        return;
+        return nil;
     }
 
     NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
     OCTCall *call = [self.callsController objectAtIndexPath:path];
 
-    OCTToxAVCallControl control = (OCTToxAVCallControl)[sender indexOfSelectedItem];
+    return call;
+}
 
-    [self.manager.calls sendCallControl:control toCall:call error:nil];
+- (BOOL)doSomeThingWithCallWithBlock:(void (^)(OCTCall *))block
+{
+    NSInteger selectedRow = self.callsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return NO;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+    OCTCall *call = [self.callsController objectAtIndexPath:path];
+
+    block(call);
+
+    return YES;
 }
 
 @end

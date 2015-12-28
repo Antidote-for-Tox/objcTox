@@ -90,7 +90,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
 
-    [self.manager.calls callToChat:chat enableAudio:YES enableVideo:NO error:nil]; 
+    [self.manager.calls callToChat:chat enableAudio:YES enableVideo:YES error:nil];
 }
 
 #pragma mark - NSTextFieldDelegate
