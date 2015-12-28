@@ -10,7 +10,7 @@
 #import "RBQFetchRequest.h"
 #import "RBQSafeRealmObject.h"
 
-typedef NS_ENUM(NSUInteger, RBQFetchedResultsChangeType) {
+typedef NS_ENUM(NSInteger, RBQFetchedResultsChangeType) {
     RBQFetchedResultsChangeInsert = 1,
     RBQFetchedResultsChangeDelete = 2,
     RBQFetchedResultsChangeMove = 3,

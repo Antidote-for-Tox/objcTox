@@ -11,7 +11,7 @@
 
 @class OCTSubmanagerUser;
 @protocol OCTSubmanagerUserDelegate <NSObject>
-- (void)OCTSubmanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
+- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
 @end
 
 @interface OCTSubmanagerUser : NSObject

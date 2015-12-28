@@ -95,7 +95,7 @@
         [self.dataSource managerSaveTox];
     }
 
-    [self.delegate OCTSubmanagerUser:self connectionStatusUpdate:connectionStatus];
+    [self.delegate submanagerUser:self connectionStatusUpdate:connectionStatus];
 }
 
 @end

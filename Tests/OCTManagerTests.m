@@ -278,42 +278,6 @@
     [(id)encryptSave stopMocking];
 }
 
-- (void)testBootstrap
-{
-    NSError *error, *error2;
-
-    OCMExpect([self.tox bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
-
-    [self createManager];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    BOOL result = [self.manager bootstrapFromHost:@"host" port:10 publicKey:@"publicKey" error:&error];
-#pragma clang diagnostic pop
-
-    XCTAssertTrue(result);
-    XCTAssertEqual(error, error2);
-    OCMVerifyAll(self.tox);
-}
-
-- (void)testAddTCPRelay
-{
-    NSError *error, *error2;
-
-    OCMExpect([self.tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
-
-    [self createManager];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    BOOL result = [self.manager addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:&error];
-#pragma clang diagnostic pop
-
-    XCTAssertTrue(result);
-    XCTAssertEqual(error, error2);
-    OCMVerifyAll(self.tox);
-}
-
 - (void)testSubmanagerDataSource
 {
     [self createManager];

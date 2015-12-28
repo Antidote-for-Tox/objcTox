@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 - toxcore was updated to 0.0.1-542338a.
+- OCTSubmanagerUser: delegate method renamed from OCTSubmanagerUser:connectionStatusUpdate: to submanagerUser:connectionStatusUpdate:
 
 ### Fixes
 - Build issue on Xcode 7.

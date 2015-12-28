@@ -490,35 +490,4 @@
     }
 }
 
-#pragma mark -  Deprecated
-
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
-                                error:(NSError **)error
-{
-    configuration.importToxSaveFromPath = toxSaveFilePath;
-    return [self initWithConfiguration:configuration error:error];
-}
-
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-{
-    return [self initWithConfiguration:configuration error:nil];
-}
-
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                  loadToxSaveFilePath:(NSString *)toxSaveFilePath
-{
-    return [self initWithConfiguration:configuration loadToxSaveFilePath:toxSaveFilePath error:nil];
-}
-
-- (BOOL)bootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox bootstrapFromHost:host port:port publicKey:publicKey error:error];
-}
-
-- (BOOL)addTCPRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey error:(NSError **)error
-{
-    return [self.tox addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
-}
-
 @end
