@@ -300,6 +300,8 @@
 		F09D0A471C1B9877008E74AF /* OCTUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09D0A451C1B9877008E74AF /* OCTUserViewController.xib */; };
 		F0EAD8431C1A38DA0056587D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8421C1A38DA0056587D /* MainWindow.xib */; };
 		F0EAD8451C1A58B20056587D /* OCTBootStrap.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EAD8441C1A58B20056587D /* OCTBootStrap.xib */; };
+		F50269671C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F50269661C31CB0700E05351 /* OCTAudioQueueTests.m */; };
+		F50269681C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F50269661C31CB0700E05351 /* OCTAudioQueueTests.m */; };
 		F5BF42781C2D1F75008283E0 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 		F5BF42791C2D1F7D008283E0 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
 		F5F6FA1F1C268B5000607306 /* OCTAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FA1E1C268B5000607306 /* OCTAudioQueue.m */; };
@@ -553,6 +555,7 @@
 		F09D0A451C1B9877008E74AF /* OCTUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTUserViewController.xib; sourceTree = "<group>"; };
 		F0EAD8421C1A38DA0056587D /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F0EAD8441C1A58B20056587D /* OCTBootStrap.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCTBootStrap.xib; sourceTree = "<group>"; };
+		F50269661C31CB0700E05351 /* OCTAudioQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTAudioQueueTests.m; sourceTree = "<group>"; };
 		F5BC99BD1C2A175700425CE3 /* test_straight3p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_straight3p.h; sourceTree = "<group>"; };
 		F5BC99BE1C2A1AB800425CE3 /* test_good.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_good.h; sourceTree = "<group>"; };
 		F5BC99BF1C2A1C4600425CE3 /* test_stride13p.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_stride13p.h; sourceTree = "<group>"; };
@@ -998,6 +1001,7 @@
 			children = (
 				F5BF427A1C2D2686008283E0 /* CoreAudioMocks.h */,
 				11D651221B89236A00C3DD23 /* OCTAudioEngineTests.m */,
+				F50269661C31CB0700E05351 /* OCTAudioQueueTests.m */,
 				11D651231B89236A00C3DD23 /* OCTCallTimerTests.m */,
 				9CB44C9D1B84DF46007FA7B6 /* OCTCAsserts.h */,
 				9CB44C9E1B84DF46007FA7B6 /* OCTChatTests.m */,
@@ -1577,6 +1581,7 @@
 				11D651071B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
 				9CB44C1F1B84DBA3007FA7B6 /* OCTTox.m in Sources */,
 				9CB44C271B84DBA3007FA7B6 /* RBQSafeRealmObject.m in Sources */,
+				F50269671C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */,
 				11D650D11B89225400C3DD23 /* OCTAudioEngine.m in Sources */,
 				9CB44C121B84DBA3007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
 				9CB44C211B84DBA3007FA7B6 /* RLMRealm+Notifications.m in Sources */,
@@ -1731,6 +1736,7 @@
 				11D651091B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
 				9CB44C931B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */,
 				9CB44C8F1B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */,
+				F50269681C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */,
 				11D650D31B89225400C3DD23 /* OCTAudioEngine.m in Sources */,
 				9CB44C7E1B84DCFB007FA7B6 /* OCTMessageFile.m in Sources */,
 				9CB44C7F1B84DCFB007FA7B6 /* OCTMessageText.m in Sources */,

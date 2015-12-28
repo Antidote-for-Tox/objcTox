@@ -48,7 +48,7 @@ static NSError *OCTErrorFromCoreAudioCode(OSStatus resultCode)
 }
 
 #if ! TARGET_OS_IPHONE
-static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
+static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSError **err)
 {
     AudioDeviceID devID = 0;
     OSStatus ok = 0;
@@ -62,6 +62,8 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     ok = _AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
+        if (err)
+            *err = OCTErrorFromCoreAudioCode(ok);
         return nil;
     }
 
@@ -71,6 +73,8 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
     ok = _AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
+        if (err)
+            *err = OCTErrorFromCoreAudioCode(ok);
         return nil;
     }
 
@@ -181,6 +185,16 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
 {
     DDLogVerbose(@"OCTAudioQueue begin");
 
+    if (!self.audioQueue) {
+        OSStatus res = [self createAudioQueue];
+        if (res != 0) {
+            DDLogError(@"Can't create the audio queue again after a presumably failed updateSampleRate:... call.");
+            if (error)
+                *error = OCTErrorFromCoreAudioCode(res);
+            return NO;
+        }
+    }
+
     int framesPerBuffer = 1;
     if (self.isOutput) {
         framesPerBuffer = kFramesPerOutputBuffer;
@@ -240,14 +254,16 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
         DDLogVerbose(@"using the default device because nil passed to OCTAudioQueue setDeviceID:");
         deviceID = OCTGetSystemAudioDevice(self.isOutput ?
                                            kAudioHardwarePropertyDefaultOutputDevice :
-                                           kAudioHardwarePropertyDefaultInputDevice);
+                                           kAudioHardwarePropertyDefaultInputDevice, err);
         if (! deviceID) {
             return NO;
         }
     }
 
+    BOOL needToRestart = self.running;
+
     // we need to pause the queue for a sec
-    if (! [self stop:err]) {
+    if (needToRestart && ! [self stop:err]) {
         return NO;
     }
 
@@ -264,7 +280,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel)
         DDLogVerbose(@"Successfully set the device id to %@", deviceID);
     }
 
-    if (! [self begin:err] || (ok != 0)) {
+    if ((needToRestart && ![self begin:err]) || (ok != 0)) {
         return NO;
     }
     else {
