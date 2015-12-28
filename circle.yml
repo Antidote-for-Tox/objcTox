@@ -1,6 +1,6 @@
 machine:
   xcode:
-    version: "6.3.1"
+    version: "7.0"
 
 dependencies:
   pre:
@@ -10,7 +10,7 @@ dependencies:
 
 test:
   override:
-    - xctool -workspace objcTox.xcworkspace -scheme OSXDemo -sdk macosx10.10 CODE_SIGNING_REQUIRED=NO clean test
+    - xctool -workspace objcTox.xcworkspace -scheme OSXDemo -sdk macosx10.11 CODE_SIGNING_REQUIRED=NO clean test
 
     - xctool
       -workspace objcTox.xcworkspace

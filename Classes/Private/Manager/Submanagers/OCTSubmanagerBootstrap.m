@@ -27,7 +27,6 @@ static const NSUInteger kNodesPerIteration = 4;
 
 @property (assign, nonatomic) BOOL isBootstrapping;
 
-@property (strong, nonatomic) NSObject *nodesLock;
 @property (strong, nonatomic) NSObject *bootstrappingLock;
 
 @property (assign, nonatomic) NSTimeInterval didConnectDelay;
@@ -49,7 +48,6 @@ static const NSUInteger kNodesPerIteration = 4;
     }
 
     _addedNodes = [NSMutableSet new];
-    _nodesLock = [NSObject new];
     _bootstrappingLock = [NSObject new];
 
     _didConnectDelay = kDidConnectDelay;

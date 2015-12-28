@@ -48,7 +48,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     DDLogVerbose(@"%@: init", self);
 
     _captureSession = [AVCaptureSession new];
-    _captureSession.sessionPreset = AVCaptureSessionPresetLow;
+    _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
     _pixelPool = [[OCTPixelBufferPool alloc] initWithFormat:kPixelFormat];
@@ -236,6 +236,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     CVPixelBufferLockBaseAddress(bufferRef, 0);
 
     OCTToxAVPlaneData *ySource = yPlane;
+    // if stride is negative, start reading from the left of the last row
+    if (yStride < 0) {
+        ySource = ySource + ((-yStride) * (height - 1));
+    }
+
     uint8_t *yDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 0);
 
     /* Copy yPlane data */
@@ -248,7 +253,15 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     /* Interweave U and V */
     uint8_t *uvDestinationPlane = CVPixelBufferGetBaseAddressOfPlane(bufferRef, 1);
     OCTToxAVPlaneData *uSource = uPlane;
+    if (uStride < 0) {
+        uSource = uSource + ((-uStride) * ((height / 2) - 1));
+    }
+
     OCTToxAVPlaneData *vSource = vPlane;
+    if (vStride < 0) {
+        vSource = vSource + ((-vStride) * ((height / 2) - 1));
+    }
+
     for (size_t yHeight = 0; yHeight < height / 2; yHeight++) {
         for (size_t index = 0; index < uvBytesPerRow; index++) {
             uvDestinationPlane[index * 2] = uSource[index];
@@ -262,17 +275,12 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     CVPixelBufferUnlockBaseAddress(bufferRef, 0);
 
     dispatch_async(self.processingQueue, ^{
-
         /* Create Core Image */
-#if TARGET_OS_IPHONE
         CIImage *coreImage = [CIImage imageWithCVPixelBuffer:bufferRef];
 
         CVPixelBufferRelease(bufferRef);
 
         self.videoView.image = coreImage;
-#else
-#warning TODO audio OSX
-#endif
     });
 }
 
