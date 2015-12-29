@@ -93,11 +93,13 @@ static void *refToSelf;
 
 - (void)testStartingAudioFlowWithBadDeviceID
 {
+#if !TARGET_OS_IPHONE
     XCTAssertTrue([self.audioEngine setOutputDeviceID:@"jkfhsdhfgk" error:nil]);
 
     NSError *err;
     XCTAssertFalse([self.audioEngine startAudioFlow:&err]);
     XCTAssertNotNil(err);
+#endif
 }
 
 - (void)testStartingAudioFlowWithNilDeviceID
@@ -109,6 +111,7 @@ static void *refToSelf;
     XCTAssertNotEqual([self.audioEngine.outputQueue getBufferPointer], NULL);
 }
 
+// No test for iOS because it doesn't do anything anyway
 - (void)testSettingDevicesLive
 {
 #if ! TARGET_OS_IPHONE
@@ -130,9 +133,6 @@ static void *refToSelf;
     // Failed sets should not update the stored id.
     XCTAssertFalse([self.audioEngine setOutputDeviceID:@"Niles" error:nil]);
     XCTAssertNotEqualObjects(self.audioEngine.outputDeviceID, @"Niles");
-#else
-    XCTAssertTrue([self.audioEngine setOutputDeviceID:OCTOutputDeviceSpeaker error:nil]);
-    XCTAssertEqualObjects(self.audioEngine.outputDeviceID, OCTOutputDeviceSpeaker);
 #endif
 }
 

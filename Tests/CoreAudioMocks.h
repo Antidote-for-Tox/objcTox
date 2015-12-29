@@ -19,8 +19,7 @@
     PATCH_PASSING(_AudioQueueNewOutput); \
     PATCH_PASSING(_AudioQueueSetProperty); \
     PATCH_PASSING(_AudioQueueStart); \
-    PATCH_PASSING(_AudioQueueStop); \
-    PATCH_PASSING(_AudioObjectGetPropertyData);
+    PATCH_PASSING(_AudioQueueStop);
 
 // Implements a function named PASSING<funcname> that takes any number of args
 // and just returns 0. Handy when there's no need for special functionality.
