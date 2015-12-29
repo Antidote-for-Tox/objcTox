@@ -154,9 +154,14 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 
 - (void)dealloc
 {
+    if (self.running) {
+        [self stop:nil];
+    }
+
     if (self.audioQueue) {
         _AudioQueueDispose(self.audioQueue, true);
     }
+
     TPCircularBufferCleanup(&_buffer);
 }
 

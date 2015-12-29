@@ -1,8 +1,8 @@
 //
-//  OCTAudioEngineTests.m
+//  OCTAudioQueueTests.m
 //  objcTox
 //
-//  Created by Chuong Vu on 5/26/15.
+//  Created by stal on 5/26/15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
@@ -22,10 +22,6 @@ static AudioQueueInputCallback callForInput;
 static AudioQueueOutputCallback callForOutput;
 
 const OCTToxAVPCMData pcm[8] = {2, 4, 6, 8, 10, 12, 14, 16};
-int16_t *pcmRender;
-
-// Get arund const-ness.
-#define FORCE_ASSIGN_TO_MEMORY(type, expr1, expr2) { type *b = (type *)&(expr1); *b = expr2; }
 
 OSStatus PASSING_AudioQueueNewOutput(const AudioStreamBasicDescription *inFormat,
                                      AudioQueueOutputCallback inCallbackProc,
@@ -72,8 +68,6 @@ OSStatus PASSING_AudioQueueAllocateBuffer(AudioQueueRef inAQ, UInt32 inBufferByt
     buf->mAudioDataBytesCapacity = inBufferByteSize;
     buf->mAudioDataByteSize = inBufferByteSize;
 
-    // memset(buf, 0x9a, sizeof(AudioQueueBuffer) + inBufferByteSize);
-
     *outBuffer = (AudioQueueBufferRef)buf;
     return 0;
 }
@@ -92,9 +86,8 @@ OSStatus PASSING_AudioObjectGetPropertyData(AudioObjectID inObjectID,
                                             void *outData)
 {
     if (inObjectID == kAudioObjectSystemObject) {
-        // we can't do this in C functions :(
-        // XCTAssertTrue(outData != NULL);
-        // XCTAssertTrue(*ioDataSize == sizeof(AudioDeviceID));
+        CCCAssertTrue(outData != NULL);
+        CCCAssertTrue(*ioDataSize == sizeof(AudioDeviceID));
         *(AudioDeviceID *)outData = 0x1234567;
         return 0;
     }
@@ -436,7 +429,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
     };
 
     int times = 0;
-    while (!sbreak && times < 2000) {
+    while (! sbreak && times < 2000) {
         memcpy(buf->mAudioData, pcm, 4);
         callForInput((__bridge void *_Nullable)(oq),
                      (void *)0x1234567,
@@ -452,5 +445,3 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 }
 
 @end
-
-#pragma mark mocked audio engine functions
