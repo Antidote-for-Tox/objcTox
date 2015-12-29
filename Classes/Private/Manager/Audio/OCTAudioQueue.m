@@ -29,16 +29,47 @@ const int kFramesPerOutputBuffer = kSampleCount / 4;
 const int kBytesPerSample = sizeof(SInt16);
 const int kNumberOfAudioQueueBuffers = 8;
 
-OSStatus (*_AudioQueueAllocateBuffer)( AudioQueueRef inAQ, UInt32 inBufferByteSize, AudioQueueBufferRef  *outBuffer ) = AudioQueueAllocateBuffer;
-OSStatus (*_AudioQueueDispose)( AudioQueueRef inAQ, Boolean inImmediate ) = AudioQueueDispose;
-OSStatus (*_AudioQueueEnqueueBuffer)( AudioQueueRef inAQ, AudioQueueBufferRef inBuffer, UInt32 inNumPacketDescs, const AudioStreamPacketDescription *inPacketDescs ) = AudioQueueEnqueueBuffer;
-OSStatus (*_AudioQueueFreeBuffer)( AudioQueueRef inAQ, AudioQueueBufferRef inBuffer ) = AudioQueueFreeBuffer;
-OSStatus (*_AudioQueueNewInput)( const AudioStreamBasicDescription *inFormat, AudioQueueInputCallback inCallbackProc, void *inUserData, CFRunLoopRef inCallbackRunLoop, CFStringRef inCallbackRunLoopMode, UInt32 inFlags, AudioQueueRef  *outAQ ) = AudioQueueNewInput;
-OSStatus (*_AudioQueueNewOutput)( const AudioStreamBasicDescription *inFormat, AudioQueueOutputCallback inCallbackProc, void *inUserData, CFRunLoopRef inCallbackRunLoop, CFStringRef inCallbackRunLoopMode, UInt32 inFlags, AudioQueueRef  *outAQ ) = AudioQueueNewOutput;
-OSStatus (*_AudioQueueSetProperty)( AudioQueueRef inAQ, AudioQueuePropertyID inID, const void *inData, UInt32 inDataSize ) = AudioQueueSetProperty;
-OSStatus (*_AudioQueueStart)( AudioQueueRef inAQ, const AudioTimeStamp *inStartTime ) = AudioQueueStart;
-OSStatus (*_AudioQueueStop)( AudioQueueRef inAQ, Boolean inImmediate ) = AudioQueueStop;
-OSStatus (*_AudioObjectGetPropertyData)( AudioObjectID inObjectID, const AudioObjectPropertyAddress *inAddress,                           UInt32 inQualifierDataSize,                           const void *inQualifierData,                           UInt32 *ioDataSize,                           void *outData) = AudioObjectGetPropertyData;
+OSStatus (*_AudioQueueAllocateBuffer)(AudioQueueRef inAQ,
+                                      UInt32 inBufferByteSize,
+                                      AudioQueueBufferRef *outBuffer) = AudioQueueAllocateBuffer;
+OSStatus (*_AudioQueueDispose)(AudioQueueRef inAQ,
+                               Boolean inImmediate) = AudioQueueDispose;
+OSStatus (*_AudioQueueEnqueueBuffer)(AudioQueueRef inAQ,
+                                     AudioQueueBufferRef inBuffer,
+                                     UInt32 inNumPacketDescs,
+                                     const AudioStreamPacketDescription *inPacketDescs) = AudioQueueEnqueueBuffer;
+OSStatus (*_AudioQueueFreeBuffer)(AudioQueueRef inAQ,
+                                  AudioQueueBufferRef inBuffer) = AudioQueueFreeBuffer;
+OSStatus (*_AudioQueueNewInput)(const AudioStreamBasicDescription *inFormat,
+                                AudioQueueInputCallback inCallbackProc,
+                                void *inUserData,
+                                CFRunLoopRef inCallbackRunLoop,
+                                CFStringRef inCallbackRunLoopMode,
+                                UInt32 inFlags,
+                                AudioQueueRef *outAQ) = AudioQueueNewInput;
+OSStatus (*_AudioQueueNewOutput)(const AudioStreamBasicDescription *inFormat,
+                                 AudioQueueOutputCallback inCallbackProc,
+                                 void *inUserData,
+                                 CFRunLoopRef inCallbackRunLoop,
+                                 CFStringRef inCallbackRunLoopMode,
+                                 UInt32 inFlags,
+                                 AudioQueueRef *outAQ) = AudioQueueNewOutput;
+OSStatus (*_AudioQueueSetProperty)(AudioQueueRef inAQ,
+                                   AudioQueuePropertyID inID,
+                                   const void *inData,
+                                   UInt32 inDataSize) = AudioQueueSetProperty;
+OSStatus (*_AudioQueueStart)(AudioQueueRef inAQ,
+                             const AudioTimeStamp *inStartTime) = AudioQueueStart;
+OSStatus (*_AudioQueueStop)(AudioQueueRef inAQ,
+                            Boolean inImmediate) = AudioQueueStop;
+#if ! TARGET_OS_IPHONE
+OSStatus (*_AudioObjectGetPropertyData)(AudioObjectID inObjectID,
+                                        const AudioObjectPropertyAddress *inAddress,
+                                        UInt32 inQualifierDataSize,
+                                        const void *inQualifierData,
+                                        UInt32 *ioDataSize,
+                                        void *outData) = AudioObjectGetPropertyData;
+#endif
 
 static NSError *OCTErrorFromCoreAudioCode(OSStatus resultCode)
 {
@@ -62,8 +93,9 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     ok = _AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &devID);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for system object: %d! Crash may or may not be imminent", ok);
-        if (err)
+        if (err) {
             *err = OCTErrorFromCoreAudioCode(ok);
+        }
         return nil;
     }
 
@@ -73,8 +105,9 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     ok = _AudioObjectGetPropertyData(devID, &address, 0, NULL, &size, &unique);
     if (ok != kAudioHardwareNoError) {
         DDLogCError(@"failed AudioObjectGetPropertyData for selected device: %d! Crash may or may not be imminent", ok);
-        if (err)
+        if (err) {
             *err = OCTErrorFromCoreAudioCode(ok);
+        }
         return nil;
     }
 
@@ -190,12 +223,13 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 {
     DDLogVerbose(@"OCTAudioQueue begin");
 
-    if (!self.audioQueue) {
+    if (! self.audioQueue) {
         OSStatus res = [self createAudioQueue];
         if (res != 0) {
             DDLogError(@"Can't create the audio queue again after a presumably failed updateSampleRate:... call.");
-            if (error)
+            if (error) {
                 *error = OCTErrorFromCoreAudioCode(res);
+            }
             return NO;
         }
     }
@@ -285,7 +319,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
         DDLogVerbose(@"Successfully set the device id to %@", deviceID);
     }
 
-    if ((needToRestart && ![self begin:err]) || (ok != 0)) {
+    if ((needToRestart && ! [self begin:err]) || (ok != 0)) {
         return NO;
     }
     else {
@@ -298,7 +332,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 
 - (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err
 {
-    DDLogVerbose(@"updateSampleRate %lf, %u", sampleRate, numberOfChannels);
+    DDLogVerbose(@"updateSampleRate %lf, %u", sampleRate, (unsigned int)numberOfChannels);
 
     if (! [self stop:err]) {
         return NO;
@@ -315,7 +349,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 
     OSStatus res = [self createAudioQueue];
     if (res != 0) {
-        DDLogError(@"oops, could not recreate the audio queue: %d after samplerate/nc change. enjoy your overflowing buffer", res);
+        DDLogError(@"oops, could not recreate the audio queue: %d after samplerate/nc change. enjoy your overflowing buffer", (int)res);
         if (err) {
             *err = OCTErrorFromCoreAudioCode(res);
         }
