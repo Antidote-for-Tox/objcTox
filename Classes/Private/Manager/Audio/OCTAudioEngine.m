@@ -23,7 +23,6 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 @interface OCTAudioEngine ()
 
-// @property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
 @property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
 
@@ -105,24 +104,15 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
 
-    if (!
-        [session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
-        [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
-        [session setMode:AVAudioSessionModeVoiceChat error:error] &&
-        [session setActive:YES error:error]) {
+    if (! ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+           [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
+           [session setMode:AVAudioSessionModeVoiceChat error:error] &&
+           [session setActive:YES error:error])) {
         return NO;
     }
 #endif
 
-    // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
-    // we don't set the device explicitly, and the default is used.
-#if TARGET_OS_IPHONE
-    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:nil error:error];
-    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:nil error:error];
-#else
-    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID error:error];
-    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID error:error];
-#endif
+    [self makeQueues:error];
 
     if (! (self.outputQueue && self.inputQueue)) {
         return NO;
@@ -163,6 +153,8 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     BOOL ret = YES;
 #endif
 
+    self.inputQueue = nil;
+    self.outputQueue = nil;
     return ret;
 }
 
@@ -183,9 +175,22 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     }
 }
 
-- (BOOL)isAudioRunning:(NSError *__autoreleasing *)error
+- (BOOL)isAudioRunning:(NSError **)error
 {
     return self.inputQueue.running && self.outputQueue.running;
+}
+
+- (void)makeQueues:(NSError **)error
+{
+    // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
+    // we don't set the device explicitly, and the default is used.
+#if TARGET_OS_IPHONE
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:nil error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:nil error:error];
+#else
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID error:error];
+#endif
 }
 
 @end

@@ -378,7 +378,7 @@ static void InputAvailable(OCTAudioQueue *__unsafe_unretained context,
     int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
 
     for (int32_t i = 0; i < cyclesToConsume; i++) {
-        context.sendDataBlock(tail, kSampleCount, kDefaultSampleRate, kNumberOfInputChannels);
+        context.sendDataBlock(tail, kSampleCount, context.streamFmt.mSampleRate, kNumberOfInputChannels);
         TPCircularBufferConsume(&context->_buffer, minimalBytesToConsume);
         tail = TPCircularBufferTail(&context->_buffer, &availableBytesToConsume);
     }

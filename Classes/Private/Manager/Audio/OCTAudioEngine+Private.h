@@ -26,4 +26,6 @@ extern int kNumberOfAudioQueueBuffers;
 @property (nonatomic, strong) OCTAudioQueue *outputQueue;
 @property (nonatomic, strong) OCTAudioQueue *inputQueue;
 
+- (void)makeQueues:(NSError **)error;
+
 @end
