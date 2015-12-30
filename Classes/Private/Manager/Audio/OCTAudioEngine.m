@@ -114,11 +114,15 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     }
 #endif
 
-    // TODO: handle iOS device model
     // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
     // we don't set the device explicitly, and the default is used.
+#if TARGET_OS_IPHONE
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:nil error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:nil error:error];
+#else
     self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID error:error];
     self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID error:error];
+#endif
 
     if (! (self.outputQueue && self.inputQueue)) {
         return NO;
