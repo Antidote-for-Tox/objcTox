@@ -411,7 +411,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
     memset((void *)checkPCM, 0, 32);
     memcpy((void *)checkPCM, pcm, 16);
 
-    XCTAssertTrue(memcmp(buf->mAudioData, pcm, 32) == 0);
+    XCTAssertTrue(memcmp(buf->mAudioData, checkPCM, 32) == 0);
 }
 
 - (void)testFillInput
