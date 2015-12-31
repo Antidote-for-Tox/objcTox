@@ -139,7 +139,7 @@ static NSString *const kCellIdent = @"cellIdent";
         OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
         OCTFriend *friend = [chat.friends firstObject];
 
-        field.stringValue = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
+        field.stringValue = (friend.isConnected) ? ([NSString stringWithFormat : @"%@ : Online", friend.nickname]) : friend.nickname;
 
     }
     else {
