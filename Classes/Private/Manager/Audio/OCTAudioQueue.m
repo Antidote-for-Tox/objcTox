@@ -234,13 +234,8 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
         }
     }
 
-    int framesPerBuffer = 1;
-    if (self.isOutput) {
-        framesPerBuffer = kFramesPerOutputBuffer;
-    }
-
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
-        _AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * framesPerBuffer, &(_AQBuffers[i]));
+        _AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * kFramesPerOutputBuffer, &(_AQBuffers[i]));
         _AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
         if (self.isOutput) {
             // For some reason we have to fill it with zero or the callback never gets called.
