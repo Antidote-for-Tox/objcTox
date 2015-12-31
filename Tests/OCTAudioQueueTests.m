@@ -78,7 +78,7 @@ OSStatus PASSING_AudioQueueFreeBuffer(AudioQueueRef inAQ, AudioQueueBufferRef in
     return 0;
 }
 
-#if !TARGET_OS_IPHONE
+#if ! TARGET_OS_IPHONE
 OSStatus PASSING_AudioObjectGetPropertyData(AudioObjectID inObjectID,
                                             const AudioObjectPropertyAddress *inAddress,
                                             UInt32 inQualifierDataSize,
@@ -187,8 +187,8 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 #endif
 
     RESTORE_PATCHES
-    
-#if !TARGET_OS_IPHONE
+
+#if ! TARGET_OS_IPHONE
     _AudioObjectGetPropertyData = PASSING_AudioObjectGetPropertyData;
 #endif
 }
