@@ -138,7 +138,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 
 #pragma mark -  OCTSubmanagerUserDelegate
 
-- (void)OCTSubmanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
+- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
 {
     [self.userTableView reloadData];
 }
