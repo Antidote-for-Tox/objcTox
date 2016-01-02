@@ -304,7 +304,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testStartStop
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Naivy" error:&error];
 
     XCTAssertNotNil(oq);
     XCTAssertNotEqual([oq getBufferPointer], NULL);
@@ -319,7 +319,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testStartFail
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Vervain" error:&error];
 
     XCTAssertNotNil(oq);
 
@@ -336,7 +336,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testStopFail
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Raijin" error:&error];
 
     XCTAssertNotNil(oq);
 
@@ -353,7 +353,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testChangeSampleRate
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Minari" error:&error];
 
     XCTAssertNotNil(oq);
 
@@ -367,7 +367,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testChangeSampleRateFail
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Medis" error:&error];
 
     XCTAssertNotNil(oq);
 
@@ -389,7 +389,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testFillOutput
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithOutputDeviceID:@"Shadogan" error:&error];
 
     XCTAssertNotNil(oq);
 
@@ -417,7 +417,7 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
 - (void)testFillInput
 {
     NSError *error = nil;
-    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithInputDeviceID:@"Crystinger" error:&error];
+    OCTAudioQueue *oq = [[OCTAudioQueue alloc] initWithInputDeviceID:@"Nelly" error:&error];
 
     XCTAssertNotNil(oq);
 
