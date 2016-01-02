@@ -25,6 +25,8 @@ static void *refToSelf;
 @property (strong, nonatomic) OCTAudioEngine *realAudioEngine;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
 
+@property (strong, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
+
 @end
 
 @implementation OCTAudioEngineTests
@@ -42,6 +44,7 @@ static void *refToSelf;
     [OCMStub([self.audioSession setPreferredSampleRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     OCMStub([self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:[OCMArg anyObjectRef]]).andReturn(YES);
     [OCMStub([self.audioSession setPreferredIOBufferDuration:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [OCMStub([self.audioSession overrideOutputAudioPort:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     OCMStub(([self.audioSession setMode:AVAudioSessionModeVoiceChat error:[OCMArg anyObjectRef]])).andReturn(YES);
     OCMStub([self.audioSession setActive:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
@@ -69,46 +72,85 @@ static void *refToSelf;
 
 - (void)enableMockQueues
 {
-    self.outputMock = OCMPartialMock(self.audioEngine.outputQueue);
-    [self.audioEngine setOutputQueue:self.outputMock];
+    OCMStub([(id)self.audioEngine makeQueues:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        id ae;
+        [invocation getArgument:&ae atIndex:0];
 
-    self.inputMock = OCMPartialMock(self.audioEngine.inputQueue);
-    [self.audioEngine setInputQueue:self.inputMock];
+        [ae setOutputQueue:self.outputMock];
+        [ae setInputQueue:self.inputMock];
+    });
 }
 
 - (void)testStartStopAudioFlow
 {
+    [self enableMockQueues];
+
     id toxav = OCMClassMock([OCTToxAV class]);
     OCMStub([toxav sendAudioFrame:[OCMArg anyPointer] sampleCount:0 channels:0 sampleRate:0 toFriend:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioEngine toxav]).andReturn(toxav);
 
-    XCTAssertTrue([self.audioEngine startAudioFlow:nil]);
-    XCTAssertTrue([self.audioEngine isAudioRunning:nil]);
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    OCMVerifyAllWithDelay(toxav, 0.3);
+    OCMStub([self.inputMock stop:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock stop:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    XCTAssertTrue([self.audioEngine stopAudioFlow:nil]);
-    XCTAssertFalse([self.audioEngine isAudioRunning:nil]);
+    NSError *error = nil;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+    XCTAssertTrue([self.audioEngine stopAudioFlow:&error]);
 }
 
-- (void)testStartingAudioFlowWithBadDeviceID
+- (void)testStartStopAudioFlowFail
 {
-#if !TARGET_OS_IPHONE
-    XCTAssertTrue([self.audioEngine setOutputDeviceID:@"jkfhsdhfgk" error:nil]);
+    [self enableMockQueues];
 
-    NSError *err;
-    XCTAssertFalse([self.audioEngine startAudioFlow:&err]);
-    XCTAssertNotNil(err);
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        NSError *__autoreleasing *err;
+        [invocation getArgument:&err atIndex:2];
+
+        if (err) {
+            *err = [NSError new];
+        }
+
+        BOOL no = NO;
+        [invocation setReturnValue:&no];
+    });
+
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        NSError *__autoreleasing *err;
+        [invocation getArgument:&err atIndex:2];
+
+        if (err) {
+            *err = [NSError new];
+        }
+
+        BOOL no = NO;
+        [invocation setReturnValue:&no];
+    });
+
+
+    NSError *error = nil;
+    XCTAssertFalse([self.audioEngine startAudioFlow:&error]);
+    XCTAssertNotNil(error);
+}
+
+- (void)testSettingDevice
+{
+#if ! TARGET_OS_IPHONE
+    XCTAssertTrue([self.audioEngine setOutputDeviceID:@"Sayle" error:nil]);
+    XCTAssertTrue([self.audioEngine setInputDeviceID:@"Laives" error:nil]);
+
+    // Device ID should stay in sync with set.
+    XCTAssertEqualObjects(self.audioEngine.outputDeviceID, @"Sayle");
+    XCTAssertEqualObjects(self.audioEngine.inputDeviceID, @"Laives");
+#else
+    XCTAssertTrue([self.audioEngine setOutputDeviceID:OCTOutputDeviceSpeaker error:nil]);
+    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
+    XCTAssertThrows([self.audioEngine setInputDeviceID:OCTInputDeviceDefault error:nil]);
+
+    // Device ID should stay in sync with set.
+    XCTAssertEqual(self.audioEngine.outputDeviceID, OCTOutputDeviceSpeaker);
 #endif
-}
-
-- (void)testStartingAudioFlowWithNilDeviceID
-{
-    [self.audioEngine setOutputDeviceID:nil error:nil];
-
-    NSError *err;
-    XCTAssertTrue([self.audioEngine startAudioFlow:&err]);
-    XCTAssertNotEqual([self.audioEngine.outputQueue getBufferPointer], NULL);
 }
 
 // No test for iOS because it doesn't do anything anyway
@@ -116,9 +158,12 @@ static void *refToSelf;
 {
 #if ! TARGET_OS_IPHONE
     NSError *err;
+    [self enableMockQueues];
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
     XCTAssertTrue([self.audioEngine startAudioFlow:&err]);
 
-    [self enableMockQueues];
     OCMStub([self.outputMock setDeviceID:@"Crystinger" error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.inputMock setDeviceID:@"Daxx" error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.outputMock setDeviceID:@"Niles" error:[OCMArg anyObjectRef]]).andReturn(NO);
@@ -136,13 +181,59 @@ static void *refToSelf;
 #endif
 }
 
-- (void)testSettingNilDevicesLiveMacOS
+- (void)testSendDataBlock
 {
-#if ! TARGET_OS_IPHONE
-    NSError *err;
-    XCTAssertTrue([self.audioEngine startAudioFlow:&err]);
-    XCTAssertTrue([self.audioEngine setOutputDeviceID:nil error:nil]);
-#endif
+    [self enableMockQueues];
+
+    id toxav = OCMClassMock([OCTToxAV class]);
+    OCMStub([self.audioEngine toxav]).andReturn(toxav);
+
+    OCMStub([self.inputMock setSendDataBlock:[OCMArg any]]).andDo(^(NSInvocation *invoc) {
+        void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
+        [invoc getArgument:&sendDataBlock atIndex:2];
+        self.sendDataBlock = sendDataBlock;
+    });
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    NSError *error = nil;
+    self.audioEngine.friendNumber = 0;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+
+    OCTToxAVPCMData pcm[] = {0x52, 0x2d, 0x4f, 0x2d, 0x4d, 0x2d, 0x41, 0x2d, 0x4e, 0x2d, 0x54, 0x2d, 0x49, 0x2d, 0x43, 0x2d, 0x21, 0x21};
+    self.sendDataBlock((void *)pcm, 9, 48000, 1);
+
+    OCMVerify([toxav sendAudioFrame:pcm sampleCount:9 channels:1 sampleRate:48000 toFriend:0 error:[OCMArg anyObjectRef]]);
+}
+
+- (void)testReceiveAudioPackets
+{
+    [self enableMockQueues];
+
+    TPCircularBuffer buffer;
+    TPCircularBufferInit(&buffer, 256);
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock getBufferPointer]).andReturn(&buffer);
+
+    NSError *error = nil;
+    self.audioEngine.friendNumber = 0;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+
+    OCTToxAVPCMData pcm[] = {0x52, 0x2d, 0x4f, 0x2d, 0x4d, 0x2d, 0x41, 0x2d, 0x4e, 0x2d, 0x54, 0x2d, 0x49, 0x2d, 0x43, 0x2d, 0x21, 0x21};
+    [self.audioEngine provideAudioFrames:pcm sampleCount:9 channels:1 sampleRate:12 fromFriend:0];
+
+    int32_t nbytes;
+    void *samples = TPCircularBufferTail(&buffer, &nbytes);
+
+    XCTAssertTrue(nbytes == 18);
+    XCTAssertTrue(memcmp(samples, pcm, 18) == 0);
+
+    TPCircularBufferCleanup(&buffer);
+
+    OCMVerify([self.outputMock updateSampleRate:12 numberOfChannels:1 error:[OCMArg anyObjectRef]]);
 }
 
 @end
