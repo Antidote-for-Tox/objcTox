@@ -354,6 +354,28 @@ static NSString *const kMessage = @"kMessage";
     XCTAssertEqual(friend.status, kStatus);
 }
 
+- (void)testLastSeenDate
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = kFriendNumber;
+    friend.lastSeenOnlineInterval = 0;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm commitWriteTransaction];
+
+    XCTAssertNil([friend lastSeenOnline]);
+
+    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusTCP friendNumber:kFriendNumber];
+
+    XCTAssertNil([friend lastSeenOnline]);
+    XCTAssertEqual(friend.lastSeenOnlineInterval, 0);
+
+    [self stubFriendMethodsInTox];
+    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusNone friendNumber:kFriendNumber];
+    XCTAssertEqual(friend.lastSeenOnlineInterval, [sLastSeenOnline timeIntervalSince1970]);
+}
+
 - (void)testIsTypingUpdate
 {
     OCTFriend *friend = [self createFriend];
