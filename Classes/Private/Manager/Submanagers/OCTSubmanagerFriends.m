@@ -211,6 +211,15 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
     [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.isConnected = (status != OCTToxConnectionStatusNone);
         theFriend.connectionStatus = status;
+
+        if (! theFriend.isConnected) {
+            NSDate *dateOffline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:nil];
+            NSTimeInterval timeSince = [dateOffline timeIntervalSince1970];
+            theFriend.lastSeenOnlineInterval = timeSince;
+        }
+        else {
+            theFriend.lastSeenOnlineInterval = 0;
+        }
     }];
 
     [[self.dataSource managerGetNotificationCenter] postNotificationName:kOCTFriendConnectionStatusChangeNotificationName object:friend];
