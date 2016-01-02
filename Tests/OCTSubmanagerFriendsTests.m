@@ -374,10 +374,6 @@ static NSString *const kMessage = @"kMessage";
     [self stubFriendMethodsInTox];
     [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusNone friendNumber:kFriendNumber];
     XCTAssertEqual(friend.lastSeenOnlineInterval, [sLastSeenOnline timeIntervalSince1970]);
-
-    [self.submanager tox:self.tox friendConnectionStatusChanged:OCTToxConnectionStatusTCP friendNumber:kFriendNumber];
-    XCTAssertNil([friend lastSeenOnline]);
-    XCTAssertEqual(0, friend.lastSeenOnlineInterval);
 }
 
 - (void)testIsTypingUpdate

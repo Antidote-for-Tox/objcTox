@@ -106,6 +106,8 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
             friend.isConnected = NO;
             friend.connectionStatus = OCTToxConnectionStatusNone;
             friend.isTyping = NO;
+            NSDate *dateOffline = [[self.dataSource managerGetTox] friendGetLastOnlineWithFriendNumber:friend.friendNumber error:nil];
+            friend.lastSeenOnlineInterval = [dateOffline timeIntervalSince1970];
         }
     }];
 
@@ -216,9 +218,6 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
             NSDate *dateOffline = [tox friendGetLastOnlineWithFriendNumber:friendNumber error:nil];
             NSTimeInterval timeSince = [dateOffline timeIntervalSince1970];
             theFriend.lastSeenOnlineInterval = timeSince;
-        }
-        else {
-            theFriend.lastSeenOnlineInterval = 0;
         }
     }];
 
