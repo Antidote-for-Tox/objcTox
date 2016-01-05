@@ -38,6 +38,8 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
         return nil;
     }
 
+    _outputSampleRate = kDefaultSampleRate;
+    _outputNumberOfChannels = kNumberOfInputChannels;
     _enableMicrophone = YES;
 
     return self;
@@ -131,6 +133,7 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
                                 error:nil];
         }
     };
+    [self.outputQueue updateSampleRate:(Float64)self.outputSampleRate numberOfChannels:(UInt32)self.outputNumberOfChannels error:nil];
 
     if (! [self.inputQueue begin:error] || ! [self.outputQueue begin:error]) {
         return NO;

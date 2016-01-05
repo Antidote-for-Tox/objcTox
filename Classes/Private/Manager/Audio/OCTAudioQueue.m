@@ -329,7 +329,9 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 {
     DDLogVerbose(@"updateSampleRate %lf, %u", sampleRate, (unsigned int)numberOfChannels);
 
-    if (! [self stop:err]) {
+    BOOL needToRestart = self.running;
+
+    if (needToRestart && ! [self stop:err]) {
         return NO;
     }
 
@@ -350,8 +352,11 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
         }
         return NO;
     }
-    else {
+    else if (needToRestart) {
         return [self begin:err];
+    }
+    else {
+        return YES;
     }
 }
 
