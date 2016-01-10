@@ -41,7 +41,6 @@
     });
 
     self.enableSetNeedsDisplay = NO;
-    // #warning TODO audio OSX
 #endif
 }
 
