@@ -38,16 +38,6 @@
 - (BOOL)stopAudioFlow:(NSError **)error;
 
 /**
- * Set the input device (not available on Mac OS X).
- * @param inputDeviceID Core Audio's unique ID for the device. See
- * @param error If this method returns NO, contains more information on the
- *              underlying error.
- * @return YES on success, otherwise NO.
- */
-- (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error;
-- (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error;
-
-/**
  * Checks if the Audio Graph is processing.
  * @param error Pointer to error object.
  * @return YES if Audio Graph is running, otherwise NO.
@@ -63,5 +53,47 @@
  */
 - (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate fromFriend:(OCTToxFriendNumber)friendNumber;
 
+@end
+
+#if ! TARGET_OS_IPHONE
+
+@interface OCTAudioEngine (MacDevice)
+
+/**
+ * Set the input device (not available on iOS).
+ * @param inputDeviceID Core Audio's unique ID for the device. See
+ *                      public OCTSubmanagerCalls.h for what these should be.
+ * @param error If this method returns NO, contains more information on the
+ *              underlying error.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error;
+
+/**
+ * Set the output device (not available on iOS).
+ * @param outputDeviceID Core Audio's unique ID for the device. See
+ *                       public OCTSubmanagerCalls.h for what these should be.
+ * @param error If this method returns NO, contains more information on the
+ *              underlying error.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error;
 
 @end
+
+#else
+
+@interface OCTAudioEngine (iOSDevice)
+
+/**
+ * Switch the output to/from the device's speaker.
+ * @param speaker Whether we should use the speaker for output.
+ * @param error If this method returns NO, contains more information on the
+ *              underlying error.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+
+@end
+
+#endif

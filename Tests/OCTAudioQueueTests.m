@@ -282,21 +282,21 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
     XCTAssertNotNil(oq);
 
 #if ! TARGET_OS_IPHONE
-    BOOL ok = [oq setDeviceID:OCTInputDeviceDefault error:&error];
+    BOOL ok = [oq setDeviceID:nil error:&error];
     XCTAssertTrue(ok);
 
     _AudioObjectGetPropertyData = FAILING_AudioObjectGetPropertyData;
-    ok = [oq setDeviceID:OCTInputDeviceDefault error:&error];
+    ok = [oq setDeviceID:nil error:&error];
     XCTAssertFalse(ok);
     XCTAssertNotNil(error);
 
     _AudioObjectGetPropertyData = FAILING_AudioObjectGetPropertyData2;
     error = nil;
-    ok = [oq setDeviceID:OCTInputDeviceDefault error:&error];
+    ok = [oq setDeviceID:nil error:&error];
     XCTAssertFalse(ok);
     XCTAssertNotNil(error);
 #else
-    BOOL ok = [oq setDeviceID:OCTInputDeviceDefault error:&error];
+    BOOL ok = [oq setDeviceID:nil error:&error];
     XCTAssertFalse(ok);
 #endif
 }

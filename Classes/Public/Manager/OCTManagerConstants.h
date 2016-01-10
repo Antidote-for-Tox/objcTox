@@ -204,26 +204,3 @@ typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
          */
         OCTCallPausedStatusByFriend = 1 << 1,
 };
-
-/**
- * Output to the iPhone speaker.
- * Not available on Mac OS X - you must specify a real device ID.
- */
-extern NSString *const OCTOutputDeviceSpeaker;
-/**
- * Reset the output destination.
- * On OS X, this represents the output device configured in System Preferences.
- */
-extern NSString *const OCTOutputDeviceDefault;
-extern NSString *const OCTInputDeviceDefault;
-
-/**
- * Back camera.
- * Not available on Mac OS X.
- */
-extern NSString *const OCTInputDeviceBackCamera;
-/**
- * Front (FaceTime) camera.
- * Not available on Mac OS X.
- */
-extern NSString *const OCTInputDeviceFrontCamera;

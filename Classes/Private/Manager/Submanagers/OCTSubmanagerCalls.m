@@ -63,12 +63,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     return status;
 }
 
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
-{
-    DDLogVerbose(@"OCTSubmanagerCalls warning: switchToCameraFront:error: is deprecated. Please use setVideoInputDevice:error: instead.");
-    return [self setVideoInputDevice:front ? OCTInputDeviceFrontCamera : OCTInputDeviceBackCamera error:error];
-}
-
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
 {
     OCTToxAVAudioBitRate audioBitRate = (enableAudio) ? kDefaultAudioBitRate : OCTToxAVAudioBitRateDisabled;
@@ -166,12 +160,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     }
 }
 
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
-{
-    DDLogVerbose(@"OCTSubmanagerCalls: routeAudioToSpeaker:error: is deprecated.");
-    return [self.audioEngine setOutputDeviceID:OCTOutputDeviceSpeaker error:error];
-}
-
 - (BOOL)enableMicrophone
 {
     return self.audioEngine.enableMicrophone;
@@ -251,6 +239,8 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 #pragma mark - Setting IO devices
 
+#if ! TARGET_OS_IPHONE
+
 - (BOOL)setAudioInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
 {
     return [self.audioEngine setInputDeviceID:deviceUniqueID error:error];
@@ -265,6 +255,20 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 {
     return [self.videoEngine switchToCamera:deviceUniqueID error:error];
 }
+
+#else
+
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
+}
+
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
+{
+    return [self.videoEngine useFrontCamera:front error:error];
+}
+
+#endif
 
 #pragma mark Private methods
 - (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status

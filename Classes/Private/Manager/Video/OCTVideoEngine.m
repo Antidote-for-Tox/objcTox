@@ -107,25 +107,35 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     return YES;
 }
 
+#if ! TARGET_OS_IPHONE
+
 - (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error
 {
     AVCaptureDevice *dev = nil;
 
-    if ((camera == OCTInputDeviceBackCamera) || (camera == OCTInputDeviceFrontCamera)) {
-        AVCaptureDevicePosition position = (camera == OCTInputDeviceBackCamera) ? AVCaptureDevicePositionBack : AVCaptureDevicePositionFront;
-        dev = [self getDeviceForPosition:position];
+    if (! camera) {
+        dev = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     }
     else {
-        if (! camera) {
-            dev = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        }
-        else {
-            dev = [AVCaptureDevice deviceWithUniqueID:camera];
-        }
+        dev = [AVCaptureDevice deviceWithUniqueID:camera];
     }
 
     return [self actuallySetCamera:dev error:error];
 }
+
+#else
+
+- (BOOL)useFrontCamera:(BOOL)front error:(NSError **)error
+{
+    AVCaptureDevice *dev = nil;
+
+    AVCaptureDevicePosition position = (front) ? AVCaptureDevicePositionBack : AVCaptureDevicePositionFront;
+    dev = [self getDeviceForPosition:position];
+
+    return [self actuallySetCamera:dev error:error];
+}
+
+#endif
 
 - (BOOL)actuallySetCamera:(AVCaptureDevice *)dev error:(NSError **)error
 {

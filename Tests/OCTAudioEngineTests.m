@@ -144,12 +144,8 @@ static void *refToSelf;
     XCTAssertEqualObjects(self.audioEngine.outputDeviceID, @"Sayle");
     XCTAssertEqualObjects(self.audioEngine.inputDeviceID, @"Laives");
 #else
-    XCTAssertTrue([self.audioEngine setOutputDeviceID:OCTOutputDeviceSpeaker error:nil]);
+    XCTAssertTrue([self.audioEngine routeAudioToSpeaker:YES error:nil]);
     OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
-    XCTAssertThrows([self.audioEngine setInputDeviceID:OCTInputDeviceDefault error:nil]);
-
-    // Device ID should stay in sync with set.
-    XCTAssertEqual(self.audioEngine.outputDeviceID, OCTOutputDeviceSpeaker);
 #endif
 }
 

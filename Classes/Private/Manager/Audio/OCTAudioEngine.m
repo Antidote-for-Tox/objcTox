@@ -13,12 +13,6 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-NSString *const OCTInputDeviceDefault = nil;
-NSString *const OCTOutputDeviceDefault = nil;
-NSString *const OCTOutputDeviceSpeaker = @"OCTOutputDeviceSpeaker";
-NSString *const OCTInputDeviceBackCamera = @"OCTInputDeviceBackCamera";
-NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
-
 @import AVFoundation;
 
 @interface OCTAudioEngine ()
@@ -47,12 +41,10 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
 
 #pragma mark - SPI
 
+#if ! TARGET_OS_IPHONE
+
 - (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error
 {
-#if TARGET_OS_IPHONE
-    [NSException raise:NSGenericException format:@"setInputDeviceID: is not available on iOS."];
-    return NO;
-#else
     // if audio is not active, we can't really be bothered to check that the
     // device exists; we rely on startAudioFlow: to fail later.
     if (! self.inputQueue) {
@@ -67,25 +59,10 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     else {
         return NO;
     }
-#endif
 }
 
 - (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error
 {
-#if TARGET_OS_IPHONE
-    _outputDeviceID = outputDeviceID;
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    AVAudioSessionPortOverride override;
-    if (outputDeviceID == OCTOutputDeviceSpeaker) {
-        override = AVAudioSessionPortOverrideSpeaker;
-    }
-    else {
-        override = AVAudioSessionPortOverrideNone;
-    }
-
-    return [session overrideOutputAudioPort:override error:error];
-#else
     if (! self.outputQueue) {
         _outputDeviceID = outputDeviceID;
         return YES;
@@ -98,8 +75,26 @@ NSString *const OCTInputDeviceFrontCamera = @"OCTInputDeviceFrontCamera";
     else {
         return NO;
     }
-#endif
 }
+
+#else
+
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    AVAudioSessionPortOverride override;
+    if (speaker) {
+        override = AVAudioSessionPortOverrideSpeaker;
+    }
+    else {
+        override = AVAudioSessionPortOverrideNone;
+    }
+
+    return [session overrideOutputAudioPort:override error:error];
+}
+
+#endif
 
 - (BOOL)startAudioFlow:(NSError **)error
 {

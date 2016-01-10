@@ -29,14 +29,6 @@
 - (BOOL)setupWithError:(NSError **)error;
 
 /**
- * Use a different camera for input.
- * @param camera The camera's AVFoundation device ID.
- * @param error Pointer to error object.
- * @return YES on success, otherwise NO.
- */
-- (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error;
-
-/**
  * Start sending video data.
  * This will turn on processIncomingVideo to YES
  */
@@ -98,3 +90,33 @@
                            vStride:(OCTToxAVStrideData)vStride
                       friendNumber:(OCTToxFriendNumber)friendNumber;
 @end
+
+#if ! TARGET_OS_IPHONE
+
+@interface OCTVideoEngine (MacDevice)
+
+/**
+ * Use a different camera for input.
+ * @param camera The camera's AVFoundation device ID.
+ * @param error Pointer to error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error;
+
+@end
+
+#else
+
+@interface OCTVideoEngine (iOSDevice)
+
+/**
+ * Use a different camera for input.
+ * @param camera The camera's AVFoundation device ID.
+ * @param error Pointer to error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)useFrontCamera:(BOOL)front error:(NSError **)error;
+
+@end
+
+#endif
