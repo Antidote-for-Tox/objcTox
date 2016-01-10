@@ -33,7 +33,7 @@
     }
 
     _outputSampleRate = kDefaultSampleRate;
-    _outputNumberOfChannels = kNumberOfInputChannels;
+    _outputNumberOfChannels = kNumberOfChannels;
     _enableMicrophone = YES;
 
     return self;
