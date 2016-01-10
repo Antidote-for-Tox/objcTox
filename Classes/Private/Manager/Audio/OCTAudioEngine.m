@@ -56,9 +56,8 @@
         _inputDeviceID = inputDeviceID;
         return YES;
     }
-    else {
-        return NO;
-    }
+
+    return NO;
 }
 
 - (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error
@@ -72,9 +71,8 @@
         _outputDeviceID = outputDeviceID;
         return YES;
     }
-    else {
-        return NO;
-    }
+
+    return NO;
 }
 
 #else
@@ -133,9 +131,8 @@
     if (! [self.inputQueue begin:error] || ! [self.outputQueue begin:error]) {
         return NO;
     }
-    else {
-        return YES;
-    }
+
+    return YES;
 }
 
 - (BOOL)stopAudioFlow:(NSError **)error
@@ -158,7 +155,7 @@
 
 - (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate fromFriend:(OCTToxFriendNumber)friendNumber
 {
-    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
+    int32_t len = (int32_t)(channels * sampleCount * sizeof(OCTToxAVPCMData));
     TPCircularBuffer *buf = [self.outputQueue getBufferPointer];
     if (buf) {
         TPCircularBufferProduceBytes(buf, pcm, len);

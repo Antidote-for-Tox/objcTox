@@ -12,7 +12,7 @@
 @import AVFoundation;
 
 extern int kBufferLength;
-extern int kNumberOfInputChannels;
+extern int kNumberOfChannels;
 extern int kDefaultSampleRate;
 extern int kSampleCount;
 extern int kBitsPerByte;

@@ -18,7 +18,7 @@
 @import AudioToolbox;
 
 const int kBufferLength = 384000;
-const int kNumberOfInputChannels = 2;
+const int kNumberOfChannels = 2;
 const int kDefaultSampleRate = 48000;
 const int kSampleCount = 1920;
 const int kBitsPerByte = 8;
@@ -140,17 +140,17 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 #endif
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
     _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;
-    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfInputChannels;
+    _streamFmt.mChannelsPerFrame = kNumberOfChannels;
+    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfChannels;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
-    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfChannels * kFramesPerPacket;
     _isOutput = NO;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    OSStatus res = 0;
-    if ((res = [self createAudioQueue]) != 0) {
+    OSStatus res = [self createAudioQueue];
+    if (res != 0) {
         if (error) {
             *error = OCTErrorFromCoreAudioCode(res);
         }
@@ -165,17 +165,17 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     _streamFmt.mSampleRate = kDefaultSampleRate;
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
     _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
-    _streamFmt.mChannelsPerFrame = kNumberOfInputChannels;
-    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfInputChannels;
+    _streamFmt.mChannelsPerFrame = kNumberOfChannels;
+    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfChannels;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
-    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfInputChannels * kFramesPerPacket;
+    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfChannels * kFramesPerPacket;
     _isOutput = YES;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
-    OSStatus res = 0;
-    if ((res = [self createAudioQueue]) != 0) {
+    OSStatus res = [self createAudioQueue];
+    if (res != 0) {
         if (error) {
             *error = OCTErrorFromCoreAudioCode(res);
         }
@@ -235,7 +235,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     }
 
     for (int i = 0; i < kNumberOfAudioQueueBuffers; ++i) {
-        _AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfInputChannels * kFramesPerOutputBuffer, &(_AQBuffers[i]));
+        _AudioQueueAllocateBuffer(self.audioQueue, kBytesPerSample * kNumberOfChannels * kFramesPerOutputBuffer, &(_AQBuffers[i]));
         _AudioQueueEnqueueBuffer(self.audioQueue, _AQBuffers[i], 0, NULL);
         if (self.isOutput) {
             // For some reason we have to fill it with zero or the callback never gets called.
@@ -374,11 +374,11 @@ static void InputAvailable(OCTAudioQueue *__unsafe_unretained context,
 
     int32_t availableBytesToConsume;
     void *tail = TPCircularBufferTail(&context->_buffer, &availableBytesToConsume);
-    int32_t minimalBytesToConsume = kSampleCount * kNumberOfInputChannels * sizeof(SInt16);
+    int32_t minimalBytesToConsume = kSampleCount * kNumberOfChannels * sizeof(SInt16);
     int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
 
     for (int32_t i = 0; i < cyclesToConsume; i++) {
-        context.sendDataBlock(tail, kSampleCount, context.streamFmt.mSampleRate, kNumberOfInputChannels);
+        context.sendDataBlock(tail, kSampleCount, context.streamFmt.mSampleRate, kNumberOfChannels);
         TPCircularBufferConsume(&context->_buffer, minimalBytesToConsume);
         tail = TPCircularBufferTail(&context->_buffer, &availableBytesToConsume);
     }

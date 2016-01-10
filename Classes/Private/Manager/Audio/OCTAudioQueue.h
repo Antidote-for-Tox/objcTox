@@ -59,7 +59,7 @@ extern OSStatus (*_AudioObjectGetPropertyData)(AudioObjectID inObjectID,
 @interface OCTAudioQueue : NSObject
 
 @property (strong, nonatomic, readonly) NSString *deviceID;
-@property (strong, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
+@property (copy, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
 @property (assign, nonatomic, readonly) BOOL running;
 
 - (instancetype)initWithInputDeviceID:(NSString *)devID error:(NSError **)error;
@@ -67,7 +67,10 @@ extern OSStatus (*_AudioObjectGetPropertyData)(AudioObjectID inObjectID,
 
 - (TPCircularBuffer *)getBufferPointer;
 - (BOOL)updateSampleRate:(OCTToxAVSampleRate)sampleRate numberOfChannels:(OCTToxAVChannels)numberOfChannels error:(NSError **)err;
+
+#if ! TARGET_OS_IPHONE
 - (BOOL)setDeviceID:(NSString *)deviceID error:(NSError **)err;
+#endif
 
 - (BOOL)begin:(NSError **)error;
 - (BOOL)stop:(NSError **)error;
