@@ -130,7 +130,7 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     AudioQueueBufferRef _AQBuffers[kNumberOfAudioQueueBuffers];
 }
 
-- (instancetype)initWithInputDeviceID:(NSString *)devID error:(NSError **)error
+- (instancetype)initWithDeviceID:(NSString *)devID isOutput:(BOOL)output error:(NSError **)error
 {
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -139,13 +139,13 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     _streamFmt.mSampleRate = kDefaultSampleRate;
 #endif
     _streamFmt.mFormatID = kAudioFormatLinearPCM;
-    _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
     _streamFmt.mChannelsPerFrame = kNumberOfChannels;
     _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfChannels;
     _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
     _streamFmt.mFramesPerPacket = kFramesPerPacket;
     _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfChannels * kFramesPerPacket;
-    _isOutput = NO;
+    _isOutput = output;
     _deviceID = devID;
 
     TPCircularBufferInit(&_buffer, kBufferLength);
@@ -160,29 +160,15 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
     return self;
 }
 
+
+- (instancetype)initWithInputDeviceID:(NSString *)devID error:(NSError **)error
+{
+    return [self initWithDeviceID:devID isOutput:NO error:error];
+}
+
 - (instancetype)initWithOutputDeviceID:(NSString *)devID error:(NSError **)error
 {
-    _streamFmt.mSampleRate = kDefaultSampleRate;
-    _streamFmt.mFormatID = kAudioFormatLinearPCM;
-    _streamFmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
-    _streamFmt.mChannelsPerFrame = kNumberOfChannels;
-    _streamFmt.mBytesPerFrame = kBytesPerSample * kNumberOfChannels;
-    _streamFmt.mBitsPerChannel = kBitsPerByte * kBytesPerSample;
-    _streamFmt.mFramesPerPacket = kFramesPerPacket;
-    _streamFmt.mBytesPerPacket = kBytesPerSample * kNumberOfChannels * kFramesPerPacket;
-    _isOutput = YES;
-    _deviceID = devID;
-
-    TPCircularBufferInit(&_buffer, kBufferLength);
-    OSStatus res = [self createAudioQueue];
-    if (res != 0) {
-        if (error) {
-            *error = OCTErrorFromCoreAudioCode(res);
-        }
-        return nil;
-    }
-
-    return self;
+    return [self initWithDeviceID:devID isOutput:YES error:error];
 }
 
 - (void)dealloc
