@@ -66,7 +66,7 @@ extern OSStatus (*_AudioObjectGetPropertyData)(AudioObjectID inObjectID,
 - (instancetype)initWithOutputDeviceID:(NSString *)devID error:(NSError **)error;
 
 - (TPCircularBuffer *)getBufferPointer;
-- (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err;
+- (BOOL)updateSampleRate:(OCTToxAVSampleRate)sampleRate numberOfChannels:(OCTToxAVChannels)numberOfChannels error:(NSError **)err;
 - (BOOL)setDeviceID:(NSString *)deviceID error:(NSError **)err;
 
 - (BOOL)begin:(NSError **)error;

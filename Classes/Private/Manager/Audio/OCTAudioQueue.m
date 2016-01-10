@@ -325,9 +325,9 @@ static NSString *OCTGetSystemAudioDevice(AudioObjectPropertySelector sel, NSErro
 #endif
 }
 
-- (BOOL)updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)numberOfChannels error:(NSError **)err
+- (BOOL)updateSampleRate:(OCTToxAVSampleRate)sampleRate numberOfChannels:(OCTToxAVChannels)numberOfChannels error:(NSError **)err
 {
-    DDLogVerbose(@"updateSampleRate %lf, %u", sampleRate, (unsigned int)numberOfChannels);
+    DDLogVerbose(@"updateSampleRate %u, %u", sampleRate, (unsigned int)numberOfChannels);
 
     BOOL needToRestart = self.running;
 

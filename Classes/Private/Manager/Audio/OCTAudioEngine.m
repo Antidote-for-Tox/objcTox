@@ -166,7 +166,7 @@
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
         // failure is logged by OCTAudioQueue.
-        [self.outputQueue updateSampleRate:(Float64)sampleRate numberOfChannels:(UInt32)channels error:nil];
+        [self.outputQueue updateSampleRate:sampleRate numberOfChannels:channels error:nil];
 
         self.outputSampleRate = sampleRate;
         self.outputNumberOfChannels = channels;
