@@ -126,7 +126,7 @@
                                 error:nil];
         }
     };
-    [self.outputQueue updateSampleRate:(Float64)self.outputSampleRate numberOfChannels:(UInt32)self.outputNumberOfChannels error:nil];
+    [self.outputQueue updateSampleRate:self.outputSampleRate numberOfChannels:self.outputNumberOfChannels error:nil];
 
     if (! [self.inputQueue begin:error] || ! [self.outputQueue begin:error]) {
         return NO;
