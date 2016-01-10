@@ -170,8 +170,21 @@
         uint8_t *y = CVPixelBufferGetBaseAddressOfPlane(pb, 0);
         uint8_t *uv = CVPixelBufferGetBaseAddressOfPlane(pb, 1);
 
-        XCTAssertEqual(memcmp(y, test_good_y, sizeof(test_good_y)), 0);
-        XCTAssertEqual(memcmp(uv, test_good_uv, sizeof(test_good_uv)), 0);
+        uint8_t *testyrow = y;
+        uint8_t *goodyrow = test_good_y;
+        for (int i = 0; i < 30; ++i) {
+            XCTAssertEqual(memcmp(testyrow, goodyrow, 30), 0);
+            testyrow += CVPixelBufferGetBytesPerRowOfPlane(pb, 0);
+            goodyrow += 30;
+        }
+
+        uint8_t *testuvrow = uv;
+        uint8_t *gooduvrow = test_good_uv;
+        for (int i = 0; i < 15; ++i) {
+            XCTAssertEqual(memcmp(testuvrow, gooduvrow, 30), 0);
+            testuvrow += CVPixelBufferGetBytesPerRowOfPlane(pb, 1);
+            gooduvrow += 30;
+        }
 
         void *ret = nil;
         [invocation setReturnValue:&ret];
