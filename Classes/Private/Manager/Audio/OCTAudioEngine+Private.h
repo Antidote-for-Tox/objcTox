@@ -23,6 +23,11 @@ extern int kNumberOfAudioQueueBuffers;
 @class OCTAudioQueue;
 @interface OCTAudioEngine ()
 
+#if ! TARGET_OS_IPHONE
+@property (strong, nonatomic, readonly) NSString *inputDeviceID;
+@property (strong, nonatomic, readonly) NSString *outputDeviceID;
+#endif
+
 @property (nonatomic, strong) OCTAudioQueue *outputQueue;
 @property (nonatomic, strong) OCTAudioQueue *inputQueue;
 
