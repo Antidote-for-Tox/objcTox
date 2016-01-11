@@ -295,9 +295,6 @@ DECLARE_GENERIC_FAIL(_AudioQueueStop)
     ok = [oq setDeviceID:nil error:&error];
     XCTAssertFalse(ok);
     XCTAssertNotNil(error);
-#else
-    BOOL ok = [oq setDeviceID:nil error:&error];
-    XCTAssertFalse(ok);
 #endif
 }
 
