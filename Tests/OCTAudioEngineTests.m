@@ -10,38 +10,22 @@
 #import <OCMock/OCMock.h>
 #import "OCTCAsserts.h"
 #import "OCTAudioEngine+Private.h"
+#import "OCTAudioQueue.h"
+#import "OCTManagerConstants.h"
 
 @import AVFoundation;
 
 static void *refToSelf;
 
-OSStatus mocked_AUGraphIsRunning(AUGraph inGraph, Boolean *outIsRunning);
-OSStatus mocked_AUGraphNotRunning(AUGraph inGraph, Boolean *outIsRunning);
-OSStatus mocked_AudioUnitSetProperty(AudioUnit inUnit,
-                                     AudioUnitPropertyID inID,
-                                     AudioUnitScope inScope,
-                                     AudioUnitElement inElement,
-                                     const void *inData,
-                                     UInt32 inDataSize
-);
-
-OSStatus mocked_AudioUnitRender(AudioUnit inUnit,
-                                AudioUnitRenderActionFlags *ioActionFlags,
-                                const AudioTimeStamp *inTimeStamp,
-                                UInt32 inOutputBusNumber,
-                                UInt32 inNumberFrames,
-                                AudioBufferList *ioData);
-
-OSStatus mocked_success_inGraph(AUGraph inGraph);
-OSStatus mocked_fail_inGraph(AUGraph inGraph);
-
-const OCTToxAVPCMData pcm[8] = {2, 4, 6, 8, 10, 12, 14, 16};
-int16_t *pcmRender;
-
 @interface OCTAudioEngineTests : XCTestCase
 
+@property (strong, nonatomic) OCTAudioQueue *outputMock;
+@property (strong, nonatomic) OCTAudioQueue *inputMock;
 @property (strong, nonatomic) id audioSession;
+@property (strong, nonatomic) OCTAudioEngine *realAudioEngine;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
+
+@property (strong, nonatomic) void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
 
 @end
 
@@ -60,15 +44,18 @@ int16_t *pcmRender;
     [OCMStub([self.audioSession setPreferredSampleRate:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     OCMStub([self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:[OCMArg anyObjectRef]]).andReturn(YES);
     [OCMStub([self.audioSession setPreferredIOBufferDuration:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
+    [OCMStub([self.audioSession overrideOutputAudioPort:0 error:[OCMArg anyObjectRef]]).andReturn(YES) ignoringNonObjectArgs];
     OCMStub(([self.audioSession setMode:AVAudioSessionModeVoiceChat error:[OCMArg anyObjectRef]])).andReturn(YES);
     OCMStub([self.audioSession setActive:YES error:[OCMArg anyObjectRef]]).andReturn(YES);
     OCMStub([self.audioSession setActive:NO error:[OCMArg anyObjectRef]]).andReturn(YES);
-
-    self.audioEngine = [[OCTAudioEngine alloc] init];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-#else
-#warning TODO audio OSX
 #endif
+
+    self.realAudioEngine = [[OCTAudioEngine alloc] init];
+    self.audioEngine = OCMPartialMock(self.realAudioEngine);
+
+    self.inputMock = OCMClassMock([OCTAudioQueue class]);
+    self.outputMock = OCMClassMock([OCTAudioQueue class]);
 }
 
 - (void)tearDown
@@ -77,220 +64,172 @@ int16_t *pcmRender;
 
     self.audioSession = nil;
     self.audioEngine = nil;
+    self.outputMock = nil;
+    self.inputMock = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
 
-- (void)testInit
+- (void)enableMockQueues
 {
-    NSError *error;
-    OCTAudioEngine *engine = [OCTAudioEngine new];
-    XCTAssertNotNil(engine);
-    XCTAssertFalse([engine isAudioRunning:&error]);
+    OCMStub([(id)self.audioEngine makeQueues:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        id ae;
+        [invocation getArgument:&ae atIndex:0];
+
+        [ae setOutputQueue:self.outputMock];
+        [ae setInputQueue:self.inputMock];
+    });
 }
 
-- (void)testStartAudioFlow
+- (void)testStartStopAudioFlow
 {
-#if TARGET_OS_IPHONE
-    _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
-    _AUGraphStart = mocked_success_inGraph;
-    NSError *error;
+    [self enableMockQueues];
+
+    id toxav = OCMClassMock([OCTToxAV class]);
+    OCMStub([toxav sendAudioFrame:[OCMArg anyPointer] sampleCount:0 channels:0 sampleRate:0 toFriend:0 error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.audioEngine toxav]).andReturn(toxav);
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    OCMStub([self.inputMock stop:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock stop:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    NSError *error = nil;
     XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
-#else
-#warning TODO audio OSX
-#endif
+    XCTAssertTrue([self.audioEngine stopAudioFlow:&error]);
 }
 
-- (void)testStopAudioFlow
+- (void)testStartStopAudioFlowFail
 {
-#if TARGET_OS_IPHONE
-    _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
-    _AUGraphStop = mocked_success_inGraph;
-    _AUGraphStart = mocked_success_inGraph;
-    XCTAssertTrue([self.audioEngine stopAudioFlow:nil]);
+    [self enableMockQueues];
 
-    NSError *error;
-    _AUGraphStop = mocked_fail_inGraph;
-    XCTAssertFalse([self.audioEngine stopAudioFlow:&error]);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 1);
-#else
-#warning TODO audio OSX
-#endif
-}
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        NSError *__autoreleasing *err;
+        [invocation getArgument:&err atIndex:2];
 
-- (void)testRouteAudioToSpeaker
-{
-#if TARGET_OS_IPHONE
-    [self.audioEngine routeAudioToSpeaker:YES error:nil];
-    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
+        if (err) {
+            *err = [NSError new];
+        }
 
-    [self.audioEngine routeAudioToSpeaker:NO error:nil];
-    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:[OCMArg anyObjectRef]]);
-#else
-#warning TODO audio OSX
-#endif
-}
+        BOOL no = NO;
+        [invocation setReturnValue:&no];
+    });
 
-- (void)testIsAudioRunning
-{
-#if TARGET_OS_IPHONE
-    _AUGraphIsRunning = mocked_AUGraphIsRunning;
-    XCTAssertTrue([self.audioEngine isAudioRunning:nil]);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andDo(^(NSInvocation *invocation) {
+        NSError *__autoreleasing *err;
+        [invocation getArgument:&err atIndex:2];
 
-    NSError *error;
-    _AUGraphIsRunning = mocked_AUGraphNotRunning;
-    XCTAssertFalse([self.audioEngine isAudioRunning:&error]);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 1);
-#else
-#warning TODO audio OSX
-#endif
-}
+        if (err) {
+            *err = [NSError new];
+        }
 
-- (void)testProvideAudioFrames
-{
-#if TARGET_OS_IPHONE
-    OCTToxAVSampleCount sampleCount = 4;
-    OCTToxAVChannels channelCount = 2;
-    OCTToxAVSampleRate sampleRate = 33333;
+        BOOL no = NO;
+        [invocation setReturnValue:&no];
+    });
 
-    self.audioEngine.friendNumber = 123;
 
-    _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
-
-    [self.audioEngine provideAudioFrames:pcm
-                             sampleCount:sampleCount
-                                channels:channelCount
-                              sampleRate:sampleRate
-                              fromFriend:123];
-
-    XCTAssertEqual((int)self.audioEngine.outputBuffer.fillCount, 16);
-    XCTAssertEqual(self.audioEngine.outputSampleRate, 33333);
-#else
-#warning TODO audio OSX
-#endif
-}
-
-- (void)testStartingGraph
-{
-#if TARGET_OS_IPHONE
-    NSError *error;
-    _AudioUnitSetProperty = mocked_AudioUnitSetProperty;
-    _AUGraphInitialize = mocked_success_inGraph;
-    _AUGraphStart = mocked_fail_inGraph;
+    NSError *error = nil;
     XCTAssertFalse([self.audioEngine startAudioFlow:&error]);
     XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 1);
+}
 
-    _AUGraphStart = mocked_success_inGraph;
-    XCTAssertTrue([self.audioEngine startAudioFlow:nil]);
+- (void)testSettingDevice
+{
+#if ! TARGET_OS_IPHONE
+    XCTAssertTrue([self.audioEngine setOutputDeviceID:@"Sayle" error:nil]);
+    XCTAssertTrue([self.audioEngine setInputDeviceID:@"Laives" error:nil]);
+
+    // Device ID should stay in sync with set.
+    XCTAssertEqualObjects(self.audioEngine.outputDeviceID, @"Sayle");
+    XCTAssertEqualObjects(self.audioEngine.inputDeviceID, @"Laives");
 #else
-#warning TODO audio OSX
+    XCTAssertTrue([self.audioEngine routeAudioToSpeaker:YES error:nil]);
+    OCMVerify([self.audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:[OCMArg anyObjectRef]]);
 #endif
 }
 
-- (void)testInputRenderCallback
+// No test for iOS because it doesn't do anything anyway
+- (void)testSettingDevicesLive
 {
-#if TARGET_OS_IPHONE
-    id toxAV = OCMClassMock([OCTToxAV class]);
-    self.audioEngine.toxav = toxAV;
-    self.audioEngine.friendNumber = 1234;
-    self.audioEngine.inputSampleRate = 48000;
-    _AudioUnitRender = mocked_AudioUnitRender;
+#if ! TARGET_OS_IPHONE
+    NSError *err;
+    [self enableMockQueues];
 
-    pcmRender = malloc(1920 * sizeof(SInt16));
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    XCTAssertTrue([self.audioEngine startAudioFlow:&err]);
 
-    inputRenderCallBack((__bridge void *)(self.audioEngine), 0, 0, 1, 1920, NULL);
+    OCMStub([self.outputMock setDeviceID:@"Crystinger" error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.inputMock setDeviceID:@"Daxx" error:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock setDeviceID:@"Niles" error:[OCMArg anyObjectRef]]).andReturn(NO);
 
-    OCMVerify([toxAV sendAudioFrame:[OCMArg anyPointer] sampleCount:1920 channels:2 sampleRate:48000 toFriend:1234 error:[OCMArg anyObjectRef]]);
+    XCTAssertTrue([self.audioEngine setOutputDeviceID:@"Crystinger" error:nil]);
+    XCTAssertTrue([self.audioEngine setInputDeviceID:@"Daxx" error:nil]);
 
-    free(pcmRender);
-#else
-#warning TODO audio OSX
+    // Device ID should stay in sync with set.
+    XCTAssertEqualObjects(self.audioEngine.outputDeviceID, @"Crystinger");
+    XCTAssertEqualObjects(self.audioEngine.inputDeviceID, @"Daxx");
+
+    // Failed sets should not update the stored id.
+    XCTAssertFalse([self.audioEngine setOutputDeviceID:@"Niles" error:nil]);
+    XCTAssertNotEqualObjects(self.audioEngine.outputDeviceID, @"Niles");
 #endif
 }
 
-- (void)testFillError
+- (void)testSendDataBlock
 {
-#if TARGET_OS_IPHONE
-    NSError *error;
-    [self.audioEngine fillError:&error
-                       withCode:2
-                    description:@"Test"
-                  failureReason:@"TestFailure"];
-    XCTAssertEqual(error.localizedDescription, @"Test");
-    XCTAssertEqual(error.localizedFailureReason, @"TestFailure");
-    XCTAssertEqual(error.code, 2);
+    [self enableMockQueues];
 
-    // No exception should be thrown here if error is nil.
-    [self.audioEngine fillError:nil
-                       withCode:4
-                    description:@"Test"
-                  failureReason:@"TestFailure"];
-#else
-#warning TODO audio OSX
-#endif
+    id toxav = OCMClassMock([OCTToxAV class]);
+    OCMStub([self.audioEngine toxav]).andReturn(toxav);
+
+    OCMStub([self.inputMock setSendDataBlock:[OCMArg any]]).andDo(^(NSInvocation *invoc) {
+        void (^sendDataBlock)(void *, OCTToxAVSampleCount, OCTToxAVSampleRate, OCTToxAVChannels);
+        [invoc getArgument:&sendDataBlock atIndex:2];
+        self.sendDataBlock = sendDataBlock;
+    });
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+
+    NSError *error = nil;
+    self.audioEngine.friendNumber = 0;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+
+    OCTToxAVPCMData pcm[] = {0x52, 0x2d, 0x4f, 0x2d, 0x4d, 0x2d, 0x41, 0x2d, 0x4e, 0x2d, 0x54, 0x2d, 0x49, 0x2d, 0x43, 0x2d, 0x21, 0x21};
+    self.sendDataBlock((void *)pcm, 9, 48000, 1);
+
+    OCMVerify([toxav sendAudioFrame:pcm sampleCount:9 channels:1 sampleRate:48000 toFriend:0 error:[OCMArg anyObjectRef]]);
+}
+
+- (void)testReceiveAudioPackets
+{
+    [self enableMockQueues];
+
+    TPCircularBuffer buffer;
+    TPCircularBufferInit(&buffer, 256);
+
+    OCMStub([self.inputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock begin:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.outputMock getBufferPointer]).andReturn(&buffer);
+
+    NSError *error = nil;
+    self.audioEngine.friendNumber = 0;
+    XCTAssertTrue([self.audioEngine startAudioFlow:&error]);
+
+    OCTToxAVPCMData pcm[] = {0x52, 0x2d, 0x4f, 0x2d, 0x4d, 0x2d, 0x41, 0x2d, 0x4e, 0x2d, 0x54, 0x2d, 0x49, 0x2d, 0x43, 0x2d, 0x21, 0x21};
+    [self.audioEngine provideAudioFrames:pcm sampleCount:9 channels:1 sampleRate:12 fromFriend:0];
+
+    int32_t nbytes;
+    void *samples = TPCircularBufferTail(&buffer, &nbytes);
+
+    XCTAssertTrue(nbytes == 18);
+    XCTAssertTrue(memcmp(samples, pcm, 18) == 0);
+
+    TPCircularBufferCleanup(&buffer);
+
+    OCMVerify([self.outputMock updateSampleRate:12 numberOfChannels:1 error:[OCMArg anyObjectRef]]);
 }
 
 @end
-
-#pragma mark mocked audio engine functions
-
-
-OSStatus mocked_AUGraphIsRunning(AUGraph inGraph, Boolean *outIsRunning)
-{
-    OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
-    CCCAssertEqual(engine.processingGraph, inGraph);
-
-    *outIsRunning = true;
-
-    return noErr;
-}
-
-OSStatus mocked_AUGraphNotRunning(AUGraph inGraph, Boolean *outIsRunning)
-{
-    OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
-    CCCAssertEqual(engine.processingGraph, inGraph);
-
-    return 1;
-}
-OSStatus mocked_AudioUnitSetProperty(AudioUnit inUnit,
-                                     AudioUnitPropertyID inID,
-                                     AudioUnitScope inScope,
-                                     AudioUnitElement inElement,
-                                     const void *inData,
-                                     UInt32 inDataSize
-)
-{
-    OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
-    CCCAssertEqual(engine.ioUnit, inUnit);
-
-    return noErr;
-}
-
-OSStatus mocked_fail_inGraph(AUGraph inGraph)
-{
-    OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
-    CCCAssertEqual(engine.processingGraph, inGraph);
-    return 1;
-}
-
-OSStatus mocked_success_inGraph(AUGraph inGraph)
-{
-    OCTAudioEngine *engine = [(__bridge OCTAudioEngineTests *)refToSelf audioEngine];
-    CCCAssertEqual(engine.processingGraph, inGraph);
-    return noErr;
-}
-
-OSStatus mocked_AudioUnitRender(AudioUnit inUnit,
-                                AudioUnitRenderActionFlags *ioActionFlags,
-                                const AudioTimeStamp *inTimeStamp,
-                                UInt32 inOutputBusNumber,
-                                UInt32 inNumberFrames,
-                                AudioBufferList *ioData)
-{
-    ioData->mBuffers[0].mData = pcmRender;
-
-    return noErr;
-}

@@ -5,9 +5,9 @@
 //  Created by Chuong Vu on 5/24/15.
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
-
 #import "OCTAudioEngine+Private.h"
 #import "OCTToxAV+Private.h"
+#import "OCTAudioQueue.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -15,60 +15,9 @@
 
 @import AVFoundation;
 
-static const AudioUnitElement kInputBus = 1;
-static const AudioUnitElement kOutputBus = 0;
-static const int kBufferLength = 16384;
-static const int kNumberOfInputChannels = 2;
-static const int kDefaultSampleRate = 48000;
-static const int kSampleCount = 1920;
-static const int kBitsPerByte = 8;
-static const int kFramesPerPacket = 1;
-
-OSStatus (*_NewAUGraph)(AUGraph *outGraph);
-OSStatus (*_AUGraphAddNode)(
-    AUGraph inGraph,
-    const AudioComponentDescription *inDescription,
-    AUNode *outNode);
-OSStatus (*_AUGraphOpen)(AUGraph inGraph);
-OSStatus (*_AUGraphNodeInfo)(AUGraph inGraph,
-                             AUNode inNode,
-                             AudioComponentDescription *outDescription,
-                             AudioUnit *outAudioUnit);
-
-OSStatus (*_DisposeAUGraph)(AUGraph inGraph);
-
-OSStatus (*_AUGraphStart)(AUGraph inGraph);
-OSStatus (*_AUGraphStop)(AUGraph inGraph);
-OSStatus (*_AUGraphInitialize)(AUGraph inGraph);
-OSStatus (*_AUGraphUninitialize)(AUGraph inGraph);
-OSStatus (*_AUGraphIsRunning)(AUGraph inGraph, Boolean *outIsRunning);
-OSStatus (*_AudioUnitSetProperty)(AudioUnit inUnit,
-                                  AudioUnitPropertyID inID,
-                                  AudioUnitScope inScope,
-                                  AudioUnitElement inElement,
-                                  const void *inData,
-                                  UInt32 inDataSize
-);
-OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
-                             AudioUnitRenderActionFlags *ioActionFlags,
-                             const AudioTimeStamp *inTimeStamp,
-                             UInt32 inOutputBusNumber,
-                             UInt32 inNumberFrames,
-                             AudioBufferList *ioData
-);
-
 @interface OCTAudioEngine ()
 
-@property (nonatomic, assign) AUGraph processingGraph;
-@property (nonatomic, assign) AUNode ioNode;
-@property (nonatomic, assign) AudioUnit ioUnit;
-@property (nonatomic, assign) AudioComponentDescription ioUnitDescription;
-@property (nonatomic, assign) TPCircularBuffer outputBuffer;
-@property (nonatomic, assign) TPCircularBuffer inputBuffer;
-@property (nonatomic, assign) OCTToxAVSampleRate inputSampleRate;
 @property (nonatomic, assign) OCTToxAVSampleRate outputSampleRate;
-@property (nonatomic, assign) dispatch_once_t setupOnceToken;
-
 @property (nonatomic, assign) OCTToxAVChannels outputNumberOfChannels;
 
 @end
@@ -83,459 +32,160 @@ OSStatus (*_AudioUnitRender)(AudioUnit inUnit,
         return nil;
     }
 
-    [self setupCFunctions];
-
-    _ioUnitDescription.componentType = kAudioUnitType_Output;
-    _ioUnitDescription.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
-    _ioUnitDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
-    _ioUnitDescription.componentFlags = 0;
-    _ioUnitDescription.componentFlagsMask = 0;
-
-    TPCircularBufferInit(&_outputBuffer, kBufferLength);
-    TPCircularBufferInit(&_inputBuffer, kBufferLength);
-
+    _outputSampleRate = kDefaultSampleRate;
+    _outputNumberOfChannels = kNumberOfChannels;
     _enableMicrophone = YES;
 
     return self;
 }
 
-- (void)dealloc
+#pragma mark - SPI
+
+#if ! TARGET_OS_IPHONE
+
+- (BOOL)setInputDeviceID:(NSString *)inputDeviceID error:(NSError **)error
 {
-    TPCircularBufferCleanup(&_outputBuffer);
-    TPCircularBufferCleanup(&_inputBuffer);
+    // if audio is not active, we can't really be bothered to check that the
+    // device exists; we rely on startAudioFlow: to fail later.
+    if (! self.inputQueue) {
+        _inputDeviceID = inputDeviceID;
+        return YES;
+    }
+
+    if ([self.inputQueue setDeviceID:inputDeviceID error:error]) {
+        _inputDeviceID = inputDeviceID;
+        return YES;
+    }
+
+    return NO;
 }
 
-- (BOOL)setupGraphWithError:(NSError **)error
+- (BOOL)setOutputDeviceID:(NSString *)outputDeviceID error:(NSError **)error
 {
-    _NewAUGraph(&_processingGraph);
+    if (! self.outputQueue) {
+        _outputDeviceID = outputDeviceID;
+        return YES;
+    }
 
-    _AUGraphAddNode(self.processingGraph,
-                    &_ioUnitDescription,
-                    &_ioNode);
+    if ([self.outputQueue setDeviceID:outputDeviceID error:error]) {
+        _outputDeviceID = outputDeviceID;
+        return YES;
+    }
 
-    _AUGraphOpen(_processingGraph);
-
-    _AUGraphNodeInfo(_processingGraph, _ioNode, NULL, &_ioUnit);
-
-    return ([self enableInputScope:error] &&
-            [self registerInputCallBack:error] &&
-            [self registerOutputCallBack:error] &&
-            [self initializeGraph:error]);
+    return NO;
 }
 
-#pragma mark - Audio Controls
+#else
+
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    AVAudioSessionPortOverride override;
+    if (speaker) {
+        override = AVAudioSessionPortOverrideSpeaker;
+    }
+    else {
+        override = AVAudioSessionPortOverrideNone;
+    }
+
+    return [session overrideOutputAudioPort:override error:error];
+}
+
+#endif
+
 - (BOOL)startAudioFlow:(NSError **)error
 {
-    return ([self setupGraphWithError:error] &&
-            [self startAudioSession:error] &&
-            [self setUpStreamFormat:error] &&
-            [self startGraph:error]);
+#if TARGET_OS_IPHONE
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    if (! ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
+           [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
+           [session setMode:AVAudioSessionModeVoiceChat error:error] &&
+           [session setActive:YES error:error])) {
+        return NO;
+    }
+#endif
+
+    [self makeQueues:error];
+
+    if (! (self.outputQueue && self.inputQueue)) {
+        return NO;
+    }
+
+    OCTAudioEngine *__weak welf = self;
+    self.inputQueue.sendDataBlock = ^(void *data, OCTToxAVSampleCount samples, OCTToxAVSampleRate rate, OCTToxAVChannels channelCount) {
+        OCTAudioEngine *aoi = welf;
+
+        if (aoi.enableMicrophone) {
+            [aoi.toxav sendAudioFrame:data
+                          sampleCount:samples
+                             channels:channelCount
+                           sampleRate:rate
+                             toFriend:aoi.friendNumber
+                                error:nil];
+        }
+    };
+    [self.outputQueue updateSampleRate:self.outputSampleRate numberOfChannels:self.outputNumberOfChannels error:nil];
+
+    if (! [self.inputQueue begin:error] || ! [self.outputQueue begin:error]) {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (BOOL)stopAudioFlow:(NSError **)error
 {
-
-    OSStatus status = _AUGraphStop(self.processingGraph);
-
-    AUGraphClose(self.processingGraph);
-
-    DisposeAUGraph(self.processingGraph);
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"AUGraphStop"
-          failureReason:@"Failed to stop graph"];
+    if (! [self.inputQueue stop:error] || ! [self.outputQueue stop:error]) {
         return NO;
     }
 
-    TPCircularBufferClear(&_outputBuffer);
-    TPCircularBufferClear(&_inputBuffer);
-
 #if TARGET_OS_IPHONE
     AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    return [session setActive:NO error:error];
+    BOOL ret = [session setActive:NO error:error];
 #else
-#warning TODO audio OSX
-    return NO;
+    BOOL ret = YES;
 #endif
+
+    self.inputQueue = nil;
+    self.outputQueue = nil;
+    return ret;
 }
 
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error;
+- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm sampleCount:(OCTToxAVSampleCount)sampleCount channels:(OCTToxAVChannels)channels sampleRate:(OCTToxAVSampleRate)sampleRate fromFriend:(OCTToxFriendNumber)friendNumber
 {
-#if TARGET_OS_IPHONE
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    AVAudioSessionPortOverride override = (speaker) ? AVAudioSessionPortOverrideSpeaker : AVAudioSessionPortOverrideNone;
-
-    return [session overrideOutputAudioPort:override error:error];
-#else
-#warning TODO audio OSX
-    return NO;
-#endif
-}
-
-#pragma mark - Audio Status
-- (BOOL)isAudioRunning:(NSError **)error
-{
-    Boolean running = false;
-    OSStatus status = _AUGraphIsRunning(self.processingGraph,
-                                        &running);
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Check if Audio Graph is running"
-          failureReason:@"Failed to check if graph is running"];
+    int32_t len = (int32_t)(channels * sampleCount * sizeof(OCTToxAVPCMData));
+    TPCircularBuffer *buf = [self.outputQueue getBufferPointer];
+    if (buf) {
+        TPCircularBufferProduceBytes(buf, pcm, len);
     }
-
-    return running;
-}
-
-#pragma mark - Buffer Management
-- (void)provideAudioFrames:(OCTToxAVPCMData *)pcm
-               sampleCount:(OCTToxAVSampleCount)sampleCount
-                  channels:(OCTToxAVChannels)channels
-                sampleRate:(OCTToxAVSampleRate)sampleRate
-                fromFriend:(OCTToxFriendNumber)friendNumber
-{
-    if (self.friendNumber != friendNumber) {
-        return;
-    }
-
-    int32_t len = (int32_t)(channels * sampleCount * sizeof(int16_t));
-
-    TPCircularBufferProduceBytes(&_outputBuffer, pcm, len);
 
     if ((self.outputSampleRate != sampleRate) || (self.outputNumberOfChannels != channels)) {
-        NSError *error;
-        if (! [self updateOutputSampleRate:sampleRate channels:channels error:&error]) {
-            DDLogWarn(@"%@, error updateOutputSampleRate:%@", self, error);
-        }
+        // failure is logged by OCTAudioQueue.
+        [self.outputQueue updateSampleRate:sampleRate numberOfChannels:channels error:nil];
+
+        self.outputSampleRate = sampleRate;
+        self.outputNumberOfChannels = channels;
     }
 }
 
-#pragma mark - Call Backs
-
-- (BOOL)registerInputCallBack:(NSError **)error;
+- (BOOL)isAudioRunning:(NSError **)error
 {
-    AURenderCallbackStruct callbackStruct;
-    callbackStruct.inputProc = inputRenderCallBack;
-    callbackStruct.inputProcRefCon = (__bridge void *)(self);
-    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                            kAudioOutputUnitProperty_SetInputCallback,
-                                            kAudioUnitScope_Global,
-                                            kInputBus,
-                                            &callbackStruct,
-                                            sizeof(callbackStruct));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Registering Input Callback"
-          failureReason:@"Failed to register input callback"];
-        return NO;
-    }
-    return YES;
+    return self.inputQueue.running && self.outputQueue.running;
 }
 
-- (BOOL)registerOutputCallBack:(NSError **)error;
+- (void)makeQueues:(NSError **)error
 {
-    AURenderCallbackStruct callbackStruct;
-    callbackStruct.inputProc = outputRenderCallBack;
-    callbackStruct.inputProcRefCon = (__bridge void *)(self);
-    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                            kAudioUnitProperty_SetRenderCallback,
-                                            kAudioUnitScope_Global,
-                                            kOutputBus,
-                                            &callbackStruct,
-                                            sizeof(callbackStruct));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Registering output Callback"
-          failureReason:@"Failed to register output callback"];
-        return NO;
-    }
-    return YES;
-}
-
-
-OSStatus inputRenderCallBack(void *inRefCon,
-                             AudioUnitRenderActionFlags  *ioActionFlags,
-                             const AudioTimeStamp    *inTimeStamp,
-                             UInt32 inBusNumber,
-                             UInt32 inNumberFrames,
-                             AudioBufferList *ioData)
-{
-    OCTAudioEngine *engine = (__bridge OCTAudioEngine *)(inRefCon);
-
-    if (! engine.enableMicrophone) {
-        return noErr;
-    }
-
-    AudioBufferList bufferList;
-    bufferList.mNumberBuffers = 1;
-    bufferList.mBuffers[0].mNumberChannels = kNumberOfInputChannels;
-    bufferList.mBuffers[0].mData = NULL;
-    bufferList.mBuffers[0].mDataByteSize = inNumberFrames * sizeof(SInt16) * kNumberOfInputChannels;
-
-    OSStatus status = _AudioUnitRender(engine.ioUnit,
-                                       ioActionFlags,
-                                       inTimeStamp,
-                                       inBusNumber,
-                                       inNumberFrames,
-                                       &bufferList);
-
-    TPCircularBufferProduceBytes(&engine->_inputBuffer,
-                                 bufferList.mBuffers[0].mData,
-                                 bufferList.mBuffers[0].mDataByteSize);
-
-    int32_t availableBytesToConsume;
-    void *tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
-    int32_t minimalBytesToConsume = kSampleCount * kNumberOfInputChannels * sizeof(SInt16);
-
-    int32_t cyclesToConsume = availableBytesToConsume / minimalBytesToConsume;
-
-    for (int32_t i = 0; i < cyclesToConsume; i++) {
-        NSError *error;
-        [engine.toxav sendAudioFrame:tail
-                         sampleCount:kSampleCount
-                            channels:kNumberOfInputChannels
-                          sampleRate:engine.inputSampleRate
-                            toFriend:engine.friendNumber
-                               error:&error];
-        TPCircularBufferConsume(&engine->_inputBuffer, minimalBytesToConsume);
-        tail = TPCircularBufferTail(&engine->_inputBuffer, &availableBytesToConsume);
-    }
-    return status;
-}
-
-OSStatus outputRenderCallBack(void *inRefCon,
-                              AudioUnitRenderActionFlags *ioActionFlags,
-                              const AudioTimeStamp *inTimeStamp,
-                              UInt32 inBusNumber,
-                              UInt32 inNumberFrames,
-                              AudioBufferList *ioData)
-{
-    OCTAudioEngine *myEngine = (__bridge OCTAudioEngine *)inRefCon;
-
-    int32_t targetBufferSize = ioData->mBuffers[0].mDataByteSize;
-    SInt16 *targetBuffer = (SInt16 *)ioData->mBuffers[0].mData;
-
-    int32_t availableBytes;
-    SInt16 *buffer = TPCircularBufferTail(&myEngine->_outputBuffer, &availableBytes);
-
-    if (availableBytes < targetBufferSize) {
-        memset(targetBuffer, 0, targetBufferSize);
-        return noErr;
-    }
-    memcpy(targetBuffer, buffer, targetBufferSize);
-    TPCircularBufferConsume(&myEngine->_outputBuffer, targetBufferSize);
-
-    return noErr;
-}
-
-
-#pragma mark - Private
-
-- (void)setupCFunctions
-{
-    _NewAUGraph = NewAUGraph;
-    _AUGraphAddNode = AUGraphAddNode;
-    _AUGraphOpen = AUGraphOpen;
-    _AUGraphNodeInfo = AUGraphNodeInfo;
-    _DisposeAUGraph = DisposeAUGraph;
-    _AUGraphStart = AUGraphStart;
-    _AUGraphStop = AUGraphStop;
-    _AUGraphInitialize = AUGraphInitialize;
-    _AUGraphUninitialize = AUGraphUninitialize;
-    _AUGraphIsRunning = AUGraphIsRunning;
-    _AudioUnitSetProperty = AudioUnitSetProperty;
-    _AudioUnitRender = AudioUnitRender;
-    _DisposeAUGraph = DisposeAUGraph;
-}
-
-- (BOOL)startAudioSession:(NSError **)error
-{
+    // Note: OCTAudioQueue handles the case where the device ids are nil - in that case
+    // we don't set the device explicitly, and the default is used.
 #if TARGET_OS_IPHONE
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    return ([session setCategory:AVAudioSessionCategoryPlayAndRecord error:error] &&
-            [session setPreferredSampleRate:kDefaultSampleRate error:error] &&
-            [session setMode:AVAudioSessionModeVoiceChat error:error] &&
-            [session setActive:YES error:error]);
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:nil error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:nil error:error];
 #else
-#warning TODO audio OSX
-    return NO;
+    self.outputQueue = [[OCTAudioQueue alloc] initWithOutputDeviceID:self.outputDeviceID error:error];
+    self.inputQueue = [[OCTAudioQueue alloc] initWithInputDeviceID:self.inputDeviceID error:error];
 #endif
-}
-
-- (BOOL)setUpStreamFormat:(NSError **)error
-{
-#if TARGET_OS_IPHONE
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    self.inputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
-    self.outputSampleRate = (OCTToxAVSampleRate)session.sampleRate;
-#else
-#warning TODO audio OSX
-#endif
-
-    UInt32 bytesPerSample = sizeof(SInt16);
-
-    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    asbd.mSampleRate = self.inputSampleRate;
-    asbd.mFormatID = kAudioFormatLinearPCM;
-    asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = kNumberOfInputChannels;
-    asbd.mBytesPerFrame = bytesPerSample * kNumberOfInputChannels;
-    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
-    asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * kNumberOfInputChannels;
-
-    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                            kAudioUnitProperty_StreamFormat,
-                                            kAudioUnitScope_Output,
-                                            kInputBus,
-                                            &asbd,
-                                            sizeof(asbd));
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Stream Format"
-          failureReason:@"Failed to setup output stream format"];
-        return NO;
-    }
-
-    status = _AudioUnitSetProperty(self.ioUnit,
-                                   kAudioUnitProperty_StreamFormat,
-                                   kAudioUnitScope_Input,
-                                   kOutputBus,
-                                   &asbd,
-                                   sizeof(asbd));
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Stream Format"
-          failureReason:@"Failed to setup input stream format"];
-        return NO;
-    }
-    return YES;
-}
-
-- (void)setFriendNumber:(OCTToxFriendNumber)friendNumber
-{
-    _friendNumber = friendNumber;
-
-    TPCircularBufferClear(&_inputBuffer);
-    TPCircularBufferClear(&_outputBuffer);
-}
-
-- (BOOL)initializeGraph:(NSError **)error
-{
-    OSStatus status = _AUGraphInitialize(self.processingGraph);
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Initialize Graph"
-          failureReason:@"Failed to initialize Graph"];
-        return NO;
-    }
-    return YES;
-}
-
-- (BOOL)startGraph:(NSError **)error
-{
-    OSStatus status = _AUGraphStart(self.processingGraph);
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Starting Graph"
-          failureReason:@"Failed to start Graph"];
-        return NO;
-    }
-    return YES;
-}
-
-- (BOOL)updateOutputSampleRate:(OCTToxAVSampleRate)rate channels:(OCTToxAVChannels)channels error:(NSError **)error
-{
-    DDLogVerbose(@"%@ updateOutputSampleRate:%u channels:%u", self, rate, channels);
-
-    UInt32 bytesPerSample = sizeof(SInt16);
-
-    AudioStreamBasicDescription asbd = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    asbd.mSampleRate = rate;
-    asbd.mFormatID = kAudioFormatLinearPCM;
-    asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    asbd.mChannelsPerFrame = channels;
-    asbd.mBytesPerFrame = bytesPerSample * channels;
-    asbd.mBitsPerChannel = kBitsPerByte * bytesPerSample;
-    asbd.mFramesPerPacket = kFramesPerPacket;
-    asbd.mBytesPerPacket = bytesPerSample * channels;
-
-    OSStatus status = _AudioUnitSetProperty(self.ioUnit,
-                                            kAudioUnitProperty_StreamFormat,
-                                            kAudioUnitScope_Input,
-                                            kOutputBus,
-                                            &asbd,
-                                            sizeof(asbd));
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"Stream Format"
-          failureReason:@"Failed to setup output stream format"];
-        return NO;
-    }
-
-    self.outputSampleRate = rate;
-    self.outputNumberOfChannels = channels;
-
-    return YES;
-}
-
-- (BOOL)enableInputScope:(NSError **)error
-{
-    UInt32 enableInput = 1;
-    OSStatus status =  _AudioUnitSetProperty(
-        _ioUnit,
-        kAudioOutputUnitProperty_EnableIO,
-        kAudioUnitScope_Input,
-        kInputBus,
-        &enableInput,
-        sizeof(enableInput));
-
-    if (status != noErr) {
-        [self fillError:error
-               withCode:status
-            description:@"EnableIO of input scope"
-          failureReason:@"Unable to enable input scope"];
-        return NO;
-    }
-
-    return YES;
-}
-
-
-- (BOOL)fillError:(NSError **)error
-         withCode:(NSUInteger)code
-      description:(NSString *)description
-    failureReason:(NSString *)failureReason
-{
-    if (error) {
-        NSMutableDictionary *userInfo = [NSMutableDictionary new];
-
-        if (description) {
-            userInfo[NSLocalizedDescriptionKey] = description;
-        }
-
-        if (failureReason) {
-            userInfo[NSLocalizedFailureReasonErrorKey] = failureReason;
-        }
-        *error = [NSError errorWithDomain:@"OCTAudioEngineError" code:code userInfo:userInfo];
-    }
-
-    return YES;
 }
 
 @end

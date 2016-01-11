@@ -9,6 +9,7 @@
 #import "OCTVideoEngine.h"
 #import "OCTVideoView.h"
 #import "OCTPixelBufferPool.h"
+#import "OCTManagerConstants.h"
 #import "DDLog.h"
 
 #undef LOG_LEVEL_DEF
@@ -74,7 +75,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 - (BOOL)setupWithError:(NSError **)error
 {
     DDLogVerbose(@"%@: setupWithError", self);
+#if TARGET_OS_IPHONE
     AVCaptureDevice *videoCaptureDevice = [self getDeviceForPosition:AVCaptureDevicePositionFront];
+#else
+    AVCaptureDevice *videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+#endif
     AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:videoCaptureDevice error:error];
 
     if (! videoInput) {
@@ -102,18 +107,46 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     return YES;
 }
 
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
-{
-    DDLogVerbose(@"%@: switchToCameraFront %d", self, front);
+#if ! TARGET_OS_IPHONE
 
-    AVCaptureDevicePosition position = front ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+- (BOOL)switchToCamera:(NSString *)camera error:(NSError **)error
+{
+    AVCaptureDevice *dev = nil;
+
+    if (! camera) {
+        dev = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    }
+    else {
+        dev = [AVCaptureDevice deviceWithUniqueID:camera];
+    }
+
+    return [self actuallySetCamera:dev error:error];
+}
+
+#else
+
+- (BOOL)useFrontCamera:(BOOL)front error:(NSError **)error
+{
+    AVCaptureDevice *dev = nil;
+
+    AVCaptureDevicePosition position = (front) ? AVCaptureDevicePositionBack : AVCaptureDevicePositionFront;
+    dev = [self getDeviceForPosition:position];
+
+    return [self actuallySetCamera:dev error:error];
+}
+
+#endif
+
+- (BOOL)actuallySetCamera:(AVCaptureDevice *)dev error:(NSError **)error
+{
+    DDLogVerbose(@"%@: actuallySetCamera: %@", self, dev);
 
     NSArray *inputs = [self.captureSession inputs];
 
     AVCaptureInput *current = [inputs firstObject];
     if ([current isKindOfClass:[AVCaptureDeviceInput class]]) {
         AVCaptureDeviceInput *inputDevice = (AVCaptureDeviceInput *)current;
-        if (inputDevice.device.position == position) {
+        if ([inputDevice.device.uniqueID isEqualToString:dev.uniqueID]) {
             return YES;
         }
     }
@@ -122,9 +155,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         [self.captureSession removeInput:input];
     }
 
-    AVCaptureDevice *camera = [self getDeviceForPosition:position];
-
-    AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:camera error:error];
+    AVCaptureDeviceInput *videoInput = [AVCaptureDeviceInput deviceInputWithDevice:dev error:error];
 
     if (! videoInput) {
         return NO;
@@ -199,7 +230,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
     OCTVideoView *feed = self.videoView;
 
     if (! feed) {
-        feed = [[OCTVideoView alloc] initWithFrame:CGRectZero];
+        feed = [OCTVideoView view];
         self.videoView = feed;
     }
 
@@ -408,8 +439,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                              selector:@selector(orientationChanged)
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
-#else
-#warning TODO audio OSX
 #endif
 }
 
@@ -440,8 +469,6 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     conn.videoOrientation = orientation;
     self.previewLayer.connection.videoOrientation = orientation;
-#else
-#warning TODO audio OSX
 #endif
 }
 

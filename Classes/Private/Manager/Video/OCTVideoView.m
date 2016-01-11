@@ -18,40 +18,49 @@
 
 @implementation OCTVideoView
 
-- (instancetype)initWithFrame:(CGRect)frame
++ (instancetype)view
 {
-    self = [super initWithFrame:frame];
+#if TARGET_OS_IPHONE
+    OCTVideoView *videoView = [[self alloc] initWithFrame:CGRectZero];
+#else
+    OCTVideoView *videoView = [[self alloc] initWithFrame:CGRectZero pixelFormat:[self defaultPixelFormat]];
+#endif
+    [videoView finishInitializing];
+    return videoView;
+}
 
-    if (! self) {
-        return nil;
-    }
-
+- (void)finishInitializing
+{
+#if TARGET_OS_IPHONE
     __weak OCTVideoView *weakSelf = self;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-#if TARGET_OS_IPHONE
         OCTVideoView *strongSelf = weakSelf;
         strongSelf.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         strongSelf.coreImageContext = [CIContext contextWithEAGLContext:strongSelf.context];
-#else
-#warning TODO audio OSX
-#endif
     });
 
-#if TARGET_OS_IPHONE
     self.enableSetNeedsDisplay = NO;
-#else
-#warning TODO audio OSX
 #endif
-
-    return self;
 }
 
 - (void)setImage:(CIImage *)image
 {
     _image = image;
+#if TARGET_OS_IPHONE
     [self display];
+#else
+    [self setNeedsDisplay:YES];
+#endif
 }
+
+#if ! TARGET_OS_IPHONE
+// OS X: we need to correct the viewport when the view size changes
+- (void)reshape
+{
+    glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+}
+#endif
 
 - (void)drawRect:(CGRect)rect
 {
@@ -70,7 +79,19 @@
         [self.coreImageContext drawImage:self.image inRect:destRect fromRect:self.image.extent];
     }
 #else
-#warning TODO audio OSX
+    [self.openGLContext makeCurrentContext];
+
+    if (self.image) {
+        CIContext *ctx = [CIContext contextWithCGLContext:self.openGLContext.CGLContextObj pixelFormat:self.openGLContext.pixelFormat.CGLPixelFormatObj colorSpace:nil options:nil];
+        // The GL coordinate system goes from -1 to 1 on all axes by default.
+        // We didn't set a matrix so use that instead of bounds.
+        [ctx drawImage:self.image inRect:(CGRect) {-1, -1, 2, 2} fromRect:self.image.extent];
+    }
+    else {
+        glClearColor(0.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    glFlush();
 #endif
 }
 @end

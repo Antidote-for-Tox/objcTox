@@ -7,6 +7,10 @@
 //
 
 #import "OCTSubmanagerCalls+Private.h"
+#import "DDLog.h"
+
+#undef LOG_LEVEL_DEF
+#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
@@ -57,11 +61,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     });
 
     return status;
-}
-
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
-{
-    return [self.videoEngine switchToCameraFront:front error:error];
 }
 
 - (OCTCall *)callToChat:(OCTChat *)chat enableAudio:(BOOL)enableAudio enableVideo:(BOOL)enableVideo error:(NSError **)error
@@ -144,8 +143,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
         [self checkForCurrentActiveCallAndPause];
 
-        [self startEnginesAndTimer:YES forCall:call];
-
         OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
         [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
             call.status = OCTCallStatusActive;
@@ -153,6 +150,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
         }];
 
         self.enableMicrophone = YES;
+        [self startEnginesAndTimer:YES forCall:call];
 
         return YES;
     }
@@ -160,11 +158,6 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
         // TO DO: Group Calls
         return NO;
     }
-}
-
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
-{
-    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
 }
 
 - (BOOL)enableMicrophone
@@ -243,6 +236,39 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
         return NO;
     }
 }
+
+#pragma mark - Setting IO devices
+
+#if ! TARGET_OS_IPHONE
+
+- (BOOL)setAudioInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    return [self.audioEngine setInputDeviceID:deviceUniqueID error:error];
+}
+
+- (BOOL)setAudioOutputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    return [self.audioEngine setOutputDeviceID:deviceUniqueID error:error];
+}
+
+- (BOOL)setVideoInputDevice:(NSString *)deviceUniqueID error:(NSError **)error
+{
+    return [self.videoEngine switchToCamera:deviceUniqueID error:error];
+}
+
+#else
+
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker error:(NSError **)error
+{
+    return [self.audioEngine routeAudioToSpeaker:speaker error:error];
+}
+
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError **)error
+{
+    return [self.videoEngine useFrontCamera:front error:error];
+}
+
+#endif
 
 #pragma mark Private methods
 - (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status
@@ -382,7 +408,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
         NSError *error;
         if (! [self.audioEngine startAudioFlow:&error]) {
-            NSLog(@"Error starting audio flow %@", error);
+            DDLogVerbose(@"Error starting audio flow %@", error);
         }
 
 

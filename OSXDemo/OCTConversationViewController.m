@@ -14,6 +14,7 @@
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
 #import "OCTSubmanagerUser.h"
+#import "OCTSubmanagerCalls.h"
 #import "OCTMessageText.h"
 
 static NSString *const kCellIdent = @"cellIdent";
@@ -77,6 +78,21 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.manager.chats removeChatWithAllMessages:chat];
 }
 
+- (IBAction)callUserButtonPressed:(NSButton *)sender
+{
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+
+    [self.manager.calls callToChat:chat enableAudio:YES enableVideo:YES error:nil];
+}
+
 #pragma mark - NSTextFieldDelegate
 
 - (IBAction)chatTextFieldEntered:(NSTextField *)sender
@@ -95,7 +111,6 @@ static NSString *const kCellIdent = @"cellIdent";
                                      type:OCTToxMessageTypeNormal
                                     error:nil];
     sender.stringValue = @"";
-
 }
 
 #pragma mark - NSTableViewDelegate
@@ -124,7 +139,7 @@ static NSString *const kCellIdent = @"cellIdent";
         OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
         OCTFriend *friend = [chat.friends firstObject];
 
-        field.stringValue = (friend.isConnected) ? [NSString stringWithFormat : @"%@ : Online", friend.nickname] : friend.nickname;
+        field.stringValue = (friend.isConnected) ? ([NSString stringWithFormat : @"%@ : Online", friend.nickname]) : friend.nickname;
 
     }
     else {

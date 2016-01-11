@@ -91,7 +91,7 @@
                     </tableHeaderView>
                 </scrollView>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="l4O-Ce-roz">
-                    <rect key="frame" x="64" y="3" width="112" height="32"/>
+                    <rect key="frame" x="4" y="3" width="112" height="32"/>
                     <buttonCell key="cell" type="push" title="Delete Chat" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YQ5-VB-gcm">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -184,6 +184,16 @@
                         <outlet property="delegate" destination="-2" id="Cgq-PV-Yhi"/>
                     </connections>
                 </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5DZ-38-1cv">
+                    <rect key="frame" x="162" y="3" width="93" height="32"/>
+                    <buttonCell key="cell" type="push" title="Call user" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HBA-rc-hH3">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="callUserButtonPressed:" target="-2" id="0fg-kO-gc1"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="zLC-bT-7fG" secondAttribute="trailing" id="1ZD-Fp-tLh"/>
@@ -191,12 +201,15 @@
                 <constraint firstAttribute="bottom" secondItem="l4O-Ce-roz" secondAttribute="bottom" constant="10" id="EXT-aC-ip0"/>
                 <constraint firstItem="qAJ-48-2Vl" firstAttribute="height" secondItem="LtX-5e-me2" secondAttribute="height" multiplier="0.75" id="Hx8-LR-mpr"/>
                 <constraint firstItem="qAJ-48-2Vl" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Ocm-gh-ocf"/>
+                <constraint firstItem="5DZ-38-1cv" firstAttribute="trailing" secondItem="LtX-5e-me2" secondAttribute="trailing" constant="10" id="OeG-a0-kg4"/>
+                <constraint firstItem="5DZ-38-1cv" firstAttribute="centerY" secondItem="l4O-Ce-roz" secondAttribute="centerY" id="VHD-Mz-1zF"/>
                 <constraint firstItem="qAJ-48-2Vl" firstAttribute="leading" secondItem="LtX-5e-me2" secondAttribute="trailing" id="VM8-N3-D4Z"/>
                 <constraint firstAttribute="trailing" secondItem="qAJ-48-2Vl" secondAttribute="trailing" id="Vdz-DI-2av"/>
                 <constraint firstItem="LtX-5e-me2" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="bl3-3C-KbC"/>
                 <constraint firstItem="l4O-Ce-roz" firstAttribute="top" secondItem="LtX-5e-me2" secondAttribute="bottom" constant="10" id="cNY-6x-4aP"/>
-                <constraint firstItem="l4O-Ce-roz" firstAttribute="centerX" secondItem="LtX-5e-me2" secondAttribute="centerX" id="dxq-1G-Rlb"/>
+                <constraint firstItem="5DZ-38-1cv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="l4O-Ce-roz" secondAttribute="trailing" constant="10" id="gwy-r5-V6J"/>
                 <constraint firstItem="zLC-bT-7fG" firstAttribute="bottom" secondItem="LtX-5e-me2" secondAttribute="bottom" id="kMv-dH-TTU"/>
+                <constraint firstItem="l4O-Ce-roz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="10" id="l1l-xC-0gf"/>
                 <constraint firstItem="zLC-bT-7fG" firstAttribute="leading" secondItem="LtX-5e-me2" secondAttribute="trailing" id="uAp-xu-yJL"/>
                 <constraint firstItem="zLC-bT-7fG" firstAttribute="top" secondItem="qAJ-48-2Vl" secondAttribute="bottom" id="wDI-aX-9Qh"/>
             </constraints>

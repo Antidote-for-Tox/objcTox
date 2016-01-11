@@ -34,15 +34,6 @@
 - (BOOL)setupWithError:(NSError *__nullable *__nullable)error;
 
 /**
- * Use a different camera for input.
- * @param front YES to use the front camera, NO to use the
- * rear camera. Front camera is used by default.
- * @error Pointer to error object.
- * @return YES on success, otherwise NO.
- */
-- (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error;
-
-/**
  * This class is responsible for telling the end-user what calls we have available.
  * We can also initialize a call session from here.
  * @param chat The chat for which we would like to initiate a call.
@@ -82,15 +73,6 @@
              error:(NSError *__nullable *__nullable)error;
 
 /**
- * Send the audio to the speaker
- * @param speaker YES to send audio to speaker, NO to reset to default.
- * @param error Pointer to error object.
- * @return YES if successful, otherwise NO.
- */
-- (BOOL)routeAudioToSpeaker:(BOOL)speaker
-                      error:(NSError *__nullable *__nullable)error;
-
-/**
  * Send call control to call.
  * @param control The control to send to call.
  * @param call The appopriate call to send to.
@@ -124,3 +106,53 @@
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(nonnull OCTCall *)call error:(NSError *__nullable *__nullable)error;
 
 @end
+
+#if ! TARGET_OS_IPHONE
+
+@interface OCTSubmanagerCalls (MacDevice)
+
+/**
+ * Set input source and output targets for A/V.
+ *
+ * On iPhone OS, you must pass one of the OCT[Input|Output]Device...  constants
+ * as the deviceUniqueID.
+ * On OS X, you can get valid deviceUniqueID values from:
+ *   - AVFoundation: video and audio (inputs only) (AVCaptureDevice uniqueID)
+ *   - Core Audio: audio inputs and outputs (kAudioDevicePropertyDeviceUID).
+ * @param deviceUniqueID The device ID to use. May be nil, in which case
+ *                       a default device will be used
+ */
+- (BOOL)setAudioInputDevice:(nullable NSString *)deviceUniqueID
+                      error:(NSError *__nullable *__nullable)error;
+- (BOOL)setAudioOutputDevice:(nullable NSString *)deviceUniqueID
+                       error:(NSError *__nullable *__nullable)error;
+- (BOOL)setVideoInputDevice:(nullable NSString *)deviceUniqueID
+                      error:(NSError *__nullable *__nullable)error;
+
+@end
+
+#else
+
+@interface OCTSubmanagerCalls (iOSDevice)
+
+/**
+ * Send the audio to the speaker
+ * @param speaker YES to send audio to speaker, NO to reset to default.
+ * @param error Pointer to error object.
+ * @return YES if successful, otherwise NO.
+ */
+- (BOOL)routeAudioToSpeaker:(BOOL)speaker
+                      error:(NSError *__nullable *__nullable)error;
+
+/**
+ * Use a different camera for input.
+ * @param front YES to use the front camera, NO to use the
+ * rear camera. Front camera is used by default.
+ * @error Pointer to error object.
+ * @return YES on success, otherwise NO.
+ */
+- (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error;
+
+@end
+
+#endif

@@ -18,4 +18,9 @@
 
 @property (strong, nonatomic) CIImage *image;
 
+/**
+ * Allocs and calls the platform-specific initializers.
+ */
++ (instancetype)view;
+
 @end
