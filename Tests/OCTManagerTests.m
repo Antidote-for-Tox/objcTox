@@ -26,6 +26,9 @@
 #import "OCTSubmanagerObjects+Private.h"
 #import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
+#import "OCTDefaultFileStorage.h"
+
+static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 @interface OCTManager (Tests) <OCTSubmanagerDataSource>
 
@@ -142,7 +145,7 @@
     self.tox = nil;
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-
+    configuration.fileStorage = [self temporaryFileStorage];
     // Just in case, removing leftovers from other tests.
     [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
 
@@ -254,6 +257,7 @@
     configuration.options.tcpPort = 777;
     configuration.importToxSaveFromPath = @"save.tox";
     configuration.passphrase = @"p@s$";
+    configuration.fileStorage = [self temporaryFileStorage];
 
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 
@@ -444,7 +448,27 @@
 {
     OCMStub([[self.mockedCallManager alloc] initWithTox:[OCMArg anyPointer]]).andReturn(nil);
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+
+    configuration.fileStorage = [self temporaryFileStorage];
+
     self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+}
+
+- (OCTDefaultFileStorage *)temporaryFileStorage
+{
+
+    NSString *tempDirectory = NSTemporaryDirectory();
+    tempDirectory = [tempDirectory stringByAppendingPathComponent:kTestDirectory];
+
+    [[NSFileManager defaultManager] createDirectoryAtPath:tempDirectory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
+
+    OCTDefaultFileStorage *defaultStorage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:tempDirectory
+                                                                              temporaryDirectory:tempDirectory];
+
+    return defaultStorage;
 }
 
 @end
