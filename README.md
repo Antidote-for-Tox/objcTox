@@ -23,6 +23,7 @@ See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current a
 - Chat objects with various information.
 - Sending and receiving messages.
 - tox1 and tox3 DNS discovery.
+- Audio and video calls.
 
 #### What's next?
 
