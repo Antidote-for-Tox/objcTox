@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Classes/**/*.{m,h}'
   s.public_header_files = 'Classes/Public/**/*.h'
-  s.dependency 'toxcore', '0.0.1-0938ba0'
+  s.dependency 'toxcore', '0.0.1-94cc8b1'
   s.dependency 'TPCircularBuffer', '~> 0.0.1'
   s.dependency 'CocoaLumberjack', '1.9.2'
   s.dependency 'Realm', '0.95.0'

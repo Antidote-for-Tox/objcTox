@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OS X Demo.
 
 ### Changes
-- Updating toxcore to 0.0.1-0938ba0.
+- Updating toxcore to 0.0.1-94cc8b1.
 - Splitting calls API for Mac and iOS.
 - Change video quality to default medium.
 - Making code more swift friendly.
