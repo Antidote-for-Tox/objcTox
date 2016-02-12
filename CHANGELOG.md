@@ -4,6 +4,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [0.5.0] - 2016-02-12
+### Added
+- install.sh script.
+- OS X Demo.
+
+### Changes
+- Updating toxcore to 0.0.1-0938ba0.
+- Splitting calls API for Mac and iOS.
+- Change video quality to default medium.
+- Making code more swift friendly.
+
+### Fixes
+- Some refactoring.
+- Bug with last seen date not updated.
+- Lots of issues in audio and video calls.
+
 ## [0.4.0] - 2015-11-03
 ### Added
 - Audio and video calls.
@@ -76,7 +92,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.4.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.5.0...master
+[0.5.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.0...0.2.1

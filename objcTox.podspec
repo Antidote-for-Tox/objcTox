@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "objcTox"
-  s.version          = "0.4.0"
+  s.version          = "0.5.0"
   s.summary          = "Objective-C wrapper for Tox"
   s.homepage         = "https://github.com/Antidote-for-Tox/objcTox"
   s.license          = "MIT"
