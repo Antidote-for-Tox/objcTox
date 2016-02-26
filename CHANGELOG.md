@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+### Changes
+- Bootstrap nodes updated and moved to separate json file
+
+### Fixes
+- Bug with switching to wrong camera on iOS.
 
 ## [0.5.0] - 2016-02-12
 ### Added

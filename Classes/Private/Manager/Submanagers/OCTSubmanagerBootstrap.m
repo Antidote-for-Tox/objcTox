@@ -69,9 +69,22 @@ static const NSUInteger kNodesPerIteration = 4;
 
 - (void)addPredefinedNodes
 {
-    for (NSArray *nodeArray in [OCTPredefined bootstrapNodes]) {
-        NSNumber *port = nodeArray[1];
-        [self addNodeWithHost:nodeArray[0] port:port.unsignedShortValue publicKey:nodeArray[2]];
+    NSString *file = [[self objcToxBundle] pathForResource:@"nodes" ofType:@"json"];
+    NSData *data = [NSData dataWithContentsOfFile:file];
+
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    NSAssert(dictionary, @"Nodes json file is corrupted.");
+
+    for (NSDictionary *node in dictionary[@"nodes"]) {
+        NSString *host = node[@"ipv4"];
+        OCTToxPort port = [node[@"port"] unsignedShortValue];
+        NSString *publicKey = node[@"public_key"];
+
+        NSAssert(host, @"Nodes json file is corrupted");
+        NSAssert(port > 0, @"Nodes json file is corrupted");
+        NSAssert(publicKey, @"Nodes json file is corrupted");
+
+        [self addNodeWithHost:host port:port publicKey:publicKey];
     }
 }
 
@@ -185,6 +198,15 @@ static const NSUInteger kNodesPerIteration = 4;
     }
 
     return [selectedNodes copy];
+}
+
+- (NSBundle *)objcToxBundle
+{
+    NSBundle *mainBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *objcToxBundle = [NSBundle bundleWithPath:[mainBundle pathForResource:@"objcTox" ofType:@"bundle"]];
+
+    // objcToxBundle is used when installed with CocoaPods. If we run tests/demo app mainBundle would be used.
+    return objcToxBundle ?: mainBundle;
 }
 
 @end

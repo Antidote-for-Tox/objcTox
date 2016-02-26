@@ -11,15 +11,6 @@
 @interface OCTPredefined : NSObject
 
 /**
- * A list of nodes from https://wiki.tox.chat/users/nodes
- *
- * See OCTSubmanagerBootstrap for more information.
- *
- * Updated 2015-08-22.
- */
-+ (NSArray *)bootstrapNodes;
-
-/**
  * A list of servers for Tox3 DNS discovery.
  *
  * See OCTSubmanagerDNS for more information.
