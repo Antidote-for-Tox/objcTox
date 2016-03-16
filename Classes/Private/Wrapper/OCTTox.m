@@ -834,7 +834,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (void)updateTimerIntervalIfNeeded
 {
-    uint64_t nextIterate = tox_iteration_interval(self.tox) * (NSEC_PER_SEC / 1000);
+    uint64_t nextIterate = tox_iteration_interval(self.tox) * USEC_PER_SEC;
 
     if (self.previousIterate == nextIterate) {
         return;
@@ -1787,6 +1787,9 @@ void fileReceiveCallback(
     NSString *fileName = [[NSString alloc] initWithBytes:cFileName length:fileNameLength encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogCInfo(@"%@: fileReceiveCallback with friendNumber %d fileNumber %d kind %ld fileSize %llu fileName %@",
+                   tox, friendNumber, fileNumber, kind, fileSize, fileName);
+
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
             [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber
                  friendNumber:friendNumber
