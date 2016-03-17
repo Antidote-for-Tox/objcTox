@@ -19,8 +19,7 @@
 @interface OCTMessageFile : OCTObject
 
 /**
- * The current state of file. Only in case if it is OCTMessageFileTypeReady
- * the file can be shown to user.
+ * The current state of file.
  */
 @property OCTMessageFileType fileType;
 
@@ -38,6 +37,8 @@
 /**
  * Path of file on disk. If you need fileName to show to user please use
  * `fileName` property. filePath has it's own random fileName.
+ *
+ * In case of incoming file filePath will have value only if fileType is OCTMessageFileTypeReady
  */
 @property (nullable) NSString *filePath;
 

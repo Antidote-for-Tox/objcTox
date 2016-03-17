@@ -13,13 +13,10 @@
 
 @class RBQFetchRequest;
 @class OCTObject;
-@class OCTFriendRequest;
 @class OCTFriend;
 @class OCTChat;
 @class OCTCall;
 @class OCTMessageAbstract;
-@class OCTMessageText;
-@class OCTMessageFile;
 @class OCTSettingsStorageObject;
 
 @interface OCTRealmManager : NSObject
@@ -76,6 +73,14 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
-- (void)addMessageCall:(OCTCall *)call;
+- (OCTMessageAbstract *)addMessageWithFileType:(OCTMessageFileType)fileType
+                                      fileSize:(OCTToxFileSize)fileSize
+                                      fileName:(NSString *)fileName
+                                      filePath:(NSString *)filePath
+                                       fileUTI:(NSString *)fileUTI
+                                          chat:(OCTChat *)chat
+                                        sender:(OCTFriend *)sender;
+
+- (OCTMessageAbstract *)addMessageCall:(OCTCall *)call;
 
 @end

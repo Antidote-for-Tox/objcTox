@@ -336,7 +336,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                                  messageId:(OCTToxMessageId)messageId
 {
     NSParameterAssert(text);
-    NSParameterAssert(chat);
 
     OCTLogInfo(@"adding messageText to chat %@", chat);
 
@@ -346,25 +345,31 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     messageText.type = type;
     messageText.messageId = messageId;
 
-    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
-    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
-    messageAbstract.sender = sender;
-    messageAbstract.chat = chat;
-    messageAbstract.messageText = messageText;
-
-    [self addObject:messageAbstract];
-
-    [self updateObject:chat withBlock:^(OCTChat *theChat) {
-        theChat.lastMessage = messageAbstract;
-        theChat.lastActivityDateInterval = messageAbstract.dateInterval;
-    }];
-
-    return messageAbstract;
+    return [self addMessageAbstractWithChat:chat sender:sender messageText:messageText messageFile:nil messageCall:nil];
 }
 
-- (void)addMessageCall:(OCTCall *)call
+- (OCTMessageAbstract *)addMessageWithFileType:(OCTMessageFileType)fileType
+                                      fileSize:(OCTToxFileSize)fileSize
+                                      fileName:(NSString *)fileName
+                                      filePath:(NSString *)filePath
+                                       fileUTI:(NSString *)fileUTI
+                                          chat:(OCTChat *)chat
+                                        sender:(OCTFriend *)sender
 {
-    NSParameterAssert(call);
+    OCTLogInfo(@"adding messageFile to chat %@, fileSize %lld", chat, fileSize);
+
+    OCTMessageFile *messageFile = [OCTMessageFile new];
+    messageFile.fileType = fileType;
+    messageFile.fileSize = fileSize;
+    messageFile.fileName = fileName;
+    messageFile.filePath = filePath;
+    messageFile.fileUTI = fileUTI;
+
+    return [self addMessageAbstractWithChat:chat sender:sender messageText:nil messageFile:messageFile messageCall:nil];
+}
+
+- (OCTMessageAbstract *)addMessageCall:(OCTCall *)call
+{
     OCTLogInfo(@"adding messageCall to call %@", call);
 
     OCTMessageCallEvent event;
@@ -382,18 +387,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     messageCall.callDuration = call.callDuration;
     messageCall.callEvent = event;
 
-    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
-    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
-    messageAbstract.chat = call.chat;
-    messageAbstract.messageCall = messageCall;
-    messageAbstract.sender = call.caller;
-
-    [self addObject:messageAbstract];
-
-    [self updateObject:call.chat withBlock:^(OCTChat *theChat) {
-        theChat.lastMessage = messageAbstract;
-        theChat.lastActivityDateInterval = messageAbstract.dateInterval;
-    }];
+    return [self addMessageAbstractWithChat:call.chat sender:call.caller messageText:nil messageFile:nil messageCall:messageCall];
 }
 
 #pragma mark -  Private
@@ -449,6 +443,40 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 - (RBQRealmChangeLogger *)logger
 {
     return [RBQRealmChangeLogger loggerForRealm:self.realm];
+}
+
+/**
+ * Only one of messageText, messageFile or messageCall can be non-nil.
+ */
+- (OCTMessageAbstract *)addMessageAbstractWithChat:(OCTChat *)chat
+                                            sender:(OCTFriend *)sender
+                                       messageText:(OCTMessageText *)messageText
+                                       messageFile:(OCTMessageFile *)messageFile
+                                       messageCall:(OCTMessageCall *)messageCall
+{
+    NSParameterAssert(chat);
+
+    NSAssert( (messageText && ! messageFile && ! messageCall) ||
+              (! messageText && messageFile && ! messageCall) ||
+              (! messageText && ! messageFile && messageCall),
+              @"Wrong options passed. Only one of messageText, messageFile or messageCall should be non-nil.");
+
+    OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
+    messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
+    messageAbstract.sender = sender;
+    messageAbstract.chat = chat;
+    messageAbstract.messageText = messageText;
+    messageAbstract.messageFile = messageFile;
+    messageAbstract.messageCall = messageCall;
+
+    [self addObject:messageAbstract];
+
+    [self updateObject:chat withBlock:^(OCTChat *theChat) {
+        theChat.lastMessage = messageAbstract;
+        theChat.lastActivityDateInterval = messageAbstract.dateInterval;
+    }];
+
+    return messageAbstract;
 }
 
 @end
