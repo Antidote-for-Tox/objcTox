@@ -366,7 +366,7 @@
 		11AF88FA1C98976F00AD1D9F /* OCTFileDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFileDownloadOperation.m; sourceTree = "<group>"; };
 		11AF88FF1C98C25A00AD1D9F /* OCTFileBaseOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFileBaseOperation.h; sourceTree = "<group>"; };
 		11AF89001C98C25A00AD1D9F /* OCTFileBaseOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFileBaseOperation.m; sourceTree = "<group>"; };
-		11AF89061C98CBDC00AD1D9F /* OCTLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTLogging.h; sourceTree = "<group>"; };
+		11AF890D1C9B57F900AD1D9F /* OCTLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTLogging.h; sourceTree = "<group>"; };
 		11B4BAEF1B11E2530001A96A /* OCTSubmanagerFiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFiles.h; sourceTree = "<group>"; };
 		11B4BAF01B11E2800001A96A /* OCTSubmanagerFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerFiles.m; sourceTree = "<group>"; };
 		11B4BAF31B11E29A0001A96A /* OCTSubmanagerFiles+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerFiles+Private.h"; sourceTree = "<group>"; };
@@ -631,14 +631,6 @@
 			name = Files;
 			sourceTree = "<group>";
 		};
-		11AF89051C98CBC400AD1D9F /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				11AF89061C98CBDC00AD1D9F /* OCTLogging.h */,
-			);
-			name = Logging;
-			sourceTree = "<group>";
-		};
 		11D650CD1B89225400C3DD23 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -667,6 +659,7 @@
 		29E30FD5E3A845CEB92CCF1E4DD35ED4 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				11AF890D1C9B57F900AD1D9F /* OCTLogging.h */,
 				B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */,
 				1125DC491B2107E900C8DB98 /* OCTTox+Private.h */,
 				11D651031B8922AF00C3DD23 /* OCTToxAV.m */,
@@ -712,7 +705,6 @@
 		491C3A03DF405B148E570C976B10BB3D /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				11AF89051C98CBC400AD1D9F /* Logging */,
 				CF9416C2498272D5823396FB02DF7670 /* Manager */,
 				29E30FD5E3A845CEB92CCF1E4DD35ED4 /* Wrapper */,
 			);

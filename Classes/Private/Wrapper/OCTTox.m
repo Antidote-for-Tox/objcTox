@@ -7,10 +7,7 @@
 //
 
 #import "OCTTox+Private.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
@@ -61,34 +58,33 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     struct Tox_Options cOptions;
 
     if (options) {
-        DDLogVerbose(@"%@: init with options:\n"
-                     @"IPv6Enabled %d\n"
-                     @"UDPEnabled %d\n"
-                     @"startPort %u\n"
-                     @"endPort %u\n"
-                     @"proxyType %lu\n"
-                     @"proxyHost %@\n"
-                     @"proxyPort %d\n"
-                     @"tcpPort %d",
-                     self,
-                     options.IPv6Enabled,
-                     options.UDPEnabled,
-                     options.startPort,
-                     options.endPort,
-                     (unsigned long)options.proxyType,
-                     options.proxyHost,
-                     options.proxyPort,
-                     options.tcpPort);
+        OCTLogVerbose(@"init with options:\n"
+                      @"IPv6Enabled %d\n"
+                      @"UDPEnabled %d\n"
+                      @"startPort %u\n"
+                      @"endPort %u\n"
+                      @"proxyType %lu\n"
+                      @"proxyHost %@\n"
+                      @"proxyPort %d\n"
+                      @"tcpPort %d",
+                      options.IPv6Enabled,
+                      options.UDPEnabled,
+                      options.startPort,
+                      options.endPort,
+                      (unsigned long)options.proxyType,
+                      options.proxyHost,
+                      options.proxyPort,
+                      options.tcpPort);
 
         cOptions = [self cToxOptionsFromOptions:options];
     }
     else {
-        DDLogVerbose(@"%@: init without options", self);
+        OCTLogVerbose(@"init without options");
         tox_options_default(&cOptions);
     }
 
     if (data) {
-        DDLogVerbose(@"%@: loading from data of length %lu", self, (unsigned long)data.length);
+        OCTLogVerbose(@"loading from data of length %lu", (unsigned long)data.length);
         cOptions.savedata_type = TOX_SAVEDATA_TYPE_TOX_SAVE;
         cOptions.savedata_data = data.bytes;
         cOptions.savedata_length = data.length;
@@ -121,12 +117,12 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         tox_kill(self.tox);
     }
 
-    DDLogVerbose(@"%@: dealloc called, tox killed", self);
+    OCTLogVerbose(@"dealloc called, tox killed");
 }
 
 - (NSData *)save
 {
-    DDLogVerbose(@"%@: saving...", self);
+    OCTLogVerbose(@"saving...");
 
     size_t size = tox_get_savedata_size(self.tox);
     uint8_t *cData = malloc(size);
@@ -136,18 +132,18 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSData *data = [NSData dataWithBytes:cData length:size];
     free(cData);
 
-    DDLogInfo(@"%@: saved to data with length %lu", self, (unsigned long)data.length);
+    OCTLogInfo(@"saved to data with length %lu", (unsigned long)data.length);
 
     return data;
 }
 
 - (void)start
 {
-    DDLogVerbose(@"%@: start method called", self);
+    OCTLogVerbose(@"start method called");
 
     @synchronized(self) {
         if (self.timer) {
-            DDLogWarn(@"%@: already started", self);
+            OCTLogWarn(@"already started");
             return;
         }
 
@@ -171,16 +167,16 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         dispatch_resume(self.timer);
     }
 
-    DDLogInfo(@"%@: started", self);
+    OCTLogInfo(@"started");
 }
 
 - (void)stop
 {
-    DDLogVerbose(@"%@: stop method called", self);
+    OCTLogVerbose(@"stop method called");
 
     @synchronized(self) {
         if (! self.timer) {
-            DDLogWarn(@"%@: tox isn't running, nothing to stop", self);
+            OCTLogWarn(@"tox isn't running, nothing to stop");
             return;
         }
 
@@ -188,7 +184,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         self.timer = nil;
     }
 
-    DDLogInfo(@"%@: stopped", self);
+    OCTLogInfo(@"stopped");
 }
 
 #pragma mark -  Properties
@@ -200,7 +196,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)userAddress
 {
-    DDLogVerbose(@"%@: get userAddress", self);
+    OCTLogVerbose(@"get userAddress");
 
     const NSUInteger length = TOX_ADDRESS_SIZE;
     uint8_t *cAddress = malloc(length);
@@ -220,7 +216,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)publicKey
 {
-    DDLogVerbose(@"%@: get publicKey", self);
+    OCTLogVerbose(@"get publicKey");
 
     uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
@@ -234,7 +230,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)secretKey
 {
-    DDLogVerbose(@"%@: get secretKey", self);
+    OCTLogVerbose(@"get secretKey");
 
     uint8_t *cSecretKey = malloc(TOX_SECRET_KEY_SIZE);
 
@@ -248,13 +244,13 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (void)setNospam:(OCTToxNoSpam)nospam
 {
-    DDLogVerbose(@"%@: set nospam", self);
+    OCTLogVerbose(@"set nospam");
     tox_self_set_nospam(self.tox, nospam);
 }
 
 - (OCTToxNoSpam)nospam
 {
-    DDLogVerbose(@"%@: get nospam", self);
+    OCTLogVerbose(@"get nospam");
     return tox_self_get_nospam(self.tox);
 }
 
@@ -276,7 +272,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     tox_self_set_status(self.tox, cStatus);
 
-    DDLogInfo(@"%@: set user status to %lu", self, (unsigned long)status);
+    OCTLogInfo(@"set user status to %lu", (unsigned long)status);
 }
 
 - (OCTToxUserStatus)userStatus
@@ -291,7 +287,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(host);
     NSParameterAssert(publicKey);
 
-    DDLogInfo(@"%@: bootstrap with host %@ port %d publicKey %@", self, host, port, publicKey);
+    OCTLogInfo(@"bootstrap with host %@ port %d publicKey %@", host, port, publicKey);
 
     const char *cAddress = host.UTF8String;
     uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
@@ -312,7 +308,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(host);
     NSParameterAssert(publicKey);
 
-    DDLogInfo(@"%@: add TCP relay with host %@ port %d publicKey %@", self, host, port, publicKey);
+    OCTLogInfo(@"add TCP relay with host %@ port %d publicKey %@", host, port, publicKey);
 
     const char *cAddress = host.UTF8String;
     uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
@@ -334,7 +330,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(message);
     NSAssert(address.length == kOCTToxAddressLength, @"Address must be kOCTToxAddressLength length");
 
-    DDLogVerbose(@"%@: add friend with address.length %lu, message.length %lu", self, (unsigned long)address.length, (unsigned long)message.length);
+    OCTLogVerbose(@"add friend with address.length %lu, message.length %lu", (unsigned long)address.length, (unsigned long)message.length);
 
     uint8_t *cAddress = [OCTTox hexStringToBin:address];
     const char *cMessage = [message cStringUsingEncoding:NSUTF8StringEncoding];
@@ -356,7 +352,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: add friend with no request and publicKey.length %lu", self, (unsigned long)publicKey.length);
+    OCTLogVerbose(@"add friend with no request and publicKey.length %lu", (unsigned long)publicKey.length);
 
     uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
@@ -379,7 +375,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     [self fillError:error withCErrorFriendDelete:cError];
 
-    DDLogVerbose(@"%@: deleting friend with friendNumber %d, result %d", self, friendNumber, (result == 0));
+    OCTLogVerbose(@"deleting friend with friendNumber %d, result %d", friendNumber, (result == 0));
 
     return (BOOL)result;
 }
@@ -389,7 +385,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     NSParameterAssert(publicKey);
     NSAssert(publicKey.length == kOCTToxPublicKeyLength, @"Public key must be kOCTToxPublicKeyLength length");
 
-    DDLogVerbose(@"%@: get friend number with publicKey.length %lu", self, (unsigned long)publicKey.length);
+    OCTLogVerbose(@"get friend number with publicKey.length %lu", (unsigned long)publicKey.length);
 
     uint8_t *cPublicKey = [OCTTox hexStringToBin:publicKey];
 
@@ -406,7 +402,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (NSString *)publicKeyFromFriendNumber:(OCTToxFriendNumber)friendNumber error:(NSError **)error
 {
-    DDLogVerbose(@"%@: get public key from friend number %d", self, friendNumber);
+    OCTLogVerbose(@"get public key from friend number %d", friendNumber);
 
     uint8_t *cPublicKey = malloc(TOX_PUBLIC_KEY_SIZE);
 
@@ -433,7 +429,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 {
     bool result = tox_friend_exists(self.tox, friendNumber);
 
-    DDLogVerbose(@"%@: friend exists with friendNumber %d, result %d", self, friendNumber, result);
+    OCTLogVerbose(@"friend exists with friendNumber %d, result %d", friendNumber, result);
 
     return (BOOL)result;
 }
@@ -517,7 +513,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     [self fillError:error withCErrorSetInfo:cError];
 
-    DDLogInfo(@"%@: set userName to %@, result %d", self, name, result);
+    OCTLogInfo(@"set userName to %@, result %d", name, result);
 
     return (BOOL)result;
 }
@@ -582,7 +578,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     [self fillError:error withCErrorSetInfo:cError];
 
-    DDLogInfo(@"%@: set user status message to %@, result %d", self, statusMessage, result);
+    OCTLogInfo(@"set user status message to %@, result %d", statusMessage, result);
 
     return (BOOL)result;
 }
@@ -644,7 +640,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     [self fillError:error withCErrorSetTyping:cError];
 
-    DDLogInfo(@"%@: set user isTyping to %d for friend number %d, result %d", self, isTyping, friendNumber, result);
+    OCTLogInfo(@"set user isTyping to %d for friend number %d, result %d", isTyping, friendNumber, result);
 
     return (BOOL)result;
 }
@@ -687,7 +683,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
     free(cList);
 
-    DDLogVerbose(@"%@: friend array %@", self, list);
+    OCTLogVerbose(@"friend array %@", list);
 
     return [list copy];
 }
@@ -708,7 +704,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         free(cHash);
     }
 
-    DDLogInfo(@"%@: hash data result %@", self, hash);
+    OCTLogInfo(@"hash data result %@", hash);
 
     return hash;
 }
@@ -1599,7 +1595,7 @@ void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: connectionStatusCallback with status %lu", tox, (unsigned long)status);
+        OCTLogCInfo(@"connectionStatusCallback with status %lu", tox, (unsigned long)status);
 
         if ([tox.delegate respondsToSelector:@selector(tox:connectionStatus:)]) {
             [tox.delegate tox:tox connectionStatus:status];
@@ -1614,7 +1610,7 @@ void friendNameCallback(Tox *cTox, uint32_t friendNumber, const uint8_t *cName, 
     NSString *name = [NSString stringWithCString:(const char *)cName encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
+        OCTLogCInfo(@"nameChangeCallback with name %@, friend number %d", tox, name, friendNumber);
 
         if ([tox.delegate respondsToSelector:@selector(tox:friendNameUpdate:friendNumber:)]) {
             [tox.delegate tox:tox friendNameUpdate:name friendNumber:friendNumber];
@@ -1629,7 +1625,7 @@ void friendStatusMessageCallback(Tox *cTox, uint32_t friendNumber, const uint8_t
     NSString *message = [NSString stringWithCString:(const char *)cMessage encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: statusMessageCallback with status message %@, friend number %d", tox, message, friendNumber);
+        OCTLogCInfo(@"statusMessageCallback with status message %@, friend number %d", tox, message, friendNumber);
 
         if ([tox.delegate respondsToSelector:@selector(tox:friendStatusMessageUpdate:friendNumber:)]) {
             [tox.delegate tox:tox friendStatusMessageUpdate:message friendNumber:friendNumber];
@@ -1644,7 +1640,7 @@ void friendStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_USER_STATUS cSta
     OCTToxUserStatus status = [tox userStatusFromCUserStatus:cStatus];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: userStatusCallback with status %lu, friend number %d", tox, (unsigned long)status, friendNumber);
+        OCTLogCInfo(@"userStatusCallback with status %lu, friend number %d", tox, (unsigned long)status, friendNumber);
 
         if ([tox.delegate respondsToSelector:@selector(tox:friendStatusUpdate:friendNumber:)]) {
             [tox.delegate tox:tox friendStatusUpdate:status friendNumber:friendNumber];
@@ -1658,7 +1654,7 @@ void friendConnectionStatusCallback(Tox *cTox, uint32_t friendNumber, TOX_CONNEC
 
     OCTToxConnectionStatus status = [tox userConnectionStatusFromCUserStatus:cStatus];
 
-    DDLogCInfo(@"%@: connectionStatusCallback with status %lu, friendNumber %d", tox, (unsigned long)status, friendNumber);
+    OCTLogCInfo(@"connectionStatusCallback with status %lu, friendNumber %d", tox, (unsigned long)status, friendNumber);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([tox.delegate respondsToSelector:@selector(tox:friendConnectionStatusChanged:friendNumber:)]) {
@@ -1671,7 +1667,7 @@ void friendTypingCallback(Tox *cTox, uint32_t friendNumber, bool isTyping, void 
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    DDLogCInfo(@"%@: typingChangeCallback with isTyping %d, friend number %d", tox, isTyping, friendNumber);
+    OCTLogCInfo(@"typingChangeCallback with isTyping %d, friend number %d", tox, isTyping, friendNumber);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([tox.delegate respondsToSelector:@selector(tox:friendIsTypingUpdate:friendNumber:)]) {
@@ -1684,7 +1680,7 @@ void friendReadReceiptCallback(Tox *cTox, uint32_t friendNumber, uint32_t messag
 {
     OCTTox *tox = (__bridge OCTTox *)(userData);
 
-    DDLogCInfo(@"%@: readReceiptCallback with message id %d, friendNumber %d", tox, messageId, friendNumber);
+    OCTLogCInfo(@"readReceiptCallback with message id %d, friendNumber %d", tox, messageId, friendNumber);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([tox.delegate respondsToSelector:@selector(tox:messageDelivered:friendNumber:)]) {
@@ -1701,7 +1697,7 @@ void friendRequestCallback(Tox *cTox, const uint8_t *cPublicKey, const uint8_t *
     NSString *message = [[NSString alloc] initWithBytes:cMessage length:length encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: friendRequestCallback with publicKey %@, message %@", tox, publicKey, message);
+        OCTLogCInfo(@"friendRequestCallback with publicKey %@, message %@", tox, publicKey, message);
 
         if ([tox.delegate respondsToSelector:@selector(tox:friendRequestWithMessage:publicKey:)]) {
             [tox.delegate tox:tox friendRequestWithMessage:message publicKey:publicKey];
@@ -1723,7 +1719,7 @@ void friendMessageCallback(
     OCTToxMessageType type = [tox messageTypeFromCMessageType:cType];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: friendMessageCallback with message %@, friend number %d", tox, message, friendNumber);
+        OCTLogCInfo(@"friendMessageCallback with message %@, friend number %d", tox, message, friendNumber);
 
         if ([tox.delegate respondsToSelector:@selector(tox:friendMessage:type:friendNumber:)]) {
             [tox.delegate tox:tox friendMessage:message type:type friendNumber:friendNumber];
@@ -1738,8 +1734,8 @@ void fileReceiveControlCallback(Tox *cTox, uint32_t friendNumber, OCTToxFileNumb
     OCTToxFileControl control = [tox fileControlFromCFileControl:cControl];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
-                   tox, friendNumber, fileNumber, (unsigned long)control);
+        OCTLogCInfo(@"fileReceiveControlCallback with friendNumber %d fileNumber %d controlType %lu",
+                    tox, friendNumber, fileNumber, (unsigned long)control);
 
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveControl:friendNumber:fileNumber:)]) {
             [tox.delegate tox:tox fileReceiveControl:control friendNumber:friendNumber fileNumber:fileNumber];
@@ -1787,8 +1783,8 @@ void fileReceiveCallback(
     NSString *fileName = [[NSString alloc] initWithBytes:cFileName length:fileNameLength encoding:NSUTF8StringEncoding];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: fileReceiveCallback with friendNumber %d fileNumber %d kind %ld fileSize %llu fileName %@",
-                   tox, friendNumber, fileNumber, kind, fileSize, fileName);
+        OCTLogCInfo(@"fileReceiveCallback with friendNumber %d fileNumber %d kind %ld fileSize %llu fileName %@",
+                    tox, friendNumber, fileNumber, kind, fileSize, fileName);
 
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
             [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber

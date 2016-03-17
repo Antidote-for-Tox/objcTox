@@ -20,10 +20,7 @@
 #import "OCTMessageFile.h"
 #import "OCTMessageCall.h"
 #import "OCTSettingsStorageObject.h"
-
-#import "DDLog.h"
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 static const uint64_t kCurrentSchemeVersion = 4;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
@@ -50,7 +47,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         return nil;
     }
 
-    DDLogInfo(@"OCTRealmManager: init with path %@", path);
+    OCTLogInfo(@"init with path %@", path);
 
     _queue = dispatch_queue_create("OCTRealmManager queue", NULL);
 
@@ -96,7 +93,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     __block RBQFetchRequest *fetchRequest = nil;
 
-    DDLogVerbose(@"OCTRealmManager: fetchRequestForClass %@ withPredicate %@", class, predicate);
+    OCTLogVerbose(@"fetchRequestForClass %@ withPredicate %@", class, predicate);
 
     dispatch_sync(self.queue, ^{
         fetchRequest = [RBQFetchRequest fetchRequestWithEntityName:NSStringFromClass(class)
@@ -112,7 +109,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     NSParameterAssert(object);
     NSParameterAssert(updateBlock);
 
-    DDLogInfo(@"OCTRealmManager: updateObject %@", object);
+    OCTLogInfo(@"updateObject %@", object);
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
@@ -128,7 +125,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     NSParameterAssert(updateBlock);
 
-    DDLogInfo(@"OCTRealmManager: updating objects without notification");
+    OCTLogInfo(@"updating objects without notification");
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
@@ -141,7 +138,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     NSParameterAssert(object);
 
-    DDLogInfo(@"OCTRealmManager: add object %@", object);
+    OCTLogInfo(@"add object %@", object);
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
@@ -157,7 +154,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     NSParameterAssert(object);
 
-    DDLogInfo(@"OCTRealmManager: delete object %@", object);
+    OCTLogInfo(@"delete object %@", object);
 
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
@@ -182,7 +179,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     self->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
 
     if (! self->_realm) {
-        DDLogInfo(@"OCTRealmManager: init failed with error %@", error);
+        OCTLogInfo(@"init failed with error %@", error);
     }
 }
 
@@ -192,7 +189,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                                                  forPrimaryKey:kSettingsStorageObjectPrimaryKey];
 
     if (! _settingsStorage) {
-        DDLogInfo(@"OCTRealmManager: no _settingsStorage, creating it");
+        OCTLogInfo(@"no _settingsStorage, creating it");
         _settingsStorage = [OCTSettingsStorageObject new];
         _settingsStorage.uniqueIdentifier = kSettingsStorageObjectPrimaryKey;
 
@@ -226,7 +223,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
             return;
         }
 
-        DDLogInfo(@"OCTRealmManager: creating chat with friend %@", friend);
+        OCTLogInfo(@"creating chat with friend %@", friend);
 
         chat = [OCTChat new];
         chat.lastActivityDateInterval = [[NSDate date] timeIntervalSince1970];
@@ -255,7 +252,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
             return;
         }
 
-        DDLogInfo(@"OCTRealmManager: creating call with chat %@", chat);
+        OCTLogInfo(@"creating call with chat %@", chat);
 
         call = [OCTCall new];
         call.status = status;
@@ -286,7 +283,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     NSParameterAssert(chat);
 
-    DDLogInfo(@"OCTRealmManager: removing chat with all messages %@", chat);
+    OCTLogInfo(@"removing chat with all messages %@", chat);
 
     dispatch_sync(self.queue, ^{
         RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
@@ -318,7 +315,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     RLMResults *calls = [OCTCall allObjectsInRealm:self.realm];
 
-    DDLogInfo(@"OCTRealmManager: removing %lu calls", (unsigned long)calls.count);
+    OCTLogInfo(@"removing %lu calls", (unsigned long)calls.count);
 
     RBQRealmChangeLogger *logger = [self logger];
 
@@ -341,7 +338,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     NSParameterAssert(text);
     NSParameterAssert(chat);
 
-    DDLogInfo(@"OCTRealmManager: adding messageText to chat %@", chat);
+    OCTLogInfo(@"adding messageText to chat %@", chat);
 
     OCTMessageText *messageText = [OCTMessageText new];
     messageText.text = text;
@@ -368,7 +365,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 - (void)addMessageCall:(OCTCall *)call
 {
     NSParameterAssert(call);
-    DDLogInfo(@"OCTRealmManager: adding messageCall to call %@", call);
+    OCTLogInfo(@"adding messageCall to call %@", call);
 
     OCTMessageCallEvent event;
     switch (call.status) {

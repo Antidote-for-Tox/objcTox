@@ -8,10 +8,7 @@
 
 #import "OCTTox+Private.h"
 #import "OCTToxAV+Private.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 uint32_t (*_toxav_version_major)(void);
 uint32_t (*_toxav_version_minor)(void);
@@ -83,7 +80,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         return nil;
     }
 
-    DDLogVerbose(@"%@: init called", self);
+    OCTLogVerbose(@"init called");
 
     [self setupCFunctions];
 
@@ -99,11 +96,11 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 - (void)start
 {
-    DDLogVerbose(@"%@: start method called", self);
+    OCTLogVerbose(@"start method called");
 
     @synchronized(self) {
         if (self.timer) {
-            DDLogWarn(@"%@: already started", self);
+            OCTLogWarn(@"already started");
             return;
         }
 
@@ -126,16 +123,16 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
         dispatch_resume(self.timer);
     }
-    DDLogInfo(@"%@: started", self);
+    OCTLogInfo(@"started");
 }
 
 - (void)stop
 {
-    DDLogVerbose(@"%@: stop method called", self);
+    OCTLogVerbose(@"stop method called");
 
     @synchronized(self) {
         if (! self.timer) {
-            DDLogWarn(@"%@: toxav isn't running, nothing to stop", self);
+            OCTLogWarn(@"toxav isn't running, nothing to stop");
             return;
         }
 
@@ -143,14 +140,14 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
         self.timer = nil;
     }
 
-    DDLogInfo(@"%@: stopped", self);
+    OCTLogInfo(@"stopped");
 }
 
 - (void)dealloc
 {
     [self stop];
     _toxav_kill(self.toxAV);
-    DDLogVerbose(@"%@: dealloc called, toxav killed", self);
+    OCTLogVerbose(@"dealloc called, toxav killed");
 }
 
 #pragma mark - Call Methods
@@ -222,7 +219,7 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
     [self fillError:error withCErrorSetBitRate:cError];
 
-    DDLogVerbose(@"%@: setAudioBitRate:%lu, force:%d, friend:%d", self, (long)bitRate, force, friendNumber);
+    OCTLogVerbose(@"setAudioBitRate:%lu, force:%d, friend:%d", (long)bitRate, force, friendNumber);
 
     return status;
 }
@@ -583,7 +580,7 @@ void callIncomingCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: callIncomingCallback from friend %lu with audio:%d with video:%d", toxAV, (unsigned long)friendNumber, audioEnabled, videoEnabled);
+        OCTLogCInfo(@"callIncomingCallback from friend %lu with audio:%d with video:%d", toxAV, (unsigned long)friendNumber, audioEnabled, videoEnabled);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:receiveCallAudioEnabled:videoEnabled:friendNumber:)]) {
             [toxAV.delegate toxAV:toxAV receiveCallAudioEnabled:audioEnabled videoEnabled:videoEnabled friendNumber:friendNumber];
         }
@@ -599,7 +596,7 @@ void callStateCallback(ToxAV *cToxAV,
 
     dispatch_async(dispatch_get_main_queue(), ^{
 
-        DDLogCInfo(@"%@: callStateCallback from friend %d with state: %d", toxAV, friendNumber, cState);
+        OCTLogCInfo(@"callStateCallback from friend %d with state: %d", toxAV, friendNumber, cState);
 
         OCTToxAVCallState state = 0;
 
@@ -637,7 +634,7 @@ void bitRateStatusCallback(ToxAV *cToxAV,
     OCTToxAV *toxAV = (__bridge OCTToxAV *)userData;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogCInfo(@"%@: bitRateStatusCallback from friend %d audioBitRate: %d videoBitRate: %d", toxAV, friendNumber, audio_bit_rate, video_bit_rate);
+        OCTLogCInfo(@"bitRateStatusCallback from friend %d audioBitRate: %d videoBitRate: %d", toxAV, friendNumber, audio_bit_rate, video_bit_rate);
         if ([toxAV.delegate respondsToSelector:@selector(toxAV:bitrateStatusForFriendNumber:audioBitRate:videoBitRate:)]) {
             [toxAV.delegate toxAV:toxAV bitrateStatusForFriendNumber:friendNumber
                      audioBitRate:audio_bit_rate

@@ -8,10 +8,7 @@
 #import "OCTAudioEngine+Private.h"
 #import "OCTToxAV+Private.h"
 #import "OCTAudioQueue.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 @import AVFoundation;
 

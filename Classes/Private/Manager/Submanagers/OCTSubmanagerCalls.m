@@ -7,10 +7,7 @@
 //
 
 #import "OCTSubmanagerCalls+Private.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
@@ -408,7 +405,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
         NSError *error;
         if (! [self.audioEngine startAudioFlow:&error]) {
-            DDLogVerbose(@"Error starting audio flow %@", error);
+            OCTLogVerbose(@"Error starting audio flow %@", error);
         }
 
 
