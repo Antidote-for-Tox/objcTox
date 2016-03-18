@@ -7,8 +7,14 @@
 //
 
 #import "OCTSubmanagerFiles+Private.h"
+#import "OCTSubmanagerFilesProgressSubscriber.h"
 #import "OCTTox.h"
 #import "OCTFileDownloadOperation.h"
+#import "OCTRealmManager.h"
+#import "OCTLogging.h"
+#import "OCTMessageAbstract.h"
+#import "OCTMessageFile.h"
+#import "OCTFriend.h"
 
 @interface OCTSubmanagerFiles ()
 
@@ -34,6 +40,98 @@
     return self;
 }
 
+#pragma mark -  Public
+
+- (void)acceptFileTransfer:(OCTMessageAbstract *)message
+{
+    if (! message.sender) {
+        return;
+    }
+
+    if (! message.messageFile) {
+        return;
+    }
+
+    if (message.messageFile.fileType != OCTMessageFileTypeWaitingConfirmation) {
+        return;
+    }
+
+    [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+        file.fileType = OCTMessageFileTypeLoading;
+    }];
+
+    NSHashTable *progressSubscribers = [NSHashTable weakObjectsHashTable];
+
+    OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
+                                                                            fileStorage:self.dataSource.managerGetFileStorage
+                                                                           friendNumber:message.sender.friendNumber
+                                                                             fileNumber:message.messageFile.internalFileNumber
+                                                                               fileSize:message.messageFile.fileSize
+                                                                               userInfo:progressSubscribers
+                                                                          progressBlock:[self progressBlockWithMessage:message]
+                                                                           successBlock:[self successBlockWithMessage:message]
+                                                                            cancelBlock:[self cancelBlockWithMessage:message]
+                                                                           failureBlock:[self failureBlockWithMessage:message]];
+
+    [self.queue addOperation:operation];
+}
+
+- (void)cancelFileTransfer:(OCTMessageAbstract *)message
+{}
+
+- (void)addProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
+              forFileTransfer:(nonnull OCTMessageAbstract *)message
+{
+    if (! message.messageFile) {
+        return;
+    }
+
+    NSString *operationId;
+
+    if (message.sender) {
+        operationId = [OCTFileDownloadOperation operationIdFromFileNumber:message.messageFile.internalFileNumber
+                                                             friendNumber:message.sender.friendNumber];
+    }
+
+    OCTFileBaseOperation *operation = [self operationWithId:operationId];
+
+    if (! operation) {
+        return;
+    }
+
+    [subscriber submanagerFilesOnProgressUpdate:operation.progress
+                                        message:message
+                                 bytesPerSecond:operation.bytesPerSecond
+                                            eta:operation.eta];
+
+    NSHashTable *progressSubscribers = operation.userInfo;
+    [progressSubscribers addObject:subscriber];
+}
+
+- (void)removeProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
+                 forFileTransfer:(nonnull OCTMessageAbstract *)message
+{
+    if (! message.messageFile) {
+        return;
+    }
+
+    NSString *operationId;
+
+    if (message.sender) {
+        operationId = [OCTFileDownloadOperation operationIdFromFileNumber:message.messageFile.internalFileNumber
+                                                             friendNumber:message.sender.friendNumber];
+    }
+
+    OCTFileBaseOperation *operation = [self operationWithId:operationId];
+
+    if (! operation) {
+        return;
+    }
+
+    NSHashTable *progressSubscribers = operation.userInfo;
+    [progressSubscribers removeObject:subscriber];
+}
+
 #pragma mark -  OCTToxDelegate
 
 - (void)     tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
@@ -54,18 +152,33 @@
         fileName:(NSString *)fileName
 {
     if (fileSize == 0) {
-        NSLog(@"Received with with size 0, ignoring it.");
+        OCTLogWarn(@"Received file with size 0, ignoring it.");
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
         return;
     }
 
-    OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
-                                                                            fileStorage:self.dataSource.managerGetFileStorage
-                                                                           friendNumber:friendNumber
-                                                                             fileNumber:fileNumber
-                                                                               fileSize:fileSize
-                                                                           failureBlock:^(NSError *error) { /* TODO */ }];
+    switch (kind) {
+        case OCTToxFileKindData: {
+            OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+            OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+            OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
-    [self.queue addOperation:operation];
+            [realmManager addMessageWithFileNumber:fileNumber
+                                          fileType:OCTMessageFileTypeWaitingConfirmation
+                                          fileSize:fileSize
+                                          fileName:fileName
+                                          filePath:nil
+                                           fileUTI:[self fileUTIFromFileName:fileName]
+                                              chat:chat
+                                            sender:friend];
+            break;
+
+        }
+        case OCTToxFileKindAvatar:
+            // none for now
+            [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+            break;
+    }
 }
 
 - (void)     tox:(OCTTox *)tox fileReceiveChunk:(NSData *)chunk
@@ -73,22 +186,22 @@
     friendNumber:(OCTToxFriendNumber)friendNumber
         position:(OCTToxFileSize)position
 {
-    OCTFileDownloadOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
+    NSString *operationId = [OCTFileDownloadOperation operationIdFromFileNumber:fileNumber friendNumber:friendNumber];
+    OCTFileDownloadOperation *operation = [self operationWithId:operationId];
 
     if (operation) {
         [operation receiveChunk:chunk position:position];
     }
     else {
-        NSLog(@"---- operation not found");
+        OCTLogWarn(@"operation not found with fileNumber %d friendNumber %d", fileNumber, friendNumber);
         [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
     }
 }
 
 #pragma mark -  Private
 
-- (NSOperation *)operationWithFileNumber:(OCTToxFileNumber)fileNumber friendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTFileBaseOperation *)operationWithId:(NSString *)operationId
 {
-    NSString *operationId = [OCTFileDownloadOperation operationIdFromFileNumber:fileNumber friendNumber:friendNumber];
 
     for (OCTFileDownloadOperation *operation in [self.queue operations]) {
         if ([operation.operationId isEqualToString:operationId]) {
@@ -97,6 +210,78 @@
     }
 
     return nil;
+}
+
+- (NSString *)fileUTIFromFileName:(NSString *)fileName
+{
+    NSString *extension = [fileName pathExtension];
+
+    if (! extension) {
+        return nil;
+    }
+
+    return (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
+        kUTTagClassFilenameExtension,
+        (__bridge CFStringRef)extension,
+        NULL);
+}
+
+- (void)updateMessageFile:(OCTMessageAbstract *)message withBlock:(void (^)(OCTMessageFile *))block
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [realmManager updateObject:message.messageFile withBlock:block];
+    [realmManager notifyAboutObjectUpdate:message];
+}
+
+- (OCTFileBaseOperationProgressBlock)progressBlockWithMessage:(OCTMessageAbstract *)message
+{
+    return ^(OCTFileBaseOperation *__nonnull operation) {
+               NSHashTable *progressSubscribers = operation.userInfo;
+
+               for (id<OCTSubmanagerFilesProgressSubscriber> subscriber in progressSubscribers) {
+                   [subscriber submanagerFilesOnProgressUpdate:operation.progress
+                                                       message:message
+                                                bytesPerSecond:operation.bytesPerSecond
+                                                           eta:operation.eta];
+               }
+    };
+}
+
+- (OCTFileBaseOperationSuccessBlock)successBlockWithMessage:(OCTMessageAbstract *)message
+{
+    __weak OCTSubmanagerFiles *weakSelf = self;
+
+    return ^(OCTFileBaseOperation *__nonnull operation) {
+               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+               [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+            file.fileType = OCTMessageFileTypeReady;
+        }];
+    };
+}
+
+- (OCTFileBaseOperationCancelBlock)cancelBlockWithMessage:(OCTMessageAbstract *)message
+{
+    __weak OCTSubmanagerFiles *weakSelf = self;
+
+    return ^(OCTFileBaseOperation *__nonnull operation) {
+               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+               [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+            file.fileType = OCTMessageFileTypeCanceled;
+        }];
+    };
+}
+
+- (OCTFileBaseOperationFailureBlock)failureBlockWithMessage:(OCTMessageAbstract *)message
+{
+    __weak OCTSubmanagerFiles *weakSelf = self;
+
+    return ^(OCTFileBaseOperation *__nonnull operation, NSError *__nonnull error) {
+               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+               [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+            file.fileType = OCTMessageFileTypeCanceled;
+        }];
+    };
 }
 
 @end

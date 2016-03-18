@@ -24,7 +24,7 @@ static NSString *const kCellIdent = @"cellIdent";
                                              RBQFetchedResultsControllerDelegate, NSTextFieldDelegate>
 
 @property (weak) IBOutlet NSTableView *chatsViewController;
-@property (strong, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *chatResultsController;
 @property (strong, nonatomic) RBQFetchedResultsController *conversationResultsController;
 @property (weak) IBOutlet NSTableView *chatsTableView;

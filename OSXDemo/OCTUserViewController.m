@@ -26,7 +26,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
                                      NSTextFieldDelegate,
                                      OCTSubmanagerUserDelegate>
 
-@property (strong, nonatomic) OCTSubmanagerUser *userManager;
+@property (weak, nonatomic) OCTSubmanagerUser *userManager;
 @property (weak) IBOutlet NSTableView *userTableView;
 @property (strong, nonatomic) NSArray *userData;
 @property (weak) IBOutlet NSTableColumn *firstColumn;

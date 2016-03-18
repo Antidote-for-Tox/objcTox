@@ -7,6 +7,7 @@
 //
 
 #import "OCTFileBaseOperation.h"
+#import "OCTFileBaseOperation+Private.h"
 #import "OCTLogging.h"
 
 #import <QuartzCore/QuartzCore.h>
@@ -18,7 +19,15 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 @property (assign, atomic) BOOL privateExecuting;
 @property (assign, atomic) BOOL privateFinished;
 
-@property (copy, nonatomic) void (^failureBlock)(NSError *);
+@property (assign, nonatomic, readwrite) OCTToxFileSize bytesDone;
+@property (assign, nonatomic, readwrite) CGFloat progress;
+@property (assign, nonatomic, readwrite) OCTToxFileSize bytesPerSecond;
+@property (assign, nonatomic, readwrite) CFTimeInterval eta;
+
+@property (copy, nonatomic) OCTFileBaseOperationProgressBlock progressBlock;
+@property (copy, nonatomic) OCTFileBaseOperationSuccessBlock successBlock;
+@property (copy, nonatomic) OCTFileBaseOperationCancelBlock cancelBlock;
+@property (copy, nonatomic) OCTFileBaseOperationFailureBlock failureBlock;
 
 @property (assign, nonatomic) CFTimeInterval lastUpdateProgressTime;
 @property (assign, nonatomic) OCTToxFileSize lastUpdateBytesDone;
@@ -41,10 +50,17 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                        failureBlock:(nonnull void (^)(NSError *__nonnull error))failureBlock
+                            userInfo:(id)userInfo
+                       progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
+                        successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
+                         cancelBlock:(nonnull OCTFileBaseOperationCancelBlock)cancelBlock
+                        failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
 {
     NSParameterAssert(tox);
     NSParameterAssert(fileStorage);
+    NSParameterAssert(progressBlock);
+    NSParameterAssert(successBlock);
+    NSParameterAssert(cancelBlock);
     NSParameterAssert(failureBlock);
     NSParameterAssert(fileSize > 0);
 
@@ -63,6 +79,15 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     _fileNumber = fileNumber;
     _fileSize = fileSize;
 
+    _progress = 0.0;
+    _bytesPerSecond = 0;
+    _eta = 0;
+
+    _userInfo = userInfo;
+
+    _progressBlock = [progressBlock copy];
+    _successBlock = [successBlock copy];
+    _cancelBlock = [cancelBlock copy];
     _failureBlock = [failureBlock copy];
 
     _bytesDone = 0;
@@ -97,9 +122,11 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     return self.privateFinished;
 }
 
-- (void)setBytesDone:(OCTToxFileSize)bytesDone
+#pragma mark -  Private category
+
+- (void)updateBytesDone:(OCTToxFileSize)bytesDone
 {
-    _bytesDone = bytesDone;
+    self.bytesDone = bytesDone;
 
     CFTimeInterval time = CACurrentMediaTime();
 
@@ -112,19 +139,17 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
         self.lastUpdateProgressTime = time;
         self.lastUpdateBytesDone = bytesDone;
 
-        CGFloat progress = (CGFloat)bytesDone / self.fileSize;
-        OCTToxFileSize bytesPerSecond = deltaBytes / deltaTime;
-        CFTimeInterval eta = 0.0;
+        self.progress = (CGFloat)bytesDone / self.fileSize;
+        self.bytesPerSecond = deltaBytes / deltaTime;
 
         if (bytesDone) {
-            eta = deltaTime * bytesLeft / deltaBytes;
+            self.eta = deltaTime * bytesLeft / deltaBytes;
         }
 
-        [self sendProgressUpdate:progress bytesPerSecond:bytesPerSecond eta:eta];
+        OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", self.progress, self.bytesPerSecond, self.eta);
+        self.progressBlock(self);
     }
 }
-
-#pragma mark -  Public
 
 - (void)operationStarted
 {
@@ -137,6 +162,22 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
     self.executing = NO;
     self.finished = YES;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.successBlock(self);
+    });
+}
+
+- (void)finishWithCancel
+{
+    OCTLogInfo(@"finished with cancel");
+
+    self.executing = NO;
+    self.finished = YES;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.cancelBlock(self);
+    });
 }
 
 - (void)finishWithError:(nonnull NSError *)error
@@ -148,7 +189,9 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     self.executing = NO;
     self.finished = YES;
 
-    self.failureBlock(error);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.failureBlock(self, error);
+    });
 }
 
 #pragma mark -  Override
@@ -177,13 +220,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 - (BOOL)asynchronous
 {
     return YES;
-}
-
-#pragma mark -  Private
-
-- (void)sendProgressUpdate:(CGFloat)progress bytesPerSecond:(OCTToxFileSize)bytesPerSecond eta:(CFTimeInterval)eta
-{
-    OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", progress, bytesPerSecond, eta);
 }
 
 @end

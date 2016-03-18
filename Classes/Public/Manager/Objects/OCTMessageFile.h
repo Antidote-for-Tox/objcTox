@@ -47,6 +47,12 @@
  */
 @property (nullable) NSString *fileUTI;
 
+
+// Properties below are for internal use.
+// Do not use them or rely on them. They may change in any moment.
+
+@property int internalFileNumber;
+
 @end
 
 RLM_ARRAY_TYPE(OCTMessageFile)

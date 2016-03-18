@@ -134,6 +134,21 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
+- (void)notifyAboutObjectUpdate:(OCTObject *)object
+{
+    NSParameterAssert(object);
+
+    OCTLogInfo(@"notify about object update %@", object);
+
+    dispatch_sync(self.queue, ^{
+        [self.realm beginWriteTransaction];
+
+        [[self logger] didChangeObject:object];
+
+        [self.realm commitWriteTransaction];
+    });
+}
+
 - (void)addObject:(OCTObject *)object
 {
     NSParameterAssert(object);
@@ -348,17 +363,19 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     return [self addMessageAbstractWithChat:chat sender:sender messageText:messageText messageFile:nil messageCall:nil];
 }
 
-- (OCTMessageAbstract *)addMessageWithFileType:(OCTMessageFileType)fileType
-                                      fileSize:(OCTToxFileSize)fileSize
-                                      fileName:(NSString *)fileName
-                                      filePath:(NSString *)filePath
-                                       fileUTI:(NSString *)fileUTI
-                                          chat:(OCTChat *)chat
-                                        sender:(OCTFriend *)sender
+- (OCTMessageAbstract *)addMessageWithFileNumber:(OCTToxFileNumber)fileNumber
+                                        fileType:(OCTMessageFileType)fileType
+                                        fileSize:(OCTToxFileSize)fileSize
+                                        fileName:(NSString *)fileName
+                                        filePath:(NSString *)filePath
+                                         fileUTI:(NSString *)fileUTI
+                                            chat:(OCTChat *)chat
+                                          sender:(OCTFriend *)sender
 {
     OCTLogInfo(@"adding messageFile to chat %@, fileSize %lld", chat, fileSize);
 
     OCTMessageFile *messageFile = [OCTMessageFile new];
+    messageFile.internalFileNumber = fileNumber;
     messageFile.fileType = fileType;
     messageFile.fileSize = fileSize;
     messageFile.fileName = fileName;

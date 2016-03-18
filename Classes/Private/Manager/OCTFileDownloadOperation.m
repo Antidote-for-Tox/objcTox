@@ -7,6 +7,7 @@
 //
 
 #import "OCTFileDownloadOperation.h"
+#import "OCTFileBaseOperation+Private.h"
 #import "OCTLogging.h"
 
 static const OCTToxFileSize kCacheSize = 100 * 1024;
@@ -51,7 +52,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
         self.cache = nil;
     }
 
-    self.bytesDone += chunk.length;
+    [self updateBytesDone:self.bytesDone + chunk.length];
 }
 
 #pragma mark -  Override

@@ -11,6 +11,40 @@
 #import "OCTToxConstants.h"
 #import "OCTFileStorageProtocol.h"
 
+@class OCTFileBaseOperation;
+
+/**
+ * Block to notify about operation progress.
+ *
+ * @param operation Operation that is running.
+ * @param progress Progress of operation. From 0.0 to 1.0.
+ * @param bytesPerSecond Speed of loading.
+ * @param eta Estimated time of finish of loading.
+ */
+typedef void (^OCTFileBaseOperationProgressBlock)(OCTFileBaseOperation *__nonnull operation);
+
+/**
+ * Block to notify about operation success.
+ *
+ * @param operation Operation that is running.
+ */
+typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation);
+
+/**
+ * Block to notify about operation cancellation.
+ *
+ * @param operation Operation that is running.
+ */
+typedef void (^OCTFileBaseOperationCancelBlock)(OCTFileBaseOperation *__nonnull operation);
+
+/**
+ * Block to notify about operation failure.
+ *
+ * @param operation Operation that is running.
+ */
+typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull operation, NSError *__nonnull error);
+
+
 @interface OCTFileBaseOperation : NSOperation
 
 /**
@@ -24,13 +58,16 @@
 @property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
 @property (assign, nonatomic, readonly) OCTToxFileNumber fileNumber;
 @property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
+@property (assign, nonatomic, readonly) OCTToxFileSize bytesDone;
 
 /**
- * Update this property with downloaded/uploaded bytes.
- *
- * When updating property all progress listeners will be automatically updated
+ * Progress properties.
  */
-@property (assign, nonatomic) OCTToxFileSize bytesDone;
+@property (assign, nonatomic, readonly) CGFloat progress;
+@property (assign, nonatomic, readonly) OCTToxFileSize bytesPerSecond;
+@property (assign, nonatomic, readonly) CFTimeInterval eta;
+
+@property (strong, nonatomic, readonly, nullable) id userInfo;
 
 /**
  * Creates operation id from file and friend number.
@@ -40,31 +77,26 @@
 /**
  * Create operation.
  *
- * @param operationId Identifier of operation. Should be unique for all active file operations.
- * @param tox Tox object to download from.
+ * @param tox Tox object to load from.
+ * @param fileStorage File storage used for operation.
+ * @param friendNumber Number of friend.
+ * @param fileNumber Number of file to load.
+ * @param fileSize Size of file in bytes.
+ * @param userInfo Any object that will be stored by operation.
+ * @param progressBlock Block called to notify about loading progress. Block will be called on main thread.
+ * @param successBlock Block called on operation success. Block will be called on main thread.
+ * @param cancelBlock Block called in case if operation was cancelled. Block will be called on main thread.
+ * @param failureBlock Block called on loading error. Block will be called on main thread.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
                          fileStorage:(nonnull id<OCTFileStorageProtocol>)fileStorage
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                        failureBlock:(nonnull void (^)(NSError *__nonnull error))failureBlock;
-
-/**
- * Override this method to start custom actions. Call finish when operation is done.
- */
-- (void)operationStarted NS_REQUIRES_SUPER;
-
-/**
- * Call this method in case if operation was finished or cancelled.
- */
-- (void)finishWithSuccess;
-
-/**
- * Call this method in case if operation was finished or cancelled with error.
- *
- * @param error Pass error if occured, nil on success.
- */
-- (void)finishWithError:(nonnull NSError *)error;
+                            userInfo:(nullable id)userInfo
+                       progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
+                        successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
+                         cancelBlock:(nonnull OCTFileBaseOperationCancelBlock)cancelBlock
+                        failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;
 
 @end

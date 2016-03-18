@@ -21,7 +21,7 @@ static NSString *const kCellIdent = @"cellIdent";
                                         NSTableViewDelegate,
                                         RBQFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *friendResultsController;
 @property (strong, nonatomic) RBQFetchedResultsController *friendRequestResultsController;
 

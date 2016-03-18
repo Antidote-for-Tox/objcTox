@@ -52,6 +52,8 @@
  */
 - (void)updateObjectsWithoutNotification:(void (^)())updateBlock;
 
+- (void)notifyAboutObjectUpdate:(OCTObject *)object;
+
 #pragma mark -  Other methods
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
@@ -73,13 +75,14 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
-- (OCTMessageAbstract *)addMessageWithFileType:(OCTMessageFileType)fileType
-                                      fileSize:(OCTToxFileSize)fileSize
-                                      fileName:(NSString *)fileName
-                                      filePath:(NSString *)filePath
-                                       fileUTI:(NSString *)fileUTI
-                                          chat:(OCTChat *)chat
-                                        sender:(OCTFriend *)sender;
+- (OCTMessageAbstract *)addMessageWithFileNumber:(OCTToxFileNumber)fileNumber
+                                        fileType:(OCTMessageFileType)fileType
+                                        fileSize:(OCTToxFileSize)fileSize
+                                        fileName:(NSString *)fileName
+                                        filePath:(NSString *)filePath
+                                         fileUTI:(NSString *)fileUTI
+                                            chat:(OCTChat *)chat
+                                          sender:(OCTFriend *)sender;
 
 - (OCTMessageAbstract *)addMessageCall:(OCTCall *)call;
 

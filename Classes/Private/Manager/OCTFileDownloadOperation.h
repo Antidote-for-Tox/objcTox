@@ -10,6 +10,11 @@
 
 @class OCTTox;
 
+/**
+ * File operation for downloading file.
+ *
+ * When started will automatically send resume control to friend.
+ */
 @interface OCTFileDownloadOperation : OCTFileBaseOperation
 
 /**
