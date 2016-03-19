@@ -33,18 +33,18 @@
  * Name of the file as specified by sender. Note that actual fileName in path
  * may differ from this fileName.
  */
-@property NSString *fileName;
+@property (nullable) NSString *fileName;
 
 /**
  * Path of file on disk. If you need fileName to show to user please use
  * `fileName` property. filePath has it's own random fileName.
  */
-@property NSString *filePath;
+@property (nullable) NSString *filePath;
 
 /**
  * Uniform Type Identifier of file.
  */
-@property NSString *fileUTI;
+@property (nullable) NSString *fileUTI;
 
 @end
 

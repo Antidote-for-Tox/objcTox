@@ -16,13 +16,14 @@
 
 #pragma mark -  Class methods
 
-+ (NSDictionary *)defaultPropertyValues
++ (NSArray *)requiredProperties
 {
-    NSMutableDictionary *values = [NSMutableDictionary dictionaryWithDictionary:[super defaultPropertyValues]];
-    values[@"name"] = @"";
-    values[@"statusMessage"] = @"";
+    NSMutableArray *properties = [NSMutableArray arrayWithArray:[super requiredProperties]];
 
-    return [values copy];
+    [properties addObject:NSStringFromSelector(@selector(nickname))];
+    [properties addObject:NSStringFromSelector(@selector(publicKey))];
+
+    return [properties copy];
 }
 
 #pragma mark -  Public

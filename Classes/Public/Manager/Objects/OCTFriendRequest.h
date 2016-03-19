@@ -17,12 +17,12 @@
 /**
  * Public key of a friend.
  */
-@property NSString *publicKey;
+@property (nonnull) NSString *publicKey;
 
 /**
  * Message that friend did send with friend request.
  */
-@property NSString *message;
+@property (nullable) NSString *message;
 
 /**
  * Date interval when friend request was received (since 1970).
@@ -32,7 +32,7 @@
 /**
  * Date when friend request was received.
  */
-- (NSDate *)date;
+- (nonnull NSDate *)date;
 
 @end
 

@@ -30,24 +30,24 @@
 /**
  * The sender of the message. If the message if outgoing sender is nil.
  */
-@property OCTFriend *sender;
+@property (nullable) OCTFriend *sender;
 
 /**
  * The chat message message belongs to.
  */
-@property OCTChat *chat;
+@property (nonnull) OCTChat *chat;
 
 /**
  * Message has one of the following properties.
  */
-@property OCTMessageText *messageText;
-@property OCTMessageFile *messageFile;
-@property OCTMessageCall *messageCall;
+@property (nullable) OCTMessageText *messageText;
+@property (nullable) OCTMessageFile *messageFile;
+@property (nullable) OCTMessageCall *messageCall;
 
 /**
  * The date when message was send/received.
  */
-- (NSDate *)date;
+- (nonnull NSDate *)date;
 
 /**
  * Indicates if message is outgoing or incoming.

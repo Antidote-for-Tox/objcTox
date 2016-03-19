@@ -21,7 +21,7 @@
 /**
  * OCTChat related session with the call.
  **/
-@property OCTChat *chat;
+@property (nonnull) OCTChat *chat;
 
 /**
  * Call status
@@ -31,13 +31,13 @@
 /**
  * This property contains paused status for Active call.
  */
-@property (nonatomic, assign) OCTCallPausedStatus pausedStatus;
+@property OCTCallPausedStatus pausedStatus;
 
 /**
  * The friend who started the call.
  * Nil if the you started the call yourself.
  **/
-@property OCTFriend *caller;
+@property (nullable) OCTFriend *caller;
 
 /**
  * Video device is active for this call
@@ -77,7 +77,7 @@
 /**
  * The date when the call was put on hold.
  */
-- (NSDate *)onHoldDate;
+- (nullable NSDate *)onHoldDate;
 
 /**
  * Indicates if call is outgoing or incoming.

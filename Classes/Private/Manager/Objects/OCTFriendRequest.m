@@ -10,6 +10,17 @@
 
 @implementation OCTFriendRequest
 
+#pragma mark -  Class methods
+
++ (NSArray *)requiredProperties
+{
+    NSMutableArray *properties = [NSMutableArray arrayWithArray:[super requiredProperties]];
+
+    [properties addObject:NSStringFromSelector(@selector(publicKey))];
+
+    return [properties copy];
+}
+
 #pragma mark -  Public
 
 - (NSDate *)date
