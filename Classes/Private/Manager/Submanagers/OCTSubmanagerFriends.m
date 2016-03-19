@@ -91,32 +91,24 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
 - (void)configure
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    RBQFetchRequest *fetchResult = [realmManager fetchRequestForClass:[OCTFriend class] withPredicate:nil];
 
-    NSMutableArray *friendsArray = [NSMutableArray new];
-
-    for (OCTFriend *friend in [fetchResult fetchObjects]) {
-        [friendsArray addObject:friend];
-    }
-
-    // reseting some of friend properties
-    [realmManager updateObjectsWithoutNotification:^{
-        for (OCTFriend *friend in friendsArray) {
-            friend.status = OCTToxUserStatusNone;
-            friend.isConnected = NO;
-            friend.connectionStatus = OCTToxConnectionStatusNone;
-            friend.isTyping = NO;
-            NSDate *dateOffline = [[self.dataSource managerGetTox] friendGetLastOnlineWithFriendNumber:friend.friendNumber error:nil];
-            friend.lastSeenOnlineInterval = [dateOffline timeIntervalSince1970];
-        }
+    [realmManager updateObjectsWithClass:[OCTFriend class] predicate:nil sendNotification:NO updateBlock:^(OCTFriend *friend) {
+        friend.status = OCTToxUserStatusNone;
+        friend.isConnected = NO;
+        friend.connectionStatus = OCTToxConnectionStatusNone;
+        friend.isTyping = NO;
+        NSDate *dateOffline = [[self.dataSource managerGetTox] friendGetLastOnlineWithFriendNumber:friend.friendNumber error:nil];
+        friend.lastSeenOnlineInterval = [dateOffline timeIntervalSince1970];
     }];
+
+    RLMResults *allFriends = [realmManager objectsWithClass:[OCTFriend class] predicate:nil];
 
     for (NSNumber *friendNumber in [[self.dataSource managerGetTox] friendsArray]) {
         OCTToxFriendNumber number = [friendNumber intValue];
 
         BOOL found = NO;
 
-        for (OCTFriend *friend in friendsArray) {
+        for (OCTFriend *friend in allFriends) {
             if (friend.friendNumber == number) {
                 found = YES;
                 break;

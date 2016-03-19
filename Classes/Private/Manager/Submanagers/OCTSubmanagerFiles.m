@@ -42,6 +42,18 @@
     return self;
 }
 
+- (void)configure
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"fileType == %d OR fileType == %d OR fileType == %d",
+                              OCTMessageFileTypeWaitingConfirmation, OCTMessageFileTypeLoading, OCTMessageFileTypePaused];
+
+    [realmManager updateObjectsWithClass:[OCTMessageFile class] predicate:predicate sendNotification:NO updateBlock:^(OCTMessageFile *file) {
+        file.fileType = OCTMessageFileTypeCanceled;
+    }];
+}
+
 #pragma mark -  Public
 
 - (void)acceptFileTransfer:(OCTMessageAbstract *)message

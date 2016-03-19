@@ -18,6 +18,7 @@
 @class OCTCall;
 @class OCTMessageAbstract;
 @class OCTSettingsStorageObject;
+@class RLMResults;
 
 @interface OCTRealmManager : NSObject
 
@@ -38,6 +39,8 @@
 - (void)addObject:(OCTObject *)object;
 - (void)deleteObject:(OCTObject *)object;
 
+- (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate;
+
 /**
  * All realm objects should be updated ONLY with this method.
  *
@@ -46,11 +49,13 @@
 - (void)updateObject:(OCTObject *)object withBlock:(void (^)(id theObject))updateBlock;
 
 /**
- * Update objects without sending notification.
- * You should be careful with this method - data can in RBQFetchedResultsController may be
+ * You should be careful updating objects without notification - data can in RBQFetchedResultsController may be
  * inconsistent after updating. This method is designed to be used on startup before any user interaction.
  */
-- (void)updateObjectsWithoutNotification:(void (^)())updateBlock;
+- (void)updateObjectsWithClass:(Class)class
+                     predicate:(NSPredicate *)predicate
+              sendNotification:(BOOL)sendNotification
+                   updateBlock:(void (^)(id theObject))updateBlock;
 
 - (void)notifyAboutObjectUpdate:(OCTObject *)object;
 

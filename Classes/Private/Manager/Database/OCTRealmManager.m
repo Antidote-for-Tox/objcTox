@@ -104,6 +104,19 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     return fetchRequest;
 }
 
+- (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate
+{
+    NSParameterAssert(class);
+
+    __block RLMResults *results;
+
+    dispatch_sync(self.queue, ^{
+        results = [class objectsInRealm:self.realm withPredicate:predicate];
+    });
+
+    return results;
+}
+
 - (void)updateObject:(OCTObject *)object withBlock:(void (^)(id theObject))updateBlock
 {
     NSParameterAssert(object);
@@ -121,15 +134,27 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
-- (void)updateObjectsWithoutNotification:(void (^)())updateBlock
+- (void)updateObjectsWithClass:(Class)class
+                     predicate:(NSPredicate *)predicate
+              sendNotification:(BOOL)sendNotification
+                   updateBlock:(void (^)(id theObject))updateBlock
 {
+    NSParameterAssert(class);
     NSParameterAssert(updateBlock);
 
-    OCTLogInfo(@"updating objects without notification");
+    OCTLogInfo(@"updating objects of class %@ with predicate %@, send notification %d", NSStringFromClass(class), predicate, sendNotification);
 
     dispatch_sync(self.queue, ^{
+        RLMResults *results = [class objectsInRealm:self.realm withPredicate:predicate];
+
         [self.realm beginWriteTransaction];
-        updateBlock();
+        for (id object in results) {
+            updateBlock(object);
+
+            if (sendNotification) {
+                [[self logger] didChangeObject:object];
+            }
+        }
         [self.realm commitWriteTransaction];
     });
 }
