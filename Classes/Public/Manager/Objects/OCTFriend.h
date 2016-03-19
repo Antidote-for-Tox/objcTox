@@ -32,27 +32,27 @@
  *
  * To change please use OCTSubmanagerObjects method.
  */
-@property NSString *nickname;
+@property (nonnull) NSString *nickname;
 
 /**
  * Public key of a friend, is kOCTToxPublicKeyLength length.
  * Is constant, cannot be changed.
  */
-@property NSString *publicKey;
+@property (nonnull) NSString *publicKey;
 
 /**
  * Name of a friend.
  *
  * May be empty.
  */
-@property NSString *name;
+@property (nullable) NSString *name;
 
 /**
  * Status message of a friend.
  *
  * May be empty.
  */
-@property NSString *statusMessage;
+@property (nullable) NSString *statusMessage;
 
 /**
  * Status message of a friend.
@@ -85,7 +85,7 @@
  * The date when friend was last seen online.
  * Contains actual information in case if friend has connectionStatus offline.
  */
-- (NSDate *)lastSeenOnline;
+- (nullable NSDate *)lastSeenOnline;
 
 @end
 

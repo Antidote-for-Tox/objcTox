@@ -15,16 +15,6 @@
 
 @implementation OCTChat
 
-#pragma mark -  Class methods
-
-+ (NSDictionary *)defaultPropertyValues
-{
-    NSMutableDictionary *values = [NSMutableDictionary dictionaryWithDictionary:[super defaultPropertyValues]];
-    values[@"enteredText"] = @"";
-
-    return [values copy];
-}
-
 #pragma mark -  Public
 
 - (NSDate *)lastReadDate

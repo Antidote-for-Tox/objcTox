@@ -14,14 +14,19 @@
 
 + (NSString *)primaryKey
 {
-    return @"uniqueIdentifier";
+    return NSStringFromSelector(@selector(uniqueIdentifier));
 }
 
 + (NSDictionary *)defaultPropertyValues
 {
     return @{
-               @"uniqueIdentifier" : [[NSUUID UUID] UUIDString],
+               NSStringFromSelector(@selector(uniqueIdentifier)) : [[NSUUID UUID] UUIDString],
     };
+}
+
++ (NSArray *)requiredProperties
+{
+    return @[NSStringFromSelector(@selector(uniqueIdentifier))];
 }
 
 #pragma mark -  Public

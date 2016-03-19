@@ -20,12 +20,12 @@
 /**
  * Array with OCTFriends that participate in this chat.
  */
-@property RLMArray<OCTFriend> *friends;
+@property (nonnull) RLMArray<OCTFriend> *friends;
 
 /**
  * The latest message that was send or received.
  */
-@property OCTMessageAbstract *lastMessage;
+@property (nullable) OCTMessageAbstract *lastMessage;
 
 /**
  * This property can be used for storing entered text that wasn't send yet.
@@ -34,7 +34,7 @@
  *
  * May be empty.
  */
-@property NSString *enteredText;
+@property (nullable) NSString *enteredText;
 
 /**
  * This property stores last date interval when chat was read.
@@ -56,12 +56,12 @@
 /**
  * The date when chat was read last time.
  */
-- (NSDate *)lastReadDate;
+- (nullable NSDate *)lastReadDate;
 
 /**
  * Returns date of lastMessage or chat creationDate if there is no last message.
  */
-- (NSDate *)lastActivityDate;
+- (nullable NSDate *)lastActivityDate;
 
 /**
  * If there are unread messages in chat YES is returned. All messages that have date later than lastReadDateInterval

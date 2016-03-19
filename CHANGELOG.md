@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased][unreleased]
 ### Changes
 - Bootstrap nodes updated and moved to separate json file
+- Realm updated to version 0.98.5.
 
 ### Fixes
 - Bug with switching to wrong camera on iOS.

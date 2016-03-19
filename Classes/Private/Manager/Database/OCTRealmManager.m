@@ -12,6 +12,7 @@
 #import "RBQFetchRequest.h"
 #import "RBQRealmNotificationManager.h"
 #import "OCTFriend.h"
+#import "OCTFriendRequest.h"
 #import "OCTChat.h"
 #import "OCTCall.h"
 #import "OCTMessageAbstract.h"
@@ -24,7 +25,7 @@
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
-static const uint64_t kCurrentSchemeVersion = 3;
+static const uint64_t kCurrentSchemeVersion = 4;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -414,7 +415,38 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                if (oldSchemaVersion < 3) {
                    // objcTox version 0.4.0
                }
+
+               if (oldSchemaVersion < 4) {
+                   // objcTox version 0.5.0
+                   [self doMigrationVersion4:migration];
+               }
     };
+}
+
+- (void)doMigrationVersion4:(RLMMigration *)migration
+{
+    [migration enumerateObjects:OCTChat.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"enteredText"] = [oldObject[@"enteredText"] length] > 0 ? oldObject[@"enteredText"] : nil;
+    }];
+
+    [migration enumerateObjects:OCTFriend.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"name"] = [oldObject[@"name"] length] > 0 ? oldObject[@"name"] : nil;
+        newObject[@"statusMessage"] = [oldObject[@"statusMessage"] length] > 0 ? oldObject[@"statusMessage"] : nil;
+    }];
+
+    [migration enumerateObjects:OCTFriendRequest.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"message"] = [oldObject[@"message"] length] > 0 ? oldObject[@"message"] : nil;
+    }];
+
+    [migration enumerateObjects:OCTMessageFile.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"fileName"] = [oldObject[@"fileName"] length] > 0 ? oldObject[@"fileName"] : nil;
+        newObject[@"filePath"] = [oldObject[@"filePath"] length] > 0 ? oldObject[@"filePath"] : nil;
+        newObject[@"fileUTI"] = [oldObject[@"fileUTI"] length] > 0 ? oldObject[@"fileUTI"] : nil;
+    }];
+
+    [migration enumerateObjects:OCTMessageText.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"text"] = [oldObject[@"text"] length] > 0 ? oldObject[@"text"] : nil;
+    }];
 }
 
 - (RBQRealmChangeLogger *)logger

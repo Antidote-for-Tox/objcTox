@@ -22,7 +22,7 @@
 /**
  * The text of the message.
  */
-@property NSString *text;
+@property (nullable) NSString *text;
 
 /**
  * Indicate if message is delivered. Actual only for outgoing messages.
