@@ -26,7 +26,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
 @property (copy, nonatomic) OCTFileBaseOperationProgressBlock progressBlock;
 @property (copy, nonatomic) OCTFileBaseOperationSuccessBlock successBlock;
-@property (copy, nonatomic) OCTFileBaseOperationCancelBlock cancelBlock;
 @property (copy, nonatomic) OCTFileBaseOperationFailureBlock failureBlock;
 
 @property (assign, nonatomic) CFTimeInterval lastUpdateProgressTime;
@@ -53,14 +52,12 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                             userInfo:(id)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
-                         cancelBlock:(nonnull OCTFileBaseOperationCancelBlock)cancelBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
 {
     NSParameterAssert(tox);
     NSParameterAssert(fileStorage);
     NSParameterAssert(progressBlock);
     NSParameterAssert(successBlock);
-    NSParameterAssert(cancelBlock);
     NSParameterAssert(failureBlock);
     NSParameterAssert(fileSize > 0);
 
@@ -87,7 +84,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
     _progressBlock = [progressBlock copy];
     _successBlock = [successBlock copy];
-    _cancelBlock = [cancelBlock copy];
     _failureBlock = [failureBlock copy];
 
     _bytesDone = 0;
@@ -174,10 +170,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
     self.executing = NO;
     self.finished = YES;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.cancelBlock(self);
-    });
 }
 
 - (void)finishWithError:(nonnull NSError *)error

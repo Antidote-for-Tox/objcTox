@@ -9,12 +9,14 @@
 #import "OCTSubmanagerFiles+Private.h"
 #import "OCTSubmanagerFilesProgressSubscriber.h"
 #import "OCTTox.h"
+#import "OCTToxConstants.h"
 #import "OCTFileDownloadOperation.h"
 #import "OCTRealmManager.h"
 #import "OCTLogging.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageFile.h"
 #import "OCTFriend.h"
+#import "OCTChat.h"
 
 @interface OCTSubmanagerFiles ()
 
@@ -45,14 +47,17 @@
 - (void)acceptFileTransfer:(OCTMessageAbstract *)message
 {
     if (! message.sender) {
+        OCTLogWarn(@"specified wrong message: no sender. %@", message);
         return;
     }
 
     if (! message.messageFile) {
+        OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
         return;
     }
 
     if (message.messageFile.fileType != OCTMessageFileTypeWaitingConfirmation) {
+        OCTLogWarn(@"specified wrong message: wrong file type, should be WaitingConfirmation. %@", message);
         return;
     }
 
@@ -70,14 +75,36 @@
                                                                                userInfo:progressSubscribers
                                                                           progressBlock:[self progressBlockWithMessage:message]
                                                                            successBlock:[self successBlockWithMessage:message]
-                                                                            cancelBlock:[self cancelBlockWithMessage:message]
                                                                            failureBlock:[self failureBlockWithMessage:message]];
 
     [self.queue addOperation:operation];
 }
 
 - (void)cancelFileTransfer:(OCTMessageAbstract *)message
-{}
+{
+    if (! message.messageFile) {
+        OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
+        return;
+    }
+
+    OCTFriend *friend = [message.chat.friends firstObject];
+
+    [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
+                                                   friendNumber:friend.friendNumber
+                                                        control:OCTToxFileControlCancel
+                                                          error:nil];
+
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
+                                                       friendNumber:friend.friendNumber];
+
+    if (operation) {
+        [operation cancel];
+    }
+
+    [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+        file.fileType = OCTMessageFileTypeCanceled;
+    }];
+}
 
 - (void)addProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
               forFileTransfer:(nonnull OCTMessageAbstract *)message
@@ -86,14 +113,10 @@
         return;
     }
 
-    NSString *operationId;
+    OCTFriend *friend = [message.chat.friends firstObject];
 
-    if (message.sender) {
-        operationId = [OCTFileDownloadOperation operationIdFromFileNumber:message.messageFile.internalFileNumber
-                                                             friendNumber:message.sender.friendNumber];
-    }
-
-    OCTFileBaseOperation *operation = [self operationWithId:operationId];
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
+                                                       friendNumber:friend.friendNumber];
 
     if (! operation) {
         return;
@@ -115,14 +138,10 @@
         return;
     }
 
-    NSString *operationId;
+    OCTFriend *friend = [message.chat.friends firstObject];
 
-    if (message.sender) {
-        operationId = [OCTFileDownloadOperation operationIdFromFileNumber:message.messageFile.internalFileNumber
-                                                             friendNumber:message.sender.friendNumber];
-    }
-
-    OCTFileBaseOperation *operation = [self operationWithId:operationId];
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
+                                                       friendNumber:friend.friendNumber];
 
     if (! operation) {
         return;
@@ -186,8 +205,7 @@
     friendNumber:(OCTToxFriendNumber)friendNumber
         position:(OCTToxFileSize)position
 {
-    NSString *operationId = [OCTFileDownloadOperation operationIdFromFileNumber:fileNumber friendNumber:friendNumber];
-    OCTFileDownloadOperation *operation = [self operationWithId:operationId];
+    OCTFileDownloadOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
 
     if (operation) {
         [operation receiveChunk:chunk position:position];
@@ -200,10 +218,11 @@
 
 #pragma mark -  Private
 
-- (OCTFileBaseOperation *)operationWithId:(NSString *)operationId
+- (OCTFileBaseOperation *)operationWithFileNumber:(OCTToxFileNumber)fileNumber friendNumber:(OCTToxFriendNumber)friendNumber
 {
+    NSString *operationId = [OCTFileBaseOperation operationIdFromFileNumber:fileNumber friendNumber:friendNumber];
 
-    for (OCTFileDownloadOperation *operation in [self.queue operations]) {
+    for (OCTFileBaseOperation *operation in [self.queue operations]) {
         if ([operation.operationId isEqualToString:operationId]) {
             return operation;
         }
@@ -256,18 +275,6 @@
                __strong OCTSubmanagerFiles *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
             file.fileType = OCTMessageFileTypeReady;
-        }];
-    };
-}
-
-- (OCTFileBaseOperationCancelBlock)cancelBlockWithMessage:(OCTMessageAbstract *)message
-{
-    __weak OCTSubmanagerFiles *weakSelf = self;
-
-    return ^(OCTFileBaseOperation *__nonnull operation) {
-               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
-               [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
-            file.fileType = OCTMessageFileTypeCanceled;
         }];
     };
 }

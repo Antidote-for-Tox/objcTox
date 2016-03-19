@@ -31,13 +31,6 @@ typedef void (^OCTFileBaseOperationProgressBlock)(OCTFileBaseOperation *__nonnul
 typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation);
 
 /**
- * Block to notify about operation cancellation.
- *
- * @param operation Operation that is running.
- */
-typedef void (^OCTFileBaseOperationCancelBlock)(OCTFileBaseOperation *__nonnull operation);
-
-/**
  * Block to notify about operation failure.
  *
  * @param operation Operation that is running.
@@ -85,7 +78,6 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  * @param userInfo Any object that will be stored by operation.
  * @param progressBlock Block called to notify about loading progress. Block will be called on main thread.
  * @param successBlock Block called on operation success. Block will be called on main thread.
- * @param cancelBlock Block called in case if operation was cancelled. Block will be called on main thread.
  * @param failureBlock Block called on loading error. Block will be called on main thread.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
@@ -96,7 +88,6 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
                             userInfo:(nullable id)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
-                         cancelBlock:(nonnull OCTFileBaseOperationCancelBlock)cancelBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;
 
 @end
