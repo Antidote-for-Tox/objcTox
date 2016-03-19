@@ -25,8 +25,8 @@
 - (void)addNodeWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey;
 
 /**
- * Add nodes from https://wiki.tox.chat/users/nodes. objcTox is trying to keep this list up to date.
- * You can check all nodes in OCTPredefined file.
+ * Add nodes from https://nodes.tox.chat/. objcTox is trying to keep this list up to date.
+ * You can check all nodes and update date in nodes.json file.
  *
  * This will NOT start bootstrapping. To start actual bootstrapping set all desired nodes
  * and call `bootstrap` method.

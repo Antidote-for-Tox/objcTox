@@ -29,6 +29,10 @@
 		112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
 		112779D41B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
 		112779D51B9B6F0B00E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
+		116634F91C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
+		116634FA1C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
+		116634FB1C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
+		116634FC1C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
 		119B13E51B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
 		119B13E61B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
 		119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
@@ -342,6 +346,7 @@
 		112358AF1B887E8F00E8FB71 /* OCTPredefined.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTPredefined.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxEncryptSaveTests.m; sourceTree = "<group>"; };
+		116634F81C80C7280072C980 /* nodes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nodes.json; sourceTree = "<group>"; };
 		117D37CB1B72B284006E885C /* OCTSubmanagerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerProtocol.h; sourceTree = "<group>"; };
 		117D37CC1B72B45B006E885C /* OCTSubmanagerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerBootstrap.h; sourceTree = "<group>"; };
 		117D37CF1B72B46D006E885C /* OCTSubmanagerBootstrap+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerBootstrap+Private.h"; sourceTree = "<group>"; };
@@ -748,6 +753,7 @@
 				647688B7386EE74BA1E6359A822B2BE6 /* OCTManagerConstants.h */,
 				11D497B31B72B94A00634B56 /* OCTPredefined.h */,
 				112358AF1B887E8F00E8FB71 /* OCTPredefined.m */,
+				116634F81C80C7280072C980 /* nodes.json */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -1235,6 +1241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				116634F91C80C7280072C980 /* nodes.json in Resources */,
 				9CB44B721B84D8C1007FA7B6 /* LaunchScreen.xib in Resources */,
 				9CB44B6F1B84D8C1007FA7B6 /* Images.xcassets in Resources */,
 			);
@@ -1244,6 +1251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				116634FA1C80C7280072C980 /* nodes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1254,6 +1262,7 @@
 				F0EAD8431C1A38DA0056587D /* MainWindow.xib in Resources */,
 				F02C7EB41C1CCF1200D144BD /* OCTFriendsViewController.xib in Resources */,
 				F019291C1C2797D2001A5F45 /* OCTConversationViewController.xib in Resources */,
+				116634FB1C80C7280072C980 /* nodes.json in Resources */,
 				F09D0A471C1B9877008E74AF /* OCTUserViewController.xib in Resources */,
 				9CB44C3B1B84DCCC007FA7B6 /* Images.xcassets in Resources */,
 				9CB44C3E1B84DCCC007FA7B6 /* MainMenu.xib in Resources */,
@@ -1266,6 +1275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				116634FC1C80C7280072C980 /* nodes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

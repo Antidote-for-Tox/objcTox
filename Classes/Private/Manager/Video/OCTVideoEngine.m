@@ -127,10 +127,9 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)useFrontCamera:(BOOL)front error:(NSError **)error
 {
-    AVCaptureDevice *dev = nil;
+    AVCaptureDevicePosition position = front ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
 
-    AVCaptureDevicePosition position = (front) ? AVCaptureDevicePositionBack : AVCaptureDevicePositionFront;
-    dev = [self getDeviceForPosition:position];
+    AVCaptureDevice *dev = [self getDeviceForPosition:position];
 
     return [self actuallySetCamera:dev error:error];
 }

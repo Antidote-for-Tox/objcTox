@@ -14,8 +14,11 @@
 #import "OCTTox.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"
+#import "OCTNode.h"
 
 @interface OCTSubmanagerBootstrap (Tests)
+
+@property (strong, nonatomic) NSMutableSet *addedNodes;
 
 @property (assign, nonatomic) NSTimeInterval didConnectDelay;
 @property (assign, nonatomic) NSTimeInterval iterationTime;
@@ -61,6 +64,19 @@
     self.submanager = nil;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+}
+
+- (void)testAddPredefinedNodes
+{
+    [self.submanager addPredefinedNodes];
+
+    XCTAssertTrue(self.submanager.addedNodes.count > 0);
+
+    for (OCTNode *node in self.submanager.addedNodes) {
+        XCTAssertTrue(node.host.length > 0);
+        XCTAssertTrue(node.port > 0);
+        XCTAssertEqual(node.publicKey.length, kOCTToxPublicKeyLength);
+    }
 }
 
 - (void)testBootstrapCustomNodes
