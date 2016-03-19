@@ -6,7 +6,7 @@ inhibit_all_warnings!
 def common_pods
     pod 'toxcore', '0.0.1-94cc8b1'
     pod 'CocoaLumberjack', '~> 1.9.2'
-    pod 'Realm', '0.95.0'
+    pod 'Realm', '0.98.5'
     pod 'TPCircularBuffer', '~> 0.0.1'
 end
 
