@@ -18,6 +18,8 @@
  * Send given data to particular chat. After sending OCTMessageAbstract with messageFile will be added to this chat.
  * You can monitor progress using this message.
  *
+ * File will be saved in uploaded files directory (see OCTFileStorageProtocol).
+ *
  * @param data Data to send.
  * @param fileName Name of the file.
  * @param chat Chat to send data to.

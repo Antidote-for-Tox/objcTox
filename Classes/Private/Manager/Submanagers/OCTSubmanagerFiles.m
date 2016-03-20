@@ -20,7 +20,6 @@
 #import "OCTChat.h"
 #import "OCTFileStorageProtocol.h"
 
-static NSString *const kUploadsDirectory = @"me.objcTox.uploads";
 static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
 @interface OCTSubmanagerFiles ()
@@ -64,12 +63,6 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    NSString *uploads = [self uploadsTempDirectory];
-    OCTLogInfo(@"clearing uploads temp directory %@\ncontents %@",
-               uploads,
-               [fileManager contentsOfDirectoryAtPath:uploads error:nil]);
-    [fileManager removeItemAtPath:uploads error:nil];
-
     NSString *downloads = [self downloadsTempDirectory];
     OCTLogInfo(@"clearing downloads temp directory %@\ncontents %@",
                downloads,
@@ -85,7 +78,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     NSParameterAssert(fileName);
     NSParameterAssert(chat);
 
-    NSString *filePath = [[self uploadsTempDirectory] stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+    NSString *filePath = [[self uploadsDirectory] stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
 
     if (! [data writeToFile:filePath atomically:NO]) {
         OCTLogWarn(@"cannot save data to temp directory.");
@@ -366,11 +359,11 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     }
 }
 
-- (NSString *)uploadsTempDirectory
+- (NSString *)uploadsDirectory
 {
     id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
 
-    NSString *path = [fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:kUploadsDirectory];
+    NSString *path = fileStorage.pathForUploadedFilesDirectory;
     [self createDirectoryIfNeeded:path];
 
     return path;
