@@ -20,7 +20,7 @@
 #import "OCTChat.h"
 #import "OCTFileStorageProtocol.h"
 
-static NSString *const kUploadsDirectory = @"me.objcTox.uplooads";
+static NSString *const kUploadsDirectory = @"me.objcTox.uploads";
 static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
 @interface OCTSubmanagerFiles ()
@@ -49,6 +49,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
 - (void)configure
 {
+    OCTLogInfo(@"cancelling pending files...");
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"fileType == %d OR fileType == %d OR fileType == %d",
@@ -56,7 +57,24 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
     [realmManager updateObjectsWithClass:[OCTMessageFile class] predicate:predicate sendNotification:NO updateBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeCanceled;
+        OCTLogInfo(@"cancelling file %@", file);
     }];
+
+    OCTLogInfo(@"cancelling pending files... done");
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSString *uploads = [self uploadsTempDirectory];
+    OCTLogInfo(@"clearing uploads temp directory %@\ncontents %@",
+               uploads,
+               [fileManager contentsOfDirectoryAtPath:uploads error:nil]);
+    [fileManager removeItemAtPath:uploads error:nil];
+
+    NSString *downloads = [self downloadsTempDirectory];
+    OCTLogInfo(@"clearing downloads temp directory %@\ncontents %@",
+               downloads,
+               [fileManager contentsOfDirectoryAtPath:downloads error:nil]);
+    [fileManager removeItemAtPath:downloads error:nil];
 }
 
 #pragma mark -  Public
