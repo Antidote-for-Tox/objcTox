@@ -194,10 +194,22 @@
                         <action selector="callUserButtonPressed:" target="-2" id="0fg-kO-gc1"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mLZ-GO-ldp">
+                    <rect key="frame" x="291" y="3" width="93" height="32"/>
+                    <buttonCell key="cell" type="push" title="Send file" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4AP-wz-wf0">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="sendFileButtonPressed:" target="-2" id="Fbj-Ad-MoV"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="zLC-bT-7fG" secondAttribute="trailing" id="1ZD-Fp-tLh"/>
                 <constraint firstItem="LtX-5e-me2" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="3o0-ex-7Yz"/>
+                <constraint firstItem="mLZ-GO-ldp" firstAttribute="leading" secondItem="5DZ-38-1cv" secondAttribute="trailing" constant="48" id="7EI-PM-Fka"/>
+                <constraint firstAttribute="bottom" secondItem="mLZ-GO-ldp" secondAttribute="bottom" constant="10" id="E3t-bN-wgf"/>
                 <constraint firstAttribute="bottom" secondItem="l4O-Ce-roz" secondAttribute="bottom" constant="10" id="EXT-aC-ip0"/>
                 <constraint firstItem="qAJ-48-2Vl" firstAttribute="height" secondItem="LtX-5e-me2" secondAttribute="height" multiplier="0.75" id="Hx8-LR-mpr"/>
                 <constraint firstItem="qAJ-48-2Vl" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Ocm-gh-ocf"/>

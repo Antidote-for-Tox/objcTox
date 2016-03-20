@@ -19,6 +19,12 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 @property (assign, atomic) BOOL privateExecuting;
 @property (assign, atomic) BOOL privateFinished;
 
+@property (weak, nonatomic, readonly, nullable) OCTTox *tox;
+
+@property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
+@property (assign, nonatomic, readonly) OCTToxFileNumber fileNumber;
+@property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
+
 @property (assign, nonatomic, readwrite) OCTToxFileSize bytesDone;
 @property (assign, nonatomic, readwrite) CGFloat progress;
 @property (assign, nonatomic, readwrite) OCTToxFileSize bytesPerSecond;
@@ -45,7 +51,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 #pragma mark -  Lifecycle
 
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                         fileStorage:(nonnull id<OCTFileStorageProtocol>)fileStorage
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
@@ -55,7 +60,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
 {
     NSParameterAssert(tox);
-    NSParameterAssert(fileStorage);
     NSParameterAssert(progressBlock);
     NSParameterAssert(successBlock);
     NSParameterAssert(failureBlock);
@@ -70,7 +74,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     _operationId = [[self class] operationIdFromFileNumber:fileNumber friendNumber:friendNumber];
 
     _tox = tox;
-    _fileStorage = fileStorage;
 
     _friendNumber = friendNumber;
     _fileNumber = fileNumber;
@@ -162,14 +165,6 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     dispatch_async(dispatch_get_main_queue(), ^{
         self.successBlock(self);
     });
-}
-
-- (void)finishWithCancel
-{
-    OCTLogInfo(@"finished with cancel");
-
-    self.executing = NO;
-    self.finished = YES;
 }
 
 - (void)finishWithError:(nonnull NSError *)error

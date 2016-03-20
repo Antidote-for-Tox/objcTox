@@ -9,9 +9,33 @@
 #import <Foundation/Foundation.h>
 
 @class OCTMessageAbstract;
+@class OCTChat;
 @protocol OCTSubmanagerFilesProgressSubscriber;
 
 @interface OCTSubmanagerFiles : NSObject
+
+/**
+ * Send given data to particular chat. After sending OCTMessageAbstract with messageFile will be added to this chat.
+ * You can monitor progress using this message.
+ *
+ * @param data Data to send.
+ * @param fileName Name of the file.
+ * @param chat Chat to send data to.
+ */
+- (void)sendData:(nonnull NSData *)data withFileName:(nonnull NSString *)fileName toChat:(nonnull OCTChat *)chat;
+
+/**
+ * Send given file to particular chat. After sending OCTMessageAbstract with messageFile will be added to this chat.
+ * You can monitor progress using this message.
+ *
+ * @param filePath Path of file to upload.
+ * @param overrideFileName Optional parameter. By default file name from filePath will be used. You can override it
+ * by passing this parameter.
+ * @param chat Chat to send file to.
+ */
+- (void)    sendFile:(nonnull NSString *)filePath
+    overrideFileName:(nullable NSString *)overrideFileName
+              toChat:(nonnull OCTChat *)chat;
 
 /**
  * Accept file transfer.

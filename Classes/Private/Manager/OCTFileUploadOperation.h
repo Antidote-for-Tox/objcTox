@@ -1,33 +1,24 @@
 //
-//  OCTFileDownloadOperation.h
+//  OCTFileUploadOperation.h
 //  objcTox
 //
-//  Created by Dmytro Vorobiov on 15.03.16.
+//  Created by Dmytro Vorobiov on 20.03.16.
 //  Copyright © 2016 dvor. All rights reserved.
 //
 
 #import "OCTFileBaseOperation.h"
 
-@class OCTTox;
-
-/**
- * File operation for downloading file.
- *
- * When started will automatically send resume control to friend.
- */
-@interface OCTFileDownloadOperation : OCTFileBaseOperation
+@interface OCTFileUploadOperation : OCTFileBaseOperation
 
 /**
  * Create operation.
  *
- * @param tempDirectoryPath Path to directory to store temporary files.
- * @param fileNumber Number of file to load.
- * @param fileSize Size of file in bytes.
+ * @param filePath Path of file to upload.
  *
  * For other parameters description see OCTFileBaseOperation.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                   tempDirectoryPath:(nonnull NSString *)tempDirectoryPath
+                            filePath:(nonnull NSString *)filePath
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
@@ -37,11 +28,11 @@
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;
 
 /**
- * Call this method to get next chunk to operation.
+ * Call this method to request next chunk.
  *
- * @param chunk Next chunk of data to append to file.
- * @param position Position in file to append chunk.
+ * @param position The file or stream position from which to continue reading.
+ * @param length The number of bytes requested for the current chunk.
  */
-- (void)receiveChunk:(nullable NSData *)chunk position:(OCTToxFileSize)position;
+- (void)chunkRequestWithPosition:(OCTToxFileSize)position length:(size_t)length;
 
 @end

@@ -11,12 +11,17 @@
 #import "OCTTox.h"
 #import "OCTToxConstants.h"
 #import "OCTFileDownloadOperation.h"
+#import "OCTFileUploadOperation.h"
 #import "OCTRealmManager.h"
 #import "OCTLogging.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageFile.h"
 #import "OCTFriend.h"
 #import "OCTChat.h"
+#import "OCTFileStorageProtocol.h"
+
+static NSString *const kUploadsDirectory = @"me.objcTox.uplooads";
+static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
 @interface OCTSubmanagerFiles ()
 
@@ -56,6 +61,79 @@
 
 #pragma mark -  Public
 
+- (void)sendData:(nonnull NSData *)data withFileName:(nonnull NSString *)fileName toChat:(nonnull OCTChat *)chat
+{
+    NSParameterAssert(data);
+    NSParameterAssert(fileName);
+    NSParameterAssert(chat);
+
+    NSString *filePath = [[self uploadsTempDirectory] stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+
+    if (! [data writeToFile:filePath atomically:NO]) {
+        OCTLogWarn(@"cannot save data to temp directory.");
+        return;
+    }
+
+    [self sendFile:filePath overrideFileName:fileName toChat:chat];
+}
+
+- (void)    sendFile:(nonnull NSString *)filePath
+    overrideFileName:(nullable NSString *)overrideFileName
+              toChat:(nonnull OCTChat *)chat
+{
+    NSParameterAssert(filePath);
+    NSParameterAssert(chat);
+
+    NSString *fileName = overrideFileName ?: [filePath lastPathComponent];
+    OCTFriend *friend = [chat.friends firstObject];
+
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+
+    if (! attributes) {
+        OCTLogWarn(@"cannot read file %@", filePath);
+        return;
+    }
+
+    OCTToxFileSize fileSize = [attributes[NSFileSize] longLongValue];
+
+    NSError *error;
+    OCTToxFileNumber fileNumber = [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber
+                                                                                       kind:OCTToxFileKindData
+                                                                                   fileSize:fileSize
+                                                                                     fileId:nil
+                                                                                   fileName:fileName
+                                                                                      error:&error];
+
+    if (fileNumber == kOCTToxFileNumberFailure) {
+        OCTLogWarn(@"cannot send file %@", error);
+        return;
+    }
+
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    OCTMessageAbstract *message = [realmManager addMessageWithFileNumber:fileNumber
+                                                                fileType:OCTMessageFileTypeWaitingConfirmation
+                                                                fileSize:fileSize
+                                                                fileName:fileName
+                                                                filePath:filePath
+                                                                 fileUTI:[self fileUTIFromFileName:fileName]
+                                                                    chat:chat
+                                                                  sender:nil];
+
+    NSHashTable *progressSubscribers = [NSHashTable weakObjectsHashTable];
+
+    OCTFileUploadOperation *operation = [[OCTFileUploadOperation alloc] initWithTox:[self.dataSource managerGetTox]
+                                                                           filePath:filePath
+                                                                       friendNumber:friend.friendNumber
+                                                                         fileNumber:fileNumber
+                                                                           fileSize:fileSize
+                                                                           userInfo:progressSubscribers
+                                                                      progressBlock:[self progressBlockWithMessage:message]
+                                                                       successBlock:[self successBlockWithMessage:message]
+                                                                       failureBlock:[self failureBlockWithMessage:message]];
+
+    [self.queue addOperation:operation];
+}
+
 - (void)acceptFileTransfer:(OCTMessageAbstract *)message
 {
     if (! message.sender) {
@@ -80,7 +158,7 @@
     NSHashTable *progressSubscribers = [NSHashTable weakObjectsHashTable];
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
-                                                                            fileStorage:self.dataSource.managerGetFileStorage
+                                                                      tempDirectoryPath:[self downloadsTempDirectory]
                                                                            friendNumber:message.sender.friendNumber
                                                                              fileNumber:message.messageFile.internalFileNumber
                                                                                fileSize:message.messageFile.fileSize
@@ -174,7 +252,17 @@
     friendNumber:(OCTToxFriendNumber)friendNumber
         position:(OCTToxFileSize)position
           length:(size_t)length
-{}
+{
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
+
+    if ([operation isKindOfClass:[OCTFileUploadOperation class]]) {
+        [(OCTFileUploadOperation *)operation chunkRequestWithPosition:position length:length];
+    }
+    else {
+        OCTLogWarn(@"operation not found with fileNumber %d friendNumber %d", fileNumber, friendNumber);
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+    }
+}
 
 - (void)     tox:(OCTTox *)tox fileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
     friendNumber:(OCTToxFriendNumber)friendNumber
@@ -217,10 +305,10 @@
     friendNumber:(OCTToxFriendNumber)friendNumber
         position:(OCTToxFileSize)position
 {
-    OCTFileDownloadOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
 
-    if (operation) {
-        [operation receiveChunk:chunk position:position];
+    if ([operation isKindOfClass:[OCTFileDownloadOperation class]]) {
+        [(OCTFileDownloadOperation *)operation receiveChunk:chunk position:position];
     }
     else {
         OCTLogWarn(@"operation not found with fileNumber %d friendNumber %d", fileNumber, friendNumber);
@@ -241,6 +329,43 @@
     }
 
     return nil;
+}
+
+- (void)createDirectoryIfNeeded:(NSString *)path
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    BOOL isDirectory;
+    BOOL exists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+
+    if (exists && ! isDirectory) {
+        [fileManager removeItemAtPath:path error:nil];
+        exists = NO;
+    }
+
+    if (! exists) {
+        [fileManager createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+}
+
+- (NSString *)uploadsTempDirectory
+{
+    id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
+
+    NSString *path = [fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:kUploadsDirectory];
+    [self createDirectoryIfNeeded:path];
+
+    return path;
+}
+
+- (NSString *)downloadsTempDirectory
+{
+    id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
+
+    NSString *path = [fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:kDownloadsDirectory];
+    [self createDirectoryIfNeeded:path];
+
+    return path;
 }
 
 - (NSString *)fileUTIFromFileName:(NSString *)fileName

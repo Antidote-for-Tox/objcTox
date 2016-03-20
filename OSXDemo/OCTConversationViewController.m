@@ -15,6 +15,7 @@
 #import "OCTMessageAbstract.h"
 #import "OCTSubmanagerUser.h"
 #import "OCTSubmanagerCalls.h"
+#import "OCTSubmanagerFiles.h"
 #import "OCTMessageText.h"
 
 static NSString *const kCellIdent = @"cellIdent";
@@ -91,6 +92,25 @@ static NSString *const kCellIdent = @"cellIdent";
     OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
 
     [self.manager.calls callToChat:chat enableAudio:YES enableVideo:YES error:nil];
+}
+
+- (IBAction)sendFileButtonPressed:(id)sender
+{
+    NSInteger selectedRow = self.chatsTableView.selectedRow;
+
+    if (selectedRow < 0) {
+        return;
+    }
+
+    OCTChat *chat = [self.chatResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0]];
+
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+
+    [panel runModal];
+
+    NSString *path = [panel.URL path];
+
+    [self.manager.files sendFile:path overrideFileName:nil toChat:chat];
 }
 
 #pragma mark - NSTextFieldDelegate

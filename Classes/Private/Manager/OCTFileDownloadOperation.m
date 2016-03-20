@@ -14,14 +14,46 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 
 @interface OCTFileDownloadOperation ()
 
-@property (strong, nonatomic) NSString *path;
-@property (strong, nonatomic) NSFileHandle *handle;
+@property (strong, nonatomic, readonly) NSString *tempDirectoryPath;
 
+@property (strong, nonatomic) NSFileHandle *handle;
 @property (strong, nonatomic) NSMutableData *cache;
 
 @end
 
 @implementation OCTFileDownloadOperation
+
+#pragma mark -  Lifecycle
+
+- (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
+                   tempDirectoryPath:(NSString *)tempDirectoryPath
+                        friendNumber:(OCTToxFriendNumber)friendNumber
+                          fileNumber:(OCTToxFileNumber)fileNumber
+                            fileSize:(OCTToxFileSize)fileSize
+                            userInfo:(id)userInfo
+                       progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
+                        successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
+                        failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
+{
+    NSParameterAssert(tempDirectoryPath);
+
+    self = [super initWithTox:tox
+                 friendNumber:friendNumber
+                   fileNumber:fileNumber
+                     fileSize:fileSize
+                     userInfo:userInfo
+                progressBlock:progressBlock
+                 successBlock:successBlock
+                 failureBlock:failureBlock];
+
+    if (! self) {
+        return nil;
+    }
+
+    _tempDirectoryPath = tempDirectoryPath;
+
+    return self;
+}
 
 #pragma mark -  Public
 
@@ -85,7 +117,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 
 - (NSString *)createNewFile:(NSError **)error
 {
-    NSString *path = [self.fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:self.operationId];
+    NSString *path = [self.tempDirectoryPath stringByAppendingPathComponent:self.operationId];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     OCTLogInfo(@"saving to path %@", path);

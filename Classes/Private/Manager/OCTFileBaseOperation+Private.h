@@ -10,6 +10,12 @@
 
 @interface OCTFileBaseOperation (Private)
 
+@property (weak, nonatomic, readonly, nullable) OCTTox *tox;
+
+@property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
+@property (assign, nonatomic, readonly) OCTToxFileNumber fileNumber;
+@property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
+
 /**
  * Override this method to start custom actions. Call finish when operation is done.
  */
@@ -24,11 +30,6 @@
  * Call this method in case if operation was finished.
  */
 - (void)finishWithSuccess;
-
-/**
- * Call this method in case if operation was cancelled.
- */
-- (void)finishWithCancel;
 
 /**
  * Call this method in case if operation was finished or cancelled with error.

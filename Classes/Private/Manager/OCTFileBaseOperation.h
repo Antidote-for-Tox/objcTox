@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "OCTTox.h"
 #import "OCTToxConstants.h"
-#import "OCTFileStorageProtocol.h"
 
 @class OCTFileBaseOperation;
 
@@ -45,17 +44,10 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  */
 @property (strong, nonatomic, readonly, nonnull) NSString *operationId;
 
-@property (weak, nonatomic, readonly, nullable) OCTTox *tox;
-@property (weak, nonatomic, readonly) id<OCTFileStorageProtocol> fileStorage;
-
-@property (assign, nonatomic, readonly) OCTToxFriendNumber friendNumber;
-@property (assign, nonatomic, readonly) OCTToxFileNumber fileNumber;
-@property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
-@property (assign, nonatomic, readonly) OCTToxFileSize bytesDone;
-
 /**
  * Progress properties.
  */
+@property (assign, nonatomic, readonly) OCTToxFileSize bytesDone;
 @property (assign, nonatomic, readonly) CGFloat progress;
 @property (assign, nonatomic, readonly) OCTToxFileSize bytesPerSecond;
 @property (assign, nonatomic, readonly) CFTimeInterval eta;
@@ -71,7 +63,6 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  * Create operation.
  *
  * @param tox Tox object to load from.
- * @param fileStorage File storage used for operation.
  * @param friendNumber Number of friend.
  * @param fileNumber Number of file to load.
  * @param fileSize Size of file in bytes.
@@ -81,7 +72,6 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  * @param failureBlock Block called on loading error. Block will be called on main thread.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                         fileStorage:(nonnull id<OCTFileStorageProtocol>)fileStorage
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
@@ -89,5 +79,8 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;
+
+- (nullable instancetype)init NS_UNAVAILABLE;
++ (nullable instancetype)new NS_UNAVAILABLE;
 
 @end
