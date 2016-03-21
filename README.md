@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/Antidote-for-Tox/objcTox/tree/master.svg?style=svg)](https://circleci.com/gh/Antidote-for-Tox/objcTox/tree/master) [![codecov.io](http://codecov.io/github/Antidote-for-Tox/objcTox/coverage.svg?branch=master)](http://codecov.io/github/Antidote-for-Tox/objcTox?branch=master)
+[![Build Status](https://travis-ci.org/Antidote-for-Tox/objcTox.svg?branch=master)](https://travis-ci.org/Antidote-for-Tox/objcTox) [![codecov.io](http://codecov.io/github/Antidote-for-Tox/objcTox/coverage.svg?branch=master)](http://codecov.io/github/Antidote-for-Tox/objcTox?branch=master)
 
 # objcTox
 
