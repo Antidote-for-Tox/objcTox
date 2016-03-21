@@ -21,6 +21,8 @@
 #import "OCTFileStorageProtocol.h"
 #import "OCTFilePathInput.h"
 #import "OCTFilePathOutput.h"
+#import "OCTFileDataInput.h"
+#import "OCTSettingsStorageObject.h"
 
 static NSString *const kDownloadsTempDirectory = @"me.objcTox.downloads";
 
@@ -353,10 +355,26 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 #pragma mark -  NSNotification
 
 - (void)friendConnectionStatusChangeNotification:(NSNotification *)notification
-{}
+{
+    OCTFriend *friend = notification.object;
+
+    if (! friend) {
+        OCTLogWarn(@"no friend received in notification %@, exiting", notification);
+        return;
+    }
+
+    [self sendAvatarToFriend:friend];
+}
 
 - (void)userAvatarWasUpdatedNotification
-{}
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"connectionStatus != %d", OCTToxConnectionStatusNone];
+    RLMResults *onlineFriends = [self.dataSource.managerGetRealmManager objectsWithClass:[OCTFriend class] predicate:predicate];
+
+    for (OCTFriend *friend in onlineFriends) {
+        [self sendAvatarToFriend:friend];
+    }
+}
 
 #pragma mark -  Private
 
@@ -486,6 +504,53 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
     return @{
                kProgressSubscribersKey : [NSHashTable weakObjectsHashTable],
     };
+}
+
+- (void)sendAvatarToFriend:(OCTFriend *)friend
+{
+    NSParameterAssert(friend);
+
+    NSData *avatar = self.dataSource.managerGetRealmManager.settingsStorage.userAvatarData;
+
+    if (! avatar) {
+        [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber
+                                                             kind:OCTToxFileKindAvatar
+                                                         fileSize:0
+                                                           fileId:nil
+                                                         fileName:nil
+                                                            error:nil];
+        return;
+    }
+
+    OCTToxFileSize fileSize = avatar.length;
+    NSData *hash = [self.dataSource.managerGetTox hashData:avatar];
+
+    NSError *error;
+    OCTToxFileNumber fileNumber = [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber
+                                                                                       kind:OCTToxFileKindAvatar
+                                                                                   fileSize:fileSize
+                                                                                     fileId:hash
+                                                                                   fileName:nil
+                                                                                      error:&error];
+
+    if (fileNumber == kOCTToxFileNumberFailure) {
+        OCTLogWarn(@"cannot send file %@", error);
+        return;
+    }
+
+    OCTFileDataInput *input = [[OCTFileDataInput alloc] initWithData:avatar];
+
+    OCTFileUploadOperation *operation = [[OCTFileUploadOperation alloc] initWithTox:[self.dataSource managerGetTox]
+                                                                          fileInput:input
+                                                                       friendNumber:friend.friendNumber
+                                                                         fileNumber:fileNumber
+                                                                           fileSize:fileSize
+                                                                           userInfo:nil
+                                                                      progressBlock:nil
+                                                                       successBlock:nil
+                                                                       failureBlock:nil];
+
+    [self.queue addOperation:operation];
 }
 
 @end

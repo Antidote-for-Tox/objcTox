@@ -97,7 +97,12 @@
         return NO;
     }
 
-    self.dataSource.managerGetRealmManager.settingsStorage.userAvatarData = avatar;
+    OCTRealmManager *realmManager = self.dataSource.managerGetRealmManager;
+
+    [realmManager updateObject:realmManager.settingsStorage withBlock:^(OCTSettingsStorageObject *object) {
+        object.userAvatarData = avatar;
+    }];
+
     [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTUserAvatarWasUpdatedNotification object:nil];
 
     return YES;

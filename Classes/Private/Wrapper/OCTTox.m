@@ -777,7 +777,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 - (OCTToxFileNumber)fileSendWithFriendNumber:(OCTToxFriendNumber)friendNumber
                                         kind:(OCTToxFileKind)kind
                                     fileSize:(OCTToxFileSize)fileSize
-                                      fileId:(NSString *)fileId
+                                      fileId:(NSData *)fileId
                                     fileName:(NSString *)fileName
                                        error:(NSError **)error
 {
@@ -796,7 +796,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     if (fileId.length) {
-        cFileId = (const uint8_t *)[fileId cStringUsingEncoding:NSUTF8StringEncoding];
+        cFileId = [fileId bytes];
     }
 
     if (fileName.length) {

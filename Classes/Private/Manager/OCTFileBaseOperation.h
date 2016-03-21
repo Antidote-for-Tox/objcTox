@@ -77,9 +77,9 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(nullable NSDictionary *)userInfo
-                       progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
-                        successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
-                        failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;
+                       progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                        successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
+                        failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock;
 
 - (nullable instancetype)init NS_UNAVAILABLE;
 + (nullable instancetype)new NS_UNAVAILABLE;

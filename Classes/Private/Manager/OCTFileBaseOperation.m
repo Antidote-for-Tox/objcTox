@@ -55,14 +55,11 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(NSDictionary *)userInfo
-                       progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
-                        successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
-                        failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
+                       progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                        successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
+                        failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock
 {
     NSParameterAssert(tox);
-    NSParameterAssert(progressBlock);
-    NSParameterAssert(successBlock);
-    NSParameterAssert(failureBlock);
     NSParameterAssert(fileSize > 0);
 
     self = [super init];
@@ -146,7 +143,9 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
         }
 
         OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", self.progress, self.bytesPerSecond, self.eta);
-        self.progressBlock(self);
+        if (self.progressBlock) {
+            self.progressBlock(self);
+        }
     }
 }
 
@@ -163,7 +162,9 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     self.finished = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.successBlock(self);
+        if (self.successBlock) {
+            self.successBlock(self);
+        }
     });
 }
 
@@ -177,7 +178,9 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     self.finished = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.failureBlock(self, error);
+        if (self.failureBlock) {
+            self.failureBlock(self, error);
+        }
     });
 }
 

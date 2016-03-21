@@ -10,7 +10,6 @@
 
 @class OCTTox;
 @class OCTRealmManager;
-@protocol OCTSettingsStorageProtocol;
 @protocol OCTFileStorageProtocol;
 
 /**
