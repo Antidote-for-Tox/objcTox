@@ -20,7 +20,7 @@
  * @param bytesPerSecond Speed of download/upload.
  * @param eta Estimated time of finish of download/upload.
  */
-- (void)submanagerFilesOnProgressUpdate:(CGFloat)progress
+- (void)submanagerFilesOnProgressUpdate:(float)progress
                                 message:(nonnull OCTMessageAbstract *)message
                          bytesPerSecond:(OCTToxFileSize)bytesPerSecond
                                     eta:(CFTimeInterval)eta;

@@ -1784,7 +1784,7 @@ void fileReceiveCallback(
 
     dispatch_async(dispatch_get_main_queue(), ^{
         OCTLogCInfo(@"fileReceiveCallback with friendNumber %d fileNumber %d kind %ld fileSize %llu fileName %@",
-                    tox, friendNumber, fileNumber, kind, fileSize, fileName);
+                    tox, friendNumber, fileNumber, (long)kind, fileSize, fileName);
 
         if ([tox.delegate respondsToSelector:@selector(tox:fileReceiveForFileNumber:friendNumber:kind:fileSize:fileName:)]) {
             [tox.delegate tox:tox fileReceiveForFileNumber:fileNumber

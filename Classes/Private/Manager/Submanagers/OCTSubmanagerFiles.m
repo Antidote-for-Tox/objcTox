@@ -26,6 +26,10 @@
 #import "OCTSettingsStorageObject.h"
 #import "NSError+OCTFile.h"
 
+#if TARGET_OS_IPHONE
+@import MobileCoreServices;
+#endif
+
 static NSString *const kDownloadsTempDirectory = @"me.dvor.objcTox.downloads";
 
 static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";

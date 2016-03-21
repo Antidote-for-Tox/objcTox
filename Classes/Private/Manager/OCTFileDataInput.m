@@ -42,7 +42,7 @@
 - (nonnull NSData *)bytesWithPosition:(OCTToxFileSize)position length:(size_t)length
 {
     @try {
-        return [self.data subdataWithRange:NSMakeRange(position, length)];
+        return [self.data subdataWithRange:NSMakeRange((NSUInteger)position, length)];
     }
     @catch (NSException *ex) {
         OCTLogWarn(@"catched exception %@", ex);

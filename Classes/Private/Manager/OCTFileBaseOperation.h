@@ -49,7 +49,7 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  * Progress properties.
  */
 @property (assign, nonatomic, readonly) OCTToxFileSize bytesDone;
-@property (assign, nonatomic, readonly) CGFloat progress;
+@property (assign, nonatomic, readonly) float progress;
 @property (assign, nonatomic, readonly) OCTToxFileSize bytesPerSecond;
 @property (assign, nonatomic, readonly) CFTimeInterval eta;
 

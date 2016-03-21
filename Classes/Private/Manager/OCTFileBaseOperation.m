@@ -26,7 +26,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 @property (assign, nonatomic, readonly) OCTToxFileSize fileSize;
 
 @property (assign, nonatomic, readwrite) OCTToxFileSize bytesDone;
-@property (assign, nonatomic, readwrite) CGFloat progress;
+@property (assign, nonatomic, readwrite) float progress;
 @property (assign, nonatomic, readwrite) OCTToxFileSize bytesPerSecond;
 @property (assign, nonatomic, readwrite) CFTimeInterval eta;
 
@@ -135,7 +135,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
         self.lastUpdateProgressTime = time;
         self.lastUpdateBytesDone = bytesDone;
 
-        self.progress = (CGFloat)bytesDone / self.fileSize;
+        self.progress = (float)bytesDone / self.fileSize;
         self.bytesPerSecond = deltaBytes / deltaTime;
 
         if (bytesDone) {
