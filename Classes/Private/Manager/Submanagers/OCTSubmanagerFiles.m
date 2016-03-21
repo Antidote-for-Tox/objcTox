@@ -22,6 +22,7 @@
 #import "OCTFilePathInput.h"
 #import "OCTFilePathOutput.h"
 #import "OCTFileDataInput.h"
+#import "OCTFileDataOutput.h"
 #import "OCTSettingsStorageObject.h"
 
 static NSString *const kDownloadsTempDirectory = @"me.objcTox.downloads";
@@ -306,32 +307,20 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
         fileSize:(OCTToxFileSize)fileSize
         fileName:(NSString *)fileName
 {
-    if (fileSize == 0) {
-        OCTLogWarn(@"Received file with size 0, ignoring it.");
-        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
-        return;
-    }
-
     switch (kind) {
-        case OCTToxFileKindData: {
-            OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-            OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
-            OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
-
-            [realmManager addMessageWithFileNumber:fileNumber
-                                          fileType:OCTMessageFileTypeWaitingConfirmation
-                                          fileSize:fileSize
-                                          fileName:fileName
-                                          filePath:nil
-                                           fileUTI:[self fileUTIFromFileName:fileName]
-                                              chat:chat
-                                            sender:friend];
+        case OCTToxFileKindData:
+            [self dataFileReceiveForFileNumber:fileNumber
+                                  friendNumber:friendNumber
+                                          kind:kind
+                                      fileSize:fileSize
+                                      fileName:fileName];
             break;
-
-        }
         case OCTToxFileKindAvatar:
-            // none for now
-            [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+            [self avatarFileReceiveForFileNumber:fileNumber
+                                    friendNumber:friendNumber
+                                            kind:kind
+                                        fileSize:fileSize
+                                        fileName:fileName];
             break;
     }
 }
@@ -549,6 +538,89 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
                                                                       progressBlock:nil
                                                                        successBlock:nil
                                                                        failureBlock:nil];
+
+    [self.queue addOperation:operation];
+}
+
+- (void)dataFileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
+                        friendNumber:(OCTToxFriendNumber)friendNumber
+                                kind:(OCTToxFileKind)kind
+                            fileSize:(OCTToxFileSize)fileSize
+                            fileName:(NSString *)fileName
+{
+    if (fileSize == 0) {
+        OCTLogWarn(@"Received file with size 0, ignoring it.");
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+        return;
+    }
+
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
+
+    [realmManager addMessageWithFileNumber:fileNumber
+                                  fileType:OCTMessageFileTypeWaitingConfirmation
+                                  fileSize:fileSize
+                                  fileName:fileName
+                                  filePath:nil
+                                   fileUTI:[self fileUTIFromFileName:fileName]
+                                      chat:chat
+                                    sender:friend];
+}
+
+- (void)avatarFileReceiveForFileNumber:(OCTToxFileNumber)fileNumber
+                          friendNumber:(OCTToxFriendNumber)friendNumber
+                                  kind:(OCTToxFileKind)kind
+                              fileSize:(OCTToxFileSize)fileSize
+                              fileName:(NSString *)fileName
+{
+    OCTFriend *friend = [[self.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
+
+    if (fileSize == 0) {
+        if (friend.avatarData) {
+            [[self.dataSource managerGetRealmManager] updateObject:friend withBlock:^(OCTFriend *theFriend) {
+                theFriend.avatarData = nil;
+            }];
+        }
+        return;
+    }
+
+    if (fileSize > kOCTManagerMaxAvatarSize) {
+        OCTLogWarn(@"received avatar is too big, ignoring it, size %lld", fileSize);
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+        return;
+    }
+
+    NSData *hash = [self.dataSource.managerGetTox hashData:friend.avatarData];
+    NSData *remoteHash = [self.dataSource.managerGetTox fileGetFileIdForFileNumber:fileNumber
+                                                                      friendNumber:friendNumber
+                                                                             error:nil];
+
+    if (remoteHash && [hash isEqual:remoteHash]) {
+        OCTLogInfo(@"received same avatar, ignoring it");
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+        return;
+    }
+
+    OCTFileDataOutput *output = [OCTFileDataOutput new];
+    __weak OCTSubmanagerFiles *weakSelf = self;
+
+    OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
+                                                                             fileOutput:output
+                                                                           friendNumber:friendNumber
+                                                                             fileNumber:fileNumber
+                                                                               fileSize:fileSize
+                                                                               userInfo:nil
+                                                                          progressBlock:nil
+                                                                           successBlock:^(OCTFileBaseOperation *__nonnull operation) {
+        __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+
+        OCTFriend *friend = [[strongSelf.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
+
+        [[strongSelf.dataSource managerGetRealmManager] updateObject:friend withBlock:^(OCTFriend *theFriend) {
+            theFriend.avatarData = output.resultData;
+        }];
+    } failureBlock:nil];
 
     [self.queue addOperation:operation];
 }
