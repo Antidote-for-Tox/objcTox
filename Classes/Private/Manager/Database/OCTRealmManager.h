@@ -84,6 +84,12 @@
 - (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
+/**
+ * Converts all the OCTCalls to OCTMessageCalls.
+ * Only use this when first starting the app or during termination.
+ */
+- (void)convertAllCallsToMessages;
+
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
                                       type:(OCTToxMessageType)type
                                       chat:(OCTChat *)chat
