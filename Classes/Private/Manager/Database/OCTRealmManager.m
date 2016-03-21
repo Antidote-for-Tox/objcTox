@@ -137,6 +137,22 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
+- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock
+{
+    NSParameterAssert(updateBlock);
+    NSParameterAssert([cls isSubclassOfClass:RLMObject.class]);
+
+    dispatch_sync(self.queue, ^{
+        RLMResults *objs = [cls allObjectsInRealm:self.realm];
+
+        [self.realm beginWriteTransaction];
+        for (RLMObject *obj in objs) {
+            updateBlock(obj);
+        }
+        [self.realm commitWriteTransaction];
+    });
+}
+
 - (void)addObject:(OCTObject *)object
 {
     NSParameterAssert(object);

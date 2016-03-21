@@ -29,6 +29,8 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 @implementation OCTSubmanagerCalls : NSObject
 
+#pragma mark - Lifecycle
+
 - (instancetype)initWithTox:(OCTTox *)tox
 {
     self = [super init];
@@ -43,6 +45,13 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
     return self;
 }
+
+- (void)dealloc
+{
+    [self endAllCalls];
+}
+
+#pragma mark - Public
 
 - (BOOL)setupWithError:(NSError **)error
 {
@@ -298,6 +307,20 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = status;
     }];
+}
+
+- (void)endAllCalls
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    [self startEnginesAndTimer:NO forCall:nil];
+
+    [realmManager updateObjectsOfClass:[OCTCall class] withoutNotificationUsingBlock:^(OCTCall *call) {
+        OCTFriend *friend = call.chat.friends.firstObject;
+        [self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:nil];
+    }];
+
+    [realmManager convertAllCallsToMessages];
 }
 
 - (void)putOnPause:(BOOL)pause call:(OCTCall *)call

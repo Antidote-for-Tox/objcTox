@@ -55,6 +55,14 @@
  */
 - (void)updateObjectsWithoutNotification:(void (^)())updateBlock;
 
+/**
+ * Map `updateBlock` over all realm objects of the `cls` without sending RBQ update notifications.
+ * The note on -updateObjectsWithoutNotification: applies here too.
+ * @param cls Class of objects to be updated.
+ * @param updateBlock The block that will be applied to all the objects.
+ */
+- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock;
+
 #pragma mark -  Other methods
 
 - (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
@@ -69,6 +77,12 @@
  */
 - (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
+
+/**
+ * Converts all the OCTCalls to OCTMessageCalls.
+ * Only use this when first starting the app or during termination.
+ */
+- (void)convertAllCallsToMessages;
 
 - (OCTMessageAbstract *)addMessageWithText:(NSString *)text
                                       type:(OCTToxMessageType)type
