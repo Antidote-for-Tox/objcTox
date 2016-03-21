@@ -170,6 +170,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
                                                                       tempDirectoryPath:[self downloadsTempDirectory]
+                                                                    resultDirectoryPath:[self downloadsDirectory]
                                                                            friendNumber:message.sender.friendNumber
                                                                              fileNumber:message.messageFile.internalFileNumber
                                                                                fileSize:message.messageFile.fileSize
@@ -359,6 +360,16 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     }
 }
 
+- (NSString *)downloadsDirectory
+{
+    id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
+
+    NSString *path = fileStorage.pathForDownloadedFilesDirectory;
+    [self createDirectoryIfNeeded:path];
+
+    return path;
+}
+
 - (NSString *)uploadsDirectory
 {
     id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
@@ -419,10 +430,11 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 {
     __weak OCTSubmanagerFiles *weakSelf = self;
 
-    return ^(OCTFileBaseOperation *__nonnull operation) {
+    return ^(OCTFileBaseOperation *__nonnull operation, NSString *filePath) {
                __strong OCTSubmanagerFiles *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
             file.fileType = OCTMessageFileTypeReady;
+            file.filePath = filePath;
         }];
     };
 }

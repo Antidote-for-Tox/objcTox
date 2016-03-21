@@ -15,9 +15,12 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 @interface OCTFileDownloadOperation ()
 
 @property (strong, nonatomic, readonly) NSString *tempDirectoryPath;
+@property (strong, nonatomic, readonly) NSString *resultDirectoryPath;
+
+@property (strong, nonatomic) NSString *tempPath;
+@property (strong, nonatomic) NSString *resultPath;
 
 @property (strong, nonatomic) NSFileHandle *handle;
-@property (strong, nonatomic) NSMutableData *cache;
 
 @end
 
@@ -27,6 +30,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
                    tempDirectoryPath:(NSString *)tempDirectoryPath
+                 resultDirectoryPath:(nonnull NSString *)resultDirectoryPath
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
@@ -51,6 +55,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
     }
 
     _tempDirectoryPath = tempDirectoryPath;
+    _resultDirectoryPath = resultDirectoryPath;
 
     return self;
 }
@@ -60,8 +65,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 - (void)receiveChunk:(NSData *)chunk position:(OCTToxFileSize)position
 {
     if (! chunk) {
-        [self.handle writeData:self.cache];
-        [self finishWithSuccess];
+        [self finishDownload];
         return;
     }
 
@@ -74,16 +78,7 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
         return;
     }
 
-    if (! self.cache) {
-        self.cache = [NSMutableData new];
-    }
-    [self.cache appendData:chunk];
-
-    if (self.cache.length > kCacheSize) {
-        [self.handle writeData:self.cache];
-        self.cache = nil;
-    }
-
+    [self.handle writeData:chunk];
     [self updateBytesDone:self.bytesDone + chunk.length];
 }
 
@@ -94,15 +89,20 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
     [super operationStarted];
     NSError *error;
 
-    NSString *path = [self createNewFile:&error];
-
-    if (! path) {
+    if (! [self generateTempAndResultPath:&error]) {
         [self finishWithError:error];
         return;
     }
 
-    self.handle = [NSFileHandle fileHandleForWritingAtPath:path];
-    NSAssert(self.handle, @"Cannot open file handle");
+    [[NSFileManager defaultManager] createFileAtPath:self.tempPath contents:nil attributes:nil];
+
+    self.handle = [NSFileHandle fileHandleForWritingAtPath:self.tempPath];
+
+    if (! self.handle) {
+        OCTLogWarn(@"Cannot open file handle for path %@", self.tempPath);
+        [self finishWithError:nil];
+        return;
+    }
 
     if (! [self.tox fileSendControlForFileNumber:self.fileNumber
                                     friendNumber:self.friendNumber
@@ -115,26 +115,61 @@ static const OCTToxFileSize kCacheSize = 100 * 1024;
 
 #pragma mark -  Private
 
-- (NSString *)createNewFile:(NSError **)error
+- (BOOL)generateTempAndResultPath:(NSError **)error
 {
-    NSString *path = [self.tempDirectoryPath stringByAppendingPathComponent:self.operationId];
+    if (! [self validateDirectory:self.tempDirectoryPath error:error]) {
+        return NO;
+    }
+
+    if (! [self validateDirectory:self.resultDirectoryPath error:error]) {
+        return NO;
+    }
+
+    NSString *fileName = [[NSUUID UUID] UUIDString];
+    self.tempPath = [self.tempDirectoryPath stringByAppendingPathComponent:fileName];
+    self.resultPath = [self.resultDirectoryPath stringByAppendingPathComponent:fileName];
+
+    OCTLogInfo(@"temp path %@", self.tempPath);
+    OCTLogInfo(@"result path %@", self.resultPath);
+
+    return YES;
+}
+
+- (BOOL)validateDirectory:(NSString *)path error:(NSError **)error
+{
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    OCTLogInfo(@"saving to path %@", path);
+    BOOL isDirectory;
+    BOOL exists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
 
-    if ([fileManager fileExistsAtPath:path]) {
-        OCTLogWarn(@"file already exist, removing it");
+    if (exists && ! isDirectory) {
+        // TODO fill error
+        return NO;
+    }
 
-        if (! [fileManager removeItemAtPath:path error:error]) {
-            return nil;
+    if (! exists) {
+        if (! [fileManager createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:error]) {
+            return NO;
         }
     }
 
-    if (! [fileManager createFileAtPath:path contents:nil attributes:nil]) {
-        return nil;
+    return YES;
+}
+
+- (void)finishDownload
+{
+    [self.handle synchronizeFile];
+    self.handle = nil;
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSError *error;
+    if (! [fileManager moveItemAtPath:self.tempPath toPath:self.resultPath error:&error]) {
+        [self finishWithError:error];
+        return;
     }
 
-    return path;
+    [self finishWithSuccess:self.resultPath];
 }
 
 @end

@@ -29,7 +29,7 @@
 /**
  * Call this method in case if operation was finished.
  */
-- (void)finishWithSuccess;
+- (void)finishWithSuccess:(nonnull NSString *)filePath;
 
 /**
  * Call this method in case if operation was finished or cancelled with error.

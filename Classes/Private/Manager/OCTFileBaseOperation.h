@@ -26,8 +26,9 @@ typedef void (^OCTFileBaseOperationProgressBlock)(OCTFileBaseOperation *__nonnul
  * Block to notify about operation success.
  *
  * @param operation Operation that is running.
+ * @param filePath Path of file being loaded
  */
-typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation);
+typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation, NSString *__nonnull filePath);
 
 /**
  * Block to notify about operation failure.

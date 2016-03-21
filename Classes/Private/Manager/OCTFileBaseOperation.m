@@ -155,7 +155,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     OCTLogInfo(@"start downloading file with identifier %@", self.operationId);
 }
 
-- (void)finishWithSuccess
+- (void)finishWithSuccess:(NSString *)filePath
 {
     OCTLogInfo(@"finished with success");
 
@@ -163,7 +163,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     self.finished = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.successBlock(self);
+        self.successBlock(self, filePath);
     });
 }
 

@@ -57,7 +57,7 @@
 - (void)chunkRequestWithPosition:(OCTToxFileSize)position length:(size_t)length
 {
     if (length == 0) {
-        [self finishWithSuccess];
+        [self finishWithSuccess:self.filePath];
         return;
     }
 

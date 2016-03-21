@@ -21,13 +21,13 @@
  * Create operation.
  *
  * @param tempDirectoryPath Path to directory to store temporary files.
- * @param fileNumber Number of file to load.
- * @param fileSize Size of file in bytes.
+ * @param resultDirectoryPath Path to which file would be copied on success.
  *
  * For other parameters description see OCTFileBaseOperation.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
                    tempDirectoryPath:(nonnull NSString *)tempDirectoryPath
+                 resultDirectoryPath:(nonnull NSString *)resultDirectoryPath
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
