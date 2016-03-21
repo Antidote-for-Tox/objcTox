@@ -13,7 +13,6 @@
 
 @class OCTManagerConfiguration;
 
-@class OCTSubmanagerAvatars;
 @class OCTSubmanagerBootstrap;
 @class OCTSubmanagerCalls;
 @class OCTSubmanagerChats;
@@ -24,11 +23,6 @@
 @class OCTSubmanagerUser;
 
 @interface OCTManager : NSObject
-
-/**
- * Submanager with all user avatar methods.
- */
-@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
 
 /**
  * Submanager responsible for connecting to other nodes.

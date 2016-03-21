@@ -54,11 +54,4 @@
  */
 @property (readonly) NSString *pathForTemporaryFilesDirectory;
 
-/**
- * Returns path where all avatar images will be stored.
- *
- * @return Full path to the directory with avatar images.
- */
-@property (readonly) NSString *pathForAvatarsDirectory;
-
 @end

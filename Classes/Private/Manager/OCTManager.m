@@ -13,7 +13,6 @@
 #import "OCTToxEncryptSave.h"
 #import "OCTToxEncryptSaveConstants.h"
 #import "OCTManagerConfiguration.h"
-#import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerCalls+Private.h"
 #import "OCTSubmanagerChats+Private.h"
@@ -29,7 +28,6 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *currentConfiguration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
@@ -206,7 +204,6 @@
     NSParameterAssert(configuration.fileStorage.pathForDownloadedFilesDirectory);
     NSParameterAssert(configuration.fileStorage.pathForUploadedFilesDirectory);
     NSParameterAssert(configuration.fileStorage.pathForTemporaryFilesDirectory);
-    NSParameterAssert(configuration.fileStorage.pathForAvatarsDirectory);
 
     NSParameterAssert(configuration.options);
 }
@@ -331,7 +328,6 @@
 
 - (void)createSubmanagers
 {
-    _avatars = [self createSubmanagerWithClass:[OCTSubmanagerAvatars class]];
     _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
     _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNS class]];
@@ -440,7 +436,6 @@
     }
 
     NSArray *submanagers = @[
-        self.avatars,
         self.bootstrap,
         self.chats,
         self.dns,

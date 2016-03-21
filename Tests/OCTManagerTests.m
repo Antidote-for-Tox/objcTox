@@ -16,7 +16,6 @@
 #import "OCTToxEncryptSave.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
-#import "OCTSubmanagerAvatars+Private.h"
 #import "OCTSubmanagerBootstrap+Private.h"
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTSubmanagerDNS+Private.h"
@@ -36,7 +35,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 @property (strong, nonatomic, readonly) OCTToxAV *toxAV;
 @property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerAvatars *avatars;
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
 @property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
@@ -113,8 +111,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertNotNil(self.manager);
 
-    XCTAssertNotNil(self.manager.avatars);
-    XCTAssertEqual(self.manager.avatars.dataSource, self.manager);
     XCTAssertNotNil(self.manager.bootstrap);
     XCTAssertEqual(self.manager.bootstrap.dataSource, self.manager);
     XCTAssertNotNil(self.manager.chats);
@@ -297,7 +293,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     [self createManager];
 
     id submanager = [FakeSubmanager new];
-    self.manager.avatars = submanager;
     self.manager.bootstrap = submanager;
     self.manager.chats = submanager;
     self.manager.dns = submanager;
@@ -323,18 +318,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     id submanager = [FakeSubmanager new];
     id dummy = [NSObject new];
 
-    self.manager.avatars = submanager;
-    self.manager.bootstrap = dummy;
-    self.manager.chats = dummy;
-    self.manager.dns = dummy;
-    self.manager.files = dummy;
-    self.manager.friends = dummy;
-    self.manager.objects = dummy;
-    self.manager.user = dummy;
-
-    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
-
-    self.manager.avatars = dummy;
     self.manager.bootstrap = submanager;
     self.manager.chats = dummy;
     self.manager.dns = dummy;
@@ -345,7 +328,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = submanager;
     self.manager.dns = dummy;
@@ -356,7 +338,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.dns = submanager;
@@ -367,7 +348,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.dns = dummy;
@@ -378,7 +358,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.dns = dummy;
@@ -389,7 +368,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.dns = dummy;
@@ -400,7 +378,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
 
-    self.manager.avatars = dummy;
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
     self.manager.dns = dummy;
