@@ -151,7 +151,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
 - (void)operationStarted
 {
-    OCTLogInfo(@"start downloading file with identifier %@", self.operationId);
+    OCTLogInfo(@"start loading file with identifier %@", self.operationId);
 }
 
 - (void)finishWithSuccess
