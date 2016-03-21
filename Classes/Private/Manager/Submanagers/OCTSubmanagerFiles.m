@@ -574,6 +574,10 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
                               fileSize:(OCTToxFileSize)fileSize
                               fileName:(NSString *)fileName
 {
+    void (^cancelBlock)() = ^() {
+        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+    };
+
     OCTFriend *friend = [[self.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
 
     if (fileSize == 0) {
@@ -582,12 +586,14 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
                 theFriend.avatarData = nil;
             }];
         }
+
+        cancelBlock();
         return;
     }
 
     if (fileSize > kOCTManagerMaxAvatarSize) {
         OCTLogWarn(@"received avatar is too big, ignoring it, size %lld", fileSize);
-        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+        cancelBlock();
         return;
     }
 
@@ -598,7 +604,7 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 
     if (remoteHash && [hash isEqual:remoteHash]) {
         OCTLogInfo(@"received same avatar, ignoring it");
-        [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
+        cancelBlock();
         return;
     }
 
