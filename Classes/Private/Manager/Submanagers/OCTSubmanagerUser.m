@@ -93,7 +93,14 @@
 - (BOOL)setUserAvatar:(NSData *)avatar error:(NSError **)error
 {
     if (avatar && (avatar.length > kOCTManagerMaxAvatarSize)) {
-        // TODO handle error
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain
+                                         code:OCTSetUserAvatarErrorTooBig
+                                     userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot set user avatar",
+                          NSLocalizedFailureReasonErrorKey : @"Avatar is too big",
+                      }];
+        }
         return NO;
     }
 

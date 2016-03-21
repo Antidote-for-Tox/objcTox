@@ -10,6 +10,7 @@
 #import "OCTFileBaseOperation+Private.h"
 #import "OCTFileInputProtocol.h"
 #import "OCTLogging.h"
+#import "NSError+OCTFile.h"
 
 @interface OCTFileUploadOperation ()
 
@@ -59,6 +60,12 @@
     }
 
     NSData *data = [self.input bytesWithPosition:position length:length];
+
+    if (! data) {
+        [self finishWithError:[NSError sendFileErrorCannotReadFile]];
+        return;
+    }
+
     NSError *error;
 
     BOOL result;
@@ -76,11 +83,14 @@
     while (! result && error.code == OCTToxErrorFileSendChunkSendq);
 
     if (! result) {
+        OCTLogWarn(@"upload error %@", error);
+
         [self.tox fileSendControlForFileNumber:self.fileNumber
                                   friendNumber:self.friendNumber
                                        control:OCTToxFileControlCancel
                                          error:nil];
-        [self finishWithError:error];
+
+        [self finishWithError:[NSError acceptFileErrorFromToxFileSendChunkError:error.code]];
         return;
     }
 
@@ -93,7 +103,9 @@
 {
     [super operationStarted];
 
-    [self.input prepareToRead];
+    if (! [self.input prepareToRead]) {
+        [self finishWithError:[NSError sendFileErrorCannotReadFile]];
+    }
 }
 
 @end

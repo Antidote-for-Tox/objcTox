@@ -42,24 +42,45 @@
 
 #pragma mark -  OCTFileOutputProtocol
 
-- (void)prepareToWrite
+- (BOOL)prepareToWrite
 {
-    [[NSFileManager defaultManager] createFileAtPath:self.tempFilePath contents:nil attributes:nil];
+    if (! [[NSFileManager defaultManager] createFileAtPath:self.tempFilePath contents:nil attributes:nil]) {
+        return NO;
+    }
 
     self.handle = [NSFileHandle fileHandleForWritingAtPath:self.tempFilePath];
-    NSAssert(self.handle, @"Cannot open file handle");
+
+    if (! self.handle) {
+        return NO;
+    }
+
+    return YES;
 }
 
-- (void)writeData:(nonnull NSData *)data
+- (BOOL)writeData:(nonnull NSData *)data
 {
-    [self.handle writeData:data];
+    @try {
+        [self.handle writeData:data];
+        return YES;
+    }
+    @catch (NSException *ex) {
+        OCTLogWarn(@"catched exception %@", ex);
+    }
+
+    return NO;
 }
 
-- (void)finishWriting
+- (BOOL)finishWriting
 {
-    [self.handle synchronizeFile];
+    @try {
+        [self.handle synchronizeFile];
+    }
+    @catch (NSException *ex) {
+        OCTLogWarn(@"catched exception %@", ex);
+        return NO;
+    }
 
-    [[NSFileManager defaultManager] moveItemAtPath:self.tempFilePath toPath:self.resultFilePath error:nil];
+    return [[NSFileManager defaultManager] moveItemAtPath:self.tempFilePath toPath:self.resultFilePath error:nil];
 }
 
 - (void)cancel

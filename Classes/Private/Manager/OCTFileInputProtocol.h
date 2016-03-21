@@ -13,14 +13,18 @@
 
 /**
  * Prepare input to read. This method will be called before first call to bytesWithPosition:length:.
+ *
+ * @return YES on success, NO on failure.
  */
-- (void)prepareToRead;
+- (BOOL)prepareToRead;
 
 /**
  * Provide bytes.
  *
  * @param position Start position to start reading from.
  * @param length Length of bytes to read.
+ *
+ * @return NSData on success, nil on failure
  */
 - (nonnull NSData *)bytesWithPosition:(OCTToxFileSize)position length:(size_t)length;
 

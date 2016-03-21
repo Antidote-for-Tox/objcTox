@@ -62,8 +62,8 @@ static NSString *const kCellIdentifier = @"fileCell";
         return;
     }
 
-    [self.manager.files acceptFileTransfer:message];
-    [self.manager.files addProgressSubscriber:self forFileTransfer:message];
+    [self.manager.files acceptFileTransfer:message failureBlock:nil];
+    [self.manager.files addProgressSubscriber:self forFileTransfer:message error:nil];
 }
 
 - (IBAction)declineButtonPressed:(id)sender
@@ -74,7 +74,7 @@ static NSString *const kCellIdentifier = @"fileCell";
         return;
     }
 
-    [self.manager.files cancelFileTransfer:message];
+    [self.manager.files cancelFileTransfer:message error:nil];
 }
 
 - (IBAction)pauseButtonPressed:(id)sender
@@ -85,7 +85,7 @@ static NSString *const kCellIdentifier = @"fileCell";
         return;
     }
 
-    [self.manager.files pauseFileTransfer:YES message:message];
+    [self.manager.files pauseFileTransfer:YES message:message error:nil];
 }
 
 - (IBAction)resumeButtonPressed:(id)sender
@@ -96,7 +96,7 @@ static NSString *const kCellIdentifier = @"fileCell";
         return;
     }
 
-    [self.manager.files pauseFileTransfer:NO message:message];
+    [self.manager.files pauseFileTransfer:NO message:message error:nil];
 }
 
 #pragma mark - NSTableViewDelegate
@@ -169,7 +169,7 @@ static NSString *const kCellIdentifier = @"fileCell";
     NSIndexPath *indexPath = [self.filesController indexPathForObject:message];
 
     if (! indexPath) {
-        [self.manager.files removeProgressSubscriber:self forFileTransfer:message];
+        [self.manager.files removeProgressSubscriber:self forFileTransfer:message error:nil];
         return;
     }
 

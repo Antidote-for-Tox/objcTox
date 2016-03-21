@@ -24,6 +24,7 @@
 #import "OCTFileDataInput.h"
 #import "OCTFileDataOutput.h"
 #import "OCTSettingsStorageObject.h"
+#import "NSError+OCTFile.h"
 
 static NSString *const kDownloadsTempDirectory = @"me.dvor.objcTox.downloads";
 
@@ -94,7 +95,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
 #pragma mark -  Public
 
-- (void)sendData:(nonnull NSData *)data withFileName:(nonnull NSString *)fileName toChat:(nonnull OCTChat *)chat
+- (void)sendData:(nonnull NSData *)data
+    withFileName:(nonnull NSString *)fileName
+          toChat:(nonnull OCTChat *)chat
+    failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
 {
     NSParameterAssert(data);
     NSParameterAssert(fileName);
@@ -104,15 +108,19 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     if (! [data writeToFile:filePath atomically:NO]) {
         OCTLogWarn(@"cannot save data to temp directory.");
+        if (failureBlock) {
+            failureBlock([NSError sendFileErrorCannotSaveFileToUploads]);
+        }
         return;
     }
 
-    [self sendFile:filePath overrideFileName:fileName toChat:chat];
+    [self sendFile:filePath overrideFileName:fileName toChat:chat failureBlock:failureBlock];
 }
 
 - (void)    sendFile:(nonnull NSString *)filePath
     overrideFileName:(nullable NSString *)overrideFileName
               toChat:(nonnull OCTChat *)chat
+        failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
 {
     NSParameterAssert(filePath);
     NSParameterAssert(chat);
@@ -124,6 +132,9 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     if (! attributes) {
         OCTLogWarn(@"cannot read file %@", filePath);
+        if (failureBlock) {
+            failureBlock([NSError sendFileErrorCannotReadFile]);
+        }
         return;
     }
 
@@ -139,6 +150,9 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     if (fileNumber == kOCTToxFileNumberFailure) {
         OCTLogWarn(@"cannot send file %@", error);
+        if (failureBlock) {
+            failureBlock([NSError sendFileErrorFromToxFileSendError:error.code]);
+        }
         return;
     }
 
@@ -163,25 +177,36 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                            userInfo:userInfo
                                                                       progressBlock:[self fileProgressBlockWithMessage:message]
                                                                        successBlock:[self fileSuccessBlockWithMessage:message]
-                                                                       failureBlock:[self fileFailureBlockWithMessage:message]];
+                                                                       failureBlock:[self  fileFailureBlockWithMessage:message
+                                                                                                      userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
 }
 
 - (void)acceptFileTransfer:(OCTMessageAbstract *)message
+              failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
 {
     if (! message.sender) {
         OCTLogWarn(@"specified wrong message: no sender. %@", message);
+        if (failureBlock) {
+            failureBlock([NSError acceptFileErrorWrongMessage:message]);
+        }
         return;
     }
 
     if (! message.messageFile) {
         OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
+        if (failureBlock) {
+            failureBlock([NSError acceptFileErrorWrongMessage:message]);
+        }
         return;
     }
 
     if (message.messageFile.fileType != OCTMessageFileTypeWaitingConfirmation) {
         OCTLogWarn(@"specified wrong message: wrong file type, should be WaitingConfirmation. %@", message);
+        if (failureBlock) {
+            failureBlock([NSError acceptFileErrorWrongMessage:message]);
+        }
         return;
     }
 
@@ -203,16 +228,20 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                                userInfo:userInfo
                                                                           progressBlock:[self fileProgressBlockWithMessage:message]
                                                                            successBlock:[self fileSuccessBlockWithMessage:message]
-                                                                           failureBlock:[self fileFailureBlockWithMessage:message]];
+                                                                           failureBlock:[self  fileFailureBlockWithMessage:message
+                                                                                                          userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
 }
 
-- (void)cancelFileTransfer:(OCTMessageAbstract *)message
+- (BOOL)cancelFileTransfer:(OCTMessageAbstract *)message error:(NSError **)error
 {
     if (! message.messageFile) {
         OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
-        return;
+        if (error) {
+            *error = [NSError fileTransferErrorWrongMessage:message];
+        }
+        return NO;
     }
 
     OCTFriend *friend = [message.chat.friends firstObject];
@@ -229,13 +258,18 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeCanceled;
     }];
+
+    return YES;
 }
 
-- (void)pauseFileTransfer:(BOOL)pause message:(nonnull OCTMessageAbstract *)message
+- (BOOL)pauseFileTransfer:(BOOL)pause message:(nonnull OCTMessageAbstract *)message error:(NSError **)error
 {
     if (! message.messageFile) {
         OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
-        return;
+        if (error) {
+            *error = [NSError fileTransferErrorWrongMessage:message];
+        }
+        return NO;
     }
 
     OCTToxFileControl control;
@@ -247,7 +281,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
         if ((message.messageFile.fileType != OCTMessageFileTypeLoading) && ! pausedByFriend) {
             OCTLogWarn(@"message in wrong state %ld", (long)message.messageFile.fileType);
-            return;
+            return YES;
         }
 
         control = OCTToxFileControlPause;
@@ -258,7 +292,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         BOOL pausedByUser = message.messageFile.pausedBy & OCTMessageFilePausedByUser;
         if ((message.messageFile.fileType != OCTMessageFileTypePaused) && ! pausedByUser) {
             OCTLogWarn(@"message in wrong state %ld", (long)message.messageFile.fileType);
-            return;
+            return YES;
         }
 
         control = OCTToxFileControlResume;
@@ -269,23 +303,28 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     OCTFriend *friend = [message.chat.friends firstObject];
 
-    NSError *error;
     [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
                                                    friendNumber:friend.friendNumber
                                                         control:control
-                                                          error:&error];
+                                                          error:nil];
 
     [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
         file.fileType = type;
         file.pausedBy = pausedBy;
     }];
+
+    return YES;
 }
 
-- (void)addProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
+- (BOOL)addProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
               forFileTransfer:(nonnull OCTMessageAbstract *)message
+                        error:(NSError **)error
 {
     if (! message.messageFile) {
-        return;
+        if (error) {
+            *error = [NSError fileTransferErrorWrongMessage:message];
+        }
+        return NO;
     }
 
     OCTFriend *friend = [message.chat.friends firstObject];
@@ -294,7 +333,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                        friendNumber:friend.friendNumber];
 
     if (! operation) {
-        return;
+        return YES;
     }
 
     [subscriber submanagerFilesOnProgressUpdate:operation.progress
@@ -304,13 +343,19 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
     [progressSubscribers addObject:subscriber];
+
+    return YES;
 }
 
-- (void)removeProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
+- (BOOL)removeProgressSubscriber:(nonnull id<OCTSubmanagerFilesProgressSubscriber>)subscriber
                  forFileTransfer:(nonnull OCTMessageAbstract *)message
+                           error:(NSError **)error
 {
     if (! message.messageFile) {
-        return;
+        if (error) {
+            *error = [NSError fileTransferErrorWrongMessage:message];
+        }
+        return NO;
     }
 
     OCTFriend *friend = [message.chat.friends firstObject];
@@ -319,11 +364,13 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                        friendNumber:friend.friendNumber];
 
     if (! operation) {
-        return;
+        return YES;
     }
 
     NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
     [progressSubscribers removeObject:subscriber];
+
+    return YES;
 }
 
 #pragma mark -  OCTToxDelegate
@@ -565,6 +612,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 }
 
 - (OCTFileBaseOperationFailureBlock)fileFailureBlockWithMessage:(OCTMessageAbstract *)message
+                                               userFailureBlock:(void (^)(NSError *))userFailureBlock
 {
     __weak OCTSubmanagerFiles *weakSelf = self;
 
@@ -572,6 +620,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                __strong OCTSubmanagerFiles *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
             file.fileType = OCTMessageFileTypeCanceled;
+
+            if (userFailureBlock) {
+                userFailureBlock(error);
+            }
         }];
     };
 }

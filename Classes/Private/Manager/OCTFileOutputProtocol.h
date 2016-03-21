@@ -12,20 +12,26 @@
 
 /**
  * Prepare input to write. This method will be called before first call to writeData:.
+ *
+ * @return YES on success, NO on failure.
  */
-- (void)prepareToWrite;
+- (BOOL)prepareToWrite;
 
 /**
  * Write data to output.
  *
  * @param data Data to write.
+ *
+ * @return YES on success, NO on failure.
  */
-- (void)writeData:(nonnull NSData *)data;
+- (BOOL)writeData:(nonnull NSData *)data;
 
 /**
  * This method is called after last writeData: method.
+ *
+ * @return YES on success, NO on failure.
  */
-- (void)finishWriting;
+- (BOOL)finishWriting;
 
 /**
  * This method is called if all progress was canceled. Do needed cleanup.

@@ -19,20 +19,23 @@
 
 #pragma mark -  OCTFileOutputProtocol
 
-- (void)prepareToWrite
+- (BOOL)prepareToWrite
 {
     self.tempData = [NSMutableData new];
+    return YES;
 }
 
-- (void)writeData:(nonnull NSData *)data
+- (BOOL)writeData:(nonnull NSData *)data
 {
     [self.tempData appendData:data];
+    return YES;
 }
 
-- (void)finishWriting
+- (BOOL)finishWriting
 {
     self.resultData = [self.tempData copy];
     self.tempData = nil;
+    return YES;
 }
 
 - (void)cancel

@@ -143,6 +143,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
         }
 
         OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", self.progress, self.bytesPerSecond, self.eta);
+
         if (self.progressBlock) {
             self.progressBlock(self);
         }

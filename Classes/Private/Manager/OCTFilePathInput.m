@@ -7,6 +7,7 @@
 //
 
 #import "OCTFilePathInput.h"
+#import "OCTLogging.h"
 
 @interface OCTFilePathInput ()
 
@@ -34,20 +35,31 @@
 
 #pragma mark -  OCTFileInputProtocol
 
-- (void)prepareToRead
+- (BOOL)prepareToRead
 {
     self.handle = [NSFileHandle fileHandleForReadingAtPath:self.filePath];
-    NSAssert(self.handle, @"Cannot open file handle");
+
+    if (! self.handle) {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (NSData *)bytesWithPosition:(OCTToxFileSize)position length:(size_t)length
 {
-    // TODO handle exceptions
-    if (self.handle.offsetInFile != position) {
-        [self.handle seekToFileOffset:position];
+    @try {
+        if (self.handle.offsetInFile != position) {
+            [self.handle seekToFileOffset:position];
+        }
+
+        return [self.handle readDataOfLength:length];
+    }
+    @catch (NSException *ex) {
+        OCTLogWarn(@"catched exception %@", ex);
     }
 
-    return [self.handle readDataOfLength:length];
+    return nil;
 }
 
 @end

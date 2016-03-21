@@ -87,7 +87,7 @@
  *
  * @param avatar NSData representation of avatar image.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See <placeholder> for all error codes.
+ * See OCTSetUserAvatarError for all error codes.
  *
  * @return YES on success, NO on failure.
  */

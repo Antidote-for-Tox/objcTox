@@ -10,6 +10,7 @@
 #import "OCTFileBaseOperation+Private.h"
 #import "OCTFileOutputProtocol.h"
 #import "OCTLogging.h"
+#import "NSError+OCTFile.h"
 
 @interface OCTFileDownloadOperation ()
 
@@ -54,21 +55,30 @@
 - (void)receiveChunk:(NSData *)chunk position:(OCTToxFileSize)position
 {
     if (! chunk) {
-        [self.output finishWriting];
-        [self finishWithSuccess];
+        if ([self.output finishWriting]) {
+            [self finishWithSuccess];
+        }
+        else {
+            [self finishWithError:[NSError acceptFileErrorCannotWriteToFile]];
+        }
         return;
     }
 
     if (self.bytesDone != position) {
+        OCTLogWarn(@"bytesDone doesn't match position");
         [self.tox fileSendControlForFileNumber:self.fileNumber
                                   friendNumber:self.friendNumber
                                        control:OCTToxFileControlCancel
                                          error:nil];
-        [self finishWithError:nil];
+        [self finishWithError:[NSError acceptFileErrorInternalError]];
         return;
     }
 
-    [self.output writeData:chunk];
+    if (! [self.output writeData:chunk]) {
+        [self finishWithError:[NSError acceptFileErrorCannotWriteToFile]];
+        return;
+    }
+
     [self updateBytesDone:self.bytesDone + chunk.length];
 }
 
@@ -77,15 +87,18 @@
 - (void)operationStarted
 {
     [super operationStarted];
+
+    if (! [self.output prepareToWrite]) {
+        [self finishWithError:[NSError acceptFileErrorCannotWriteToFile]];
+    }
+
     NSError *error;
-
-    [self.output prepareToWrite];
-
     if (! [self.tox fileSendControlForFileNumber:self.fileNumber
                                     friendNumber:self.friendNumber
                                          control:OCTToxFileControlResume
                                            error:&error]) {
-        [self finishWithError:error];
+        OCTLogWarn(@"cannot send control %@", error);
+        [self finishWithError:[NSError acceptFileErrorFromToxFileControl:error.code]];
         return;
     }
 }

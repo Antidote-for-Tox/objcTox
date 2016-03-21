@@ -7,6 +7,7 @@
 //
 
 #import "OCTFileDataInput.h"
+#import "OCTLogging.h"
 
 @interface OCTFileDataInput ()
 
@@ -33,14 +34,21 @@
 
 #pragma mark -  OCTFileInputProtocol
 
-- (void)prepareToRead
+- (BOOL)prepareToRead
 {
-    // nop
+    return YES;
 }
 
 - (nonnull NSData *)bytesWithPosition:(OCTToxFileSize)position length:(size_t)length
 {
-    return [self.data subdataWithRange:NSMakeRange(position, length)];
+    @try {
+        return [self.data subdataWithRange:NSMakeRange(position, length)];
+    }
+    @catch (NSException *ex) {
+        OCTLogWarn(@"catched exception %@", ex);
+    }
+
+    return nil;
 }
 
 @end

@@ -53,6 +53,10 @@
 		1183BC901CA036AA000CD310 /* OCTFileDataOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC8E1CA036AA000CD310 /* OCTFileDataOutput.m */; };
 		1183BC911CA036AA000CD310 /* OCTFileDataOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC8E1CA036AA000CD310 /* OCTFileDataOutput.m */; };
 		1183BC921CA036AA000CD310 /* OCTFileDataOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC8E1CA036AA000CD310 /* OCTFileDataOutput.m */; };
+		1183BC951CA076BC000CD310 /* NSError+OCTFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC941CA076BC000CD310 /* NSError+OCTFile.m */; };
+		1183BC961CA076BC000CD310 /* NSError+OCTFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC941CA076BC000CD310 /* NSError+OCTFile.m */; };
+		1183BC971CA076BC000CD310 /* NSError+OCTFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC941CA076BC000CD310 /* NSError+OCTFile.m */; };
+		1183BC981CA076BC000CD310 /* NSError+OCTFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1183BC941CA076BC000CD310 /* NSError+OCTFile.m */; };
 		119B13E51B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
 		119B13E61B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
 		119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */; };
@@ -389,6 +393,8 @@
 		1183BC881CA035CD000CD310 /* OCTFileDataInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFileDataInput.m; sourceTree = "<group>"; };
 		1183BC8D1CA036AA000CD310 /* OCTFileDataOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTFileDataOutput.h; sourceTree = "<group>"; };
 		1183BC8E1CA036AA000CD310 /* OCTFileDataOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFileDataOutput.m; sourceTree = "<group>"; };
+		1183BC931CA076BC000CD310 /* NSError+OCTFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+OCTFile.h"; sourceTree = "<group>"; };
+		1183BC941CA076BC000CD310 /* NSError+OCTFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+OCTFile.m"; sourceTree = "<group>"; };
 		119B13DE1B9AF58B006DA6FF /* OCTToxEncryptSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTToxEncryptSave.h; sourceTree = "<group>"; };
 		119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxEncryptSave.m; sourceTree = "<group>"; };
 		119B13E91B9AF78F006DA6FF /* OCTToxEncryptSaveConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTToxEncryptSaveConstants.h; sourceTree = "<group>"; };
@@ -652,6 +658,8 @@
 		11AF88F81C9896F000AD1D9F /* Files */ = {
 			isa = PBXGroup;
 			children = (
+				1183BC931CA076BC000CD310 /* NSError+OCTFile.h */,
+				1183BC941CA076BC000CD310 /* NSError+OCTFile.m */,
 				11AF88FF1C98C25A00AD1D9F /* OCTFileBaseOperation.h */,
 				11AF89001C98C25A00AD1D9F /* OCTFileBaseOperation.m */,
 				115B6FC11C9DDB6D00C65334 /* OCTFileBaseOperation+Private.h */,
@@ -1578,6 +1586,7 @@
 				9CB44BF91B84D9E1007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C051B84D9E1007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44C041B84D9E1007FA7B6 /* RLMArray+Utilities.m in Sources */,
+				1183BC951CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44BEA1B84D9E1007FA7B6 /* OCTMessageFile.m in Sources */,
 				11D651181B89232200C3DD23 /* OCTCallsViewController.m in Sources */,
 				9CB44B941B84D91C007FA7B6 /* OCTUserViewController.m in Sources */,
@@ -1638,6 +1647,7 @@
 				11D650E21B89226800C3DD23 /* OCTCallTimer.m in Sources */,
 				9CB44C151B84DBA3007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 				9CB44C071B84DBA3007FA7B6 /* OCTChat.m in Sources */,
+				1183BC961CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44C191B84DBA3007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
 				9CB44C1E1B84DBA3007FA7B6 /* OCTToxOptions.m in Sources */,
 				11D650DE1B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
@@ -1719,6 +1729,7 @@
 				9CB44C681B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */,
 				119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
+				1183BC971CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44C5F1B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
 				9CB44C6C1B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
 				F009D9AE1C195DBA008243EF /* OCTBootStrapViewController.m in Sources */,
@@ -1805,6 +1816,7 @@
 				11D650E41B89226800C3DD23 /* OCTCallTimer.m in Sources */,
 				9CB44C811B84DCFB007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C751B84DCFB007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
+				1183BC981CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44C921B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
 				11D650E01B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
 				11D651091B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
