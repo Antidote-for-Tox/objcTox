@@ -42,6 +42,12 @@
 - (void)deleteObject:(OCTObject *)object;
 
 /**
+ * Deletes all objects of a class.
+ * @param cls Class of objects to be deleted.
+ */
+- (void)deleteObjectsOfClass:(Class)cls;
+
+/**
  * All realm objects should be updated ONLY with this method.
  *
  * Specified object will be passed in block.
@@ -54,6 +60,14 @@
  * inconsistent after updating. This method is designed to be used on startup before any user interaction.
  */
 - (void)updateObjectsWithoutNotification:(void (^)())updateBlock;
+
+/**
+ * Map `updateBlock` over all realm objects of the `cls` without sending RBQ update notifications.
+ * The note on -updateObjectsWithoutNotification: applies here too.
+ * @param cls Class of objects to be updated.
+ * @param updateBlock The block that will be applied to all the objects.
+ */
+- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock;
 
 #pragma mark -  Other methods
 

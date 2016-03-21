@@ -137,6 +137,22 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
+- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock
+{
+    NSParameterAssert(updateBlock);
+    NSParameterAssert([cls isSubclassOfClass:RLMObject.class]);
+
+    dispatch_sync(self.queue, ^{
+        RLMResults *objs = [cls allObjectsInRealm:self.realm];
+
+        [self.realm beginWriteTransaction];
+        for (RLMObject *obj in objs) {
+            updateBlock(obj);
+        }
+        [self.realm commitWriteTransaction];
+    });
+}
+
 - (void)addObject:(OCTObject *)object
 {
     NSParameterAssert(object);
@@ -167,6 +183,24 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
         [self.realm commitWriteTransaction];
     });
+}
+
+- (void)deleteObjectsOfClass:(Class)cls
+{
+    NSParameterAssert([[cls class] isSubclassOfClass:[OCTObject class]]);
+    DDLogInfo(@"OCTRealmManager: delete all objects of type %@", [cls class]);
+
+    RLMResults *allobjects = [cls allObjects];
+
+    dispatch_sync(self.queue, ^{
+        [self.realm beginWriteTransaction];
+
+        [[self logger] willDeleteObjects:allobjects];
+        [self.realm deleteObjects:allobjects];
+
+        [self.realm commitWriteTransaction];
+    });
+
 }
 
 #pragma mark -  Other methods
