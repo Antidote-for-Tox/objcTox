@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 - Bootstrap nodes updated and moved to separate json file.
 - Realm updated to version 0.98.5.
+- Killing all active calls when killing toxav.
 
 ### Fixes
 - Bug with switching to wrong camera on iOS.

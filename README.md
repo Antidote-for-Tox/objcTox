@@ -24,6 +24,8 @@ See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current a
 - Sending and receiving messages.
 - tox1 and tox3 DNS discovery.
 - Audio and video calls.
+- File transfers.
+- User avatars.
 
 #### What's next?
 
