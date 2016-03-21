@@ -24,6 +24,12 @@
 @property OCTMessageFileType fileType;
 
 /**
+ * In case if fileType is equal to OCTMessageFileTypePaused this property will contain information
+ * by whom file transfer was paused.
+ */
+@property OCTMessageFilePausedBy pausedBy;
+
+/**
  * Size of file in bytes.
  */
 @property OCTToxFileSize fileSize;

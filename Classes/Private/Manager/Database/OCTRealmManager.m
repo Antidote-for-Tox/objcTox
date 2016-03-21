@@ -73,7 +73,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Basic methods
 
-- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class
+- (id)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class
 {
     NSParameterAssert(uniqueIdentifier);
     NSParameterAssert(class);

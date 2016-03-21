@@ -18,13 +18,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Gn-mW-Fx9">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <rect key="frame" x="0.0" y="40" width="480" height="232"/>
                     <clipView key="contentView" id="TyA-XD-Mii">
-                        <rect key="frame" x="1" y="0.0" width="478" height="271"/>
+                        <rect key="frame" x="1" y="0.0" width="478" height="231"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="hkF-wS-k9D" viewBased="YES" id="shY-H6-tes">
-                                <rect key="frame" x="0.0" y="0.0" width="479" height="248"/>
+                                <rect key="frame" x="0.0" y="0.0" width="478" height="208"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -62,7 +62,7 @@
                                             </tableCellView>
                                         </prototypeCellViews>
                                     </tableColumn>
-                                    <tableColumn identifier="" width="136" minWidth="10" maxWidth="3.4028234663852886e+38" id="VGF-3j-UwG">
+                                    <tableColumn identifier="" width="135" minWidth="10" maxWidth="3.4028234663852886e+38" id="VGF-3j-UwG">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -103,7 +103,7 @@
                         </subviews>
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </clipView>
-                    <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="aV4-SX-bZ0">
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="aV4-SX-bZ0">
                         <rect key="frame" x="1" y="255" width="478" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
@@ -116,12 +116,60 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NHP-k7-ZQ9">
+                    <rect key="frame" x="5" y="3" width="88" height="32"/>
+                    <buttonCell key="cell" type="push" title="Receive" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Fs-cK-LT2">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="receiveButtonPressed:" target="-2" id="4bj-47-Fk3"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zHn-bO-wq3">
+                    <rect key="frame" x="113" y="3" width="86" height="32"/>
+                    <buttonCell key="cell" type="push" title="Decline" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fzm-3E-gNO">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="declineButtonPressed:" target="-2" id="hwj-vU-yPG"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ec3-3z-kAr">
+                    <rect key="frame" x="222" y="3" width="77" height="32"/>
+                    <buttonCell key="cell" type="push" title="Pause" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BXs-lv-HMx">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="pauseButtonPressed:" target="-2" id="kP8-y1-PsC"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SIh-QM-kli">
+                    <rect key="frame" x="321" y="3" width="89" height="32"/>
+                    <buttonCell key="cell" type="push" title="Resume" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iln-xZ-OWK">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="resumeButtonPressed:" target="-2" id="jhX-td-seF"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
+                <constraint firstItem="NHP-k7-ZQ9" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="11" id="7kF-kf-4fo"/>
+                <constraint firstItem="ec3-3z-kAr" firstAttribute="centerY" secondItem="zHn-bO-wq3" secondAttribute="centerY" id="ANX-TX-Rws"/>
+                <constraint firstItem="ec3-3z-kAr" firstAttribute="leading" secondItem="zHn-bO-wq3" secondAttribute="trailing" constant="35" id="HkJ-yQ-Vvm"/>
+                <constraint firstItem="zHn-bO-wq3" firstAttribute="leading" secondItem="NHP-k7-ZQ9" secondAttribute="trailing" constant="32" id="JgK-Hy-PYP"/>
+                <constraint firstAttribute="bottom" secondItem="NHP-k7-ZQ9" secondAttribute="bottom" constant="10" id="P3C-VZ-khz"/>
+                <constraint firstItem="SIh-QM-kli" firstAttribute="centerY" secondItem="ec3-3z-kAr" secondAttribute="centerY" id="RAp-LZ-jU6"/>
                 <constraint firstItem="2Gn-mW-Fx9" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="VWz-eX-UnV"/>
                 <constraint firstAttribute="trailing" secondItem="2Gn-mW-Fx9" secondAttribute="trailing" id="ZSx-Mi-aca"/>
-                <constraint firstAttribute="bottom" secondItem="2Gn-mW-Fx9" secondAttribute="bottom" id="aXU-ru-Oc8"/>
+                <constraint firstItem="NHP-k7-ZQ9" firstAttribute="centerY" secondItem="zHn-bO-wq3" secondAttribute="centerY" id="cpX-Rh-82X"/>
+                <constraint firstItem="SIh-QM-kli" firstAttribute="leading" secondItem="ec3-3z-kAr" secondAttribute="trailing" constant="34" id="q5p-lJ-vP1"/>
                 <constraint firstItem="2Gn-mW-Fx9" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="tuH-hd-2K3"/>
+                <constraint firstItem="NHP-k7-ZQ9" firstAttribute="top" secondItem="2Gn-mW-Fx9" secondAttribute="bottom" constant="9" id="uYB-od-6pq"/>
             </constraints>
         </customView>
     </objects>

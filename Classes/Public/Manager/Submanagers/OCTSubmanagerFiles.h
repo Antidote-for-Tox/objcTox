@@ -56,6 +56,16 @@
 - (void)cancelFileTransfer:(nonnull OCTMessageAbstract *)message;
 
 /**
+ * Pause or resume file transfer.
+ * - For pausing transfer should be in Loading state or paused by friend, otherwise nothing will happen.
+ * - For resuming transfer should be in Paused state and paused by user, otherwise nothing will happen.
+ *
+ * @param pause Flag notifying of pausing/resuming file transfer.
+ * @param message Message with file transfer. Message should have OCTMessageFile.
+ */
+- (void)pauseFileTransfer:(BOOL)pause message:(nonnull OCTMessageAbstract *)message;
+
+/**
  * Add progress subscriber for given file transfer. Subscriber will receive progress immediately after subscribing.
  *
  * @param subscriber Object listening to progress protocol.

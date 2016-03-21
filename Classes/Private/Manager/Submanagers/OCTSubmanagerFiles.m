@@ -28,6 +28,7 @@
 static NSString *const kDownloadsTempDirectory = @"me.dvor.objcTox.downloads";
 
 static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
+static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
 @interface OCTSubmanagerFiles ()
 
@@ -151,7 +152,7 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
                                                                     chat:chat
                                                                   sender:nil];
 
-    NSDictionary *userInfo = [self createOperationUserInfo];
+    NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
     OCTFilePathInput *input = [[OCTFilePathInput alloc] initWithFilePath:filePath];
 
     OCTFileUploadOperation *operation = [[OCTFileUploadOperation alloc] initWithTox:[self.dataSource managerGetTox]
@@ -192,7 +193,7 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
         file.filePath = output.resultFilePath;
     }];
 
-    NSDictionary *userInfo = [self createOperationUserInfo];
+    NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
                                                                              fileOutput:output
@@ -223,13 +224,60 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 
     OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
                                                        friendNumber:friend.friendNumber];
-
-    if (operation) {
-        [operation cancel];
-    }
+    [operation cancel];
 
     [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeCanceled;
+    }];
+}
+
+- (void)pauseFileTransfer:(BOOL)pause message:(nonnull OCTMessageAbstract *)message
+{
+    if (! message.messageFile) {
+        OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
+        return;
+    }
+
+    OCTToxFileControl control;
+    OCTMessageFileType type;
+    OCTMessageFilePausedBy pausedBy = message.messageFile.pausedBy;
+
+    if (pause) {
+        BOOL pausedByFriend = message.messageFile.pausedBy & OCTMessageFilePausedByFriend;
+
+        if ((message.messageFile.fileType != OCTMessageFileTypeLoading) && ! pausedByFriend) {
+            OCTLogWarn(@"message in wrong state %ld", (long)message.messageFile.fileType);
+            return;
+        }
+
+        control = OCTToxFileControlPause;
+        type = OCTMessageFileTypePaused;
+        pausedBy |= OCTMessageFilePausedByUser;
+    }
+    else {
+        BOOL pausedByUser = message.messageFile.pausedBy & OCTMessageFilePausedByUser;
+        if ((message.messageFile.fileType != OCTMessageFileTypePaused) && ! pausedByUser) {
+            OCTLogWarn(@"message in wrong state %ld", (long)message.messageFile.fileType);
+            return;
+        }
+
+        control = OCTToxFileControlResume;
+        pausedBy &= ~OCTMessageFilePausedByUser;
+
+        type = (pausedBy == OCTMessageFilePausedByNone) ? OCTMessageFileTypeLoading : OCTMessageFileTypePaused;
+    }
+
+    OCTFriend *friend = [message.chat.friends firstObject];
+
+    NSError *error;
+    [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
+                                                   friendNumber:friend.friendNumber
+                                                        control:control
+                                                          error:&error];
+
+    [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+        file.fileType = type;
+        file.pausedBy = pausedBy;
     }];
 }
 
@@ -284,16 +332,37 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
     friendNumber:(OCTToxFriendNumber)friendNumber
       fileNumber:(OCTToxFileNumber)fileNumber
 {
+    OCTFileBaseOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
+
+    NSString *identifier = operation.userInfo[kMessageIdentifierKey];
+    OCTMessageAbstract *message;
+
+    if (identifier) {
+        message = [self.dataSource.managerGetRealmManager objectWithUniqueIdentifier:identifier
+                                                                               class:[OCTMessageAbstract class]];
+    }
+
     switch (control) {
-        case OCTToxFileControlResume:
-            // TODO handle resuming paused transfers.
+        case OCTToxFileControlResume: {
+            [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+                file.pausedBy &= ~OCTMessageFilePausedByFriend;
+                file.fileType = (file.pausedBy == OCTMessageFilePausedByNone) ? OCTMessageFileTypeLoading : OCTMessageFileTypePaused;
+            }];
             break;
-        case OCTToxFileControlPause:
-            // TODO pause transfer.
+        }
+        case OCTToxFileControlPause: {
+            [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+                file.pausedBy |= OCTMessageFilePausedByFriend;
+                file.fileType = OCTMessageFileTypePaused;
+            }];
             break;
+        }
         case OCTToxFileControlCancel: {
-            OCTFileBaseOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
             [operation cancel];
+
+            [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+                file.fileType = OCTMessageFileTypeCanceled;
+            }];
             break;
         }
     }
@@ -457,6 +526,11 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 
 - (void)updateMessageFile:(OCTMessageAbstract *)message withBlock:(void (^)(OCTMessageFile *))block
 {
+    if (! message) {
+        DDLogWarn(@"no message to update");
+        return;
+    }
+
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:message.messageFile withBlock:block];
@@ -502,10 +576,11 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
     };
 }
 
-- (NSDictionary *)createOperationUserInfo
+- (NSDictionary *)fileOperationUserInfoWithMessage:(OCTMessageAbstract *)message
 {
     return @{
                kProgressSubscribersKey : [NSHashTable weakObjectsHashTable],
+               kMessageIdentifierKey : message.uniqueIdentifier,
     };
 }
 

@@ -51,6 +51,23 @@ typedef NS_ENUM(NSInteger, OCTMessageFileType) {
     OCTMessageFileTypeReady,
 };
 
+typedef NS_ENUM(NSInteger, OCTMessageFilePausedBy) {
+    /**
+     * File transfer isn't paused.
+     */
+    OCTMessageFilePausedByNone = 0,
+
+    /**
+     * File transfer is paused by user.
+     */
+    OCTMessageFilePausedByUser = 1 << 0,
+
+        /**
+         * File transfer is paused by friend.
+         */
+        OCTMessageFilePausedByFriend = 1 << 1,
+};
+
 extern NSString *const kOCTManagerErrorDomain;
 
 typedef NS_ENUM(NSInteger, OCTManagerInitError) {

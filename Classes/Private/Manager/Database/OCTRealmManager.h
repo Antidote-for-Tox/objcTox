@@ -33,7 +33,7 @@
 
 #pragma mark -  Basic methods
 
-- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class;
+- (id)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class;
 - (RBQFetchRequest *)fetchRequestForClass:(Class)class withPredicate:(NSPredicate *)predicate;
 
 - (void)addObject:(OCTObject *)object;

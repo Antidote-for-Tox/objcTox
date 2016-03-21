@@ -54,6 +54,51 @@ static NSString *const kCellIdentifier = @"fileCell";
     return self;
 }
 
+- (IBAction)receiveButtonPressed:(id)sender
+{
+    OCTMessageAbstract *message = [self messageForCurrentlySelectedRow];
+
+    if (! message) {
+        return;
+    }
+
+    [self.manager.files acceptFileTransfer:message];
+    [self.manager.files addProgressSubscriber:self forFileTransfer:message];
+}
+
+- (IBAction)declineButtonPressed:(id)sender
+{
+    OCTMessageAbstract *message = [self messageForCurrentlySelectedRow];
+
+    if (! message) {
+        return;
+    }
+
+    [self.manager.files cancelFileTransfer:message];
+}
+
+- (IBAction)pauseButtonPressed:(id)sender
+{
+    OCTMessageAbstract *message = [self messageForCurrentlySelectedRow];
+
+    if (! message) {
+        return;
+    }
+
+    [self.manager.files pauseFileTransfer:YES message:message];
+}
+
+- (IBAction)resumeButtonPressed:(id)sender
+{
+    OCTMessageAbstract *message = [self messageForCurrentlySelectedRow];
+
+    if (! message) {
+        return;
+    }
+
+    [self.manager.files pauseFileTransfer:NO message:message];
+}
+
 #pragma mark - NSTableViewDelegate
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -63,32 +108,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
-    return 120.0;
-}
-
-- (void)tableViewSelectionDidChange:(NSNotification *)notification
-{
-    OCTMessageAbstract *message = [self messageForCurrentlySelectedRow];
-
-    if (! message) {
-        return;
-    }
-
-    NSAlert *alert = [NSAlert new];
-    alert.messageText = @"Receive file?";
-    [alert addButtonWithTitle:@"Receive"];
-    [alert addButtonWithTitle:@"Decline"];
-    [alert addButtonWithTitle:@"Cancel"];
-
-    NSModalResponse response = [alert runModal];
-
-    if (response == NSAlertFirstButtonReturn) {
-        [self.manager.files acceptFileTransfer:message];
-        [self.manager.files addProgressSubscriber:self forFileTransfer:message];
-    }
-    else if (response == NSAlertSecondButtonReturn) {
-        [self.manager.files cancelFileTransfer:message];
-    }
+    return 150.0;
 }
 
 #pragma mark - NSTableViewDataSource
@@ -109,6 +129,7 @@ static NSString *const kCellIdentifier = @"fileCell";
     if ([tableColumn.identifier isEqualToString:@"AutomaticTableColumnIdentifier.0"]) {
         textField.stringValue = [NSString stringWithFormat:
                                  @"fileType = %@\n"
+                                 @"pausedBy = %@\n"
                                  @"fileSize = %lld\n"
                                  @"fileName = %@\n"
                                  @"filePath = %@\n"
@@ -116,6 +137,7 @@ static NSString *const kCellIdentifier = @"fileCell";
                                  @"fileNumber = %d\n"
                                  @"sender = %@",
                                  [self stringFromFileType:message.messageFile.fileType],
+                                 [self stringFromPausedBy:message.messageFile.pausedBy],
                                  message.messageFile.fileSize,
                                  message.messageFile.fileName,
                                  message.messageFile.filePath,
@@ -182,6 +204,25 @@ static NSString *const kCellIdentifier = @"fileCell";
         case OCTMessageFileTypeReady:
             return @"Ready";
     }
+}
+
+- (NSString *)stringFromPausedBy:(OCTMessageFilePausedBy)pausedBy
+{
+    if (pausedBy == OCTMessageFilePausedByNone) {
+        return @"None";
+    }
+
+    NSString *string = @"";
+
+    if (pausedBy & OCTMessageFilePausedByUser) {
+        string = [string stringByAppendingString:@" user"];
+    }
+
+    if (pausedBy & OCTMessageFilePausedByFriend) {
+        string = [string stringByAppendingString:@" friend"];
+    }
+
+    return string;
 }
 
 - (OCTMessageAbstract *)messageForCurrentlySelectedRow
