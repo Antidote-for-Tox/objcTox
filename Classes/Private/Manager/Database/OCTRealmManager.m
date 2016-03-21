@@ -185,24 +185,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
-- (void)deleteObjectsOfClass:(Class)cls
-{
-    NSParameterAssert([[cls class] isSubclassOfClass:[OCTObject class]]);
-    DDLogInfo(@"OCTRealmManager: delete all objects of type %@", [cls class]);
-
-    RLMResults *allobjects = [cls allObjects];
-
-    dispatch_sync(self.queue, ^{
-        [self.realm beginWriteTransaction];
-
-        [[self logger] willDeleteObjects:allobjects];
-        [self.realm deleteObjects:allobjects];
-
-        [self.realm commitWriteTransaction];
-    });
-
-}
-
 #pragma mark -  Other methods
 
 - (void)createRealmWithPath:(NSString *)path

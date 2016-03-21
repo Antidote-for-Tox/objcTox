@@ -42,12 +42,6 @@
 - (void)deleteObject:(OCTObject *)object;
 
 /**
- * Deletes all objects of a class.
- * @param cls Class of objects to be deleted.
- */
-- (void)deleteObjectsOfClass:(Class)cls;
-
-/**
  * All realm objects should be updated ONLY with this method.
  *
  * Specified object will be passed in block.
