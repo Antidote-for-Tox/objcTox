@@ -161,7 +161,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 #pragma mark -  OCTSubmanagerFilesProgressSubscriber
 
-- (void)submanagerFilesOnProgressUpdate:(CGFloat)progress
+- (void)submanagerFilesOnProgressUpdate:(float)progress
                                 message:(nonnull OCTMessageAbstract *)message
                          bytesPerSecond:(OCTToxFileSize)bytesPerSecond
                                     eta:(CFTimeInterval)eta
