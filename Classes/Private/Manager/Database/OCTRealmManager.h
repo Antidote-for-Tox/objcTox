@@ -13,14 +13,12 @@
 
 @class RBQFetchRequest;
 @class OCTObject;
-@class OCTFriendRequest;
 @class OCTFriend;
 @class OCTChat;
 @class OCTCall;
 @class OCTMessageAbstract;
-@class OCTMessageText;
-@class OCTMessageFile;
 @class OCTSettingsStorageObject;
+@class RLMResults;
 
 @interface OCTRealmManager : NSObject
 
@@ -35,11 +33,13 @@
 
 #pragma mark -  Basic methods
 
-- (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class;
+- (id)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class;
 - (RBQFetchRequest *)fetchRequestForClass:(Class)class withPredicate:(NSPredicate *)predicate;
 
 - (void)addObject:(OCTObject *)object;
 - (void)deleteObject:(OCTObject *)object;
+
+- (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate;
 
 /**
  * All realm objects should be updated ONLY with this method.
@@ -49,11 +49,15 @@
 - (void)updateObject:(OCTObject *)object withBlock:(void (^)(id theObject))updateBlock;
 
 /**
- * Update objects without sending notification.
- * You should be careful with this method - data can in RBQFetchedResultsController may be
+ * You should be careful updating objects without notification - data can in RBQFetchedResultsController may be
  * inconsistent after updating. This method is designed to be used on startup before any user interaction.
  */
-- (void)updateObjectsWithoutNotification:(void (^)())updateBlock;
+- (void)updateObjectsWithClass:(Class)class
+                     predicate:(NSPredicate *)predicate
+              sendNotification:(BOOL)sendNotification
+                   updateBlock:(void (^)(id theObject))updateBlock;
+
+- (void)notifyAboutObjectUpdate:(OCTObject *)object;
 
 /**
  * Map `updateBlock` over all realm objects of the `cls` without sending RBQ update notifications.
@@ -90,6 +94,15 @@
                                     sender:(OCTFriend *)sender
                                  messageId:(OCTToxMessageId)messageId;
 
-- (void)addMessageCall:(OCTCall *)call;
+- (OCTMessageAbstract *)addMessageWithFileNumber:(OCTToxFileNumber)fileNumber
+                                        fileType:(OCTMessageFileType)fileType
+                                        fileSize:(OCTToxFileSize)fileSize
+                                        fileName:(NSString *)fileName
+                                        filePath:(NSString *)filePath
+                                         fileUTI:(NSString *)fileUTI
+                                            chat:(OCTChat *)chat
+                                          sender:(OCTFriend *)sender;
+
+- (OCTMessageAbstract *)addMessageCall:(OCTCall *)call;
 
 @end

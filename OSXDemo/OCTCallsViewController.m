@@ -19,7 +19,7 @@ static NSString *const kCellIdent = @"cellIdent";
                                       NSTableViewDataSource,
                                       NSTableViewDelegate>
 
-@property (strong, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *callsController;
 @property (weak) IBOutlet NSTableView *callsTableView;
 @property (weak) IBOutlet NSView *videoContainerView;

@@ -10,12 +10,9 @@
 #import "OCTPredefined.h"
 #import "OCTNode.h"
 #import "OCTTox.h"
-#import "DDLog.h"
+#import "OCTLogging.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
 
 static const NSTimeInterval kDidConnectDelay = 10.0;
 static const NSTimeInterval kIterationTime = 5.0;
@@ -92,18 +89,18 @@ static const NSUInteger kNodesPerIteration = 4;
 {
     @synchronized(self.bootstrappingLock) {
         if (self.isBootstrapping) {
-            DDLogWarn(@"%@: bootstrap method called while already bootstrapping", self);
+            OCTLogWarn(@"bootstrap method called while already bootstrapping");
             return;
         }
         self.isBootstrapping = YES;
     }
 
-    DDLogVerbose(@"%@: bootstrapping with %lu nodes", self, (unsigned long)self.addedNodes.count);
+    OCTLogVerbose(@"bootstrapping with %lu nodes", (unsigned long)self.addedNodes.count);
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     if (realmManager.settingsStorage.bootstrapDidConnect) {
-        DDLogVerbose(@"%@: did connect before, waiting %g seconds", self, self.didConnectDelay);
+        OCTLogVerbose(@"did connect before, waiting %g seconds", self.didConnectDelay);
         [self tryToBootstrapAfter:self.didConnectDelay];
     }
     else {
@@ -128,7 +125,7 @@ static const NSUInteger kNodesPerIteration = 4;
         __strong OCTSubmanagerBootstrap *strongSelf = weakSelf;
 
         if (! strongSelf) {
-            DDLogInfo(@"OCTSubmanagerBootstrap is dead, seems that OCTManager was killed, quiting.");
+            OCTLogInfo(@"OCTSubmanagerBootstrap is dead, seems that OCTManager was killed, quiting.");
             return;
         }
 
@@ -139,7 +136,7 @@ static const NSUInteger kNodesPerIteration = 4;
 - (void)tryToBootstrap
 {
     if ([self.dataSource managerIsToxConnected]) {
-        DDLogInfo(@"%@: trying to bootstrap... tox is connected, exiting", self);
+        OCTLogInfo(@"trying to bootstrap... tox is connected, exiting");
 
         OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
         [realmManager updateObject:realmManager.settingsStorage withBlock:^(OCTSettingsStorageObject *object) {
@@ -154,12 +151,12 @@ static const NSUInteger kNodesPerIteration = 4;
     NSArray *selectedNodes = [self selectedNodesForIteration];
 
     if (! selectedNodes.count) {
-        DDLogInfo(@"%@: trying to bootstrap... no nodes left, exiting", self);
+        OCTLogInfo(@"trying to bootstrap... no nodes left, exiting");
         [self finishBootstrapping];
         return;
     }
 
-    DDLogInfo(@"%@: trying to bootstrap... picked %lu nodes", self, (unsigned long)selectedNodes.count);
+    OCTLogInfo(@"trying to bootstrap... picked %lu nodes", (unsigned long)selectedNodes.count);
 
     OCTTox *tox = [self.dataSource managerGetTox];
 

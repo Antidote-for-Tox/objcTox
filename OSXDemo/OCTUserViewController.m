@@ -26,11 +26,13 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
                                      NSTextFieldDelegate,
                                      OCTSubmanagerUserDelegate>
 
-@property (strong, nonatomic) OCTSubmanagerUser *userManager;
+@property (weak, nonatomic) OCTSubmanagerUser *userManager;
 @property (weak) IBOutlet NSTableView *userTableView;
 @property (strong, nonatomic) NSArray *userData;
 @property (weak) IBOutlet NSTableColumn *firstColumn;
 @property (weak) IBOutlet NSTableColumn *secondColumn;
+
+@property (weak) IBOutlet NSImageView *avatarImageView;
 
 @end
 
@@ -58,6 +60,13 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
     userManager.delegate = self;
 
     return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [self updateAvatarImageView];
 }
 
 #pragma mark - NSTableViewDataSource
@@ -111,6 +120,25 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 - (void)selectionMadeForUserStatus:(NSPopUpButton *)sender
 {
     self.userManager.userStatus = sender.indexOfSelectedItem;
+}
+
+- (IBAction)avatarButtonPressed:(id)sender
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+
+    [panel runModal];
+
+    NSString *path = [panel.URL path];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+
+    [self.userManager setUserAvatar:data error:nil];
+    [self updateAvatarImageView];
+}
+
+- (IBAction)removeAvatarButtonPressed:(id)sender
+{
+    [self.userManager setUserAvatar:nil error:nil];
+    [self updateAvatarImageView];
 }
 
 #pragma mark - NSTextFieldDelegate
@@ -233,6 +261,11 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
         case OCTToxUserStatusBusy:
             return @"Busy";
     }
+}
+
+- (void)updateAvatarImageView
+{
+    self.avatarImageView.image = [[NSImage alloc] initWithData:self.userManager.userAvatar];
 }
 
 @end

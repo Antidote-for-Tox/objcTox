@@ -15,6 +15,7 @@
 #import "OCTFriendsViewController.h"
 #import "OCTConversationViewController.h"
 #import "OCTCallsViewController.h"
+#import "OCTFilesViewController.h"
 
 @interface OCTMainWindowController () <OCTBootStrapViewDelegate>
 
@@ -24,6 +25,7 @@
 @property (strong, nonatomic) NSViewController *friendUserViewController;
 @property (strong, nonatomic) NSViewController *conversationViewController;
 @property (strong, nonatomic) NSViewController *callsViewController;
+@property (strong, nonatomic) NSViewController *filesViewController;
 
 @property (strong, nonatomic) OCTManagerConfiguration *configuration;
 @property (strong, nonatomic) OCTManager *manager;
@@ -73,6 +75,10 @@
 
 - (void)setupTabControllers
 {
+    NSTabViewItem *userViewItem = [self.tabView tabViewItemAtIndex:0];
+    self.userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
+    userViewItem.view = self.userViewController.view;
+
     NSTabViewItem *friendViewItem = [self.tabView tabViewItemAtIndex:1];
     self.friendUserViewController = [[OCTFriendsViewController alloc] initWithManager:self.manager];
     friendViewItem.view = self.friendUserViewController.view;
@@ -81,13 +87,13 @@
     self.conversationViewController = [[OCTConversationViewController alloc] initWithManager:self.manager];
     conversationViewItem.view = self.conversationViewController.view;
 
-    NSTabViewItem *userViewItem = [self.tabView tabViewItemAtIndex:0];
-    self.userViewController = [[OCTUserViewController alloc] initWithManager:self.manager.user];
-    userViewItem.view = self.userViewController.view;
-
     NSTabViewItem *callViewItem = [self.tabView tabViewItemAtIndex:3];
     self.callsViewController = [[OCTCallsViewController alloc] initWithManager:self.manager];
     callViewItem.view = self.callsViewController.view;
+
+    NSTabViewItem *fileViewItem = [self.tabView tabViewItemAtIndex:4];
+    self.filesViewController = [[OCTFilesViewController alloc] initWithManager:self.manager];
+    fileViewItem.view = self.filesViewController.view;
 }
 
 @end

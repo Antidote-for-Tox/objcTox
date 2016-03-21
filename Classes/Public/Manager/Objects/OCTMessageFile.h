@@ -19,10 +19,15 @@
 @interface OCTMessageFile : OCTObject
 
 /**
- * The current state of file. Only in case if it is OCTMessageFileTypeReady
- * the file can be shown to user.
+ * The current state of file.
  */
 @property OCTMessageFileType fileType;
+
+/**
+ * In case if fileType is equal to OCTMessageFileTypePaused this property will contain information
+ * by whom file transfer was paused.
+ */
+@property OCTMessageFilePausedBy pausedBy;
 
 /**
  * Size of file in bytes.
@@ -38,6 +43,8 @@
 /**
  * Path of file on disk. If you need fileName to show to user please use
  * `fileName` property. filePath has it's own random fileName.
+ *
+ * In case of incoming file filePath will have value only if fileType is OCTMessageFileTypeReady
  */
 @property (nullable) NSString *filePath;
 
@@ -45,6 +52,12 @@
  * Uniform Type Identifier of file.
  */
 @property (nullable) NSString *fileUTI;
+
+
+// Properties below are for internal use.
+// Do not use them or rely on them. They may change in any moment.
+
+@property int internalFileNumber;
 
 @end
 

@@ -10,27 +10,25 @@
 
 @class OCTTox;
 @class OCTRealmManager;
-@class OCTSubmanagerAvatars;
-@class OCTSubmanagerBootstrap;
-@class OCTSubmanagerChats;
-@class OCTSubmanagerDNS;
-@class OCTSubmanagerFiles;
-@class OCTSubmanagerFriends;
-@class OCTSubmanagerObjects;
-@class OCTSubmanagerUser;
-@protocol OCTSettingsStorageProtocol;
 @protocol OCTFileStorageProtocol;
 
-@protocol OCTSubmanagerDataSource <NSObject>
+/**
+ * Notification is send when connection status of friend has changed.
+ *
+ * - object OCTFriend whose status has changed.
+ * - userInfo nil
+ */
+static NSString *const kOCTFriendConnectionStatusChangeNotification = @"kOCTFriendConnectionStatusChangeNotification";
 
-@property (strong, nonatomic, readonly) OCTSubmanagerAvatars *avatars;
-@property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
-@property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
-@property (strong, nonatomic, readonly) OCTSubmanagerDNS *dns;
-@property (strong, nonatomic, readonly) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
-@property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;
-@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
+/**
+ * Notification is send on user avatar update.
+ *
+ * - object nil
+ * - userInfo nil
+ */
+static NSString *const kOCTUserAvatarWasUpdatedNotification = @"kOCTUserAvatarWasUpdatedNotification";
+
+@protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
 - (BOOL)managerIsToxConnected;

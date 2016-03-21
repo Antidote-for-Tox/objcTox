@@ -10,10 +10,7 @@
 #import "OCTVideoView.h"
 #import "OCTPixelBufferPool.h"
 #import "OCTManagerConstants.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 @import AVFoundation;
 
@@ -46,7 +43,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
         return nil;
     }
 
-    DDLogVerbose(@"%@: init", self);
+    OCTLogVerbose(@"init");
 
     _captureSession = [AVCaptureSession new];
     _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
@@ -74,7 +71,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)setupWithError:(NSError **)error
 {
-    DDLogVerbose(@"%@: setupWithError", self);
+    OCTLogVerbose(@"setupWithError");
 #if TARGET_OS_IPHONE
     AVCaptureDevice *videoCaptureDevice = [self getDeviceForPosition:AVCaptureDevicePositionFront];
 #else
@@ -138,7 +135,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)actuallySetCamera:(AVCaptureDevice *)dev error:(NSError **)error
 {
-    DDLogVerbose(@"%@: actuallySetCamera: %@", self, dev);
+    OCTLogVerbose(@"actuallySetCamera: %@", dev);
 
     NSArray *inputs = [self.captureSession inputs];
 
@@ -173,7 +170,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)startSendingVideo
 {
-    DDLogVerbose(@"%@: startSendingVideo", self);
+    OCTLogVerbose(@"startSendingVideo");
 
     dispatch_async(self.processingQueue, ^{
         if ([self isSendingVideo]) {
@@ -185,7 +182,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (void)stopSendingVideo
 {
-    DDLogVerbose(@"%@: stopSendingVideo", self);
+    OCTLogVerbose(@"stopSendingVideo");
 
     dispatch_async(self.processingQueue, ^{
 
@@ -199,14 +196,14 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (BOOL)isSendingVideo
 {
-    DDLogVerbose(@"%@: isSendingVideo", self);
+    OCTLogVerbose(@"isSendingVideo");
     return self.captureSession.isRunning;
 }
 
 - (void)getVideoCallPreview:(void (^)(CALayer *))completionBlock
 {
     NSParameterAssert(completionBlock);
-    DDLogVerbose(@"%@: videoCallPreview", self);
+    OCTLogVerbose(@"videoCallPreview");
     dispatch_async(self.processingQueue, ^{
         AVCaptureVideoPreviewLayer *previewLayer = self.previewLayer;
 
@@ -224,7 +221,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (OCTView *)videoFeed;
 {
-    DDLogVerbose(@"%@: videoFeed", self);
+    OCTLogVerbose(@"videoFeed");
 
     OCTVideoView *feed = self.videoView;
 
@@ -411,7 +408,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
                                       uPlane:self.reusableUChromaPlane
                                       vPlane:self.reusableVChromaPlane
                                        error:&error]) {
-        DDLogWarn(@"%@ error:%@ width:%zu height:%zu", self, error, yBytesPerRow, yHeight);
+        OCTLogWarn(@"error:%@ width:%zu height:%zu", error, yBytesPerRow, yHeight);
     }
 }
 
@@ -419,7 +416,7 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 - (AVCaptureDevice *)getDeviceForPosition:(AVCaptureDevicePosition)position
 {
-    DDLogVerbose(@"%@: getDeviceForPosition", self);
+    OCTLogVerbose(@"getDeviceForPosition");
 
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice *device in devices) {

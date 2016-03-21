@@ -73,9 +73,4 @@
     return self.temporaryDirectory;
 }
 
-- (NSString *)pathForAvatarsDirectory
-{
-    return [self.baseDirectory stringByAppendingPathComponent:@"avatars"];
-}
-
 @end

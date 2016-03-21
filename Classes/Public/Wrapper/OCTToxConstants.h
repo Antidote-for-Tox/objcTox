@@ -552,5 +552,5 @@ typedef NS_ENUM(NSInteger, OCTToxErrorFileSendChunk) {
     /**
      * Position parameter was wrong.
      */
-    OCTToxErrorFileSendChunkWrongPosition
+    OCTToxErrorFileSendChunkWrongPosition,
 };

@@ -10,10 +10,7 @@
 #import "OCTRealmManager.h"
 #import "RBQFetchRequest.h"
 #import "OCTCall.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 @interface OCTCallTimer ()
 
@@ -62,7 +59,7 @@
             OCTCallTimer *strongSelf = weakSelf;
             if (! strongSelf) {
                 dispatch_source_cancel(self.timer);
-                DDLogError(@"Error: Attempt to update timer with no strong pointer to OCTCallTimer");
+                OCTLogError(@"Error: Attempt to update timer with no strong pointer to OCTCallTimer");
                 return;
             }
 
@@ -70,7 +67,7 @@
                 callToUpdate.callDuration += 1.0;
             }];
 
-            DDLogInfo(@"%@: Call: %@ duration at %f seconds", self, strongSelf.call, strongSelf.call.callDuration);
+            OCTLogInfo(@"Call: %@ duration at %f seconds", strongSelf.call, strongSelf.call.callDuration);
         });
 
         dispatch_resume(self.timer);
@@ -84,7 +81,7 @@
             return;
         }
 
-        DDLogInfo(@"%@: Timer for call %@ has stopped at duration %f", self, self.call, self.call.callDuration);
+        OCTLogInfo(@"Timer for call %@ has stopped at duration %f", self.call, self.call.callDuration);
 
         dispatch_source_cancel(self.timer);
         self.timer = nil;

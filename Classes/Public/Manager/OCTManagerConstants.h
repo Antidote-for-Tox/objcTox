@@ -6,6 +6,14 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import "OCTToxConstants.h"
+
+/**
+ * Maximum avatar size as defined in
+ * https://tox.gitbooks.io/tox-client-standard/content/user_identification/avatar.html
+ */
+static const OCTToxFileSize kOCTManagerMaxAvatarSize = 65536;
+
 typedef NS_ENUM(NSInteger, OCTFetchRequestType) {
     OCTFetchRequestTypeFriend,
     OCTFetchRequestTypeFriendRequest,
@@ -41,6 +49,69 @@ typedef NS_ENUM(NSInteger, OCTMessageFileType) {
      * In case of incoming file now it can be shown to user.
      */
     OCTMessageFileTypeReady,
+};
+
+typedef NS_ENUM(NSInteger, OCTMessageFilePausedBy) {
+    /**
+     * File transfer isn't paused.
+     */
+    OCTMessageFilePausedByNone = 0,
+
+    /**
+     * File transfer is paused by user.
+     */
+    OCTMessageFilePausedByUser = 1 << 0,
+
+        /**
+         * File transfer is paused by friend.
+         */
+        OCTMessageFilePausedByFriend = 1 << 1,
+};
+
+typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
+    /**
+     * Call was answered.
+     */
+    OCTMessageCallEventAnswered,
+
+    /**
+     * Call was unanswered.
+     */
+    OCTMessageCallEventUnanswered,
+};
+
+typedef NS_ENUM(NSInteger, OCTCallStatus) {
+    /**
+     * Call is currently ringing.
+     */
+    OCTCallStatusRinging,
+
+    /**
+     * Call is currently dialing a chat.
+     */
+    OCTCallStatusDialing,
+
+    /**
+     * Call is currently active in session.
+     */
+    OCTCallStatusActive,
+};
+
+typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
+    /**
+     * Call is not paused
+     */
+    OCTCallPausedStatusNone = 0,
+
+    /**
+     * Call is paused by the user
+     */
+    OCTCallPausedStatusByUser = 1 << 0,
+
+        /**
+         * Call is paused by friend
+         */
+        OCTCallPausedStatusByFriend = 1 << 1,
 };
 
 extern NSString *const kOCTManagerErrorDomain;
@@ -159,48 +230,83 @@ typedef NS_ENUM(NSInteger, OCTDNSError) {
     OCTDNSErrorDNSQueryError,
 };
 
-typedef NS_ENUM(NSInteger, OCTMessageCallEvent) {
+typedef NS_ENUM(NSInteger, OCTSetUserAvatarError) {
     /**
-     * Call was answered.
+     * User avatar size is too big. It should be <= kOCTManagerMaxAvatarSize.
      */
-    OCTMessageCallEventAnswered,
-
-    /**
-     * Call was unanswered.
-     */
-    OCTMessageCallEventUnanswered,
+    OCTSetUserAvatarErrorTooBig,
 };
 
-typedef NS_ENUM(NSInteger, OCTCallStatus) {
+typedef NS_ENUM(NSInteger, OCTSendFileError) {
     /**
-     * Call is currently ringing.
+     * Internal error occured while sending file.
+     * Check logs for more info.
      */
-    OCTCallStatusRinging,
+    OCTSendFileErrorInternalError,
 
     /**
-     * Call is currently dialing a chat.
+     * Cannot read file.
      */
-    OCTCallStatusDialing,
+    OCTSendFileErrorCannotReadFile,
 
     /**
-     * Call is currently active in session.
+     * Cannot save send file to uploads folder.
      */
-    OCTCallStatusActive,
+    OCTSendFileErrorCannotSaveFileToUploads,
+
+    /**
+     * Friend to send file to was not found.
+     */
+    OCTSendFileErrorFriendNotFound,
+
+    /**
+     * Friend is not connected at the moment.
+     */
+    OCTSendFileErrorFriendNotConnected,
+
+    /**
+     * Filename length exceeded kOCTToxMaxFileNameLength bytes.
+     */
+    OCTSendFileErrorNameTooLong,
+
+    /**
+     * Too many ongoing transfers. The maximum number of concurrent file transfers
+     * is 256 per friend per direction (sending and receiving).
+     */
+    OCTSendFileErrorTooMany,
 };
 
-typedef NS_OPTIONS(NSInteger, OCTCallPausedStatus) {
+typedef NS_ENUM(NSInteger, OCTAcceptFileError) {
     /**
-     * Call is not paused
+     * Internal error occured while sending file.
+     * Check logs for more info.
      */
-    OCTCallPausedStatusNone = 0,
+    OCTAcceptFileErrorInternalError,
 
     /**
-     * Call is paused by the user
+     * File is not available for writing.
      */
-    OCTCallPausedStatusByUser = 1 << 0,
+    OCTAcceptFileErrorCannotWriteToFile,
 
-        /**
-         * Call is paused by friend
-         */
-        OCTCallPausedStatusByFriend = 1 << 1,
+    /**
+     * Friend to send file to was not found.
+     */
+    OCTAcceptFileErrorFriendNotFound,
+
+    /**
+     * Friend is not connected at the moment.
+     */
+    OCTAcceptFileErrorFriendNotConnected,
+
+    /**
+     * Wrong message specified (with no friend, no file or not waiting for confirmation).
+     */
+    OCTAcceptFileErrorWrongMessage,
+};
+
+typedef NS_ENUM(NSInteger, OCTFileTransferError) {
+    /**
+     * Wrong message specified (with no file).
+     */
+    OCTFileTransferErrorWrongMessage,
 };

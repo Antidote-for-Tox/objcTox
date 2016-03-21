@@ -50,6 +50,12 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Files" identifier="" id="uxo-8a-TGl" userLabel="Files">
+                                <view key="view" id="SkJ-nQ-fyf">
+                                    <rect key="frame" x="10" y="33" width="543" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                     </tabView>
                 </subviews>

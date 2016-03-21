@@ -7,10 +7,7 @@
 //
 
 #import "OCTPixelBufferPool.h"
-#import "DDLog.h"
-
-#undef LOG_LEVEL_DEF
-#define LOG_LEVEL_DEF LOG_LEVEL_VERBOSE
+#import "OCTLogging.h"
 
 @interface OCTPixelBufferPool ()
 
@@ -87,7 +84,7 @@
                                                &_pool);
 
     if (success != kCVReturnSuccess) {
-        DDLogWarn(@"%@: failed to create CVPixelBufferPool error:%d", self, success);
+        OCTLogWarn(@"failed to create CVPixelBufferPool error:%d", success);
 
     }
 
@@ -101,7 +98,7 @@
                                                           bufferRef);
 
     if (success != kCVReturnSuccess) {
-        DDLogWarn(@"%@: Failed to create pixelBuffer error:%d", self, success);
+        OCTLogWarn(@"Failed to create pixelBuffer error:%d", success);
     }
 
     return (success == kCVReturnSuccess);

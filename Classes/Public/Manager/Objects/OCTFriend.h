@@ -82,6 +82,11 @@
 @property BOOL isTyping;
 
 /**
+ * Data representation of friend's avatar.
+ */
+@property (nullable) NSData *avatarData;
+
+/**
  * The date when friend was last seen online.
  * Contains actual information in case if friend has connectionStatus offline.
  */

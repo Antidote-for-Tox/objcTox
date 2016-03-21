@@ -3,8 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+### Added
+- File transfers.
+- Avatars.
+
 ### Changes
-- Bootstrap nodes updated and moved to separate json file
+- Bootstrap nodes updated and moved to separate json file.
 - Realm updated to version 0.98.5.
 
 ### Fixes

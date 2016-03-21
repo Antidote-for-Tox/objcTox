@@ -12,4 +12,9 @@
 
 @property BOOL bootstrapDidConnect;
 
+/**
+ * UIImage with avatar of user.
+ */
+@property NSData *userAvatarData;
+
 @end

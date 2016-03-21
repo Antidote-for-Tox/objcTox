@@ -39,7 +39,6 @@
     XCTAssertEqualObjects(storage.pathForDownloadedFilesDirectory, @"/base/downloads");
     XCTAssertEqualObjects(storage.pathForUploadedFilesDirectory, @"/base/uploads");
     XCTAssertEqualObjects(storage.pathForTemporaryFilesDirectory, @"/temp");
-    XCTAssertEqualObjects(storage.pathForAvatarsDirectory, @"/base/avatars");
 }
 
 - (void)testCustomToxSaveFileName

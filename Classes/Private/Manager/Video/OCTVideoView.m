@@ -72,7 +72,7 @@
 
         CGRect destRect = AVMakeRectWithAspectRatioInsideRect(self.image.extent.size, rect);
 
-        CGFloat screenscale = self.window.screen.scale;
+        float screenscale = self.window.screen.scale;
 
         destRect = CGRectApplyAffineTransform(destRect, CGAffineTransformMakeScale(screenscale, screenscale));
 

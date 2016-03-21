@@ -414,7 +414,7 @@ static NSString *const kMessage = @"kMessage";
     OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
 
     XCTestExpectation *expect = [self expectationWithDescription:@""];
-    [center addObserverForName:kOCTFriendConnectionStatusChangeNotificationName object:nil queue:nil usingBlock:^(NSNotification *note) {
+    [center addObserverForName:kOCTFriendConnectionStatusChangeNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
         if ([note.object friendNumber] == kFriendNumber) {
             [expect fulfill];
         }

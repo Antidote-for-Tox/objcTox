@@ -21,7 +21,7 @@ static NSString *const kCellIdent = @"cellIdent";
                                         NSTableViewDelegate,
                                         RBQFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) OCTManager *manager;
 @property (strong, nonatomic) RBQFetchedResultsController *friendResultsController;
 @property (strong, nonatomic) RBQFetchedResultsController *friendRequestResultsController;
 
@@ -31,6 +31,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @property (weak) IBOutlet NSTableView *friendsTableView;
 @property (weak) IBOutlet NSTableView *requestsTableView;
+@property (weak) IBOutlet NSImageView *avatarImageView;
 
 @end
 
@@ -129,6 +130,7 @@ static NSString *const kCellIdent = @"cellIdent";
         NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
         OCTFriend *friend = [self.friendResultsController objectAtIndexPath:path];
 
+        self.avatarImageView.image = [[NSImage alloc] initWithData:friend.avatarData];
         self.friendInfoTextField.string = [NSString stringWithFormat:
                                            @"friendNumber %u\n"
                                            @"publicKey %@\n"
