@@ -14,8 +14,6 @@
 #import "OCTRealmManager.h"
 #import "RBQFetchRequest.h"
 
-NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendConnectionStatusChangeNotificationName";
-
 @interface OCTSubmanagerFriends ()
 
 @end
@@ -213,7 +211,7 @@ NSString *const kOCTFriendConnectionStatusChangeNotificationName = @"kOCTFriendC
         }
     }];
 
-    [[self.dataSource managerGetNotificationCenter] postNotificationName:kOCTFriendConnectionStatusChangeNotificationName object:friend];
+    [[self.dataSource managerGetNotificationCenter] postNotificationName:kOCTFriendConnectionStatusChangeNotification object:friend];
 }
 
 #pragma mark -  Private

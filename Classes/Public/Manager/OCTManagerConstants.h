@@ -6,6 +6,14 @@
 //  Copyright (c) 2015 dvor. All rights reserved.
 //
 
+#import "OCTToxConstants.h"
+
+/**
+ * Maximum avatar size as defined in
+ * https://tox.gitbooks.io/tox-client-standard/content/user_identification/avatar.html
+ */
+static const OCTToxFileSize kOCTManagerMaxAvatarSize = 65536;
+
 typedef NS_ENUM(NSInteger, OCTFetchRequestType) {
     OCTFetchRequestTypeFriend,
     OCTFetchRequestTypeFriendRequest,

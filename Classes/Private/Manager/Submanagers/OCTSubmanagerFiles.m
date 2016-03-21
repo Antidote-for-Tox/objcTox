@@ -46,8 +46,22 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     return self;
 }
 
+- (void)dealloc
+{
+    [self.dataSource.managerGetNotificationCenter removeObserver:self];
+}
+
 - (void)configure
 {
+    [self.dataSource.managerGetNotificationCenter addObserver:self
+                                                     selector:@selector(friendConnectionStatusChangeNotification:)
+                                                         name:kOCTFriendConnectionStatusChangeNotification
+                                                       object:nil];
+    [self.dataSource.managerGetNotificationCenter addObserver:self
+                                                     selector:@selector(userAvatarWasUpdatedNotification)
+                                                         name:kOCTUserAvatarWasUpdatedNotification
+                                                       object:nil];
+
     OCTLogInfo(@"cancelling pending files...");
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
@@ -327,6 +341,14 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
         [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
     }
 }
+
+#pragma mark -  NSNotification
+
+- (void)friendConnectionStatusChangeNotification:(NSNotification *)notification
+{}
+
+- (void)userAvatarWasUpdatedNotification
+{}
 
 #pragma mark -  Private
 

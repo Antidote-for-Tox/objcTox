@@ -10,8 +10,6 @@
 #import "OCTFileBaseOperation+Private.h"
 #import "OCTLogging.h"
 
-static const OCTToxFileSize kCacheSize = 100 * 1024;
-
 @interface OCTFileDownloadOperation ()
 
 @property (strong, nonatomic, readonly) NSString *tempDirectoryPath;

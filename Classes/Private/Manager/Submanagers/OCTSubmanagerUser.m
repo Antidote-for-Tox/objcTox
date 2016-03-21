@@ -8,6 +8,9 @@
 
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTTox.h"
+#import "OCTManagerConstants.h"
+#import "OCTRealmManager.h"
+#import "OCTSettingsStorageObject.h"
 
 @interface OCTSubmanagerUser ()
 
@@ -85,6 +88,24 @@
 - (NSString *)userStatusMessage
 {
     return [[self.dataSource managerGetTox] userStatusMessage];
+}
+
+- (BOOL)setUserAvatar:(NSData *)avatar error:(NSError **)error
+{
+    if (avatar && (avatar.length > kOCTManagerMaxAvatarSize)) {
+        // TODO handle error
+        return NO;
+    }
+
+    self.dataSource.managerGetRealmManager.settingsStorage.userAvatarData = avatar;
+    [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTUserAvatarWasUpdatedNotification object:nil];
+
+    return YES;
+}
+
+- (NSData *)userAvatar
+{
+    return self.dataSource.managerGetRealmManager.settingsStorage.userAvatarData;
 }
 
 #pragma mark -  OCTToxDelegate

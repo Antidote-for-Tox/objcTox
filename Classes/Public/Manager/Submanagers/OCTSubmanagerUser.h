@@ -82,4 +82,22 @@
  */
 - (NSString *)userStatusMessage;
 
+/**
+ * Set user avatar. Avatar should be <= kOCTManagerMaxAvatarSize.
+ *
+ * @param avatar NSData representation of avatar image.
+ * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * See <placeholder> for all error codes.
+ *
+ * @return YES on success, NO on failure.
+ */
+- (BOOL)setUserAvatar:(NSData *)avatar error:(NSError **)error;
+
+/**
+ * Get data representation of user avatar.
+ *
+ * @return Data with user avatar if exists.
+ */
+- (NSData *)userAvatar;
+
 @end
