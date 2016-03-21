@@ -9,6 +9,7 @@
 #import "OCTFileBaseOperation.h"
 
 @class OCTTox;
+@protocol OCTFileOutputProtocol;
 
 /**
  * File operation for downloading file.
@@ -17,21 +18,21 @@
  */
 @interface OCTFileDownloadOperation : OCTFileBaseOperation
 
+@property (strong, nonatomic, readonly, nonnull) id<OCTFileOutputProtocol> output;
+
 /**
  * Create operation.
  *
- * @param tempDirectoryPath Path to directory to store temporary files.
- * @param resultDirectoryPath Path to which file would be copied on success.
+ * @param fileOutput Output to use as a destination for file transfer.
  *
  * For other parameters description see OCTFileBaseOperation.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                   tempDirectoryPath:(nonnull NSString *)tempDirectoryPath
-                 resultDirectoryPath:(nonnull NSString *)resultDirectoryPath
+                          fileOutput:(nonnull id<OCTFileOutputProtocol>)fileOutput
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                            userInfo:(nullable id)userInfo
+                            userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;

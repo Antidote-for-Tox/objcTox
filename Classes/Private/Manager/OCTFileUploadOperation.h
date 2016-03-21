@@ -8,21 +8,25 @@
 
 #import "OCTFileBaseOperation.h"
 
+@protocol OCTFileInputProtocol;
+
 @interface OCTFileUploadOperation : OCTFileBaseOperation
+
+@property (strong, nonatomic, readonly, nonnull) id<OCTFileInputProtocol> input;
 
 /**
  * Create operation.
  *
- * @param filePath Path of file to upload.
+ * @param fileInput Input to use as a source for file transfer.
  *
  * For other parameters description see OCTFileBaseOperation.
  */
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                            filePath:(nonnull NSString *)filePath
+                           fileInput:(nonnull id<OCTFileInputProtocol>)fileInput
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                            userInfo:(nullable id)userInfo
+                            userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;

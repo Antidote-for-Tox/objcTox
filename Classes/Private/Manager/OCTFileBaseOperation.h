@@ -28,7 +28,7 @@ typedef void (^OCTFileBaseOperationProgressBlock)(OCTFileBaseOperation *__nonnul
  * @param operation Operation that is running.
  * @param filePath Path of file being loaded
  */
-typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation, NSString *__nonnull filePath);
+typedef void (^OCTFileBaseOperationSuccessBlock)(OCTFileBaseOperation *__nonnull operation);
 
 /**
  * Block to notify about operation failure.
@@ -53,7 +53,7 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
 @property (assign, nonatomic, readonly) OCTToxFileSize bytesPerSecond;
 @property (assign, nonatomic, readonly) CFTimeInterval eta;
 
-@property (strong, nonatomic, readonly, nullable) id userInfo;
+@property (strong, nonatomic, readonly, nullable) NSDictionary *userInfo;
 
 /**
  * Creates operation id from file and friend number.
@@ -76,7 +76,7 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                            userInfo:(nullable id)userInfo
+                            userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock;

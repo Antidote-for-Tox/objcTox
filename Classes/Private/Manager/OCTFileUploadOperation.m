@@ -8,13 +8,10 @@
 
 #import "OCTFileUploadOperation.h"
 #import "OCTFileBaseOperation+Private.h"
+#import "OCTFileInputProtocol.h"
 #import "OCTLogging.h"
 
 @interface OCTFileUploadOperation ()
-
-@property (strong, nonatomic, readonly) NSString *filePath;
-
-@property (strong, nonatomic) NSFileHandle *handle;
 
 @end
 
@@ -23,16 +20,16 @@
 #pragma mark -  Public
 
 - (nullable instancetype)initWithTox:(nonnull OCTTox *)tox
-                            filePath:(nonnull NSString *)filePath
+                           fileInput:(nonnull id<OCTFileInputProtocol>)fileInput
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                            userInfo:(nullable id)userInfo
+                            userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
 {
-    NSParameterAssert(filePath);
+    NSParameterAssert(fileInput);
 
     self = [super initWithTox:tox
                  friendNumber:friendNumber
@@ -47,7 +44,7 @@
         return nil;
     }
 
-    _filePath = filePath;
+    _input = fileInput;
 
     return self;
 }
@@ -57,16 +54,11 @@
 - (void)chunkRequestWithPosition:(OCTToxFileSize)position length:(size_t)length
 {
     if (length == 0) {
-        [self finishWithSuccess:self.filePath];
+        [self finishWithSuccess];
         return;
     }
 
-    // TODO handle exceptions
-    if (self.handle.offsetInFile != position) {
-        [self.handle seekToFileOffset:position];
-    }
-
-    NSData *data = [self.handle readDataOfLength:length];
+    NSData *data = [self.input bytesWithPosition:position length:length];
     NSError *error;
 
     BOOL result;
@@ -101,8 +93,7 @@
 {
     [super operationStarted];
 
-    self.handle = [NSFileHandle fileHandleForReadingAtPath:self.filePath];
-    NSAssert(self.handle, @"Cannot open file handle");
+    [self.input prepareToRead];
 }
 
 @end

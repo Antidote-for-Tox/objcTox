@@ -19,8 +19,12 @@
 #import "OCTFriend.h"
 #import "OCTChat.h"
 #import "OCTFileStorageProtocol.h"
+#import "OCTFilePathInput.h"
+#import "OCTFilePathOutput.h"
 
-static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
+static NSString *const kDownloadsTempDirectory = @"me.objcTox.downloads";
+
+static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 
 @interface OCTSubmanagerFiles ()
 
@@ -144,17 +148,18 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
                                                                     chat:chat
                                                                   sender:nil];
 
-    NSHashTable *progressSubscribers = [NSHashTable weakObjectsHashTable];
+    NSDictionary *userInfo = [self createOperationUserInfo];
+    OCTFilePathInput *input = [[OCTFilePathInput alloc] initWithFilePath:filePath];
 
     OCTFileUploadOperation *operation = [[OCTFileUploadOperation alloc] initWithTox:[self.dataSource managerGetTox]
-                                                                           filePath:filePath
+                                                                          fileInput:input
                                                                        friendNumber:friend.friendNumber
                                                                          fileNumber:fileNumber
                                                                            fileSize:fileSize
-                                                                           userInfo:progressSubscribers
-                                                                      progressBlock:[self progressBlockWithMessage:message]
-                                                                       successBlock:[self successBlockWithMessage:message]
-                                                                       failureBlock:[self failureBlockWithMessage:message]];
+                                                                           userInfo:userInfo
+                                                                      progressBlock:[self fileProgressBlockWithMessage:message]
+                                                                       successBlock:[self fileSuccessBlockWithMessage:message]
+                                                                       failureBlock:[self fileFailureBlockWithMessage:message]];
 
     [self.queue addOperation:operation];
 }
@@ -176,22 +181,25 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
         return;
     }
 
+    OCTFilePathOutput *output = [[OCTFilePathOutput alloc] initWithTempFolder:[self downloadsTempDirectory]
+                                                                 resultFolder:[self downloadsDirectory]];
+
     [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeLoading;
+        file.filePath = output.resultFilePath;
     }];
 
-    NSHashTable *progressSubscribers = [NSHashTable weakObjectsHashTable];
+    NSDictionary *userInfo = [self createOperationUserInfo];
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
-                                                                      tempDirectoryPath:[self downloadsTempDirectory]
-                                                                    resultDirectoryPath:[self downloadsDirectory]
+                                                                             fileOutput:output
                                                                            friendNumber:message.sender.friendNumber
                                                                              fileNumber:message.messageFile.internalFileNumber
                                                                                fileSize:message.messageFile.fileSize
-                                                                               userInfo:progressSubscribers
-                                                                          progressBlock:[self progressBlockWithMessage:message]
-                                                                           successBlock:[self successBlockWithMessage:message]
-                                                                           failureBlock:[self failureBlockWithMessage:message]];
+                                                                               userInfo:userInfo
+                                                                          progressBlock:[self fileProgressBlockWithMessage:message]
+                                                                           successBlock:[self fileSuccessBlockWithMessage:message]
+                                                                           failureBlock:[self fileFailureBlockWithMessage:message]];
 
     [self.queue addOperation:operation];
 }
@@ -243,7 +251,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
                                  bytesPerSecond:operation.bytesPerSecond
                                             eta:operation.eta];
 
-    NSHashTable *progressSubscribers = operation.userInfo;
+    NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
     [progressSubscribers addObject:subscriber];
 }
 
@@ -263,7 +271,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
         return;
     }
 
-    NSHashTable *progressSubscribers = operation.userInfo;
+    NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
     [progressSubscribers removeObject:subscriber];
 }
 
@@ -406,7 +414,7 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
 {
     id<OCTFileStorageProtocol> fileStorage = self.dataSource.managerGetFileStorage;
 
-    NSString *path = [fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:kDownloadsDirectory];
+    NSString *path = [fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:kDownloadsTempDirectory];
     [self createDirectoryIfNeeded:path];
 
     return path;
@@ -434,10 +442,10 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     [realmManager notifyAboutObjectUpdate:message];
 }
 
-- (OCTFileBaseOperationProgressBlock)progressBlockWithMessage:(OCTMessageAbstract *)message
+- (OCTFileBaseOperationProgressBlock)fileProgressBlockWithMessage:(OCTMessageAbstract *)message
 {
     return ^(OCTFileBaseOperation *__nonnull operation) {
-               NSHashTable *progressSubscribers = operation.userInfo;
+               NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
 
                for (id<OCTSubmanagerFilesProgressSubscriber> subscriber in progressSubscribers) {
                    [subscriber submanagerFilesOnProgressUpdate:operation.progress
@@ -448,20 +456,20 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
     };
 }
 
-- (OCTFileBaseOperationSuccessBlock)successBlockWithMessage:(OCTMessageAbstract *)message
+- (OCTFileBaseOperationSuccessBlock)fileSuccessBlockWithMessage:(OCTMessageAbstract *)message
 {
     __weak OCTSubmanagerFiles *weakSelf = self;
 
-    return ^(OCTFileBaseOperation *__nonnull operation, NSString *filePath) {
+    return ^(OCTFileBaseOperation *__nonnull operation) {
                __strong OCTSubmanagerFiles *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+
             file.fileType = OCTMessageFileTypeReady;
-            file.filePath = filePath;
         }];
     };
 }
 
-- (OCTFileBaseOperationFailureBlock)failureBlockWithMessage:(OCTMessageAbstract *)message
+- (OCTFileBaseOperationFailureBlock)fileFailureBlockWithMessage:(OCTMessageAbstract *)message
 {
     __weak OCTSubmanagerFiles *weakSelf = self;
 
@@ -470,6 +478,13 @@ static NSString *const kDownloadsDirectory = @"me.objcTox.downloads";
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
             file.fileType = OCTMessageFileTypeCanceled;
         }];
+    };
+}
+
+- (NSDictionary *)createOperationUserInfo
+{
+    return @{
+               kProgressSubscribersKey : [NSHashTable weakObjectsHashTable],
     };
 }
 

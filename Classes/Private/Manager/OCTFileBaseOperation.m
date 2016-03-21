@@ -54,7 +54,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                         friendNumber:(OCTToxFriendNumber)friendNumber
                           fileNumber:(OCTToxFileNumber)fileNumber
                             fileSize:(OCTToxFileSize)fileSize
-                            userInfo:(id)userInfo
+                            userInfo:(NSDictionary *)userInfo
                        progressBlock:(nonnull OCTFileBaseOperationProgressBlock)progressBlock
                         successBlock:(nonnull OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nonnull OCTFileBaseOperationFailureBlock)failureBlock
@@ -155,7 +155,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     OCTLogInfo(@"start downloading file with identifier %@", self.operationId);
 }
 
-- (void)finishWithSuccess:(NSString *)filePath
+- (void)finishWithSuccess
 {
     OCTLogInfo(@"finished with success");
 
@@ -163,7 +163,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     self.finished = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.successBlock(self, filePath);
+        self.successBlock(self);
     });
 }
 
