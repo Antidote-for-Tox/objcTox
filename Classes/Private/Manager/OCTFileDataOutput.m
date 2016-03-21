@@ -35,4 +35,9 @@
     self.tempData = nil;
 }
 
+- (void)cancel
+{
+    self.tempData = nil;
+}
+
 @end

@@ -22,6 +22,11 @@
 - (void)operationStarted NS_REQUIRES_SUPER;
 
 /**
+ * Override this method to do clean up on operation cancellation.
+ */
+- (void)operationWasCanceled NS_REQUIRES_SUPER;
+
+/**
  * Call this method to change bytes done value.
  */
 - (void)updateBytesDone:(OCTToxFileSize)bytesDone;

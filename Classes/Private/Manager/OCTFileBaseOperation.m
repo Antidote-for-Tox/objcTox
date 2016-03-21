@@ -154,6 +154,11 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     OCTLogInfo(@"start loading file with identifier %@", self.operationId);
 }
 
+- (void)operationWasCanceled
+{
+    OCTLogInfo(@"was cancelled");
+}
+
 - (void)finishWithSuccess
 {
     OCTLogInfo(@"finished with success");
@@ -204,7 +209,11 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 - (void)cancel
 {
     [super cancel];
-    OCTLogInfo(@"was cancelled");
+
+    [self operationWasCanceled];
+
+    self.executing = NO;
+    self.finished = YES;
 }
 
 - (BOOL)asynchronous

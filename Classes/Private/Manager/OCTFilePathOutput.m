@@ -62,4 +62,11 @@
     [[NSFileManager defaultManager] moveItemAtPath:self.tempFilePath toPath:self.resultFilePath error:nil];
 }
 
+- (void)cancel
+{
+    self.handle = nil;
+
+    [[NSFileManager defaultManager] removeItemAtPath:self.tempFilePath error:nil];
+}
+
 @end

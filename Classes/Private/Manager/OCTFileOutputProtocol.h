@@ -27,4 +27,9 @@
  */
 - (void)finishWriting;
 
+/**
+ * This method is called if all progress was canceled. Do needed cleanup.
+ */
+- (void)cancel;
+
 @end

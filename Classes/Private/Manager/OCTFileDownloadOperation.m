@@ -90,4 +90,11 @@
     }
 }
 
+- (void)operationWasCanceled
+{
+    [super operationWasCanceled];
+
+    [self.output cancel];
+}
+
 @end

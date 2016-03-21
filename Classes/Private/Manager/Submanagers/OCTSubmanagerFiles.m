@@ -283,7 +283,21 @@ static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 - (void)     tox:(OCTTox *)tox fileReceiveControl:(OCTToxFileControl)control
     friendNumber:(OCTToxFriendNumber)friendNumber
       fileNumber:(OCTToxFileNumber)fileNumber
-{}
+{
+    switch (control) {
+        case OCTToxFileControlResume:
+            // TODO handle resuming paused transfers.
+            break;
+        case OCTToxFileControlPause:
+            // TODO pause transfer.
+            break;
+        case OCTToxFileControlCancel: {
+            OCTFileBaseOperation *operation = [self operationWithFileNumber:fileNumber friendNumber:friendNumber];
+            [operation cancel];
+            break;
+        }
+    }
+}
 
 - (void)     tox:(OCTTox *)tox fileChunkRequestForFileNumber:(OCTToxFileNumber)fileNumber
     friendNumber:(OCTToxFriendNumber)friendNumber
