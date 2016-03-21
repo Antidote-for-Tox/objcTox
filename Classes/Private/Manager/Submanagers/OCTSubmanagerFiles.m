@@ -25,7 +25,7 @@
 #import "OCTFileDataOutput.h"
 #import "OCTSettingsStorageObject.h"
 
-static NSString *const kDownloadsTempDirectory = @"me.objcTox.downloads";
+static NSString *const kDownloadsTempDirectory = @"me.dvor.objcTox.downloads";
 
 static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 
