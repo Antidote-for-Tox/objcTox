@@ -107,6 +107,7 @@
 
 - (void)dealloc
 {
+    self.calls = nil;
     [self.tox stop];
 }
 
