@@ -30,7 +30,7 @@
                         successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock
 {
-    NSParameterAssert(tempDirectoryPath);
+    NSParameterAssert(fileOutput);
 
     self = [super initWithTox:tox
                  friendNumber:friendNumber
