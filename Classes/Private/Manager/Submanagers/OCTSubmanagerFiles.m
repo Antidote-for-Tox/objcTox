@@ -217,11 +217,6 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     OCTFilePathOutput *output = [[OCTFilePathOutput alloc] initWithTempFolder:[self downloadsTempDirectory]
                                                                  resultFolder:[self downloadsDirectory]];
 
-    [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
-        file.fileType = OCTMessageFileTypeLoading;
-        [file internalSetFilePath:output.resultFilePath];
-    }];
-
     NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
@@ -236,6 +231,11 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                                                           userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
+
+    [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
+        file.fileType = OCTMessageFileTypeLoading;
+        [file internalSetFilePath:output.resultFilePath];
+    }];
 }
 
 - (BOOL)cancelFileTransfer:(OCTMessageAbstract *)message error:(NSError **)error
@@ -340,6 +340,11 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return YES;
     }
 
+    NSString *identifier = operation.userInfo[kMessageIdentifierKey];
+    if (! [identifier isEqualToString:message.uniqueIdentifier]) {
+        return YES;
+    }
+
     [subscriber submanagerFilesOnProgressUpdate:operation.progress
                                         message:message
                                  bytesPerSecond:operation.bytesPerSecond
@@ -368,6 +373,11 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                        friendNumber:friend.friendNumber];
 
     if (! operation) {
+        return YES;
+    }
+
+    NSString *identifier = operation.userInfo[kMessageIdentifierKey];
+    if (! [identifier isEqualToString:message.uniqueIdentifier]) {
         return YES;
     }
 

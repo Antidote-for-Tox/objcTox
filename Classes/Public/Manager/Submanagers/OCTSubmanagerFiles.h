@@ -86,6 +86,7 @@
 
 /**
  * Add progress subscriber for given file transfer. Subscriber will receive progress immediately after subscribing.
+ * File transfer should be in Loading or Paused state, otherwise subscriber won't be added.
  *
  * @param subscriber Object listening to progress protocol.
  * @param message Message with file transfer. Message should have OCTMessageFile. Otherwise nothing will happen.
