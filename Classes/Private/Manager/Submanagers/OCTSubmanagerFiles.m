@@ -180,9 +180,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                            fileSize:fileSize
                                                                            userInfo:userInfo
                                                                       progressBlock:[self fileProgressBlockWithMessage:message]
+                                                                     etaUpdateBlock:[self fileEtaUpdateBlockWithMessage:message]
                                                                        successBlock:[self fileSuccessBlockWithMessage:message]
-                                                                       failureBlock:[self  fileFailureBlockWithMessage:message
-                                                                                                      userFailureBlock:failureBlock]];
+                                                                       failureBlock:[self   fileFailureBlockWithMessage:message
+                                                                                                       userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
 }
@@ -226,9 +227,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                                fileSize:message.messageFile.fileSize
                                                                                userInfo:userInfo
                                                                           progressBlock:[self fileProgressBlockWithMessage:message]
+                                                                         etaUpdateBlock:[self fileEtaUpdateBlockWithMessage:message]
                                                                            successBlock:[self fileSuccessBlockWithMessage:message]
-                                                                           failureBlock:[self  fileFailureBlockWithMessage:message
-                                                                                                          userFailureBlock:failureBlock]];
+                                                                           failureBlock:[self   fileFailureBlockWithMessage:message
+                                                                                                           userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
 
@@ -345,10 +347,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return YES;
     }
 
-    [subscriber submanagerFilesOnProgressUpdate:operation.progress
-                                        message:message
-                                 bytesPerSecond:operation.bytesPerSecond
-                                            eta:operation.eta];
+    [subscriber submanagerFilesOnProgressUpdate:operation.progress message:message];
+    [subscriber submanagerFilesOnEtaUpdate:operation.eta bytesPerSecond:operation.bytesPerSecond message:message];
 
     NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
     [progressSubscribers addObject:subscriber];
@@ -604,10 +604,20 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
 
                for (id<OCTSubmanagerFilesProgressSubscriber> subscriber in progressSubscribers) {
-                   [subscriber submanagerFilesOnProgressUpdate:operation.progress
-                                                       message:message
-                                                bytesPerSecond:operation.bytesPerSecond
-                                                           eta:operation.eta];
+                   [subscriber submanagerFilesOnProgressUpdate:operation.progress message:message];
+               }
+    };
+}
+
+- (OCTFileBaseOperationProgressBlock)fileEtaUpdateBlockWithMessage:(OCTMessageAbstract *)message
+{
+    return ^(OCTFileBaseOperation *__nonnull operation) {
+               NSHashTable *progressSubscribers = operation.userInfo[kProgressSubscribersKey];
+
+               for (id<OCTSubmanagerFilesProgressSubscriber> subscriber in progressSubscribers) {
+                   [subscriber submanagerFilesOnEtaUpdate:operation.eta
+                                           bytesPerSecond:operation.bytesPerSecond
+                                                  message:message];
                }
     };
 }
@@ -691,6 +701,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                            fileSize:fileSize
                                                                            userInfo:nil
                                                                       progressBlock:nil
+                                                                     etaUpdateBlock:nil
                                                                        successBlock:nil
                                                                        failureBlock:nil];
 
@@ -773,6 +784,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                                fileSize:fileSize
                                                                                userInfo:nil
                                                                           progressBlock:nil
+                                                                         etaUpdateBlock:nil
                                                                            successBlock:^(OCTFileBaseOperation *__nonnull operation) {
         __strong OCTSubmanagerFiles *strongSelf = weakSelf;
 

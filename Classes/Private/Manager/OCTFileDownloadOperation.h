@@ -34,6 +34,7 @@
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                      etaUpdateBlock:(nullable OCTFileBaseOperationProgressBlock)etaUpdateBlock
                         successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock;
 

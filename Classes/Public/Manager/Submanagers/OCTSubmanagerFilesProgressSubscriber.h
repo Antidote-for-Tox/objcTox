@@ -17,12 +17,18 @@
  *
  * @param progress Progress of download/upload. From 0.0 to 1.0.
  * @param message File message with progress update.
- * @param bytesPerSecond Speed of download/upload.
- * @param eta Estimated time of finish of download/upload.
  */
-- (void)submanagerFilesOnProgressUpdate:(float)progress
-                                message:(nonnull OCTMessageAbstract *)message
-                         bytesPerSecond:(OCTToxFileSize)bytesPerSecond
-                                    eta:(CFTimeInterval)eta;
+- (void)submanagerFilesOnProgressUpdate:(float)progress message:(nonnull OCTMessageAbstract *)message;
+
+/**
+ * Method called on download/upload eta update.
+ *
+ * @param eta Estimated time of finish of download/upload.
+ * @param bytesPerSecond Speed of download/upload.
+ * @param message File message with progress update.
+ */
+- (void)submanagerFilesOnEtaUpdate:(CFTimeInterval)eta
+                    bytesPerSecond:(OCTToxFileSize)bytesPerSecond
+                           message:(nonnull OCTMessageAbstract *)message;
 
 @end
