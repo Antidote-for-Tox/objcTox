@@ -219,7 +219,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     [self updateMessageFile:message withBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeLoading;
-        file.filePath = output.resultFilePath;
+        [file internalSetFilePath:output.resultFilePath];
     }];
 
     NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
