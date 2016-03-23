@@ -12,7 +12,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
+static const CFTimeInterval kMinUpdateProgressInterval = 0.1;
 
 @interface OCTFileBaseOperation ()
 
