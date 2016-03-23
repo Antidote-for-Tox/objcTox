@@ -108,7 +108,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     NSParameterAssert(fileName);
     NSParameterAssert(chat);
 
-    NSString *filePath = [[self uploadsDirectory] stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+    NSString *generatedName = [[[NSUUID UUID] UUIDString] stringByAppendingPathExtension:[fileName pathExtension]];
+    NSString *filePath = [[self uploadsDirectory] stringByAppendingPathComponent:generatedName];
 
     if (! [data writeToFile:filePath atomically:NO]) {
         OCTLogWarn(@"cannot save data to temp directory.");
@@ -215,8 +216,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return;
     }
 
+    NSString *pathExtension = [message.messageFile.fileName pathExtension];
     OCTFilePathOutput *output = [[OCTFilePathOutput alloc] initWithTempFolder:[self downloadsTempDirectory]
-                                                                 resultFolder:[self downloadsDirectory]];
+                                                                 resultFolder:[self downloadsDirectory]
+                                                                pathExtension:pathExtension];
 
     NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
 

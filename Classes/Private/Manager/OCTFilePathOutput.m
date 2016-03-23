@@ -21,7 +21,9 @@
 
 #pragma mark -  Lifecycle
 
-- (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder resultFolder:(nonnull NSString *)resultFolder
+- (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder
+                               resultFolder:(nonnull NSString *)resultFolder
+                              pathExtension:(nonnull NSString *)pathExtension
 {
     self = [super init];
 
@@ -29,7 +31,7 @@
         return nil;
     }
 
-    NSString *fileName = [[NSUUID UUID] UUIDString];
+    NSString *fileName = [[[NSUUID UUID] UUIDString] stringByAppendingPathExtension:pathExtension];
 
     _tempFilePath = [tempFolder stringByAppendingPathComponent:fileName];
     _resultFilePath = [resultFolder stringByAppendingPathComponent:fileName];
