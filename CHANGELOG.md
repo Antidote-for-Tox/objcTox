@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixes
 - Bug with switching to wrong camera on iOS.
+- Crash when killing OCTManager [#154](https://github.com/Antidote-for-Tox/objcTox/issues/154).
 
 ## [0.5.0] - 2016-02-12
 ### Added
