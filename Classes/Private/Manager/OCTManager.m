@@ -107,7 +107,7 @@
 
 - (void)dealloc
 {
-    self.calls = nil;
+    [self killSubmanagers];
     [self.tox stop];
 }
 
@@ -341,6 +341,18 @@
     calls.dataSource = self;
     _calls = calls;
     [_calls setupWithError:nil];
+}
+
+- (void)killSubmanagers
+{
+    self.bootstrap = nil;
+    self.calls = nil;
+    self.chats = nil;
+    self.dns = nil;
+    self.files = nil;
+    self.friends = nil;
+    self.objects = nil;
+    self.user = nil;
 }
 
 - (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
