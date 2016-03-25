@@ -39,6 +39,9 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
 @property (strong, nonatomic, readonly) NSOperationQueue *queue;
 
+@property (strong, nonatomic, readonly) NSObject *filesCleanupLock;
+@property (assign, nonatomic) BOOL filesCleanupInProgress;
+
 @end
 
 @implementation OCTSubmanagerFiles
@@ -55,6 +58,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }
 
     _queue = [NSOperationQueue new];
+    _filesCleanupLock = [NSObject new];
 
     return self;
 }
@@ -95,6 +99,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                downloads,
                [fileManager contentsOfDirectoryAtPath:downloads error:nil]);
     [fileManager removeItemAtPath:downloads error:nil];
+
+    [self scheduleFilesCleanup];
 }
 
 #pragma mark -  Public
@@ -513,6 +519,96 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 }
 
 #pragma mark -  Private
+
+- (void)scheduleFilesCleanup
+{
+    @synchronized(self.filesCleanupLock) {
+        if (self.filesCleanupInProgress) {
+            return;
+        }
+        self.filesCleanupInProgress = YES;
+    }
+
+    OCTLogInfo(@"cleanup: starting files cleanup");
+
+    NSString *uploads = [self uploadsDirectory];
+    NSString *downloads = [self downloadsDirectory];
+
+    __weak OCTSubmanagerFiles *weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+
+        NSMutableArray *allFiles = [NSMutableArray new];
+
+        NSError *error;
+        NSArray<NSString *> *uploadsContents = [fileManager contentsOfDirectoryAtPath:uploads error:&error];
+        if (uploadsContents) {
+            for (NSString *file in uploadsContents) {
+                [allFiles addObject:[uploads stringByAppendingPathComponent:file]];
+            }
+        }
+        else {
+            OCTLogWarn(@"cleanup: cannot read contents of uploads directory %@, error %@", uploads, error);
+        }
+
+        NSArray<NSString *> *downloadsContents = [fileManager contentsOfDirectoryAtPath:downloads error:&error];
+        if (downloadsContents) {
+            for (NSString *file in downloadsContents) {
+                [allFiles addObject:[downloads stringByAppendingPathComponent:file]];
+            }
+        }
+        else {
+            OCTLogWarn(@"cleanup: cannot read contents of download directory %@, error %@", downloads, error);
+        }
+
+        OCTLogInfo(@"cleanup: total number of files %d", allFiles.count);
+        OCTToxFileSize freedSpace = 0;
+
+        for (NSString *path in allFiles) {
+            __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+            if (! strongSelf) {
+                OCTLogWarn(@"cleanup: submanager was killed, quiting");
+            }
+
+            __block BOOL exists = NO;
+
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"internalFilePath == %@",
+                                          [path stringByAbbreviatingWithTildeInPath]];
+
+                OCTRealmManager *realmManager = strongSelf.dataSource.managerGetRealmManager;
+                RLMResults *results = [realmManager objectsWithClass:[OCTMessageFile class] predicate:predicate];
+
+                exists = (results.count > 0);
+            });
+
+            if (exists) {
+                continue;
+            }
+
+            OCTLogInfo(@"cleanup: found unbounded file, removing it. Path %@", path);
+
+            NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+            if (! attributes) {
+                OCTLogWarn(@"cleanup: cannot read file at path %@, error %@", path, error);
+            }
+
+            if ([fileManager removeItemAtPath:path error:&error]) {
+                freedSpace += [attributes[NSFileSize] longLongValue];
+            }
+            else {
+                OCTLogWarn(@"cleanup: cannot remove file at path %@, error %@", path, error);
+            }
+        }
+
+        OCTLogInfo(@"cleanup: done. Freed %lld bytes.", freedSpace);
+
+        __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+        @synchronized(strongSelf.filesCleanupLock) {
+            strongSelf.filesCleanupInProgress = NO;
+        }
+    });
+}
 
 - (OCTFileBaseOperation *)operationWithFileNumber:(OCTToxFileNumber)fileNumber friendNumber:(OCTToxFriendNumber)friendNumber
 {
