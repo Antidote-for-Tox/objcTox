@@ -9,11 +9,12 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
+#import "OCTRealmTests.h"
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTTox.h"
 
-@interface OCTSubmanagerUserTests : XCTestCase
+@interface OCTSubmanagerUserTests : OCTRealmTests
 
 @property (strong, nonatomic) OCTSubmanagerUser *submanager;
 @property (strong, nonatomic) id dataSource;
@@ -31,6 +32,7 @@
 
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
     OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
+    OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
 
     self.submanager = [OCTSubmanagerUser new];
     self.submanager.dataSource = self.dataSource;
@@ -111,6 +113,22 @@
     XCTAssertEqual(error, error2);
     OCMVerifyAll(self.tox);
     OCMVerify([self.dataSource managerSaveTox]);
+}
+
+- (void)testSetUserAvatar
+{
+    char databytes[65536];
+    NSData *data = [[NSData alloc] initWithBytes:databytes length:65536];
+    XCTAssertTrue([self.submanager setUserAvatar:data error:nil]);
+
+    XCTAssertEqualObjects([self.submanager userAvatar], data);
+
+    char toomanybytes[85536];
+    data = [[NSData alloc] initWithBytes:toomanybytes length:85536];
+    XCTAssertFalse([self.submanager setUserAvatar:data error:nil]);
+
+    XCTAssertTrue([self.submanager setUserAvatar:nil error:nil]);
+    XCTAssertNil([self.submanager userAvatar]);
 }
 
 @end
