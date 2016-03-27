@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.6.0] - 2016-03-27
 ### Added
 - File transfers.
 - Avatars.
@@ -104,7 +106,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Chat objects with various information.
 - Sending and receiving messages.
 
-[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.5.0...master
+[unreleased]: https://github.com/Antidote-for-Tox/objcTox/compare/0.6.0...master
+[0.6.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/Antidote-for-Tox/objcTox/compare/0.2.1...0.3.0
