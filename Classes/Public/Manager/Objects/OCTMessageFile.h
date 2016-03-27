@@ -41,23 +41,24 @@
 @property (nullable) NSString *fileName;
 
 /**
+ * Uniform Type Identifier of file.
+ */
+@property (nullable) NSString *fileUTI;
+
+/**
  * Path of file on disk. If you need fileName to show to user please use
  * `fileName` property. filePath has it's own random fileName.
  *
  * In case of incoming file filePath will have value only if fileType is OCTMessageFileTypeReady
  */
-@property (nullable) NSString *filePath;
+- (nullable NSString *)filePath;
 
-/**
- * Uniform Type Identifier of file.
- */
-@property (nullable) NSString *fileUTI;
-
-
-// Properties below are for internal use.
+// Properties and methods below are for internal use.
 // Do not use them or rely on them. They may change in any moment.
 
 @property int internalFileNumber;
+@property (nullable) NSString *internalFilePath;
+- (void)internalSetFilePath:(nullable NSString *)path;
 
 @end
 

@@ -16,6 +16,16 @@
 
 #pragma mark -  Public
 
+- (nullable NSString *)filePath
+{
+    return [self.internalFilePath stringByExpandingTildeInPath];
+}
+
+- (void)internalSetFilePath:(NSString *)path
+{
+    self.internalFilePath = [path stringByAbbreviatingWithTildeInPath];
+}
+
 - (NSString *)description
 {
     NSString *description = [super description];

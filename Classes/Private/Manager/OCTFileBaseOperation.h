@@ -69,6 +69,7 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
  * @param fileSize Size of file in bytes.
  * @param userInfo Any object that will be stored by operation.
  * @param progressBlock Block called to notify about loading progress. Block will be called on main thread.
+ * @param etaUpdateBlock Block called to notify about loading eta update. Block will be called on main thread.
  * @param successBlock Block called on operation success. Block will be called on main thread.
  * @param failureBlock Block called on loading error. Block will be called on main thread.
  */
@@ -78,6 +79,7 @@ typedef void (^OCTFileBaseOperationFailureBlock)(OCTFileBaseOperation *__nonnull
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(nullable NSDictionary *)userInfo
                        progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                      etaUpdateBlock:(nullable OCTFileBaseOperationProgressBlock)etaUpdateBlock
                         successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock;
 

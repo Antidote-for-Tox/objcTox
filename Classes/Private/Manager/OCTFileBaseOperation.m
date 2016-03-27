@@ -12,7 +12,16 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
+static const CFTimeInterval kMinUpdateProgressInterval = 0.1;
+static const CFTimeInterval kMinUpdateEtaInterval = 1.0;
+
+@interface OCTEtaObject : NSObject
+@property (assign, nonatomic) CFTimeInterval deltaTime;
+@property (assign, nonatomic) OCTToxFileSize deltaBytes;
+@end
+
+@implementation OCTEtaObject
+@end
 
 @interface OCTFileBaseOperation ()
 
@@ -31,11 +40,16 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 @property (assign, nonatomic, readwrite) CFTimeInterval eta;
 
 @property (copy, nonatomic) OCTFileBaseOperationProgressBlock progressBlock;
+@property (copy, nonatomic) OCTFileBaseOperationProgressBlock etaUpdateBlock;
 @property (copy, nonatomic) OCTFileBaseOperationSuccessBlock successBlock;
 @property (copy, nonatomic) OCTFileBaseOperationFailureBlock failureBlock;
 
 @property (assign, nonatomic) CFTimeInterval lastUpdateProgressTime;
 @property (assign, nonatomic) OCTToxFileSize lastUpdateBytesDone;
+@property (assign, nonatomic) CFTimeInterval lastUpdateEtaProgressTime;
+@property (assign, nonatomic) OCTToxFileSize lastUpdateEtaBytesDone;
+
+@property (strong, nonatomic) NSMutableArray *last10EtaObjects;
 
 @end
 
@@ -56,6 +70,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(NSDictionary *)userInfo
                        progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                      etaUpdateBlock:(nullable OCTFileBaseOperationProgressBlock)etaUpdateBlock
                         successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock
 {
@@ -83,6 +98,7 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
     _userInfo = userInfo;
 
     _progressBlock = [progressBlock copy];
+    _etaUpdateBlock = [etaUpdateBlock copy];
     _successBlock = [successBlock copy];
     _failureBlock = [failureBlock copy];
 
@@ -124,30 +140,8 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 {
     self.bytesDone = bytesDone;
 
-    CFTimeInterval time = CACurrentMediaTime();
-
-    CFTimeInterval deltaTime = time - self.lastUpdateProgressTime;
-
-    if (deltaTime > kMinUpdateProgressInterval) {
-        OCTToxFileSize deltaBytes = bytesDone - self.lastUpdateBytesDone;
-        OCTToxFileSize bytesLeft = self.fileSize - bytesDone;
-
-        self.lastUpdateProgressTime = time;
-        self.lastUpdateBytesDone = bytesDone;
-
-        self.progress = (float)bytesDone / self.fileSize;
-        self.bytesPerSecond = deltaBytes / deltaTime;
-
-        if (bytesDone) {
-            self.eta = deltaTime * bytesLeft / deltaBytes;
-        }
-
-        OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", self.progress, self.bytesPerSecond, self.eta);
-
-        if (self.progressBlock) {
-            self.progressBlock(self);
-        }
-    }
+    [self updateProgressIfNeeded:bytesDone];
+    [self updateEtaIfNeeded:bytesDone];
 }
 
 - (void)operationStarted
@@ -203,6 +197,9 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 
     self.lastUpdateProgressTime = CACurrentMediaTime();
     self.lastUpdateBytesDone = 0;
+    self.lastUpdateEtaProgressTime = CACurrentMediaTime();
+    self.lastUpdateEtaBytesDone = 0;
+    self.last10EtaObjects = [NSMutableArray new];
 
     [self operationStarted];
 }
@@ -220,6 +217,74 @@ static const CFTimeInterval kMinUpdateProgressInterval = 1.0;
 - (BOOL)asynchronous
 {
     return YES;
+}
+
+#pragma mark -  Private
+
+- (void)updateProgressIfNeeded:(OCTToxFileSize)bytesDone
+{
+    CFTimeInterval time = CACurrentMediaTime();
+
+    CFTimeInterval deltaTime = time - self.lastUpdateProgressTime;
+
+    if (deltaTime <= kMinUpdateProgressInterval) {
+        return;
+    }
+
+    self.lastUpdateProgressTime = time;
+    self.lastUpdateBytesDone = bytesDone;
+
+    self.progress = (float)bytesDone / self.fileSize;
+
+    OCTLogInfo(@"progress %.2f, bytes per second %lld, eta %.0f seconds", self.progress, self.bytesPerSecond, self.eta);
+
+    if (self.progressBlock) {
+        self.progressBlock(self);
+    }
+}
+
+- (void)updateEtaIfNeeded:(OCTToxFileSize)bytesDone
+{
+    CFTimeInterval time = CACurrentMediaTime();
+
+    CFTimeInterval deltaTime = time - self.lastUpdateEtaProgressTime;
+
+    if (deltaTime <= kMinUpdateEtaInterval) {
+        return;
+    }
+
+    OCTToxFileSize deltaBytes = bytesDone - self.lastUpdateEtaBytesDone;
+    OCTToxFileSize bytesLeft = self.fileSize - bytesDone;
+
+    self.lastUpdateEtaProgressTime = time;
+    self.lastUpdateEtaBytesDone = bytesDone;
+
+    OCTEtaObject *etaObject = [OCTEtaObject new];
+    etaObject.deltaTime = deltaTime;
+    etaObject.deltaBytes = deltaBytes;
+
+    [self.last10EtaObjects addObject:etaObject];
+    if (self.last10EtaObjects.count > 10) {
+        [self.last10EtaObjects removeObjectAtIndex:0];
+    }
+
+    CFTimeInterval totalDeltaTime = 0.0;
+    OCTToxFileSize totalDeltaBytes = 0;
+
+    for (OCTEtaObject *object in self.last10EtaObjects) {
+        totalDeltaTime += object.deltaTime;
+        totalDeltaBytes += object.deltaBytes;
+    }
+
+    self.bytesPerSecond = totalDeltaBytes / totalDeltaTime;
+
+    if (totalDeltaBytes) {
+        self.eta = totalDeltaTime * bytesLeft / totalDeltaBytes;
+    }
+
+    if (self.etaUpdateBlock) {
+        self.etaUpdateBlock(self);
+    }
 }
 
 @end

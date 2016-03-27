@@ -161,10 +161,12 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 #pragma mark -  OCTSubmanagerFilesProgressSubscriber
 
-- (void)submanagerFilesOnProgressUpdate:(float)progress
-                                message:(nonnull OCTMessageAbstract *)message
-                         bytesPerSecond:(OCTToxFileSize)bytesPerSecond
-                                    eta:(CFTimeInterval)eta
+- (void)submanagerFilesOnProgressUpdate:(float)progress message:(nonnull OCTMessageAbstract *)message
+{}
+
+- (void)submanagerFilesOnEtaUpdate:(CFTimeInterval)eta
+                    bytesPerSecond:(OCTToxFileSize)bytesPerSecond
+                           message:(nonnull OCTMessageAbstract *)message
 {
     NSIndexPath *indexPath = [self.filesController indexPathForObject:message];
 
@@ -180,10 +182,8 @@ static NSString *const kCellIdentifier = @"fileCell";
     }
 
     textField.stringValue = [NSString stringWithFormat:
-                             @"progress = %.2f\n"
                              @"bytesPerSecond = %lld\n"
                              @"eta = %g",
-                             progress,
                              bytesPerSecond,
                              eta];
 }

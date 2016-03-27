@@ -420,7 +420,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     messageFile.fileType = fileType;
     messageFile.fileSize = fileSize;
     messageFile.fileName = fileName;
-    messageFile.filePath = filePath;
+    [messageFile internalSetFilePath:filePath];
     messageFile.fileUTI = fileUTI;
 
     return [self addMessageAbstractWithChat:chat sender:sender messageText:nil messageFile:messageFile messageCall:nil];
@@ -489,7 +489,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     [migration enumerateObjects:OCTMessageFile.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"fileName"] = [oldObject[@"fileName"] length] > 0 ? oldObject[@"fileName"] : nil;
-        newObject[@"filePath"] = [oldObject[@"filePath"] length] > 0 ? oldObject[@"filePath"] : nil;
         newObject[@"fileUTI"] = [oldObject[@"fileUTI"] length] > 0 ? oldObject[@"fileUTI"] : nil;
     }];
 

@@ -27,10 +27,11 @@
                             fileSize:(OCTToxFileSize)fileSize
                             userInfo:(NSDictionary *)userInfo
                        progressBlock:(nullable OCTFileBaseOperationProgressBlock)progressBlock
+                      etaUpdateBlock:(nullable OCTFileBaseOperationProgressBlock)etaUpdateBlock
                         successBlock:(nullable OCTFileBaseOperationSuccessBlock)successBlock
                         failureBlock:(nullable OCTFileBaseOperationFailureBlock)failureBlock
 {
-    NSParameterAssert(tempDirectoryPath);
+    NSParameterAssert(fileOutput);
 
     self = [super initWithTox:tox
                  friendNumber:friendNumber
@@ -38,6 +39,7 @@
                      fileSize:fileSize
                      userInfo:userInfo
                 progressBlock:progressBlock
+               etaUpdateBlock:etaUpdateBlock
                  successBlock:successBlock
                  failureBlock:failureBlock];
 

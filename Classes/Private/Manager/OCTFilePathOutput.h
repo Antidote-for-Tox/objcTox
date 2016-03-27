@@ -13,7 +13,9 @@
 
 @property (copy, nonatomic, readonly, nonnull) NSString *resultFilePath;
 
-- (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder resultFolder:(nonnull NSString *)resultFolder;
+- (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder
+                               resultFolder:(nonnull NSString *)resultFolder
+                              pathExtension:(nonnull NSString *)pathExtension;
 
 - (nullable instancetype)init NS_UNAVAILABLE;
 + (nullable instancetype)new NS_UNAVAILABLE;
