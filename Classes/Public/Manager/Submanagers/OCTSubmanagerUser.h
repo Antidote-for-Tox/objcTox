@@ -11,12 +11,12 @@
 
 @class OCTSubmanagerUser;
 @protocol OCTSubmanagerUserDelegate <NSObject>
-- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
+- (void)submanagerUser:(nonnull OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
 @end
 
 @interface OCTSubmanagerUser : NSObject
 
-@property (weak, nonatomic) id<OCTSubmanagerUserDelegate> delegate;
+@property (weak, nonatomic, nullable) id<OCTSubmanagerUserDelegate> delegate;
 
 /**
  * Indicates if client is connected to the DHT.
@@ -29,12 +29,12 @@
  * Address for Tox as a hex string. Address is kOCTToxAddressLength length and has following format:
  * [publicKey (32 bytes, 64 characters)][nospam number (4 bytes, 8 characters)][checksum (2 bytes, 4 characters)]
  */
-@property (strong, nonatomic, readonly) NSString *userAddress;
+@property (strong, nonatomic, readonly, nonnull) NSString *userAddress;
 
 /**
  * Client's Tox Public Key (long term public key) of kOCTToxPublicKeyLength.
  */
-@property (strong, nonatomic, readonly) NSString *publicKey;
+@property (strong, nonatomic, readonly, nonnull) NSString *publicKey;
 
 /**
  * Client's nospam part of the address. Any 32 bit unsigned integer.
@@ -55,14 +55,14 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserName:(NSString *)name error:(NSError **)error;
+- (BOOL)setUserName:(nullable NSString *)name error:(NSError *__nullable *__nullable)error;
 
 /**
  * Get client's nickname.
  *
  * @return Client's nickname or nil in case of error.
  */
-- (NSString *)userName;
+- (nullable NSString *)userName;
 
 /**
  * Set client's status message.
@@ -73,14 +73,14 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserStatusMessage:(NSString *)statusMessage error:(NSError **)error;
+- (BOOL)setUserStatusMessage:(nullable NSString *)statusMessage error:(NSError *__nullable *__nullable)error;
 
 /**
  * Get client's status message.
  *
  * @return Client's status message.
  */
-- (NSString *)userStatusMessage;
+- (nullable NSString *)userStatusMessage;
 
 /**
  * Set user avatar. Avatar should be <= kOCTManagerMaxAvatarSize.
@@ -91,13 +91,13 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserAvatar:(NSData *)avatar error:(NSError **)error;
+- (BOOL)setUserAvatar:(NSData *)avatar error:(NSError *__nullable *__nullable)error;
 
 /**
  * Get data representation of user avatar.
  *
  * @return Data with user avatar if exists.
  */
-- (NSData *)userAvatar;
+- (nullable NSData *)userAvatar;
 
 @end
