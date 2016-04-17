@@ -60,12 +60,12 @@
 
 - (NSString *)pathForDownloadedFilesDirectory
 {
-    return [self.baseDirectory stringByAppendingPathComponent:@"downloads"];
+    return [self.baseDirectory stringByAppendingPathComponent:@"files"];
 }
 
 - (NSString *)pathForUploadedFilesDirectory
 {
-    return [self.baseDirectory stringByAppendingPathComponent:@"uploads"];
+    return [self.baseDirectory stringByAppendingPathComponent:@"files"];
 }
 
 - (NSString *)pathForTemporaryFilesDirectory
