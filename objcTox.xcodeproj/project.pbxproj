@@ -598,7 +598,7 @@
 				1183BC671C9EBBE5000CD310 /* OCTFileUploadOperation.h */,
 				1183BC681C9EBBE5000CD310 /* OCTFileUploadOperation.m */,
 			);
-			name = Files;
+			path = Files;
 			sourceTree = "<group>";
 		};
 		11D650CD1B89225400C3DD23 /* Audio */ = {
