@@ -68,6 +68,17 @@
 - (BOOL)cancelFileTransfer:(nonnull OCTMessageAbstract *)message error:(NSError *__nullable *__nullable)error;
 
 /**
+ * Retry to send file using same OCTMessageAbstract. This message should have Canceled type, otherwise retry will failure.
+ *
+ * @param message File transfer message to send.
+ * @param failureBlock Block that will be called in case of upload failure.
+ *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ *     See OCTSendFileError for all error codes.
+ */
+- (void)retrySendingFile:(nonnull OCTMessageAbstract *)message
+            failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
+
+/**
  * Pause or resume file transfer.
  * - For pausing transfer should be in Loading state or paused by friend, otherwise nothing will happen.
  * - For resuming transfer should be in Paused state and paused by user, otherwise nothing will happen.

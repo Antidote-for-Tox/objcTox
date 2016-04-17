@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased][unreleased]
 ### Added
 - OS X platform in podspec.
+- Retrying sending file transfers.
 
 ### Changes
 - Realm updated to version 1.0.1.
