@@ -133,7 +133,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     NSString *path = [panel.URL path];
 
-    [self.manager.files sendFile:path overrideFileName:nil toChat:chat failureBlock:nil];
+    [self.manager.files sendFileAtPath:path moveToUploads:NO toChat:chat failureBlock:nil];
 }
 
 #pragma mark - NSTextFieldDelegate

@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 - Realm updated to version 1.0.1.
 - RBQFetchedResultsController removed. Use RLMResults with `addNotificationBlock:` method insted.
+- OCTSubmanagerFiles: using original file names instead of generated ones.
 
 ## [0.6.0] - 2016-03-27
 ### Added

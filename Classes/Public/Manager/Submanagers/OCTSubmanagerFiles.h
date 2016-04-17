@@ -37,17 +37,16 @@
  * You can monitor progress using this message.
  *
  * @param filePath Path of file to upload.
- * @param overrideFileName Optional parameter. By default file name from filePath will be used. You can override it
- * by passing this parameter.
+ * @param moveToUploads If YES file will be moved to uploads directory.
  * @param chat Chat to send file to.
  * @param failureBlock Block that will be called in case of upload failure.
  *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  *     See OCTSendFileError for all error codes.
  */
-- (void)    sendFile:(nonnull NSString *)filePath
-    overrideFileName:(nullable NSString *)overrideFileName
-              toChat:(nonnull OCTChat *)chat
-        failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
+- (void)sendFileAtPath:(nonnull NSString *)filePath
+         moveToUploads:(BOOL)moveToUploads
+                toChat:(nonnull OCTChat *)chat
+          failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
 
 /**
  * Accept file transfer.
