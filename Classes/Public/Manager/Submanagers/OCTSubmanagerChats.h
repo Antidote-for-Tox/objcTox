@@ -26,6 +26,15 @@
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 
 /**
+ * Removes given messages.
+ *
+ * @param messages Array with messages to remove.
+ *
+ * @warning Destructive operation! There is no way to restore messages after removal.
+ */
+- (void)removeMessages:(NSArray<OCTMessageAbstract *> *)messages;
+
+/**
  * Removes chat and all appropriate messages.
  *
  * @param chat Chat to remove.

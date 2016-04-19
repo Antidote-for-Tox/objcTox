@@ -275,6 +275,37 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     return call;
 }
 
+- (void)removeMessages:(NSArray<OCTMessageAbstract *> *)messages
+{
+    NSParameterAssert(messages);
+
+    OCTLogInfo(@"removing messages %lu", (unsigned long)messages.count);
+
+    dispatch_sync(self.queue, ^{
+        RBQRealmChangeLogger *logger = [self logger];
+
+        [self.realm beginWriteTransaction];
+
+        NSMutableSet *set = [NSMutableSet new];
+        for (OCTMessageAbstract *message in messages) {
+            [set addObject:message.chat];
+        }
+
+        [self removeMessagesWithSubmessages:messages];
+
+        for (OCTChat *chat in set) {
+            RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+            messages = [messages sortedResultsUsingProperty:@"dateInterval" ascending:YES];
+
+            chat.lastMessage = messages.lastObject;
+
+            [[self logger] didChangeObject:chat];
+        }
+
+        [self.realm commitWriteTransaction];
+    });
+}
+
 - (void)removeChatWithAllMessages:(OCTChat *)chat
 {
     NSParameterAssert(chat);
@@ -285,19 +316,8 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
 
         [self.realm beginWriteTransaction];
-        for (OCTMessageAbstract *message in messages) {
-            if (message.messageText) {
-                [self.realm deleteObject:message.messageText];
-            }
-            if (message.messageFile) {
-                [self.realm deleteObject:message.messageFile];
-            }
-            if (message.messageCall) {
-                [self.realm deleteObject:message.messageCall];
-            }
-        }
 
-        [self.realm deleteObjects:messages];
+        [self removeMessagesWithSubmessages:messages];
         [self.realm deleteObject:chat];
 
         [self.realm commitWriteTransaction];
@@ -476,6 +496,24 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     }];
 
     return messageAbstract;
+}
+
+// Delete an NSArray, RLMArray, or RLMResults of messages from this Realm.
+- (void)removeMessagesWithSubmessages:(id)messages
+{
+    for (OCTMessageAbstract *message in messages) {
+        if (message.messageText) {
+            [self.realm deleteObject:message.messageText];
+        }
+        if (message.messageFile) {
+            [self.realm deleteObject:message.messageFile];
+        }
+        if (message.messageCall) {
+            [self.realm deleteObject:message.messageCall];
+        }
+    }
+
+    [self.realm deleteObjects:messages];
 }
 
 @end

@@ -79,6 +79,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                      selector:@selector(userAvatarWasUpdatedNotification)
                                                          name:kOCTUserAvatarWasUpdatedNotification
                                                        object:nil];
+    [self.dataSource.managerGetNotificationCenter addObserver:self
+                                                     selector:@selector(scheduleFilesCleanup)
+                                                         name:kOCTScheduleFileTransferCleanupNotification
+                                                       object:nil];
 
     OCTLogInfo(@"cancelling pending files...");
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];

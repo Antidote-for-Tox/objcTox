@@ -66,14 +66,42 @@
     XCTAssertEqualObjects([first.friends firstObject], friend);
 }
 
+- (void)testRemoveMessages
+{
+    NSNotificationCenter *center = [[NSNotificationCenter alloc] init];
+    OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
+
+    XCTestExpectation *expect = [self expectationWithDescription:@""];
+    [center addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        [expect fulfill];
+    }];
+
+    NSArray *messages = [NSArray new];
+    OCMExpect([self.realmManager removeMessages:messages]);
+
+    [self.submanager removeMessages:messages];
+
+    [self waitForExpectationsWithTimeout:0.0 handler:nil];
+    OCMVerifyAll((id)self.realmManager);
+}
+
 - (void)testRemoveChatWithAllMessages
 {
+    NSNotificationCenter *center = [[NSNotificationCenter alloc] init];
+    OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
+
+    XCTestExpectation *expect = [self expectationWithDescription:@""];
+    [center addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        [expect fulfill];
+    }];
+
     OCTChat *chat = [OCTChat new];
 
     OCMExpect([self.realmManager removeChatWithAllMessages:chat]);
 
     [self.submanager removeChatWithAllMessages:chat];
 
+    [self waitForExpectationsWithTimeout:0.0 handler:nil];
     OCMVerifyAll((id)self.realmManager);
 }
 

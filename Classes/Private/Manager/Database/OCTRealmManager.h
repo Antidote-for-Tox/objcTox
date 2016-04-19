@@ -63,6 +63,8 @@
  * @return A call object if it exists, nil if no call is session for this call.
  */
 - (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
+
+- (void)removeMessages:(NSArray<OCTMessageAbstract *> *)messages;
 - (void)removeChatWithAllMessages:(OCTChat *)chat;
 
 /**

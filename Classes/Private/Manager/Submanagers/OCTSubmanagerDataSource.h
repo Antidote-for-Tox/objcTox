@@ -28,6 +28,15 @@ static NSString *const kOCTFriendConnectionStatusChangeNotification = @"kOCTFrie
  */
 static NSString *const kOCTUserAvatarWasUpdatedNotification = @"kOCTUserAvatarWasUpdatedNotification";
 
+/**
+ * Send this notifications to schedule cleanup of uploaded/downloaded files. All files without OCTMessageFile
+ * will be removed.
+ *
+ * - object nil
+ * - userInfo nil
+ */
+static NSString *const kOCTScheduleFileTransferCleanupNotification = @"kOCTScheduleFileTransferCleanupNotification";
+
 @protocol OCTSubmanagerDataSource <NSObject>
 
 - (OCTTox *)managerGetTox;
