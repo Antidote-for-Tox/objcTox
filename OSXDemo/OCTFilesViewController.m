@@ -7,7 +7,6 @@
 //
 
 #import "OCTFilesViewController.h"
-#import "RBQFetchedResultsController.h"
 #import "OCTManager.h"
 #import "OCTSubmanagerObjects.h"
 #import "OCTSubmanagerFiles.h"
@@ -17,13 +16,13 @@
 
 static NSString *const kCellIdentifier = @"fileCell";
 
-@interface OCTFilesViewController () <NSTableViewDataSource, NSTableViewDelegate, RBQFetchedResultsControllerDelegate,
-                                      OCTSubmanagerFilesProgressSubscriber>
+@interface OCTFilesViewController () <NSTableViewDataSource, NSTableViewDelegate, OCTSubmanagerFilesProgressSubscriber>
 
 @property (weak, nonatomic) OCTManager *manager;
 @property (weak) IBOutlet NSTableView *tableView;
 
-@property (strong, nonatomic) RBQFetchedResultsController *filesController;
+@property (strong, nonatomic) RLMResults<OCTMessageAbstract *> *fileMessages;
+@property (strong, nonatomic) RLMNotificationToken *fileMessagesNotificationToken;
 
 @end
 
@@ -42,16 +41,25 @@ static NSString *const kCellIdentifier = @"fileCell";
     _manager = manager;
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageFile != nil"];
-    RBQFetchRequest *fetchRequest = [manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract
-                                                           withPredicate:predicate];
-
-    _filesController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                              sectionNameKeyPath:nil
-                                                                       cacheName:nil];
-    _filesController.delegate = self;
-    [_filesController performFetch];
+    _fileMessages = [manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self.fileMessagesNotificationToken stop];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    __weak typeof(self) weakSelf = self;
+
+    self.fileMessagesNotificationToken = [self.fileMessages addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        [weakSelf.tableView reloadData];
+    }];
 }
 
 - (IBAction)receiveButtonPressed:(id)sender
@@ -103,7 +111,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.filesController numberOfRowsForSectionIndex:0];
+    return self.fileMessages.count;
 }
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
@@ -115,9 +123,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
-
-    OCTMessageAbstract *message = [self.filesController objectAtIndexPath:path];
+    OCTMessageAbstract *message = self.fileMessages[row];
 
     NSTextField *textField = [self.tableView makeViewWithIdentifier:kCellIdentifier owner:nil];
 
@@ -152,13 +158,6 @@ static NSString *const kCellIdentifier = @"fileCell";
     return textField;
 }
 
-#pragma mark -  RBQFetchedResultsControllerDelegate
-
-- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
-{
-    [self.tableView reloadData];
-}
-
 #pragma mark -  OCTSubmanagerFilesProgressSubscriber
 
 - (void)submanagerFilesOnProgressUpdate:(float)progress message:(nonnull OCTMessageAbstract *)message
@@ -168,14 +167,14 @@ static NSString *const kCellIdentifier = @"fileCell";
                     bytesPerSecond:(OCTToxFileSize)bytesPerSecond
                            message:(nonnull OCTMessageAbstract *)message
 {
-    NSIndexPath *indexPath = [self.filesController indexPathForObject:message];
+    NSUInteger index = [self.fileMessages indexOfObject:message];
 
-    if (! indexPath) {
+    if (index == NSNotFound) {
         [self.manager.files removeProgressSubscriber:self forFileTransfer:message error:nil];
         return;
     }
 
-    NSTextField *textField = [self.tableView viewAtColumn:1 row:indexPath.row makeIfNecessary:NO];
+    NSTextField *textField = [self.tableView viewAtColumn:1 row:index makeIfNecessary:NO];
 
     if (! textField) {
         return;
@@ -233,8 +232,7 @@ static NSString *const kCellIdentifier = @"fileCell";
         return nil;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTMessageAbstract *message = [self.filesController objectAtIndexPath:path];
+    OCTMessageAbstract *message = self.fileMessages[selectedRow];
 
     return message;
 }

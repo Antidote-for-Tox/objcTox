@@ -134,6 +134,7 @@
 		11E80D861B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E80D821B98C647008DFC47 /* OCTSettingsStorageObject.m */; };
 		447C84AF29005A2116AADE2D /* libPods-iOSDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D6D28CCB11A29144A37A53 /* libPods-iOSDemo.a */; };
 		844ACC71B8A64F9A5412EDA3 /* libPods-OSXDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 086B5D0EF83D1DB88AD12AB6 /* libPods-OSXDemoTests.a */; };
+		9C3F49F71CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C3F49F61CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m */; };
 		9CB44B641B84D8C1007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B631B84D8C1007FA7B6 /* main.m */; };
 		9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B661B84D8C1007FA7B6 /* AppDelegate.m */; };
 		9CB44B6F1B84D8C1007FA7B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CB44B6E1B84D8C1007FA7B6 /* Images.xcassets */; };
@@ -166,19 +167,6 @@
 		9CB44BF71B84D9E1007FA7B6 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
 		9CB44BF81B84D9E1007FA7B6 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */; };
 		9CB44BF91B84D9E1007FA7B6 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */; };
-		9CB44BFA1B84D9E1007FA7B6 /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
-		9CB44BFB1B84D9E1007FA7B6 /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
-		9CB44BFC1B84D9E1007FA7B6 /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
-		9CB44BFD1B84D9E1007FA7B6 /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
-		9CB44BFE1B84D9E1007FA7B6 /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
-		9CB44BFF1B84D9E1007FA7B6 /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
-		9CB44C001B84D9E1007FA7B6 /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
-		9CB44C011B84D9E1007FA7B6 /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
-		9CB44C021B84D9E1007FA7B6 /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
-		9CB44C031B84D9E1007FA7B6 /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
-		9CB44C041B84D9E1007FA7B6 /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
-		9CB44C051B84D9E1007FA7B6 /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
-		9CB44C061B84D9E1007FA7B6 /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
 		9CB44C071B84DBA3007FA7B6 /* OCTChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B2CBBB2987645B0CA4475581E7B86A /* OCTChat.m */; };
 		9CB44C081B84DBA3007FA7B6 /* OCTFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = ACBB7FE1C1F9FD951C5A5D6DFA12C7FC /* OCTFriend.m */; };
 		9CB44C091B84DBA3007FA7B6 /* OCTMessageAbstract.m in Sources */ = {isa = PBXBuildFile; fileRef = 5309FB4CA1007014A575D75CB9387C5C /* OCTMessageAbstract.m */; };
@@ -201,19 +189,6 @@
 		9CB44C1D1B84DBA3007FA7B6 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */; };
 		9CB44C1E1B84DBA3007FA7B6 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */; };
 		9CB44C1F1B84DBA3007FA7B6 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
-		9CB44C201B84DBA3007FA7B6 /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
-		9CB44C211B84DBA3007FA7B6 /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
-		9CB44C221B84DBA3007FA7B6 /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
-		9CB44C231B84DBA3007FA7B6 /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
-		9CB44C241B84DBA3007FA7B6 /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
-		9CB44C251B84DBA3007FA7B6 /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
-		9CB44C261B84DBA3007FA7B6 /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
-		9CB44C271B84DBA3007FA7B6 /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
-		9CB44C281B84DBA3007FA7B6 /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
-		9CB44C291B84DBA3007FA7B6 /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
-		9CB44C2A1B84DBA3007FA7B6 /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
-		9CB44C2B1B84DBA3007FA7B6 /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
-		9CB44C2C1B84DBA3007FA7B6 /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
 		9CB44C371B84DCCC007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44C361B84DCCC007FA7B6 /* AppDelegate.m */; };
 		9CB44C391B84DCCC007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44C381B84DCCC007FA7B6 /* main.m */; };
 		9CB44C3B1B84DCCC007FA7B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CB44C3A1B84DCCC007FA7B6 /* Images.xcassets */; };
@@ -240,19 +215,6 @@
 		9CB44C651B84DCFB007FA7B6 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
 		9CB44C661B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */; };
 		9CB44C671B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */; };
-		9CB44C681B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
-		9CB44C691B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
-		9CB44C6A1B84DCFB007FA7B6 /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
-		9CB44C6B1B84DCFB007FA7B6 /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
-		9CB44C6C1B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
-		9CB44C6D1B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
-		9CB44C6E1B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
-		9CB44C6F1B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
-		9CB44C701B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
-		9CB44C711B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
-		9CB44C721B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
-		9CB44C731B84DCFB007FA7B6 /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
-		9CB44C741B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
 		9CB44C751B84DCFB007FA7B6 /* OCTDefaultFileStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E579DEF80DD05B8F30CA2822233B2B /* OCTDefaultFileStorage.m */; };
 		9CB44C771B84DCFB007FA7B6 /* OCTManagerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B75FA045E32B1417FDC20970961725C /* OCTManagerConfiguration.m */; };
 		9CB44C781B84DCFB007FA7B6 /* OCTRealmManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 110EE0D91B387C3D00CC347A /* OCTRealmManager.m */; };
@@ -275,19 +237,6 @@
 		9CB44C8B1B84DCFB007FA7B6 /* OCTTox.m in Sources */ = {isa = PBXBuildFile; fileRef = B08EB0152D5B2993766DD654578C3493 /* OCTTox.m */; };
 		9CB44C8C1B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */; };
 		9CB44C8D1B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */; };
-		9CB44C8E1B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */; };
-		9CB44C8F1B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */; };
-		9CB44C901B84DCFB007FA7B6 /* RBQSectionCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */; };
-		9CB44C911B84DCFB007FA7B6 /* RBQFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */; };
-		9CB44C921B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */; };
-		9CB44C931B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */; };
-		9CB44C941B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */; };
-		9CB44C951B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */; };
-		9CB44C961B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */; };
-		9CB44C971B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */; };
-		9CB44C981B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */; };
-		9CB44C991B84DCFB007FA7B6 /* RLMObject+SafeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */; };
-		9CB44C9A1B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */; };
 		9CB44CB21B84DF46007FA7B6 /* OCTChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44C9E1B84DF46007FA7B6 /* OCTChatTests.m */; };
 		9CB44CB31B84DF46007FA7B6 /* OCTChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44C9E1B84DF46007FA7B6 /* OCTChatTests.m */; };
 		9CB44CB41B84DF46007FA7B6 /* OCTDefaultFileStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44C9F1B84DF46007FA7B6 /* OCTDefaultFileStorageTests.m */; };
@@ -483,37 +432,8 @@
 		872468E740CD9DEC5E48ED9646696C62 /* OCTToxConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxConstants.m; sourceTree = "<group>"; };
 		91FC63A06A08D2865DD4552BB2476EE8 /* OCTSubmanagerFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFriends.h; sourceTree = "<group>"; };
 		9BB556421978E2471480B277 /* Pods-OSXDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OSXDemoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OSXDemoTests/Pods-OSXDemoTests.release.xcconfig"; sourceTree = "<group>"; };
-		9C478F571B78C1FB000ADD5C /* RBQControllerCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQControllerCacheObject.h; sourceTree = "<group>"; };
-		9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQControllerCacheObject.m; sourceTree = "<group>"; };
-		9C478F591B78C1FB000ADD5C /* RBQObjectCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQObjectCacheObject.h; sourceTree = "<group>"; };
-		9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQObjectCacheObject.m; sourceTree = "<group>"; };
-		9C478F5B1B78C1FB000ADD5C /* RBQSectionCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQSectionCacheObject.h; sourceTree = "<group>"; };
-		9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQSectionCacheObject.m; sourceTree = "<group>"; };
-		9C478F5D1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		9C478F5E1B78C1FB000ADD5C /* RBQFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQFetchedResultsController.h; sourceTree = "<group>"; };
-		9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQFetchedResultsController.m; sourceTree = "<group>"; };
-		9C478F601B78C1FB000ADD5C /* RBQFetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQFetchRequest.h; sourceTree = "<group>"; };
-		9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQFetchRequest.m; sourceTree = "<group>"; };
-		9C478F641B78C1FB000ADD5C /* RLMObject+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+Notifications.h"; sourceTree = "<group>"; };
-		9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+Notifications.m"; sourceTree = "<group>"; };
-		9C478F661B78C1FB000ADD5C /* RLMRealm+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealm+Notifications.h"; sourceTree = "<group>"; };
-		9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealm+Notifications.m"; sourceTree = "<group>"; };
-		9C478F681B78C1FB000ADD5C /* RLMResults+Notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMResults+Notifications.h"; sourceTree = "<group>"; };
-		9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMResults+Notifications.m"; sourceTree = "<group>"; };
-		9C478F6A1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		9C478F6B1B78C1FB000ADD5C /* RBQRealmNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQRealmNotificationManager.h; sourceTree = "<group>"; };
-		9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQRealmNotificationManager.m; sourceTree = "<group>"; };
-		9C478F6D1B78C1FB000ADD5C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		9C478F6F1B78C1FB000ADD5C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		9C478F701B78C1FB000ADD5C /* RBQSafeRealmObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBQSafeRealmObject.h; sourceTree = "<group>"; };
-		9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBQSafeRealmObject.m; sourceTree = "<group>"; };
-		9C478F721B78C1FB000ADD5C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		9C478F731B78C1FB000ADD5C /* RLMArray+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMArray+Utilities.h"; sourceTree = "<group>"; };
-		9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMArray+Utilities.m"; sourceTree = "<group>"; };
-		9C478F751B78C1FB000ADD5C /* RLMObject+SafeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+SafeObject.h"; sourceTree = "<group>"; };
-		9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+SafeObject.m"; sourceTree = "<group>"; };
-		9C478F771B78C1FB000ADD5C /* RLMObject+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMObject+Utilities.h"; sourceTree = "<group>"; };
-		9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMObject+Utilities.m"; sourceTree = "<group>"; };
+		9C3F49F51CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMCollectionChange+IndexSet.h"; sourceTree = "<group>"; };
+		9C3F49F61CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMCollectionChange+IndexSet.m"; sourceTree = "<group>"; };
 		9CB44B5F1B84D8C1007FA7B6 /* iOSDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB44B621B84D8C1007FA7B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9CB44B631B84D8C1007FA7B6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -818,7 +738,6 @@
 		6B2BAAC14E1289AF1DBE31D6A928E9AA /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				9C478F551B78C1FB000ADD5C /* RBQFetchedResultsController */,
 				B729102B12162A2F537D836802D56E79 /* Configuration */,
 				714C4AAE365D94A8BC642E0D66F052D4 /* Objects */,
 				59DFACB59220710D4B2227182A018958 /* Submanagers */,
@@ -875,76 +794,6 @@
 				110EE0D91B387C3D00CC347A /* OCTRealmManager.m */,
 			);
 			path = Database;
-			sourceTree = "<group>";
-		};
-		9C478F551B78C1FB000ADD5C /* RBQFetchedResultsController */ = {
-			isa = PBXGroup;
-			children = (
-				9C478F561B78C1FB000ADD5C /* CacheObjects */,
-				9C478F5D1B78C1FB000ADD5C /* LICENSE */,
-				9C478F5E1B78C1FB000ADD5C /* RBQFetchedResultsController.h */,
-				9C478F5F1B78C1FB000ADD5C /* RBQFetchedResultsController.m */,
-				9C478F601B78C1FB000ADD5C /* RBQFetchRequest.h */,
-				9C478F611B78C1FB000ADD5C /* RBQFetchRequest.m */,
-				9C478F621B78C1FB000ADD5C /* RBQRealmNotificationManager */,
-				9C478F6E1B78C1FB000ADD5C /* RealmUtilities */,
-			);
-			path = RBQFetchedResultsController;
-			sourceTree = "<group>";
-		};
-		9C478F561B78C1FB000ADD5C /* CacheObjects */ = {
-			isa = PBXGroup;
-			children = (
-				9C478F571B78C1FB000ADD5C /* RBQControllerCacheObject.h */,
-				9C478F581B78C1FB000ADD5C /* RBQControllerCacheObject.m */,
-				9C478F591B78C1FB000ADD5C /* RBQObjectCacheObject.h */,
-				9C478F5A1B78C1FB000ADD5C /* RBQObjectCacheObject.m */,
-				9C478F5B1B78C1FB000ADD5C /* RBQSectionCacheObject.h */,
-				9C478F5C1B78C1FB000ADD5C /* RBQSectionCacheObject.m */,
-			);
-			path = CacheObjects;
-			sourceTree = "<group>";
-		};
-		9C478F621B78C1FB000ADD5C /* RBQRealmNotificationManager */ = {
-			isa = PBXGroup;
-			children = (
-				9C478F631B78C1FB000ADD5C /* Helpers */,
-				9C478F6A1B78C1FB000ADD5C /* LICENSE */,
-				9C478F6B1B78C1FB000ADD5C /* RBQRealmNotificationManager.h */,
-				9C478F6C1B78C1FB000ADD5C /* RBQRealmNotificationManager.m */,
-				9C478F6D1B78C1FB000ADD5C /* README.md */,
-			);
-			path = RBQRealmNotificationManager;
-			sourceTree = "<group>";
-		};
-		9C478F631B78C1FB000ADD5C /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				9C478F641B78C1FB000ADD5C /* RLMObject+Notifications.h */,
-				9C478F651B78C1FB000ADD5C /* RLMObject+Notifications.m */,
-				9C478F661B78C1FB000ADD5C /* RLMRealm+Notifications.h */,
-				9C478F671B78C1FB000ADD5C /* RLMRealm+Notifications.m */,
-				9C478F681B78C1FB000ADD5C /* RLMResults+Notifications.h */,
-				9C478F691B78C1FB000ADD5C /* RLMResults+Notifications.m */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
-		9C478F6E1B78C1FB000ADD5C /* RealmUtilities */ = {
-			isa = PBXGroup;
-			children = (
-				9C478F6F1B78C1FB000ADD5C /* LICENSE */,
-				9C478F701B78C1FB000ADD5C /* RBQSafeRealmObject.h */,
-				9C478F711B78C1FB000ADD5C /* RBQSafeRealmObject.m */,
-				9C478F721B78C1FB000ADD5C /* README.md */,
-				9C478F731B78C1FB000ADD5C /* RLMArray+Utilities.h */,
-				9C478F741B78C1FB000ADD5C /* RLMArray+Utilities.m */,
-				9C478F751B78C1FB000ADD5C /* RLMObject+SafeObject.h */,
-				9C478F761B78C1FB000ADD5C /* RLMObject+SafeObject.m */,
-				9C478F771B78C1FB000ADD5C /* RLMObject+Utilities.h */,
-				9C478F781B78C1FB000ADD5C /* RLMObject+Utilities.m */,
-			);
-			path = RealmUtilities;
 			sourceTree = "<group>";
 		};
 		9CB44B601B84D8C1007FA7B6 /* iOSDemo */ = {
@@ -1009,6 +858,8 @@
 				9CB44C361B84DCCC007FA7B6 /* AppDelegate.m */,
 				F009D9A81C195D77008243EF /* OCTMainWindowController.h */,
 				F009D9A91C195D77008243EF /* OCTMainWindowController.m */,
+				9C3F49F51CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.h */,
+				9C3F49F61CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m */,
 				9CB44C3A1B84DCCC007FA7B6 /* Images.xcassets */,
 				9CB44C3C1B84DCCC007FA7B6 /* MainMenu.xib */,
 				9CB44C331B84DCCC007FA7B6 /* Supporting Files */,
@@ -1189,12 +1040,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9CB44B7F1B84D8C1007FA7B6 /* Build configuration list for PBXNativeTarget "iOSDemo" */;
 			buildPhases = (
-				1A0DE562B641CFDFBE0AFFEB /* Check Pods Manifest.lock */,
+				1A0DE562B641CFDFBE0AFFEB /* [CP] Check Pods Manifest.lock */,
 				9CB44B5B1B84D8C1007FA7B6 /* Sources */,
 				9CB44B5C1B84D8C1007FA7B6 /* Frameworks */,
 				9CB44B5D1B84D8C1007FA7B6 /* Resources */,
-				1AE3FA2EF5896FAB63CEED26 /* Embed Pods Frameworks */,
-				27FAD714500DBB214100D6A9 /* Copy Pods Resources */,
+				1AE3FA2EF5896FAB63CEED26 /* [CP] Embed Pods Frameworks */,
+				27FAD714500DBB214100D6A9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1209,12 +1060,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9CB44B811B84D8C1007FA7B6 /* Build configuration list for PBXNativeTarget "iOSDemoTests" */;
 			buildPhases = (
-				E94B5F357EC3125CEB95827F /* Check Pods Manifest.lock */,
+				E94B5F357EC3125CEB95827F /* [CP] Check Pods Manifest.lock */,
 				9CB44B731B84D8C1007FA7B6 /* Sources */,
 				9CB44B741B84D8C1007FA7B6 /* Frameworks */,
 				9CB44B751B84D8C1007FA7B6 /* Resources */,
-				34BD33C231B0DC4C812E6CD4 /* Embed Pods Frameworks */,
-				F238569579B9956880F66E28 /* Copy Pods Resources */,
+				34BD33C231B0DC4C812E6CD4 /* [CP] Embed Pods Frameworks */,
+				F238569579B9956880F66E28 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1230,12 +1081,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9CB44C4B1B84DCCC007FA7B6 /* Build configuration list for PBXNativeTarget "OSXDemo" */;
 			buildPhases = (
-				5939D0C49BC321A42C08BA49 /* Check Pods Manifest.lock */,
+				5939D0C49BC321A42C08BA49 /* [CP] Check Pods Manifest.lock */,
 				9CB44C2D1B84DCCC007FA7B6 /* Sources */,
 				9CB44C2E1B84DCCC007FA7B6 /* Frameworks */,
 				9CB44C2F1B84DCCC007FA7B6 /* Resources */,
-				8DACE7DE62FF348B30F0696F /* Embed Pods Frameworks */,
-				49819FDE533D3A05C392778B /* Copy Pods Resources */,
+				8DACE7DE62FF348B30F0696F /* [CP] Embed Pods Frameworks */,
+				49819FDE533D3A05C392778B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1250,12 +1101,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9CB44C4D1B84DCCC007FA7B6 /* Build configuration list for PBXNativeTarget "OSXDemoTests" */;
 			buildPhases = (
-				B699B233074D6E44E9F6DD10 /* Check Pods Manifest.lock */,
+				B699B233074D6E44E9F6DD10 /* [CP] Check Pods Manifest.lock */,
 				9CB44C3F1B84DCCC007FA7B6 /* Sources */,
 				9CB44C401B84DCCC007FA7B6 /* Frameworks */,
 				9CB44C411B84DCCC007FA7B6 /* Resources */,
-				49814162CF2B25A0EF83F743 /* Embed Pods Frameworks */,
-				7BC9F17BA589F0241ED5F6C8 /* Copy Pods Resources */,
+				49814162CF2B25A0EF83F743 /* [CP] Embed Pods Frameworks */,
+				7BC9F17BA589F0241ED5F6C8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1359,14 +1210,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A0DE562B641CFDFBE0AFFEB /* Check Pods Manifest.lock */ = {
+		1A0DE562B641CFDFBE0AFFEB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1374,14 +1225,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		1AE3FA2EF5896FAB63CEED26 /* Embed Pods Frameworks */ = {
+		1AE3FA2EF5896FAB63CEED26 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1389,14 +1240,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		27FAD714500DBB214100D6A9 /* Copy Pods Resources */ = {
+		27FAD714500DBB214100D6A9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1404,14 +1255,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		34BD33C231B0DC4C812E6CD4 /* Embed Pods Frameworks */ = {
+		34BD33C231B0DC4C812E6CD4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1419,14 +1270,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOSDemoTests/Pods-iOSDemoTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		49814162CF2B25A0EF83F743 /* Embed Pods Frameworks */ = {
+		49814162CF2B25A0EF83F743 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1434,14 +1285,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OSXDemoTests/Pods-OSXDemoTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		49819FDE533D3A05C392778B /* Copy Pods Resources */ = {
+		49819FDE533D3A05C392778B /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1449,14 +1300,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OSXDemo/Pods-OSXDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5939D0C49BC321A42C08BA49 /* Check Pods Manifest.lock */ = {
+		5939D0C49BC321A42C08BA49 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1464,14 +1315,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		7BC9F17BA589F0241ED5F6C8 /* Copy Pods Resources */ = {
+		7BC9F17BA589F0241ED5F6C8 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1479,14 +1330,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OSXDemoTests/Pods-OSXDemoTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8DACE7DE62FF348B30F0696F /* Embed Pods Frameworks */ = {
+		8DACE7DE62FF348B30F0696F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1494,14 +1345,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OSXDemo/Pods-OSXDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B699B233074D6E44E9F6DD10 /* Check Pods Manifest.lock */ = {
+		B699B233074D6E44E9F6DD10 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1509,14 +1360,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		E94B5F357EC3125CEB95827F /* Check Pods Manifest.lock */ = {
+		E94B5F357EC3125CEB95827F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1524,14 +1375,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		F238569579B9956880F66E28 /* Copy Pods Resources */ = {
+		F238569579B9956880F66E28 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1548,25 +1399,18 @@
 			files = (
 				9CB44BE61B84D9E1007FA7B6 /* OCTChat.m in Sources */,
 				11D6511E1B89233A00C3DD23 /* OCTTabBarControllerViewController.m in Sources */,
-				9CB44C061B84D9E1007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				11D650EC1B89228C00C3DD23 /* OCTSubmanagerCalls.m in Sources */,
 				9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */,
 				11D650D91B89226800C3DD23 /* OCTCall.m in Sources */,
 				9CB44B921B84D91C007FA7B6 /* OCTStartDemoViewController.m in Sources */,
-				9CB44BFA1B84D9E1007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				1183BC831CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
 				9CB44B8F1B84D91C007FA7B6 /* OCTChatsViewController.m in Sources */,
 				11D651211B89234300C3DD23 /* OCTVideoViewController.m in Sources */,
-				9CB44C031B84D9E1007FA7B6 /* RBQSafeRealmObject.m in Sources */,
 				9CB44BEB1B84D9E1007FA7B6 /* OCTMessageText.m in Sources */,
-				9CB44BFB1B84D9E1007FA7B6 /* RBQObjectCacheObject.m in Sources */,
-				9CB44BFF1B84D9E1007FA7B6 /* RLMObject+Notifications.m in Sources */,
 				1183BC891CA035CD000CD310 /* OCTFileDataInput.m in Sources */,
 				1183BC7C1CA02755000CD310 /* OCTFilePathInput.m in Sources */,
-				9CB44C021B84D9E1007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
 				9CB44BF71B84D9E1007FA7B6 /* OCTTox.m in Sources */,
 				9CB44BF51B84D9E1007FA7B6 /* OCTManager.m in Sources */,
-				9CB44BFD1B84D9E1007FA7B6 /* RBQFetchedResultsController.m in Sources */,
 				112358B01B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44BE81B84D9E1007FA7B6 /* OCTFriendRequest.m in Sources */,
 				9CB44B931B84D91C007FA7B6 /* OCTTableViewController.m in Sources */,
@@ -1579,13 +1423,10 @@
 				9CB44B641B84D8C1007FA7B6 /* main.m in Sources */,
 				1183BC8F1CA036AA000CD310 /* OCTFileDataOutput.m in Sources */,
 				112358A31B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
-				9CB44BFC1B84D9E1007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44BE31B84D9E1007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				9CB44BF61B84D9E1007FA7B6 /* OCTManagerConstants.m in Sources */,
 				F5F6FA1F1C268B5000607306 /* OCTAudioQueue.m in Sources */,
 				9CB44BF91B84D9E1007FA7B6 /* OCTToxOptions.m in Sources */,
-				9CB44C051B84D9E1007FA7B6 /* RLMObject+SafeObject.m in Sources */,
-				9CB44C041B84D9E1007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				1183BC951CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44BEA1B84D9E1007FA7B6 /* OCTMessageFile.m in Sources */,
 				11D651181B89232200C3DD23 /* OCTCallsViewController.m in Sources */,
@@ -1598,7 +1439,6 @@
 				11E80D831B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */,
 				9CB44B911B84D91C007FA7B6 /* OCTFriendsViewController.m in Sources */,
 				11AF88FB1C98976F00AD1D9F /* OCTFileDownloadOperation.m in Sources */,
-				9CB44C001B84D9E1007FA7B6 /* RLMRealm+Notifications.m in Sources */,
 				11D650FB1B89229B00C3DD23 /* OCTVideoEngine.m in Sources */,
 				9CB44BED1B84D9E1007FA7B6 /* OCTObject.m in Sources */,
 				9CB44BEF1B84D9E1007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
@@ -1607,7 +1447,6 @@
 				11D650E61B89227300C3DD23 /* OCTMessageCall.m in Sources */,
 				9CB44BEC1B84D9E1007FA7B6 /* OCTNode.m in Sources */,
 				9CB44BE41B84D9E1007FA7B6 /* OCTRealmManager.m in Sources */,
-				9CB44C011B84D9E1007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				9CB44BF21B84D9E1007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
 				1183BC691C9EBBE5000CD310 /* OCTFileUploadOperation.m in Sources */,
 				11D650FF1B89229B00C3DD23 /* OCTVideoView.m in Sources */,
@@ -1616,7 +1455,6 @@
 				11D650D01B89225400C3DD23 /* OCTAudioEngine.m in Sources */,
 				9CB44BE11B84D9E1007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
 				112358911B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
-				9CB44BFE1B84D9E1007FA7B6 /* RBQFetchRequest.m in Sources */,
 				9CB44BF31B84D9E1007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1631,7 +1469,6 @@
 				11D650F81B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
 				9CB44C1A1B84DBA3007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
 				9CB44C0F1B84DBA3007FA7B6 /* OCTMessageFile.m in Sources */,
-				9CB44C231B84DBA3007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				9CB44CD21B84DF46007FA7B6 /* OCTToxTests.m in Sources */,
 				11D650E71B89227300C3DD23 /* OCTMessageCall.m in Sources */,
 				112779D41B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m in Sources */,
@@ -1643,7 +1480,6 @@
 				9CB44C131B84DBA3007FA7B6 /* OCTRealmManager.m in Sources */,
 				9CB44C171B84DBA3007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
 				1183BC7D1CA02755000CD310 /* OCTFilePathInput.m in Sources */,
-				9CB44C221B84DBA3007FA7B6 /* RLMObject+Notifications.m in Sources */,
 				11D650E21B89226800C3DD23 /* OCTCallTimer.m in Sources */,
 				9CB44C151B84DBA3007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 				9CB44C071B84DBA3007FA7B6 /* OCTChat.m in Sources */,
@@ -1653,11 +1489,9 @@
 				11D650DE1B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
 				11D651071B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
 				9CB44C1F1B84DBA3007FA7B6 /* OCTTox.m in Sources */,
-				9CB44C271B84DBA3007FA7B6 /* RBQSafeRealmObject.m in Sources */,
 				F50269671C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */,
 				11D650D11B89225400C3DD23 /* OCTAudioEngine.m in Sources */,
 				9CB44C121B84DBA3007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
-				9CB44C211B84DBA3007FA7B6 /* RLMRealm+Notifications.m in Sources */,
 				9CB44C0B1B84DBA3007FA7B6 /* OCTNode.m in Sources */,
 				9CB44C081B84DBA3007FA7B6 /* OCTFriend.m in Sources */,
 				11AF89021C98C25A00AD1D9F /* OCTFileBaseOperation.m in Sources */,
@@ -1677,22 +1511,15 @@
 				9CB44CC81B84DF46007FA7B6 /* OCTSubmanagerChatsTests.m in Sources */,
 				9CB44C1C1B84DBA3007FA7B6 /* OCTManagerConstants.m in Sources */,
 				112358921B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
-				9CB44C251B84DBA3007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				112358B11B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C101B84DBA3007FA7B6 /* OCTManagerConfiguration.m in Sources */,
-				9CB44C2A1B84DBA3007FA7B6 /* RBQObjectCacheObject.m in Sources */,
-				9CB44C241B84DBA3007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
 				1183BC901CA036AA000CD310 /* OCTFileDataOutput.m in Sources */,
-				9CB44C261B84DBA3007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44CBA1B84DF46007FA7B6 /* OCTManagerConfigurationTests.m in Sources */,
 				11D650DA1B89226800C3DD23 /* OCTCall.m in Sources */,
-				9CB44C281B84DBA3007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				112358A41B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44CCA1B84DF46007FA7B6 /* OCTSubmanagerFilesTests.m in Sources */,
-				9CB44C291B84DBA3007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				1183BC8A1CA035CD000CD310 /* OCTFileDataInput.m in Sources */,
 				9CB44C091B84DBA3007FA7B6 /* OCTMessageAbstract.m in Sources */,
-				9CB44C201B84DBA3007FA7B6 /* RBQFetchRequest.m in Sources */,
 				1123588E1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
 				112358991B8792B500E8FB71 /* OCTToxDNSTests.m in Sources */,
 				9CB44CBE1B84DF46007FA7B6 /* OCTMessageAbstractTests.m in Sources */,
@@ -1705,8 +1532,6 @@
 				9CB44C0E1B84DBA3007FA7B6 /* OCTMessageText.m in Sources */,
 				9CB44C0A1B84DBA3007FA7B6 /* OCTFriendRequest.m in Sources */,
 				1183BC841CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
-				9CB44C2C1B84DBA3007FA7B6 /* RBQFetchedResultsController.m in Sources */,
-				9CB44C2B1B84DBA3007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44CB81B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,
 				11D651291B89237D00C3DD23 /* OCTSubmanagerCallsTests.m in Sources */,
 				119B13E61B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
@@ -1717,42 +1542,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9CB44C6E1B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */,
 				1123588F1B87927100E8FB71 /* OCTToxDNS.m in Sources */,
-				9CB44C691B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */,
 				11AF89031C98C25A00AD1D9F /* OCTFileBaseOperation.m in Sources */,
-				9CB44C721B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				1183BC6B1C9EBBE5000CD310 /* OCTFileUploadOperation.m in Sources */,
 				11E80D851B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */,
 				1183BC911CA036AA000CD310 /* OCTFileDataOutput.m in Sources */,
 				9CB44C391B84DCCC007FA7B6 /* main.m in Sources */,
-				9CB44C681B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */,
 				119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 				1183BC971CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44C5F1B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
-				9CB44C6C1B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
 				F009D9AE1C195DBA008243EF /* OCTBootStrapViewController.m in Sources */,
 				9CB44C611B84DCFB007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 				F009D9AA1C195D77008243EF /* OCTMainWindowController.m in Sources */,
-				9CB44C741B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				F09D0A461C1B9877008E74AF /* OCTUserViewController.m in Sources */,
 				1183BC851CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
-				9CB44C731B84DCFB007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44C541B84DCFB007FA7B6 /* OCTChat.m in Sources */,
 				9CB44C371B84DCCC007FA7B6 /* AppDelegate.m in Sources */,
 				F07992DA1C2E5B1900B0D267 /* OCTCallsViewController.m in Sources */,
 				11D651081B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
 				11D650FD1B89229B00C3DD23 /* OCTVideoEngine.m in Sources */,
 				9CB44C661B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */,
-				9CB44C6A1B84DCFB007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44C671B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C641B84DCFB007FA7B6 /* OCTManagerConstants.m in Sources */,
 				9CB44C621B84DCFB007FA7B6 /* OCTSubmanagerUser.m in Sources */,
 				1183BC8B1CA035CD000CD310 /* OCTFileDataInput.m in Sources */,
+				9C3F49F71CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m in Sources */,
 				11D650E81B89227300C3DD23 /* OCTMessageCall.m in Sources */,
 				112358A51B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
-				9CB44C711B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */,
 				9CB44C5B1B84DCFB007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C5A1B84DCFB007FA7B6 /* OCTNode.m in Sources */,
 				9CB44C551B84DCFB007FA7B6 /* OCTFriend.m in Sources */,
@@ -1766,7 +1583,6 @@
 				11D650F91B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
 				11D650DB1B89226800C3DD23 /* OCTCall.m in Sources */,
 				11D650DF1B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
-				9CB44C6B1B84DCFB007FA7B6 /* RBQFetchedResultsController.m in Sources */,
 				9CB44C651B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				F02C7EB31C1CCF1200D144BD /* OCTFriendsViewController.m in Sources */,
 				9CB44C521B84DCFB007FA7B6 /* OCTRealmManager.m in Sources */,
@@ -1778,12 +1594,9 @@
 				9CB44C5D1B84DCFB007FA7B6 /* OCTSubmanagerBootstrap.m in Sources */,
 				112358B21B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C511B84DCFB007FA7B6 /* OCTManagerConfiguration.m in Sources */,
-				9CB44C701B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
-				9CB44C6F1B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				11D651011B89229B00C3DD23 /* OCTVideoView.m in Sources */,
 				11D6510C1B8922AF00C3DD23 /* OCTToxAVConstants.m in Sources */,
 				11AF89111C9D570000AD1D9F /* OCTFilesViewController.m in Sources */,
-				9CB44C6D1B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */,
 				F019291B1C2797D2001A5F45 /* OCTConversationViewController.m in Sources */,
 				11AF88FD1C98976F00AD1D9F /* OCTFileDownloadOperation.m in Sources */,
 				9CB44C601B84DCFB007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
@@ -1796,9 +1609,7 @@
 			files = (
 				F5BF42791C2D1F7D008283E0 /* OCTAudioQueue.m in Sources */,
 				11D6510D1B8922AF00C3DD23 /* OCTToxAVConstants.m in Sources */,
-				9CB44C981B84DCFB007FA7B6 /* RLMArray+Utilities.m in Sources */,
 				11D650FA1B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
-				9CB44C9A1B84DCFB007FA7B6 /* RLMObject+Utilities.m in Sources */,
 				112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */,
 				9CB44C801B84DCFB007FA7B6 /* OCTNode.m in Sources */,
 				112027CA1B88D3FC0082DD31 /* OCTToxDNSTests.m in Sources */,
@@ -1817,11 +1628,8 @@
 				9CB44C811B84DCFB007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C751B84DCFB007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
 				1183BC981CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
-				9CB44C921B84DCFB007FA7B6 /* RBQFetchRequest.m in Sources */,
 				11D650E01B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
 				11D651091B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
-				9CB44C931B84DCFB007FA7B6 /* RLMObject+Notifications.m in Sources */,
-				9CB44C8F1B84DCFB007FA7B6 /* RBQObjectCacheObject.m in Sources */,
 				F50269681C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */,
 				11D650D31B89225400C3DD23 /* OCTAudioEngine.m in Sources */,
 				9CB44C7E1B84DCFB007FA7B6 /* OCTMessageFile.m in Sources */,
@@ -1835,9 +1643,7 @@
 				9CB44CB31B84DF46007FA7B6 /* OCTChatTests.m in Sources */,
 				112027C91B88D3FC0082DD31 /* OCTSubmanagerDNSTests.m in Sources */,
 				9CB44CC71B84DF46007FA7B6 /* OCTSubmanagerBootstrapTests.m in Sources */,
-				9CB44C951B84DCFB007FA7B6 /* RLMResults+Notifications.m in Sources */,
 				11D651271B89236A00C3DD23 /* OCTCallTimerTests.m in Sources */,
-				9CB44C971B84DCFB007FA7B6 /* RBQSafeRealmObject.m in Sources */,
 				11D6512D1B89238900C3DD23 /* OCTToxAVTests.m in Sources */,
 				11D651301B89238F00C3DD23 /* OCTVideoEngineTests.m in Sources */,
 				11D650EF1B89228C00C3DD23 /* OCTSubmanagerCalls.m in Sources */,
@@ -1848,16 +1654,12 @@
 				112358941B87927100E8FB71 /* OCTToxDNS3Object.m in Sources */,
 				9CB44C8D1B84DCFB007FA7B6 /* OCTToxOptions.m in Sources */,
 				9CB44C7D1B84DCFB007FA7B6 /* OCTMessageAbstract.m in Sources */,
-				9CB44C961B84DCFB007FA7B6 /* RBQRealmNotificationManager.m in Sources */,
 				9CB44C891B84DCFB007FA7B6 /* OCTManager.m in Sources */,
 				1183BC921CA036AA000CD310 /* OCTFileDataOutput.m in Sources */,
-				9CB44C991B84DCFB007FA7B6 /* RLMObject+SafeObject.m in Sources */,
 				9CB44CBB1B84DF46007FA7B6 /* OCTManagerConfigurationTests.m in Sources */,
 				11D650DC1B89226800C3DD23 /* OCTCall.m in Sources */,
-				9CB44C941B84DCFB007FA7B6 /* RLMRealm+Notifications.m in Sources */,
 				112358A61B87963A00E8FB71 /* OCTSubmanagerDNS.m in Sources */,
 				9CB44CCB1B84DF46007FA7B6 /* OCTSubmanagerFilesTests.m in Sources */,
-				9CB44C8E1B84DCFB007FA7B6 /* RBQControllerCacheObject.m in Sources */,
 				1183BC8C1CA035CD000CD310 /* OCTFileDataInput.m in Sources */,
 				9CB44C8B1B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				9CB44C8C1B84DCFB007FA7B6 /* OCTToxConstants.m in Sources */,
@@ -1874,8 +1676,6 @@
 				9CB44C8A1B84DCFB007FA7B6 /* OCTManagerConstants.m in Sources */,
 				9CB44C771B84DCFB007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				1183BC861CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
-				9CB44C911B84DCFB007FA7B6 /* RBQFetchedResultsController.m in Sources */,
-				9CB44C901B84DCFB007FA7B6 /* RBQSectionCacheObject.m in Sources */,
 				9CB44CB91B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,
 				11D6512A1B89237D00C3DD23 /* OCTSubmanagerCallsTests.m in Sources */,
 				119B13E81B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,

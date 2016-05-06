@@ -7,7 +7,6 @@
 //
 
 #import "OCTConversationViewController.h"
-#import "RBQFetchedResultsController.h"
 #import "OCTSubmanagerObjects.h"
 #import "OCTSubmanagerChats.h"
 #import "OCTFriend.h"
@@ -17,17 +16,22 @@
 #import "OCTSubmanagerCalls.h"
 #import "OCTSubmanagerFiles.h"
 #import "OCTMessageText.h"
+#import "RLMCollectionChange+IndexSet.h"
 
 static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTConversationViewController () <NSTableViewDataSource,
                                              NSTableViewDelegate,
-                                             RBQFetchedResultsControllerDelegate, NSTextFieldDelegate>
+                                             NSTextFieldDelegate>
 
 @property (weak) IBOutlet NSTableView *chatsViewController;
 @property (weak, nonatomic) OCTManager *manager;
-@property (strong, nonatomic) RBQFetchedResultsController *chatResultsController;
-@property (strong, nonatomic) RBQFetchedResultsController *conversationResultsController;
+
+@property (strong, nonatomic) RLMResults<OCTChat *> *allChats;
+@property (strong, nonatomic) RLMNotificationToken *allChatsNotificationToken;
+@property (strong, nonatomic) RLMResults<OCTChat *> *conversationMessages;
+@property (strong, nonatomic) RLMNotificationToken *conversationMessagesNotificationToken;
+
 @property (weak) IBOutlet NSTableView *chatsTableView;
 @property (weak) IBOutlet NSTableView *conversationTableView;
 
@@ -45,21 +49,44 @@ static NSString *const kCellIdent = @"cellIdent";
 
     _manager = manager;
 
-    RBQFetchRequest *fetchRequest = [self.manager.objects
-                                     fetchRequestForType:OCTFetchRequestTypeChat
-                                           withPredicate:nil];
-
-    _chatResultsController = [[RBQFetchedResultsController alloc]
-                              initWithFetchRequest:fetchRequest
-                                sectionNameKeyPath:nil cacheName:nil];
-
-    _chatResultsController.delegate = self;
-    [_chatResultsController performFetch];
-
-    _conversationResultsController = [RBQFetchedResultsController new];
-    _conversationResultsController.delegate = self;
+    _allChats = [self.manager.objects objectsForType:OCTFetchRequestTypeChat predicate:nil];
+    _conversationMessages = nil;
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self.allChatsNotificationToken stop];
+    [self.conversationMessagesNotificationToken stop];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    __weak typeof(self) weakSelf = self;
+
+    self.allChatsNotificationToken = [self.allChats addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to open Realm on background worker: %@", error);
+            return;
+        }
+
+        NSTableView *tableView = weakSelf.chatsTableView;
+
+        // Initial run of the query will pass nil for the change information
+        if (! changes) {
+            [tableView reloadData];
+            return;
+        }
+
+        [tableView beginUpdates];
+        [tableView removeRowsAtIndexes:[changes deletionsSet] withAnimation:NSTableViewAnimationSlideLeft];
+        [tableView insertRowsAtIndexes:[changes insertionsSet] withAnimation:NSTableViewAnimationSlideRight];
+        [tableView reloadDataForRowIndexes:[changes modificationsSet] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [tableView endUpdates];
+    }];
 }
 
 #pragma mark - Actions
@@ -72,9 +99,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+    OCTChat *chat = self.allChats[selectedRow];
 
     [self.manager.chats removeChatWithAllMessages:chat];
 }
@@ -87,9 +112,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+    OCTChat *chat = self.allChats[selectedRow];
 
     [self.manager.calls callToChat:chat enableAudio:YES enableVideo:YES error:nil];
 }
@@ -102,7 +125,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return;
     }
 
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0]];
+    OCTChat *chat = self.allChats[selectedRow];
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
 
@@ -123,8 +146,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+    OCTChat *chat = self.allChats[selectedRow];
 
     [self.manager.chats sendMessageToChat:chat
                                      text:sender.stringValue
@@ -152,18 +174,15 @@ static NSString *const kCellIdent = @"cellIdent";
     field.editable = NO;
 
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
-
     if (tableView == self.chatsTableView) {
-
-        OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+        OCTChat *chat = self.allChats[row];
         OCTFriend *friend = [chat.friends firstObject];
 
         field.stringValue = (friend.isConnected) ? ([NSString stringWithFormat : @"%@ : Online", friend.nickname]) : friend.nickname;
 
     }
     else {
-        OCTMessageAbstract *messageAbstract = [self.conversationResultsController objectAtIndexPath:path];
+        OCTMessageAbstract *messageAbstract = self.conversationMessages[row];
         if (messageAbstract.messageText) {
             if (messageAbstract.sender) {
                 field.stringValue = [NSString stringWithFormat:@"%@: %@", messageAbstract.sender.nickname, messageAbstract.messageText.text];
@@ -189,8 +208,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
+    OCTChat *chat = self.allChats[selectedRow];
 
     [self updateConversationControllerForChat:chat];
 
@@ -207,93 +225,46 @@ static NSString *const kCellIdent = @"cellIdent";
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     if (tableView == self.chatsTableView) {
-        return [self.chatResultsController numberOfRowsForSectionIndex:0];
+        return self.allChats.count;
     }
     else {
-        return [self.conversationResultsController numberOfRowsForSectionIndex:0];
+        return self.conversationMessages.count;
     }
 
     return 0;
-}
-
-#pragma mark -  RBQFetchedResultsControllerDelegate
-
-- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
-{
-    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
-    [tableView beginUpdates];
-}
-
-- (void) controller:(RBQFetchedResultsController *)controller
-    didChangeObject:(RBQSafeRealmObject *)anObject
-        atIndexPath:(NSIndexPath *)indexPath
-      forChangeType:(RBQFetchedResultsChangeType)type
-       newIndexPath:(NSIndexPath *)newIndexPath
-{
-    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
-
-    NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
-    NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
-    NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
-
-
-    switch (type) {
-        case RBQFetchedResultsChangeInsert:
-            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-        case RBQFetchedResultsChangeDelete:
-            if (tableView == self.chatsViewController) {
-                [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-                [self selectFirstChat];
-            }
-            break;
-        case RBQFetchedResultsChangeUpdate:
-            [tableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
-            break;
-        case RBQFetchedResultsChangeMove:
-            [tableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-            [tableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-    }
-}
-
-- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
-{
-
-    NSTableView *tableView = (self.chatResultsController == controller) ? self.chatsTableView : self.conversationTableView;
-
-    @try {
-        [tableView endUpdates];
-    }
-    @catch (NSException *ex) {
-        [controller reset];
-        [tableView reloadData];
-    }
 }
 
 #pragma mark - Private
 
 - (void)updateConversationControllerForChat:(OCTChat *)chat
 {
+    [self.conversationMessagesNotificationToken stop];
+
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
-    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
-    [self.conversationResultsController updateFetchRequest:fetchRequest
-                                        sectionNameKeyPath:nil
-                                            andPeformFetch:YES];
+    self.conversationMessages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
+
+    __weak typeof(self) weakSelf = self;
+
+    self.conversationMessagesNotificationToken = [self.conversationMessages addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to open Realm on background worker: %@", error);
+            return;
+        }
+
+        NSTableView *tableView = weakSelf.conversationTableView;
+
+        // Initial run of the query will pass nil for the change information
+        if (! changes) {
+            [tableView reloadData];
+            return;
+        }
+
+        [tableView beginUpdates];
+        [tableView removeRowsAtIndexes:[changes deletionsSet] withAnimation:NSTableViewAnimationSlideLeft];
+        [tableView insertRowsAtIndexes:[changes insertionsSet] withAnimation:NSTableViewAnimationSlideRight];
+        [tableView reloadDataForRowIndexes:[changes modificationsSet] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [tableView endUpdates];
+    }];
 }
 
-- (void)selectFirstChat
-{
-    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
-    OCTChat *chat = [self.chatResultsController objectAtIndexPath:path];
-
-    if (chat) {
-        NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex:0];
-        // workaround for deadlock in objcTox
-        // https://github.com/Antidote-for-Tox/objcTox/issues/51
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.chatsTableView selectRowIndexes:indexSet byExtendingSelection:NO];
-        });
-    }
-}
 @end

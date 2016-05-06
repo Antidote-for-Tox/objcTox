@@ -12,7 +12,6 @@
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTRealmManager.h"
-#import "RBQFetchRequest.h"
 
 @interface OCTSubmanagerFriends ()
 
@@ -90,7 +89,7 @@
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    [realmManager updateObjectsWithClass:[OCTFriend class] predicate:nil sendNotification:NO updateBlock:^(OCTFriend *friend) {
+    [realmManager updateObjectsWithClass:[OCTFriend class] predicate:nil updateBlock:^(OCTFriend *friend) {
         friend.status = OCTToxUserStatusNone;
         friend.isConnected = NO;
         friend.connectionStatus = OCTToxConnectionStatusNone;
@@ -127,14 +126,14 @@
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"publicKey == %@", publicKey];
-    RBQFetchRequest *fetchRequest = [realmManager fetchRequestForClass:[OCTFriendRequest class] withPredicate:predicate];
-    if ([fetchRequest fetchObjects].count > 0) {
+    RLMResults *results = [realmManager objectsWithClass:[OCTFriendRequest class] predicate:predicate];
+    if (results.count > 0) {
         // friendRequest already exists
         return;
     }
 
-    fetchRequest = [realmManager fetchRequestForClass:[OCTFriend class] withPredicate:predicate];
-    if ([fetchRequest fetchObjects].count > 0) {
+    results = [realmManager objectsWithClass:[OCTFriend class] predicate:predicate];
+    if (results.count > 0) {
         // friend with such publicKey already exists
         return;
     }

@@ -13,7 +13,7 @@
 @class OCTObject;
 @class OCTFriend;
 @class OCTChat;
-@class RBQFetchRequest;
+@class RLMResults;
 
 @interface OCTSubmanagerObjects : NSObject
 
@@ -23,9 +23,9 @@
  * @param type Type of fetch request.
  * @param predicate Predicate that represents search query.
  *
- * @return RBQFetchRequest for specified type.
+ * @return RLMResults with objects of specified type.
  */
-- (RBQFetchRequest *)fetchRequestForType:(OCTFetchRequestType)type withPredicate:(NSPredicate *)predicate;
+- (RLMResults *)objectsForType:(OCTFetchRequestType)type predicate:(NSPredicate *)predicate;
 
 /**
  * Returns object for specified type with uniqueIdentifier.

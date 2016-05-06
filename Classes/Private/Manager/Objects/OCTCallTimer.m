@@ -8,7 +8,6 @@
 
 #import "OCTCallTimer.h"
 #import "OCTRealmManager.h"
-#import "RBQFetchRequest.h"
 #import "OCTCall.h"
 #import "OCTLogging.h"
 

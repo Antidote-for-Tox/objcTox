@@ -10,7 +10,6 @@
 #import "OCTSubmanagerChats+Private.h"
 #import "OCTTox.h"
 #import "OCTRealmManager.h"
-#import "RBQFetchRequest.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTChat.h"
@@ -88,8 +87,7 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat == %@ AND messageText.messageId == %d",
                               chat, messageId];
 
-    RBQFetchRequest *request = [realmManager fetchRequestForClass:[OCTMessageAbstract class] withPredicate:predicate];
-    RLMResults *results = [request fetchObjects];
+    RLMResults *results = [realmManager objectsWithClass:[OCTMessageAbstract class] predicate:predicate];
 
     OCTMessageAbstract *message = [results firstObject];
 

@@ -85,7 +85,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"fileType == %d OR fileType == %d OR fileType == %d",
                               OCTMessageFileTypeWaitingConfirmation, OCTMessageFileTypeLoading, OCTMessageFileTypePaused];
 
-    [realmManager updateObjectsWithClass:[OCTMessageFile class] predicate:predicate sendNotification:NO updateBlock:^(OCTMessageFile *file) {
+    [realmManager updateObjectsWithClass:[OCTMessageFile class] predicate:predicate updateBlock:^(OCTMessageFile *file) {
         file.fileType = OCTMessageFileTypeCanceled;
         OCTLogInfo(@"cancelling file %@", file);
     }];
@@ -561,7 +561,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
             OCTLogWarn(@"cleanup: cannot read contents of download directory %@, error %@", downloads, error);
         }
 
-        OCTLogInfo(@"cleanup: total number of files %d", allFiles.count);
+        OCTLogInfo(@"cleanup: total number of files %lu", (unsigned long)allFiles.count);
         OCTToxFileSize freedSpace = 0;
 
         for (NSString *path in allFiles) {
@@ -694,7 +694,6 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:message.messageFile withBlock:block];
-    [realmManager notifyAboutObjectUpdate:message];
 }
 
 - (OCTFileBaseOperationProgressBlock)fileProgressBlockWithMessage:(OCTMessageAbstract *)message

@@ -15,7 +15,6 @@
 #import "OCTFriendRequest.h"
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
-#import "RBQFetchRequest.h"
 
 @interface OCTSubmanagerObjectsTests : XCTestCase
 
@@ -55,28 +54,28 @@
 {
     id predicate = OCMClassMock([NSPredicate class]);
 
-    id fetchRequest1 = OCMClassMock([RBQFetchRequest class]);
-    id fetchRequest2 = OCMClassMock([RBQFetchRequest class]);
-    id fetchRequest3 = OCMClassMock([RBQFetchRequest class]);
-    id fetchRequest4 = OCMClassMock([RBQFetchRequest class]);
+    id results1 = OCMClassMock([RLMResults class]);
+    id results2 = OCMClassMock([RLMResults class]);
+    id results3 = OCMClassMock([RLMResults class]);
+    id results4 = OCMClassMock([RLMResults class]);
 
-    OCMStub([self.realmManager fetchRequestForClass:[OCTFriend class]
-                                      withPredicate:predicate]).andReturn(fetchRequest1);
-    OCMStub([self.realmManager fetchRequestForClass:[OCTFriendRequest class]
-                                      withPredicate:predicate]).andReturn(fetchRequest2);
-    OCMStub([self.realmManager fetchRequestForClass:[OCTChat class]
-                                      withPredicate:predicate]).andReturn(fetchRequest3);
-    OCMStub([self.realmManager fetchRequestForClass:[OCTMessageAbstract class]
-                                      withPredicate:predicate]).andReturn(fetchRequest4);
+    OCMStub([self.realmManager objectsWithClass:[OCTFriend class]
+                                      predicate:predicate]).andReturn(results1);
+    OCMStub([self.realmManager objectsWithClass:[OCTFriendRequest class]
+                                      predicate:predicate]).andReturn(results2);
+    OCMStub([self.realmManager objectsWithClass:[OCTChat class]
+                                      predicate:predicate]).andReturn(results3);
+    OCMStub([self.realmManager objectsWithClass:[OCTMessageAbstract class]
+                                      predicate:predicate]).andReturn(results4);
 
-    XCTAssertEqual(fetchRequest1, [self.submanager fetchRequestForType:OCTFetchRequestTypeFriend
-                                                         withPredicate:predicate]);
-    XCTAssertEqual(fetchRequest2, [self.submanager fetchRequestForType:OCTFetchRequestTypeFriendRequest
-                                                         withPredicate:predicate]);
-    XCTAssertEqual(fetchRequest3, [self.submanager fetchRequestForType:OCTFetchRequestTypeChat
-                                                         withPredicate:predicate]);
-    XCTAssertEqual(fetchRequest4, [self.submanager fetchRequestForType:OCTFetchRequestTypeMessageAbstract
-                                                         withPredicate:predicate]);
+    XCTAssertEqual(results1, [self.submanager objectsForType:OCTFetchRequestTypeFriend
+                                                   predicate:predicate]);
+    XCTAssertEqual(results2, [self.submanager objectsForType:OCTFetchRequestTypeFriendRequest
+                                                   predicate:predicate]);
+    XCTAssertEqual(results3, [self.submanager objectsForType:OCTFetchRequestTypeChat
+                                                   predicate:predicate]);
+    XCTAssertEqual(results4, [self.submanager objectsForType:OCTFetchRequestTypeMessageAbstract
+                                                   predicate:predicate]);
 }
 
 - (void)testObjectWithUniqueIdentifier

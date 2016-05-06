@@ -10,17 +10,18 @@
 #import "OCTSubmanagerCalls.h"
 #import "OCTManager.h"
 #import "OCTSubmanagerObjects.h"
-#import "RBQFetchedResultsController.h"
 #import "OCTCall.h"
+#import "RLMCollectionChange+IndexSet.h"
 
 static NSString *const kCellIdent = @"cellIdent";
 
-@interface OCTCallsViewController () <RBQFetchedResultsControllerDelegate,
-                                      NSTableViewDataSource,
-                                      NSTableViewDelegate>
+@interface OCTCallsViewController () <NSTableViewDataSource, NSTableViewDelegate>
 
 @property (weak, nonatomic) OCTManager *manager;
-@property (strong, nonatomic) RBQFetchedResultsController *callsController;
+
+@property (strong, nonatomic) RLMResults<OCTCall *> *calls;
+@property (strong, nonatomic) RLMNotificationToken *callsNotificationToken;
+
 @property (weak) IBOutlet NSTableView *callsTableView;
 @property (weak) IBOutlet NSView *videoContainerView;
 @property (strong, nonatomic) NSView *videoView;
@@ -41,17 +42,42 @@ static NSString *const kCellIdent = @"cellIdent";
 
     [manager.calls setupWithError:nil];
 
-    RBQFetchRequest *fetchRequest = [manager.objects
-                                     fetchRequestForType:OCTFetchRequestTypeCall
-                                           withPredicate:nil];
-
-    _callsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                              sectionNameKeyPath:nil
-                                                                       cacheName:nil];
-    _callsController.delegate = self;
-    [_callsController performFetch];
+    _calls = [manager.objects objectsForType:OCTFetchRequestTypeCall predicate:nil];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self.callsNotificationToken stop];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    __weak typeof(self) weakSelf = self;
+
+    self.callsNotificationToken = [self.calls addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to open Realm on background worker: %@", error);
+            return;
+        }
+
+        NSTableView *tableView = weakSelf.callsTableView;
+
+        // Initial run of the query will pass nil for the change information
+        if (! changes) {
+            [tableView reloadData];
+            return;
+        }
+
+        [tableView beginUpdates];
+        [tableView removeRowsAtIndexes:[changes deletionsSet] withAnimation:NSTableViewAnimationSlideLeft];
+        [tableView insertRowsAtIndexes:[changes insertionsSet] withAnimation:NSTableViewAnimationSlideRight];
+        [tableView reloadDataForRowIndexes:[changes modificationsSet] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [tableView endUpdates];
+    }];
 }
 
 - (void)setupVideoView
@@ -80,53 +106,11 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.videoContainerView addConstraints:@[centerX, centerY, widthConstraint, heightConstraint]];
 }
 
-#pragma mark - RBQFetchResultsControllerDelegate
-
-- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
-{
-    [self.callsTableView beginUpdates];
-}
-
-- (void)controller:(RBQFetchedResultsController *)controller didChangeObject:(RBQSafeRealmObject *)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(RBQFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
-{
-    NSIndexSet *newSet = [[NSIndexSet alloc] initWithIndex:newIndexPath.row];
-    NSIndexSet *oldSet = [[NSIndexSet alloc] initWithIndex:indexPath.row];
-    NSIndexSet *columnSet = [[NSIndexSet alloc] initWithIndex:0];
-
-
-    switch (type) {
-        case RBQFetchedResultsChangeInsert:
-            [self.callsTableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-        case RBQFetchedResultsChangeDelete:
-            [self.callsTableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-            break;
-        case RBQFetchedResultsChangeUpdate:
-            [self.callsTableView reloadDataForRowIndexes:oldSet columnIndexes:columnSet];
-            break;
-        case RBQFetchedResultsChangeMove:
-            [self.callsTableView removeRowsAtIndexes:oldSet withAnimation:NSTableViewAnimationSlideLeft];
-            [self.callsTableView insertRowsAtIndexes:newSet withAnimation:NSTableViewAnimationSlideRight];
-            break;
-    }
-}
-
-- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
-{
-    @try {
-        [self.callsTableView endUpdates];
-    }
-    @catch (NSException *ex) {
-        [controller reset];
-        [self.callsTableView reloadData];
-    }
-}
-
 #pragma mark - NSTableViewDelegate
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.callsController numberOfRowsForSectionIndex:0];
+    return self.calls.count;
 }
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
@@ -147,9 +131,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
-
-    OCTCall *call = [self.callsController objectAtIndexPath:path];
+    OCTCall *call = self.calls[row];
 
     NSTextField *textField = [self.callsTableView makeViewWithIdentifier:kCellIdent owner:nil];
 
@@ -202,8 +184,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return nil;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTCall *call = [self.callsController objectAtIndexPath:path];
+    OCTCall *call = self.calls[selectedRow];
 
     return call;
 }
@@ -216,8 +197,7 @@ static NSString *const kCellIdent = @"cellIdent";
         return NO;
     }
 
-    NSIndexPath *path = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-    OCTCall *call = [self.callsController objectAtIndexPath:path];
+    OCTCall *call = self.calls[selectedRow];
 
     block(call);
 

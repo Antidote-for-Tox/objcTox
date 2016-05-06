@@ -11,7 +11,6 @@
 #import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
 
-@class RBQFetchRequest;
 @class OCTObject;
 @class OCTFriend;
 @class OCTChat;
@@ -34,38 +33,22 @@
 #pragma mark -  Basic methods
 
 - (id)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier class:(Class)class;
-- (RBQFetchRequest *)fetchRequestForClass:(Class)class withPredicate:(NSPredicate *)predicate;
+
+- (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate;
 
 - (void)addObject:(OCTObject *)object;
 - (void)deleteObject:(OCTObject *)object;
 
-- (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate;
-
-/**
- * All realm objects should be updated ONLY with this method.
+/*
+ * All realm objects should be updated ONLY using following two methods.
  *
  * Specified object will be passed in block.
  */
 - (void)updateObject:(OCTObject *)object withBlock:(void (^)(id theObject))updateBlock;
 
-/**
- * You should be careful updating objects without notification - data can in RBQFetchedResultsController may be
- * inconsistent after updating. This method is designed to be used on startup before any user interaction.
- */
 - (void)updateObjectsWithClass:(Class)class
                      predicate:(NSPredicate *)predicate
-              sendNotification:(BOOL)sendNotification
                    updateBlock:(void (^)(id theObject))updateBlock;
-
-- (void)notifyAboutObjectUpdate:(OCTObject *)object;
-
-/**
- * Map `updateBlock` over all realm objects of the `cls` without sending RBQ update notifications.
- * The note on -updateObjectsWithoutNotification: applies here too.
- * @param cls Class of objects to be updated.
- * @param updateBlock The block that will be applied to all the objects.
- */
-- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock;
 
 #pragma mark -  Other methods
 

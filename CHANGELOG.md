@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - OS X platform in podspec.
 
+### Changes
+- Realm updated to version 1.0.1.
+- RBQFetchedResultsController removed. Use RLMResults with `addNotificationBlock:` method insted.
+
 ## [0.6.0] - 2016-03-27
 ### Added
 - File transfers.
