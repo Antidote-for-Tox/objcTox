@@ -129,7 +129,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTAssertNotNil(self.manager.tox);
     XCTAssertNotNil(self.manager.configuration);
     XCTAssertNotNil(self.manager.realmManager);
-    XCTAssertEqualObjects(self.manager.realmManager.path, self.manager.configuration.fileStorage.pathForDatabase);
+    XCTAssertEqualObjects(self.manager.realmManager.realmFileURL.path, self.manager.configuration.fileStorage.pathForDatabase);
 
     XCTAssertNotNil(self.manager.notificationCenter);
 }
@@ -395,6 +395,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     id storage = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
     OCMStub([configuration fileStorage]).andReturn(storage);
     OCMStub([configuration copy]).andReturn(configuration);
+    OCMStub([storage pathForDatabase]).andReturn(@"realm/database");
     OCMStub([storage pathForToxSaveFile]).andReturn(@"somewhere/tox.save");
     OCMStub([storage pathForTemporaryFilesDirectory]).andReturn(@"tmp");
 
@@ -404,7 +405,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     id realmManager = OCMClassMock([OCTRealmManager class]);
     OCMStub([realmManager alloc]).andReturn(realmManager);
-    OCMStub([realmManager initWithDatabasePath:[OCMArg any]]).andReturn(realmManager);
+    OCMStub([realmManager initWithDatabaseFileURL:[OCMArg any]]).andReturn(realmManager);
 
     OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
 

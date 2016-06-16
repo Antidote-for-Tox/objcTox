@@ -26,9 +26,9 @@
  */
 @property (strong, nonatomic, readonly) OCTSettingsStorageObject *settingsStorage;
 
-- (instancetype)initWithDatabasePath:(NSString *)path;
+- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL;
 
-- (NSString *)path;
+- (NSURL *)realmFileURL;
 
 #pragma mark -  Basic methods
 

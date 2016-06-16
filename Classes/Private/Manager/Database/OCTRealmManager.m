@@ -35,9 +35,9 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithDatabasePath:(NSString *)path
+- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL
 {
-    NSParameterAssert(path);
+    NSParameterAssert(fileURL);
 
     self = [super init];
 
@@ -45,7 +45,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         return nil;
     }
 
-    OCTLogInfo(@"init with path %@", path);
+    OCTLogInfo(@"init with fileURL %@", fileURL);
 
     _queue = dispatch_queue_create("OCTRealmManager queue", NULL);
 
@@ -53,7 +53,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
 
-        [strongSelf createRealmWithPath:path];
+        [strongSelf createRealmWithFileURL:fileURL];
         [strongSelf createSettingsStorage];
     });
 
@@ -64,9 +64,9 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Public
 
-- (NSString *)path
+- (NSURL *)realmFileURL
 {
-    return self.realm.path;
+    return self.realm.configuration.fileURL;
 }
 
 #pragma mark -  Basic methods
@@ -166,10 +166,10 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Other methods
 
-- (void)createRealmWithPath:(NSString *)path
+- (void)createRealmWithFileURL:(NSURL *)fileURL
 {
     RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
-    configuration.path = path;
+    configuration.fileURL = fileURL;
     configuration.schemaVersion = kCurrentSchemeVersion;
     configuration.migrationBlock = [self realmMigrationBlock];
 
