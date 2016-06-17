@@ -10,7 +10,6 @@
 
 #import "OCTToxConstants.h"
 
-@class RBQFetchRequest;
 @class OCTChat;
 @class OCTFriend;
 @class OCTMessageAbstract;

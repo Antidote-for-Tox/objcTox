@@ -312,10 +312,12 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
     [self startEnginesAndTimer:NO forCall:nil];
 
-    [realmManager updateObjectsOfClass:[OCTCall class] withoutNotificationUsingBlock:^(OCTCall *call) {
+    RLMResults *calls = [realmManager objectsWithClass:[OCTCall class] predicate:nil];
+
+    for (OCTCall *call in calls) {
         OCTFriend *friend = call.chat.friends.firstObject;
         [self.toxAV sendCallControl:OCTToxAVCallControlCancel toFriendNumber:friend.friendNumber error:nil];
-    }];
+    }
 
     [realmManager convertAllCallsToMessages];
 }

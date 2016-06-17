@@ -11,17 +11,17 @@
 #import <BlocksKit/UIBarButtonItem+BlocksKit.h>
 
 #import "OCTConversationViewController.h"
-#import "RBQFetchedResultsController.h"
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
 #import "OCTSubmanagerObjects.h"
 #import "OCTSubmanagerChats.h"
 #import "OCTSubmanagerCalls.h"
 
-@interface OCTConversationViewController () <RBQFetchedResultsControllerDelegate>
+@interface OCTConversationViewController ()
 
 @property (strong, nonatomic) OCTChat *chat;
-@property (strong, nonatomic) RBQFetchedResultsController *resultsController;
+@property (strong, nonatomic) RLMResults<OCTMessageAbstract *> *messages;
+@property (strong, nonatomic) RLMNotificationToken *messagesNotificationToken;
 
 @end
 
@@ -38,24 +38,45 @@
     _chat = chat;
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
-    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeMessageAbstract withPredicate:predicate];
-
-    _resultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                sectionNameKeyPath:nil
-                                                                         cacheName:nil];
-    _resultsController.delegate = self;
-    [_resultsController performFetch];
+    _messages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
 
     self.title = [NSString stringWithFormat:@"%@", chat.uniqueIdentifier];
 
     return self;
 }
 
+- (void)dealloc
+{
+    [self.messagesNotificationToken stop];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    __weak OCTConversationViewController *weakSelf = self;
+    __weak typeof(self) weakSelf = self;
+
+    self.messagesNotificationToken = [self.messages addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to open Realm on background worker: %@", error);
+            return;
+        }
+
+        UITableView *tableView = weakSelf.tableView;
+
+        // Initial run of the query will pass nil for the change information
+        if (! changes) {
+            [tableView reloadData];
+            return;
+        }
+
+        // Query results have changed, so apply them to the UITableView
+        [tableView beginUpdates];
+        [tableView deleteRowsAtIndexPaths:[changes deletionsInSection:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView insertRowsAtIndexPaths:[changes insertionsInSection:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView reloadRowsAtIndexPaths:[changes modificationsInSection:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView endUpdates];
+    }];
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                               bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
@@ -74,59 +95,18 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.resultsController numberOfRowsForSectionIndex:section];
+    return self.messages.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
 
-    OCTMessageAbstract *message = [self.resultsController objectAtIndexPath:indexPath];
+    OCTMessageAbstract *message = self.messages[indexPath.row];
 
     cell.textLabel.text = [message description];
 
     return cell;
-}
-
-#pragma mark -  RBQFetchedResultsControllerDelegate
-
-- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
-{
-    [self.tableView beginUpdates];
-}
-
-- (void) controller:(RBQFetchedResultsController *)controller
-    didChangeObject:(RBQSafeRealmObject *)anObject
-        atIndexPath:(NSIndexPath *)indexPath
-      forChangeType:(RBQFetchedResultsChangeType)type
-       newIndexPath:(NSIndexPath *)newIndexPath
-{
-    switch (type) {
-        case RBQFetchedResultsChangeInsert:
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeDelete:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeUpdate:
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeMove:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-    }
-}
-
-- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
-{
-    @try {
-        [self.tableView endUpdates];
-    }
-    @catch (NSException *ex) {
-        [self.resultsController reset];
-        [self.tableView reloadData];
-    }
 }
 
 #pragma mark -  Private

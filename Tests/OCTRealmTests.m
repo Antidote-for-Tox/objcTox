@@ -31,7 +31,8 @@
     self.realmMock = OCMClassMock([RLMRealm class]);
     OCMStub([self.realmMock realmWithConfiguration:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(realRealm);
 
-    self.realmManager = [[OCTRealmManager alloc] initWithDatabasePath:@"path"];
+    NSURL *fileURL = [NSURL fileURLWithPath:@"/some/realm/path"];
+    self.realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL];
     self.realmManager = OCMPartialMock(self.realmManager);
 }
 

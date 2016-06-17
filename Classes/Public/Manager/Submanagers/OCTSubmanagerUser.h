@@ -91,7 +91,7 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)setUserAvatar:(NSData *)avatar error:(NSError *__nullable *__nullable)error;
+- (BOOL)setUserAvatar:(nullable NSData *)avatar error:(NSError *__nullable *__nullable)error;
 
 /**
  * Get data representation of user avatar.

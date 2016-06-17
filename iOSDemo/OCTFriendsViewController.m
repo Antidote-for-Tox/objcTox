@@ -11,7 +11,6 @@
 #import <BlocksKit/UIBarButtonItem+BlocksKit.h>
 
 #import "OCTFriendsViewController.h"
-#import "RBQFetchedResultsController.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTSubmanagerObjects.h"
@@ -24,10 +23,12 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     SectionTypeCount,
 };
 
-@interface OCTFriendsViewController () <RBQFetchedResultsControllerDelegate>
+@interface OCTFriendsViewController ()
 
-@property (strong, nonatomic) RBQFetchedResultsController *friendResultsController;
-@property (strong, nonatomic) RBQFetchedResultsController *friendRequestResultsController;
+@property (strong, nonatomic) RLMResults<OCTFriend *> *friends;
+@property (strong, nonatomic) RLMNotificationToken *friendsNotificationToken;
+@property (strong, nonatomic) RLMResults<OCTFriendRequest *> *friendRequests;
+@property (strong, nonatomic) RLMNotificationToken *friendRequestsNotificationToken;
 
 @end
 
@@ -43,32 +44,33 @@ typedef NS_ENUM(NSUInteger, SectionType) {
         return nil;
     }
 
-    RBQFetchRequest *fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeFriend withPredicate:nil];
-
-    _friendResultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                      sectionNameKeyPath:nil
-                                                                               cacheName:nil];
-    _friendResultsController.delegate = self;
-    [_friendResultsController performFetch];
-
-    fetchRequest = [self.manager.objects fetchRequestForType:OCTFetchRequestTypeFriendRequest withPredicate:nil];
-
-    _friendRequestResultsController = [[RBQFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                             sectionNameKeyPath:nil
-                                                                                      cacheName:nil];
-    _friendRequestResultsController.delegate = self;
-    [_friendRequestResultsController performFetch];
+    _friends = [self.manager.objects objectsForType:OCTFetchRequestTypeFriend predicate:nil];
+    _friendRequests = [self.manager.objects objectsForType:OCTFetchRequestTypeFriendRequest predicate:nil];
 
     self.title = @"Friends";
 
     return self;
 }
 
+- (void)dealloc
+{
+    [self.friendsNotificationToken stop];
+    [self.friendRequestsNotificationToken stop];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    __weak OCTFriendsViewController *weakSelf = self;
+    __weak typeof(self) weakSelf = self;
+
+    self.friendsNotificationToken = [self.friends addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        [weakSelf realmWasUpdated:changes sectionType:SectionTypeFriends error:error];
+    }];
+
+    self.friendRequestsNotificationToken = [self.friendRequests addNotificationBlock:^(RLMResults *results, RLMCollectionChange *changes, NSError *error) {
+        [weakSelf realmWasUpdated:changes sectionType:SectionTypeFriendRequests error:error];
+    }];
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                               bk_initWithBarButtonSystemItem:UIBarButtonSystemItemAdd handler:^(id handler) {
@@ -83,14 +85,13 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     SectionType type = indexPath.section;
-    NSIndexPath *normalized = [self normalizeIndexPath:indexPath];
 
     switch (type) {
         case SectionTypeFriends:
-            [self didSelectFriend:[self.friendResultsController objectAtIndexPath:normalized]];
+            [self didSelectFriend:self.friends[indexPath.row]];
             break;
         case SectionTypeFriendRequests:
-            [self didSelectFriendRequest:[self.friendRequestResultsController objectAtIndexPath:normalized]];
+            [self didSelectFriendRequest:self.friendRequests[indexPath.row]];
             break;
         case SectionTypeCount:
             // nop
@@ -111,9 +112,9 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
     switch (type) {
         case SectionTypeFriends:
-            return [self.friendResultsController numberOfRowsForSectionIndex:0];
+            return self.friends.count;
         case SectionTypeFriendRequests:
-            return [self.friendRequestResultsController numberOfRowsForSectionIndex:0];
+            return self.friendRequests.count;
         case SectionTypeCount:
             return 0;
     }
@@ -147,65 +148,12 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     }
 }
 
-#pragma mark -  RBQFetchedResultsControllerDelegate
-
-- (void)controllerWillChangeContent:(RBQFetchedResultsController *)controller
-{
-    [self.tableView beginUpdates];
-}
-
-- (void) controller:(RBQFetchedResultsController *)controller
-    didChangeObject:(RBQSafeRealmObject *)anObject
-        atIndexPath:(NSIndexPath *)indexPath
-      forChangeType:(RBQFetchedResultsChangeType)type
-       newIndexPath:(NSIndexPath *)newIndexPath
-{
-    if ([controller isEqual:self.friendResultsController]) {
-        indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:SectionTypeFriends];
-        newIndexPath = [NSIndexPath indexPathForRow:newIndexPath.row inSection:SectionTypeFriends];
-    }
-    else if ([controller isEqual:self.friendRequestResultsController]) {
-        indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:SectionTypeFriendRequests];
-        newIndexPath = [NSIndexPath indexPathForRow:newIndexPath.row inSection:SectionTypeFriendRequests];
-    }
-
-    switch (type) {
-        case RBQFetchedResultsChangeInsert:
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeDelete:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeUpdate:
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case RBQFetchedResultsChangeMove:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-    }
-}
-
-- (void)controllerDidChangeContent:(RBQFetchedResultsController *)controller
-{
-    @try {
-        [self.tableView endUpdates];
-    }
-    @catch (NSException *ex) {
-        [controller reset];
-        [self.tableView reloadData];
-    }
-}
-
-
 #pragma mark -  Private
 
 - (UITableViewCell *)friendCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSIndexPath *normalized = [self normalizeIndexPath:indexPath];
-
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
-    OCTFriend *friend = [self.friendResultsController objectAtIndexPath:normalized];
+    OCTFriend *friend = self.friends[indexPath.row];
 
     cell.textLabel.text = [NSString stringWithFormat:@"Friend\n"
                            @"friendNumber %u\n"
@@ -234,10 +182,8 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
 - (UITableViewCell *)friendRequestCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSIndexPath *normalized = [self normalizeIndexPath:indexPath];
-
     UITableViewCell *cell = [self cellForIndexPath:indexPath];
-    OCTFriendRequest *request = [self.friendRequestResultsController objectAtIndexPath:normalized];
+    OCTFriendRequest *request = self.friendRequests[indexPath.row];
 
     cell.textLabel.text = [NSString stringWithFormat:@"Friend request\n"
                            @"publicKey %@\n"
@@ -299,9 +245,24 @@ typedef NS_ENUM(NSUInteger, SectionType) {
     [alert show];
 }
 
-- (NSIndexPath *)normalizeIndexPath:(NSIndexPath *)indexPath
+- (void)realmWasUpdated:(RLMCollectionChange *)changes sectionType:(SectionType)sectionType error:(NSError *)error
 {
-    return [NSIndexPath indexPathForRow:indexPath.row inSection:0];
+    if (error) {
+        NSLog(@"Failed to open Realm on background worker: %@", error);
+        return;
+    }
+
+    // Initial run of the query will pass nil for the change information
+    if (! changes) {
+        [self.tableView reloadData];
+        return;
+    }
+
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:[changes deletionsInSection:sectionType] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView insertRowsAtIndexPaths:[changes insertionsInSection:sectionType] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadRowsAtIndexPaths:[changes modificationsInSection:sectionType] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
 }
 
 @end

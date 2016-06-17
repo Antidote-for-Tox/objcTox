@@ -324,7 +324,8 @@
 
 - (void)createRealmManager
 {
-    _realmManager = [[OCTRealmManager alloc] initWithDatabasePath:_currentConfiguration.fileStorage.pathForDatabase];
+    NSURL *fileURL = [NSURL fileURLWithPath:_currentConfiguration.fileStorage.pathForDatabase];
+    _realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL];
 }
 
 - (void)createSubmanagers

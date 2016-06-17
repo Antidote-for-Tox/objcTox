@@ -23,10 +23,10 @@
 
 #pragma mark -  Public
 
-- (RBQFetchRequest *)fetchRequestForType:(OCTFetchRequestType)type withPredicate:(NSPredicate *)predicate
+- (RLMResults *)objectsForType:(OCTFetchRequestType)type predicate:(NSPredicate *)predicate
 {
     OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
-    return [manager fetchRequestForClass:[self classForFetchRequestType:type] withPredicate:predicate];
+    return [manager objectsWithClass:[self classForFetchRequestType:type] predicate:predicate];
 }
 
 - (OCTObject *)objectWithUniqueIdentifier:(NSString *)uniqueIdentifier forType:(OCTFetchRequestType)type

@@ -9,8 +9,6 @@
 #import <Realm/Realm.h>
 
 #import "OCTRealmManager.h"
-#import "RBQFetchRequest.h"
-#import "RBQRealmNotificationManager.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTChat.h"
@@ -37,9 +35,9 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithDatabasePath:(NSString *)path
+- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL
 {
-    NSParameterAssert(path);
+    NSParameterAssert(fileURL);
 
     self = [super init];
 
@@ -47,7 +45,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         return nil;
     }
 
-    OCTLogInfo(@"init with path %@", path);
+    OCTLogInfo(@"init with fileURL %@", fileURL);
 
     _queue = dispatch_queue_create("OCTRealmManager queue", NULL);
 
@@ -55,7 +53,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
 
-        [strongSelf createRealmWithPath:path];
+        [strongSelf createRealmWithFileURL:fileURL];
         [strongSelf createSettingsStorage];
     });
 
@@ -66,9 +64,9 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Public
 
-- (NSString *)path
+- (NSURL *)realmFileURL
 {
-    return self.realm.path;
+    return self.realm.configuration.fileURL;
 }
 
 #pragma mark -  Basic methods
@@ -85,23 +83,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 
     return object;
-}
-
-- (RBQFetchRequest *)fetchRequestForClass:(Class)class withPredicate:(NSPredicate *)predicate
-{
-    NSParameterAssert(class);
-
-    __block RBQFetchRequest *fetchRequest = nil;
-
-    OCTLogVerbose(@"fetchRequestForClass %@ withPredicate %@", class, predicate);
-
-    dispatch_sync(self.queue, ^{
-        fetchRequest = [RBQFetchRequest fetchRequestWithEntityName:NSStringFromClass(class)
-                                                           inRealm:self.realm
-                                                         predicate:predicate];
-    });
-
-    return fetchRequest;
 }
 
 - (RLMResults *)objectsWithClass:(Class)class predicate:(NSPredicate *)predicate
@@ -128,7 +109,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         [self.realm beginWriteTransaction];
 
         updateBlock(object);
-        [[self logger] didChangeObject:object];
 
         [self.realm commitWriteTransaction];
     });
@@ -136,13 +116,12 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 - (void)updateObjectsWithClass:(Class)class
                      predicate:(NSPredicate *)predicate
-              sendNotification:(BOOL)sendNotification
                    updateBlock:(void (^)(id theObject))updateBlock
 {
     NSParameterAssert(class);
     NSParameterAssert(updateBlock);
 
-    OCTLogInfo(@"updating objects of class %@ with predicate %@, send notification %d", NSStringFromClass(class), predicate, sendNotification);
+    OCTLogInfo(@"updating objects of class %@ with predicate %@", NSStringFromClass(class), predicate);
 
     dispatch_sync(self.queue, ^{
         RLMResults *results = [class objectsInRealm:self.realm withPredicate:predicate];
@@ -150,41 +129,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         [self.realm beginWriteTransaction];
         for (id object in results) {
             updateBlock(object);
-
-            if (sendNotification) {
-                [[self logger] didChangeObject:object];
-            }
-        }
-        [self.realm commitWriteTransaction];
-    });
-}
-
-- (void)notifyAboutObjectUpdate:(OCTObject *)object
-{
-    NSParameterAssert(object);
-
-    OCTLogInfo(@"notify about object update %@", object);
-
-    dispatch_sync(self.queue, ^{
-        [self.realm beginWriteTransaction];
-
-        [[self logger] didChangeObject:object];
-
-        [self.realm commitWriteTransaction];
-    });
-}
-
-- (void)updateObjectsOfClass:(Class)cls withoutNotificationUsingBlock:(void (^)(id theObject))updateBlock
-{
-    NSParameterAssert(updateBlock);
-    NSParameterAssert([cls isSubclassOfClass:RLMObject.class]);
-
-    dispatch_sync(self.queue, ^{
-        RLMResults *objs = [cls allObjectsInRealm:self.realm];
-
-        [self.realm beginWriteTransaction];
-        for (RLMObject *obj in objs) {
-            updateBlock(obj);
         }
         [self.realm commitWriteTransaction];
     });
@@ -200,7 +144,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         [self.realm beginWriteTransaction];
 
         [self.realm addObject:object];
-        [[self logger] didAddObject:object];
 
         [self.realm commitWriteTransaction];
     });
@@ -215,7 +158,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     dispatch_sync(self.queue, ^{
         [self.realm beginWriteTransaction];
 
-        [[self logger] willDeleteObject:object];
         [self.realm deleteObject:object];
 
         [self.realm commitWriteTransaction];
@@ -224,10 +166,10 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Other methods
 
-- (void)createRealmWithPath:(NSString *)path
+- (void)createRealmWithFileURL:(NSURL *)fileURL
 {
     RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
-    configuration.path = path;
+    configuration.fileURL = fileURL;
     configuration.schemaVersion = kCurrentSchemeVersion;
     configuration.migrationBlock = [self realmMigrationBlock];
 
@@ -288,7 +230,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
         [self.realm addObject:chat];
         [chat.friends addObject:friend];
-        [[self logger] didAddObject:chat];
 
         [self.realm commitWriteTransaction];
     });
@@ -316,7 +257,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
         [self.realm beginWriteTransaction];
         [self.realm addObject:call];
-        [[self logger] didAddObject:call];
         [self.realm commitWriteTransaction];
     });
 
@@ -343,24 +283,21 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     dispatch_sync(self.queue, ^{
         RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
-        RBQRealmChangeLogger *logger = [self logger];
 
         [self.realm beginWriteTransaction];
         for (OCTMessageAbstract *message in messages) {
             if (message.messageText) {
-                [logger willDeleteObject:message.messageText];
                 [self.realm deleteObject:message.messageText];
             }
             if (message.messageFile) {
-                [logger willDeleteObject:message.messageFile];
                 [self.realm deleteObject:message.messageFile];
+            }
+            if (message.messageCall) {
+                [self.realm deleteObject:message.messageCall];
             }
         }
 
-        [logger willDeleteObjects:messages];
         [self.realm deleteObjects:messages];
-
-        [logger willDeleteObject:chat];
         [self.realm deleteObject:chat];
 
         [self.realm commitWriteTransaction];
@@ -373,14 +310,11 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     OCTLogInfo(@"removing %lu calls", (unsigned long)calls.count);
 
-    RBQRealmChangeLogger *logger = [self logger];
-
     for (OCTCall *call in calls) {
         [self addMessageCall:call];
     }
 
     [self.realm beginWriteTransaction];
-    [logger willDeleteObjects:calls];
     [self.realm deleteObjects:calls];
     [self.realm commitWriteTransaction];
 }
@@ -495,11 +429,6 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     [migration enumerateObjects:OCTMessageText.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"text"] = [oldObject[@"text"] length] > 0 ? oldObject[@"text"] : nil;
     }];
-}
-
-- (RBQRealmChangeLogger *)logger
-{
-    return [RBQRealmChangeLogger loggerForRealm:self.realm];
 }
 
 /**
