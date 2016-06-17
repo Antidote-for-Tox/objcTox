@@ -20,8 +20,8 @@ Pod::Spec.new do |s|
       :submodules => false
   }
 
-  s.platform     = :ios, '7.0'
-  s.platform     = :osx, '10.9'
+  s.ios.deployment_target = '7.0'
+  s.osx.deployment_target = '10.9'
   s.requires_arc = true
 
   s.source_files = 'Classes/**/*.{m,h}'
