@@ -230,7 +230,7 @@
 + (NSData *)getSavedDataFromPath:(NSString *)path
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
-           ([NSData dataWithContentsOfFile : path]) :
+           ([NSData dataWithContentsOfFile:path]) :
            nil;
 }
 

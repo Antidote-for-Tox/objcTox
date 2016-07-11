@@ -31,7 +31,7 @@
     NSString *description = [super description];
 
     const NSUInteger maxSymbols = 3;
-    NSString *fileName = self.fileName.length > maxSymbols ? ([self.fileName substringToIndex : maxSymbols]) : @"";
+    NSString *fileName = self.fileName.length > maxSymbols ? ([self.fileName substringToIndex:maxSymbols]) : @"";
 
     return [description stringByAppendingFormat:@"OCTMessageFile with fileName = %@..., fileSize = %llu",
             fileName, self.fileSize];
