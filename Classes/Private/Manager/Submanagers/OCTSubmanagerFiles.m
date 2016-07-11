@@ -694,6 +694,11 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
     [realmManager updateObject:message.messageFile withBlock:block];
+
+    // Workaround to force Realm to update OCTMessageAbstract when OCTMessageFile was updated.
+    [realmManager updateObject:message withBlock:^(OCTMessageAbstract *message) {
+        message.dateInterval = message.dateInterval;
+    }];
 }
 
 - (OCTFileBaseOperationProgressBlock)fileProgressBlockWithMessage:(OCTMessageAbstract *)message
