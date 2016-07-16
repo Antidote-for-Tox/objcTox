@@ -240,7 +240,7 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     [self.conversationMessagesNotificationToken stop];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@", chat.uniqueIdentifier];
     self.conversationMessages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
 
     __weak typeof(self) weakSelf = self;

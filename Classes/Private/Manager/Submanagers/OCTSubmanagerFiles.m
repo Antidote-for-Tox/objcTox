@@ -259,7 +259,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
                                                    friendNumber:friend.friendNumber
@@ -316,7 +316,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         type = (pausedBy == OCTMessageFilePausedByNone) ? OCTMessageFileTypeLoading : OCTMessageFileTypePaused;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
                                                    friendNumber:friend.friendNumber
@@ -342,7 +342,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
                                                        friendNumber:friend.friendNumber];
@@ -376,7 +376,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
                                                        friendNumber:friend.friendNumber];
@@ -899,6 +899,13 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     } failureBlock:nil];
 
     [self.queue addOperation:operation];
+}
+
+- (OCTFriend *)friendForMessage:(OCTMessageAbstract *)message
+{
+    OCTChat *chat = [[self.dataSource managerGetRealmManager] objectWithUniqueIdentifier:message.chatUniqueIdentifier
+                                                                                   class:[OCTChat class]];
+    return [chat.friends firstObject];
 }
 
 @end

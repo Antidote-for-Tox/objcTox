@@ -35,7 +35,7 @@
 /**
  * The chat message message belongs to.
  */
-@property (nonnull) OCTChat *chat;
+@property (nonnull) NSString *chatUniqueIdentifier;
 
 /**
  * Message has one of the following properties.

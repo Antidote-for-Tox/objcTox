@@ -84,8 +84,8 @@
     OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat == %@ AND messageText.messageId == %d",
-                              chat, messageId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@ AND messageText.messageId == %d",
+                              chat.uniqueIdentifier, messageId];
 
     RLMResults *results = [realmManager objectsWithClass:[OCTMessageAbstract class] predicate:predicate];
 
