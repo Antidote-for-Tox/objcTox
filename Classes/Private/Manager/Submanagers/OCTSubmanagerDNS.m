@@ -297,7 +297,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
     OCTDNSQueryCallback callback = (__bridge OCTDNSQueryCallback)(context);
 
     if (errorCode == kDNSServiceErr_NoError) {
-        NSData *data = (rdlen > 0) ? ([NSData dataWithBytes : rdata length:rdlen]) : nil;
+        NSData *data = (rdlen > 0) ? ([NSData dataWithBytes:rdata length:rdlen]) : nil;
         callback(errorCode, data);
     }
     else {

@@ -19,7 +19,7 @@
 #import "OCTSubmanagerBootstrap.h"
 
 #define NAVIGATION_WITH_CONTROLLER(class) \
-    [[UINavigationController alloc] initWithRootViewController :[[class alloc] initWithManager:manager]]
+    [[UINavigationController alloc] initWithRootViewController:[[class alloc] initWithManager:manager]]
 
 static NSString *const kLoginIdentifier = @"kLoginIdentifier";
 

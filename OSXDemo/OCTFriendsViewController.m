@@ -110,7 +110,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     if (tableView == self.friendsTableView) {
         OCTFriend *friend = self.friends[row];
-        field.stringValue = (friend.isConnected) ? ([NSString stringWithFormat : @"%@ : Online", friend.nickname]) : friend.nickname;
+        field.stringValue = (friend.isConnected) ? ([NSString stringWithFormat:@"%@ : Online", friend.nickname]) : friend.nickname;
 
     }
     else if (tableView == self.requestsTableView) {
