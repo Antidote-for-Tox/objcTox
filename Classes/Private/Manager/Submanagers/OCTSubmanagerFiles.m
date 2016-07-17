@@ -325,7 +325,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }
 
     OCTToxFileSize fileSize = [attributes[NSFileSize] longLongValue];
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
     NSError *error;
 
     OCTToxFileNumber fileNumber = [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber

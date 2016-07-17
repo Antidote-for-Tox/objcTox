@@ -282,24 +282,21 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     OCTLogInfo(@"removing messages %lu", (unsigned long)messages.count);
 
     dispatch_sync(self.queue, ^{
-        RBQRealmChangeLogger *logger = [self logger];
-
         [self.realm beginWriteTransaction];
 
-        NSMutableSet *set = [NSMutableSet new];
+        NSMutableSet *changedChats = [NSMutableSet new];
         for (OCTMessageAbstract *message in messages) {
-            [set addObject:message.chat];
+            [changedChats addObject:message.chatUniqueIdentifier];
         }
 
         [self removeMessagesWithSubmessages:messages];
 
-        for (OCTChat *chat in set) {
-            RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+        for (NSString *chatUniqueIdentifier in changedChats) {
+            RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chatUniqueIdentifier == %@", chatUniqueIdentifier];
             messages = [messages sortedResultsUsingProperty:@"dateInterval" ascending:YES];
 
+            OCTChat *chat = [OCTChat objectInRealm:self.realm forPrimaryKey:chatUniqueIdentifier];
             chat.lastMessage = messages.lastObject;
-
-            [[self logger] didChangeObject:chat];
         }
 
         [self.realm commitWriteTransaction];
