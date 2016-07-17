@@ -440,6 +440,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 {
     [migration enumerateObjects:OCTMessageAbstract.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"chatUniqueIdentifier"] = oldObject[@"chat"][@"uniqueIdentifier"];
+        newObject[@"senderUniqueIdentifier"] = oldObject[@"sender"][@"uniqueIdentifier"];
     }];
 }
 
@@ -461,7 +462,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
     messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
-    messageAbstract.sender = sender;
+    messageAbstract.senderUniqueIdentifier = sender.uniqueIdentifier;
     messageAbstract.chatUniqueIdentifier = chat.uniqueIdentifier;
     messageAbstract.messageText = messageText;
     messageAbstract.messageFile = messageFile;

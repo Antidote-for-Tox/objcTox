@@ -49,7 +49,7 @@
 
     XCTAssertTrue([message isOutgoing]);
 
-    message.sender = [OCTFriend new];
+    message.senderUniqueIdentifier = @"Some unique id";
     XCTAssertFalse([message isOutgoing]);
 }
 

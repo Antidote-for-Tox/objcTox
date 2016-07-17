@@ -170,7 +170,7 @@
     XCTAssertEqual(results.count, 1);
 
     OCTMessageAbstract *message = [results firstObject];
-    XCTAssertEqualObjects(message.sender, friend);
+    XCTAssertEqualObjects(message.senderUniqueIdentifier, friend.uniqueIdentifier);
     XCTAssertEqualObjects(message.chatUniqueIdentifier, chat.uniqueIdentifier);
     XCTAssertNotNil(message.messageText);
     XCTAssertEqualObjects(message.messageText.text, @"message");

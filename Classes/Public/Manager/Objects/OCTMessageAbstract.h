@@ -28,9 +28,10 @@
 @property NSTimeInterval dateInterval;
 
 /**
- * The sender of the message. If the message if outgoing sender is nil.
+ * Unique identifier of friend that have send message.
+ * If the message if outgoing senderUniqueIdentifier is nil.
  */
-@property (nullable) OCTFriend *sender;
+@property (nullable) NSString *senderUniqueIdentifier;
 
 /**
  * The chat message message belongs to.

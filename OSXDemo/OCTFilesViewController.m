@@ -141,7 +141,7 @@ static NSString *const kCellIdentifier = @"fileCell";
                                  @"filePath = %@\n"
                                  @"fileUTI = %@\n"
                                  @"fileNumber = %d\n"
-                                 @"sender = %@",
+                                 @"senderUniqueIdentifier = %@",
                                  [self stringFromFileType:message.messageFile.fileType],
                                  [self stringFromPausedBy:message.messageFile.pausedBy],
                                  message.messageFile.fileSize,
@@ -149,7 +149,7 @@ static NSString *const kCellIdentifier = @"fileCell";
                                  message.messageFile.filePath,
                                  message.messageFile.fileUTI,
                                  message.messageFile.internalFileNumber,
-                                 message.sender];
+                                 message.senderUniqueIdentifier];
     }
     else if ([tableColumn.identifier isEqualToString:@"AutomaticTableColumnIdentifier.1"]) {
         textField.stringValue = @"";
