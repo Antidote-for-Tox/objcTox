@@ -20,7 +20,7 @@
 #import "OCTSettingsStorageObject.h"
 #import "OCTLogging.h"
 
-static const uint64_t kCurrentSchemeVersion = 4;
+static const uint64_t kCurrentSchemeVersion = 5;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -403,6 +403,11 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                    // objcTox version 0.5.0
                    [self doMigrationVersion4:migration];
                }
+
+               if (oldSchemaVersion < 5) {
+                   // objcTox verson 0.7.0
+                   [self doMigrationVersion5:migration];
+               }
     };
 }
 
@@ -431,6 +436,14 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     }];
 }
 
+- (void)doMigrationVersion5:(RLMMigration *)migration
+{
+    [migration enumerateObjects:OCTMessageAbstract.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        newObject[@"chatUniqueIdentifier"] = oldObject[@"chat"][@"uniqueIdentifier"];
+        newObject[@"senderUniqueIdentifier"] = oldObject[@"sender"][@"uniqueIdentifier"];
+    }];
+}
+
 /**
  * Only one of messageText, messageFile or messageCall can be non-nil.
  */
@@ -449,8 +462,8 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
     OCTMessageAbstract *messageAbstract = [OCTMessageAbstract new];
     messageAbstract.dateInterval = [[NSDate date] timeIntervalSince1970];
-    messageAbstract.sender = sender;
-    messageAbstract.chat = chat;
+    messageAbstract.senderUniqueIdentifier = sender.uniqueIdentifier;
+    messageAbstract.chatUniqueIdentifier = chat.uniqueIdentifier;
     messageAbstract.messageText = messageText;
     messageAbstract.messageFile = messageFile;
     messageAbstract.messageCall = messageCall;

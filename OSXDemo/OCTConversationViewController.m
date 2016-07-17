@@ -184,11 +184,14 @@ static NSString *const kCellIdent = @"cellIdent";
     else {
         OCTMessageAbstract *messageAbstract = self.conversationMessages[row];
         if (messageAbstract.messageText) {
-            if (messageAbstract.sender) {
-                field.stringValue = [NSString stringWithFormat:@"%@: %@", messageAbstract.sender.nickname, messageAbstract.messageText.text];
+            if ([messageAbstract isOutgoing]) {
+                field.stringValue = [NSString stringWithFormat:@"%@: %@", self.manager.user.userName, messageAbstract.messageText.text];
             }
             else {
-                field.stringValue = [NSString stringWithFormat:@"%@: %@", self.manager.user.userName, messageAbstract.messageText.text];
+                OCTFriend *friend = [self.manager.objects objectWithUniqueIdentifier:messageAbstract.senderUniqueIdentifier
+                                                                             forType:OCTFetchRequestTypeFriend];
+
+                field.stringValue = [NSString stringWithFormat:@"%@: %@", friend.nickname, messageAbstract.messageText.text];
             }
         }
     }
@@ -240,7 +243,7 @@ static NSString *const kCellIdent = @"cellIdent";
 {
     [self.conversationMessagesNotificationToken stop];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@", chat.uniqueIdentifier];
     self.conversationMessages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
 
     __weak typeof(self) weakSelf = self;

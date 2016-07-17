@@ -30,7 +30,7 @@
 
 - (BOOL)isOutgoing
 {
-    return (self.sender == nil);
+    return (self.senderUniqueIdentifier == nil);
 }
 
 - (NSString *)description

@@ -170,8 +170,8 @@
     XCTAssertEqual(results.count, 1);
 
     OCTMessageAbstract *message = [results firstObject];
-    XCTAssertEqualObjects(message.sender, friend);
-    XCTAssertEqualObjects(message.chat, chat);
+    XCTAssertEqualObjects(message.senderUniqueIdentifier, friend.uniqueIdentifier);
+    XCTAssertEqualObjects(message.chatUniqueIdentifier, chat.uniqueIdentifier);
     XCTAssertNotNil(message.messageText);
     XCTAssertEqualObjects(message.messageText.text, @"message");
     XCTAssertEqual(message.messageText.type, OCTToxMessageTypeAction);
@@ -182,15 +182,19 @@
     OCTFriend *friend = [self createFriend];
     friend.friendNumber = 5;
 
+    OCTChat *chat = [OCTChat new];
+    [chat.friends addObject:friend];
+
     OCTMessageAbstract *message = [OCTMessageAbstract new];
-    message.chat = [OCTChat new];
-    [message.chat.friends addObject:friend];
+    message.chatUniqueIdentifier = chat.uniqueIdentifier;
     message.messageText = [OCTMessageText new];
     message.messageText.text = @"";
     message.messageText.messageId = 10;
     message.messageText.isDelivered = NO;
 
     [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm addObject:chat];
     [self.realmManager.realm addObject:message];
     [self.realmManager.realm commitWriteTransaction];
 

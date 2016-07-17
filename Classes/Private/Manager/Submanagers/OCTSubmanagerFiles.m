@@ -198,7 +198,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 - (void)acceptFileTransfer:(OCTMessageAbstract *)message
               failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
 {
-    if (! message.sender) {
+    if (! message.senderUniqueIdentifier) {
         OCTLogWarn(@"specified wrong message: no sender. %@", message);
         if (failureBlock) {
             failureBlock([NSError acceptFileErrorWrongMessage:message]);
@@ -229,17 +229,21 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
     NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
 
-    OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
-                                                                             fileOutput:output
-                                                                           friendNumber:message.sender.friendNumber
-                                                                             fileNumber:message.messageFile.internalFileNumber
-                                                                               fileSize:message.messageFile.fileSize
-                                                                               userInfo:userInfo
-                                                                          progressBlock:[self fileProgressBlockWithMessage:message]
-                                                                         etaUpdateBlock:[self fileEtaUpdateBlockWithMessage:message]
-                                                                           successBlock:[self fileSuccessBlockWithMessage:message]
-                                                                           failureBlock:[self   fileFailureBlockWithMessage:message
-                                                                                                           userFailureBlock:failureBlock]];
+    OCTFriend *friend = [[self.dataSource managerGetRealmManager] objectWithUniqueIdentifier:message.senderUniqueIdentifier
+                                                                                       class:[OCTFriend class]];
+
+    OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc]
+                                           initWithTox:self.dataSource.managerGetTox
+                                              fileOutput:output
+                                            friendNumber:friend.friendNumber
+                                              fileNumber:message.messageFile.internalFileNumber
+                                                fileSize:message.messageFile.fileSize
+                                                userInfo:userInfo
+                                           progressBlock:[self fileProgressBlockWithMessage:message]
+                                          etaUpdateBlock:[self fileEtaUpdateBlockWithMessage:message]
+                                            successBlock:[self fileSuccessBlockWithMessage:message]
+                                            failureBlock:[self   fileFailureBlockWithMessage:message
+                                                                            userFailureBlock:failureBlock]];
 
     [self.queue addOperation:operation];
 
@@ -259,7 +263,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
                                                    friendNumber:friend.friendNumber
@@ -316,7 +320,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         type = (pausedBy == OCTMessageFilePausedByNone) ? OCTMessageFileTypeLoading : OCTMessageFileTypePaused;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     [self.dataSource.managerGetTox fileSendControlForFileNumber:message.messageFile.internalFileNumber
                                                    friendNumber:friend.friendNumber
@@ -342,7 +346,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
                                                        friendNumber:friend.friendNumber];
@@ -376,7 +380,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return NO;
     }
 
-    OCTFriend *friend = [message.chat.friends firstObject];
+    OCTFriend *friend = [self friendForMessage:message];
 
     OCTFileBaseOperation *operation = [self operationWithFileNumber:message.messageFile.internalFileNumber
                                                        friendNumber:friend.friendNumber];
@@ -899,6 +903,13 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     } failureBlock:nil];
 
     [self.queue addOperation:operation];
+}
+
+- (OCTFriend *)friendForMessage:(OCTMessageAbstract *)message
+{
+    OCTChat *chat = [[self.dataSource managerGetRealmManager] objectWithUniqueIdentifier:message.chatUniqueIdentifier
+                                                                                   class:[OCTChat class]];
+    return [chat.friends firstObject];
 }
 
 @end

@@ -37,7 +37,7 @@
 
     _chat = chat;
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chat.uniqueIdentifier == %@", chat.uniqueIdentifier];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@", chat.uniqueIdentifier];
     _messages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];
 
     self.title = [NSString stringWithFormat:@"%@", chat.uniqueIdentifier];
