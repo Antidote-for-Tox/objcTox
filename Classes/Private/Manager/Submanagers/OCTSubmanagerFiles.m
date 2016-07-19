@@ -628,7 +628,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSFileManager *fileManager = [NSFileManager defaultManager];
 
-        NSMutableArray *allFiles = [NSMutableArray new];
+        NSMutableSet *allFiles = [NSMutableSet new];
 
         NSError *error;
         NSArray<NSString *> *uploadsContents = [fileManager contentsOfDirectoryAtPath:uploads error:&error];
