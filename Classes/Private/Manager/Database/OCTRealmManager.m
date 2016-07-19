@@ -310,7 +310,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     OCTLogInfo(@"removing chat with all messages %@", chat);
 
     dispatch_sync(self.queue, ^{
-        RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chat == %@", chat];
+        RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chatUniqueIdentifier == %@", chat.uniqueIdentifier];
 
         [self.realm beginWriteTransaction];
 
