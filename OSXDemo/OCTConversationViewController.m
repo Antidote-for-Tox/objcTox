@@ -101,7 +101,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     OCTChat *chat = self.allChats[selectedRow];
 
-    [self.manager.chats removeChatWithAllMessages:chat];
+    [self.manager.chats removeAllMessagesInChat:chat removeChat:YES];
 }
 
 - (IBAction)callUserButtonPressed:(NSButton *)sender

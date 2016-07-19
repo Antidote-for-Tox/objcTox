@@ -34,9 +34,9 @@
     [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTScheduleFileTransferCleanupNotification object:nil];
 }
 
-- (void)removeChatWithAllMessages:(OCTChat *)chat
+- (void)removeAllMessagesInChat:(OCTChat *)chat removeChat:(BOOL)removeChat
 {
-    [[self.dataSource managerGetRealmManager] removeChatWithAllMessages:chat];
+    [[self.dataSource managerGetRealmManager] removeAllMessagesInChat:chat removeChat:removeChat];
     [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTScheduleFileTransferCleanupNotification object:nil];
 }
 

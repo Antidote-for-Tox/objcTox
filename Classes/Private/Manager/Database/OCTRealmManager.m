@@ -303,7 +303,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     });
 }
 
-- (void)removeChatWithAllMessages:(OCTChat *)chat
+- (void)removeAllMessagesInChat:(OCTChat *)chat removeChat:(BOOL)removeChat
 {
     NSParameterAssert(chat);
 
@@ -315,7 +315,9 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         [self.realm beginWriteTransaction];
 
         [self removeMessagesWithSubmessages:messages];
-        [self.realm deleteObject:chat];
+        if (removeChat) {
+            [self.realm deleteObject:chat];
+        }
 
         [self.realm commitWriteTransaction];
     });

@@ -65,7 +65,7 @@
 - (OCTCall *)getCurrentCallForChat:(OCTChat *)chat;
 
 - (void)removeMessages:(NSArray<OCTMessageAbstract *> *)messages;
-- (void)removeChatWithAllMessages:(OCTChat *)chat;
+- (void)removeAllMessagesInChat:(OCTChat *)chat removeChat:(BOOL)removeChat;
 
 /**
  * Converts all the OCTCalls to OCTMessageCalls.

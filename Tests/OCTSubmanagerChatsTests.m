@@ -85,7 +85,7 @@
     OCMVerifyAll((id)self.realmManager);
 }
 
-- (void)testRemoveChatWithAllMessages
+- (void)testRemoveMessagesWithChat
 {
     NSNotificationCenter *center = [[NSNotificationCenter alloc] init];
     OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
@@ -97,9 +97,9 @@
 
     OCTChat *chat = [OCTChat new];
 
-    OCMExpect([self.realmManager removeChatWithAllMessages:chat]);
+    OCMExpect([self.realmManager removeAllMessagesInChat:chat removeChat:YES]);
 
-    [self.submanager removeChatWithAllMessages:chat];
+    [self.submanager removeAllMessagesInChat:chat removeChat:YES];
 
     [self waitForExpectationsWithTimeout:0.0 handler:nil];
     OCMVerifyAll((id)self.realmManager);
