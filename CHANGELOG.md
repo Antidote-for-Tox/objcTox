@@ -5,10 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased][unreleased]
 ### Added
 - OS X platform in podspec.
+- Retrying sending file transfers.
+- removeMessages: method.
 
 ### Changes
 - Realm updated to version 1.0.1.
 - RBQFetchedResultsController removed. Use RLMResults with `addNotificationBlock:` method insted.
+- OCTSubmanagerFiles: using original file names instead of generated ones.
+- OCTSubmanagerChats: replacing removeChatWithAllMessages: method with removeAllMessagesInChat:removeChat:
+- OCTDefaultFileStorage: storing all upload and download files in single "files" directory.
 
 ## [0.6.0] - 2016-03-27
 ### Added

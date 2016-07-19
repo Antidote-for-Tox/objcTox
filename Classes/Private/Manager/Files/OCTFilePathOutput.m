@@ -8,6 +8,7 @@
 
 #import "OCTFilePathOutput.h"
 #import "OCTLogging.h"
+#import "OCTFileTools.h"
 
 @interface OCTFilePathOutput ()
 
@@ -23,7 +24,7 @@
 
 - (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder
                                resultFolder:(nonnull NSString *)resultFolder
-                              pathExtension:(nonnull NSString *)pathExtension
+                                   fileName:(nonnull NSString *)fileName
 {
     self = [super init];
 
@@ -31,10 +32,11 @@
         return nil;
     }
 
-    NSString *fileName = [[[NSUUID UUID] UUIDString] stringByAppendingPathExtension:pathExtension];
+    _tempFilePath = [OCTFileTools createNewFilePathInDirectory:tempFolder fileName:fileName];
+    _resultFilePath = [OCTFileTools createNewFilePathInDirectory:resultFolder fileName:fileName];
 
-    _tempFilePath = [tempFolder stringByAppendingPathComponent:fileName];
-    _resultFilePath = [resultFolder stringByAppendingPathComponent:fileName];
+    // Create dummy file to reserve fileName.
+    [[NSFileManager defaultManager] createFileAtPath:_resultFilePath contents:[NSData data] attributes:nil];
 
     OCTLogInfo(@"temp path %@", _tempFilePath);
     OCTLogInfo(@"result path %@", _resultFilePath);
@@ -79,6 +81,13 @@
     }
     @catch (NSException *ex) {
         OCTLogWarn(@"catched exception %@", ex);
+        return NO;
+    }
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    // Remove dummy file.
+    if (! [fileManager removeItemAtPath:self.resultFilePath error:nil]) {
         return NO;
     }
 

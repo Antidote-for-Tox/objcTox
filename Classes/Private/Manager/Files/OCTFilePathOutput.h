@@ -15,7 +15,7 @@
 
 - (nullable instancetype)initWithTempFolder:(nonnull NSString *)tempFolder
                                resultFolder:(nonnull NSString *)resultFolder
-                              pathExtension:(nonnull NSString *)pathExtension;
+                                   fileName:(nonnull NSString *)fileName;
 
 - (nullable instancetype)init NS_UNAVAILABLE;
 + (nullable instancetype)new NS_UNAVAILABLE;

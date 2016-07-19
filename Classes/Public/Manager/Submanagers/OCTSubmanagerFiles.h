@@ -37,17 +37,16 @@
  * You can monitor progress using this message.
  *
  * @param filePath Path of file to upload.
- * @param overrideFileName Optional parameter. By default file name from filePath will be used. You can override it
- * by passing this parameter.
+ * @param moveToUploads If YES file will be moved to uploads directory.
  * @param chat Chat to send file to.
  * @param failureBlock Block that will be called in case of upload failure.
  *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  *     See OCTSendFileError for all error codes.
  */
-- (void)    sendFile:(nonnull NSString *)filePath
-    overrideFileName:(nullable NSString *)overrideFileName
-              toChat:(nonnull OCTChat *)chat
-        failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
+- (void)sendFileAtPath:(nonnull NSString *)filePath
+         moveToUploads:(BOOL)moveToUploads
+                toChat:(nonnull OCTChat *)chat
+          failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
 
 /**
  * Accept file transfer.
@@ -67,6 +66,17 @@
  * @param message Message with file transfer. Message should have OCTMessageFile. Otherwise nothing will happen.
  */
 - (BOOL)cancelFileTransfer:(nonnull OCTMessageAbstract *)message error:(NSError *__nullable *__nullable)error;
+
+/**
+ * Retry to send file using same OCTMessageAbstract. This message should have Canceled type, otherwise retry will failure.
+ *
+ * @param message File transfer message to send.
+ * @param failureBlock Block that will be called in case of upload failure.
+ *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ *     See OCTSendFileError for all error codes.
+ */
+- (void)retrySendingFile:(nonnull OCTMessageAbstract *)message
+            failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock;
 
 /**
  * Pause or resume file transfer.

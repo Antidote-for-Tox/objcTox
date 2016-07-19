@@ -28,9 +28,16 @@
     return [[self.dataSource managerGetRealmManager] getOrCreateChatWithFriend:friend];
 }
 
-- (void)removeChatWithAllMessages:(OCTChat *)chat
+- (void)removeMessages:(NSArray<OCTMessageAbstract *> *)messages
 {
-    [[self.dataSource managerGetRealmManager] removeChatWithAllMessages:chat];
+    [[self.dataSource managerGetRealmManager] removeMessages:messages];
+    [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTScheduleFileTransferCleanupNotification object:nil];
+}
+
+- (void)removeAllMessagesInChat:(OCTChat *)chat removeChat:(BOOL)removeChat
+{
+    [[self.dataSource managerGetRealmManager] removeAllMessagesInChat:chat removeChat:removeChat];
+    [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTScheduleFileTransferCleanupNotification object:nil];
 }
 
 - (OCTMessageAbstract *)sendMessageToChat:(OCTChat *)chat

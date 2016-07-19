@@ -23,6 +23,7 @@
 #import "OCTFilePathOutput.h"
 #import "OCTFileDataInput.h"
 #import "OCTFileDataOutput.h"
+#import "OCTFileTools.h"
 #import "OCTSettingsStorageObject.h"
 #import "NSError+OCTFile.h"
 
@@ -78,6 +79,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                      selector:@selector(userAvatarWasUpdatedNotification)
                                                          name:kOCTUserAvatarWasUpdatedNotification
                                                        object:nil];
+    [self.dataSource.managerGetNotificationCenter addObserver:self
+                                                     selector:@selector(scheduleFilesCleanup)
+                                                         name:kOCTScheduleFileTransferCleanupNotification
+                                                       object:nil];
 
     OCTLogInfo(@"cancelling pending files...");
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
@@ -114,30 +119,43 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     NSParameterAssert(fileName);
     NSParameterAssert(chat);
 
-    NSString *generatedName = [[[NSUUID UUID] UUIDString] stringByAppendingPathExtension:[fileName pathExtension]];
-    NSString *filePath = [[self uploadsDirectory] stringByAppendingPathComponent:generatedName];
+    NSString *filePath = [OCTFileTools createNewFilePathInDirectory:[self uploadsDirectory] fileName:fileName];
 
     if (! [data writeToFile:filePath atomically:NO]) {
-        OCTLogWarn(@"cannot save data to temp directory.");
+        OCTLogWarn(@"cannot save data to uploads directory.");
         if (failureBlock) {
             failureBlock([NSError sendFileErrorCannotSaveFileToUploads]);
         }
         return;
     }
 
-    [self sendFile:filePath overrideFileName:fileName toChat:chat failureBlock:failureBlock];
+    [self sendFileAtPath:filePath moveToUploads:NO toChat:chat failureBlock:failureBlock];
 }
 
-- (void)    sendFile:(nonnull NSString *)filePath
-    overrideFileName:(nullable NSString *)overrideFileName
-              toChat:(nonnull OCTChat *)chat
-        failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
+- (void)sendFileAtPath:(nonnull NSString *)filePath
+         moveToUploads:(BOOL)moveToUploads
+                toChat:(nonnull OCTChat *)chat
+          failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
 {
     NSParameterAssert(filePath);
     NSParameterAssert(chat);
 
-    NSString *fileName = overrideFileName ?: [filePath lastPathComponent];
-    OCTFriend *friend = [chat.friends firstObject];
+    NSString *fileName = [filePath lastPathComponent];
+    NSError *error;
+
+    if (moveToUploads) {
+        NSString *toPath = [OCTFileTools createNewFilePathInDirectory:[self uploadsDirectory] fileName:fileName];
+
+        if (! [[NSFileManager defaultManager] moveItemAtPath:filePath toPath:toPath error:&error]) {
+            OCTLogWarn(@"cannot move file to uploads %@", error);
+            if (failureBlock) {
+                failureBlock([NSError sendFileErrorCannotSaveFileToUploads]);
+            }
+            return;
+        }
+
+        filePath = toPath;
+    }
 
     NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
 
@@ -150,8 +168,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }
 
     OCTToxFileSize fileSize = [attributes[NSFileSize] longLongValue];
+    OCTFriend *friend = [chat.friends firstObject];
 
-    NSError *error;
     OCTToxFileNumber fileNumber = [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber
                                                                                        kind:OCTToxFileKindData
                                                                                    fileSize:fileSize
@@ -222,10 +240,9 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         return;
     }
 
-    NSString *pathExtension = [message.messageFile.fileName pathExtension];
     OCTFilePathOutput *output = [[OCTFilePathOutput alloc] initWithTempFolder:[self downloadsTempDirectory]
                                                                  resultFolder:[self downloadsDirectory]
-                                                                pathExtension:pathExtension];
+                                                                     fileName:message.messageFile.fileName];
 
     NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
 
@@ -279,6 +296,75 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }];
 
     return YES;
+}
+
+- (void)retrySendingFile:(nonnull OCTMessageAbstract *)message
+            failureBlock:(nullable void (^)(NSError *__nonnull error))failureBlock
+{
+    NSParameterAssert(message);
+
+    if (! message.messageFile || (message.messageFile.fileType != OCTMessageFileTypeCanceled)) {
+        OCTLogWarn(@"specified wrong message: no messageFile. %@", message);
+        if (failureBlock) {
+            failureBlock([NSError fileTransferErrorWrongMessage:message]);
+        }
+        return;
+    }
+
+    NSString *fileName = message.messageFile.fileName;
+    NSString *filePath = [message.messageFile filePath];
+
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+
+    if (! attributes) {
+        OCTLogWarn(@"cannot read file %@", filePath);
+        if (failureBlock) {
+            failureBlock([NSError sendFileErrorCannotReadFile]);
+        }
+        return;
+    }
+
+    OCTToxFileSize fileSize = [attributes[NSFileSize] longLongValue];
+    OCTFriend *friend = [self friendForMessage:message];
+    NSError *error;
+
+    OCTToxFileNumber fileNumber = [[self.dataSource managerGetTox] fileSendWithFriendNumber:friend.friendNumber
+                                                                                       kind:OCTToxFileKindData
+                                                                                   fileSize:fileSize
+                                                                                     fileId:nil
+                                                                                   fileName:fileName
+                                                                                      error:&error];
+
+    if (fileNumber == kOCTToxFileNumberFailure) {
+        OCTLogWarn(@"cannot send file %@", error);
+        if (failureBlock) {
+            failureBlock([NSError sendFileErrorFromToxFileSendError:error.code]);
+        }
+        return;
+    }
+
+    [self updateMessageFile:message withBlock:^(OCTMessageFile *messageFile) {
+        messageFile.internalFileNumber = fileNumber;
+        messageFile.fileType = OCTMessageFileTypeWaitingConfirmation;
+        messageFile.fileSize = fileSize;
+    }];
+
+    NSDictionary *userInfo = [self fileOperationUserInfoWithMessage:message];
+    OCTFilePathInput *input = [[OCTFilePathInput alloc] initWithFilePath:filePath];
+
+    OCTFileUploadOperation *operation = [[OCTFileUploadOperation alloc] initWithTox:[self.dataSource managerGetTox]
+                                                                          fileInput:input
+                                                                       friendNumber:friend.friendNumber
+                                                                         fileNumber:fileNumber
+                                                                           fileSize:fileSize
+                                                                           userInfo:userInfo
+                                                                      progressBlock:[self fileProgressBlockWithMessage:message]
+                                                                     etaUpdateBlock:[self fileEtaUpdateBlockWithMessage:message]
+                                                                       successBlock:[self fileSuccessBlockWithMessage:message]
+                                                                       failureBlock:[self   fileFailureBlockWithMessage:message
+                                                                                                       userFailureBlock:failureBlock]];
+
+    [self.queue addOperation:operation];
 }
 
 - (BOOL)pauseFileTransfer:(BOOL)pause message:(nonnull OCTMessageAbstract *)message error:(NSError **)error
@@ -542,7 +628,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSFileManager *fileManager = [NSFileManager defaultManager];
 
-        NSMutableArray *allFiles = [NSMutableArray new];
+        NSMutableSet *allFiles = [NSMutableSet new];
 
         NSError *error;
         NSArray<NSString *> *uploadsContents = [fileManager contentsOfDirectoryAtPath:uploads error:&error];
