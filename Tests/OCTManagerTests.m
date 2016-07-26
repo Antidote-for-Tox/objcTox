@@ -148,7 +148,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     NSString *userAddress;
 
     {
-        OCTManager *nonEncrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        OCTManager *nonEncrypted = [[OCTManager alloc] initWithConfiguration:configuration passphrase:nil error:nil];
         XCTAssertNotNil(nonEncrypted);
 
         userAddress = nonEncrypted.user.userAddress;
@@ -159,10 +159,8 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         nonEncrypted = nil;
     }
 
-    configuration.passphrase = @"password123";
-
     {
-        OCTManager *encrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        OCTManager *encrypted = [[OCTManager alloc] initWithConfiguration:configuration passphrase:@"password123" error:nil];
         XCTAssertNotNil(encrypted);
         XCTAssertEqualObjects(userAddress, encrypted.user.userAddress);
         XCTAssertEqualObjects(@"nonEncrypted", encrypted.user.userName);
@@ -173,10 +171,8 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         encrypted = nil;
     }
 
-    configuration.passphrase = @"$ecur!";
-
     {
-        OCTManager *renamedEncrypted = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        OCTManager *renamedEncrypted = [[OCTManager alloc] initWithConfiguration:configuration passphrase:@"$ecur!" error:nil];
         XCTAssertNotNil(renamedEncrypted);
         XCTAssertEqualObjects(userAddress, renamedEncrypted.user.userAddress);
         XCTAssertEqualObjects(@"renamed", renamedEncrypted.user.userName);
@@ -187,10 +183,8 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         renamedEncrypted = nil;
     }
 
-    configuration.passphrase = nil;
-
     {
-        OCTManager *removed = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        OCTManager *removed = [[OCTManager alloc] initWithConfiguration:configuration passphrase:nil error:nil];
         XCTAssertNotNil(removed);
         XCTAssertEqualObjects(userAddress, removed.user.userAddress);
         XCTAssertEqualObjects(@"removed", removed.user.userName);
@@ -201,30 +195,24 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         removed = nil;
     }
 
-    configuration.passphrase = @"@g@!n";
-
     {
-        OCTManager *again = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+        OCTManager *again = [[OCTManager alloc] initWithConfiguration:configuration passphrase:@"@g@!n" error:nil];
         XCTAssertNotNil(again);
         XCTAssertEqualObjects(userAddress, again.user.userAddress);
         XCTAssertEqualObjects(@"again", again.user.userName);
     }
 
-    configuration.passphrase = nil;
-
     {
         NSError *error;
-        OCTManager *noPassword = [[OCTManager alloc] initWithConfiguration:configuration error:&error];
+        OCTManager *noPassword = [[OCTManager alloc] initWithConfiguration:configuration passphrase:nil error:&error];
         XCTAssertNil(noPassword);
         XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
         XCTAssertEqual(error.code, OCTManagerInitErrorCreateToxEncrypted);
     }
 
-    configuration.passphrase = @"wrong password";
-
     {
         NSError *error;
-        OCTManager *wrongPassword = [[OCTManager alloc] initWithConfiguration:configuration error:&error];
+        OCTManager *wrongPassword = [[OCTManager alloc] initWithConfiguration:configuration passphrase:@"wrong password" error:&error];
         XCTAssertNil(wrongPassword);
         XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
         XCTAssertEqual(error.code, OCTManagerInitErrorDecryptFailed);
@@ -252,10 +240,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     configuration.options.proxyPort = 999;
     configuration.options.tcpPort = 777;
     configuration.importToxSaveFromPath = @"save.tox";
-    configuration.passphrase = @"p@s$";
     configuration.fileStorage = [self temporaryFileStorage];
 
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration passphrase:@"p@s$" error:nil];
 
     OCTManagerConfiguration *c2 = [manager configuration];
 
@@ -267,13 +254,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
     XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
     XCTAssertEqualObjects(configuration.importToxSaveFromPath, c2.importToxSaveFromPath);
-    XCTAssertEqualObjects(configuration.passphrase, c2.passphrase);
-
-    [manager changePassphrase:@"123456"];
-
-    OCTManagerConfiguration *c3 = [manager configuration];
-
-    XCTAssertEqualObjects(@"123456", c3.passphrase);
 
     [(id)encryptSave stopMocking];
 }
@@ -407,7 +387,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     OCMStub([realmManager alloc]).andReturn(realmManager);
     OCMStub([realmManager initWithDatabaseFileURL:[OCMArg any]]).andReturn(realmManager);
 
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration passphrase:nil error:nil];
 
     NSString *path = [manager exportToxSaveFile:nil];
 
@@ -429,7 +409,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     configuration.fileStorage = [self temporaryFileStorage];
 
-    self.manager = [[OCTManager alloc] initWithConfiguration:configuration error:nil];
+    self.manager = [[OCTManager alloc] initWithConfiguration:configuration passphrase:nil error:nil];
 }
 
 - (OCTDefaultFileStorage *)temporaryFileStorage

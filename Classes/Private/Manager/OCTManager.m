@@ -64,7 +64,9 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
+- (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                                    passphrase:(nullable NSString *)passphrase
+                                         error:(NSError *__nullable *__nullable)error
 {
     self = [super init];
 
@@ -82,7 +84,7 @@
 
     NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
 
-    if (! [self createEncryptSaveWithPassphrase:_currentConfiguration.passphrase toxData:savedData]) {
+    if (! [self createEncryptSaveWithPassphrase:passphrase toxData:savedData]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
         return nil;
     }
@@ -141,8 +143,6 @@
 
 - (BOOL)changePassphrase:(NSString *)passphrase
 {
-    self.currentConfiguration.passphrase = passphrase;
-
     // Passing nil as tox data as we are setting new passphrase.
     BOOL result = [self createEncryptSaveWithPassphrase:passphrase toxData:nil];
 
@@ -358,7 +358,7 @@
 
 - (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
 {
-    id<OCTSubmanagerProtocol> submanager = [class new];
+    id<OCTSubmanagerProtocol> submanager = [[class alloc] init];
     submanager.dataSource = self;
 
     if ([submanager respondsToSelector:@selector(configure)]) {

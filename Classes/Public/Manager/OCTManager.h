@@ -11,6 +11,7 @@
 #import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
 
+NS_ASSUME_NONNULL_BEGIN
 @class OCTManagerConfiguration;
 
 @class OCTSubmanagerBootstrap;
@@ -76,12 +77,19 @@
  * change it you have to recreate OCTManager.
  *
  * @param configuration Configuration to be used.
+ * @param passphrase Passphrase used to decrypt tox save file. You should specify this parameter *only*
+ *        if tox save file is already encrypted. If you would like to enable encryption please use OCTManager's method.
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTManagerInitError for all error codes.
  *
  * @return Initialized OCTManager.
  */
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error;
+- (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                                    passphrase:(nullable NSString *)passphrase
+                                         error:(NSError *__nullable *__nullable)error;
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 /**
  * Configuration used by OCTManager.
@@ -97,7 +105,7 @@
  *
  * @return Temporary path of current tox save file.
  */
-- (NSString *)exportToxSaveFile:(NSError **)error;
+- (nullable NSString *)exportToxSaveFile:(NSError *__nullable *__nullable)error;
 
 /**
  * Set passphrase to encrypt tox save file.
@@ -106,6 +114,8 @@
  *
  * @return YES on success, NO on failure.
  */
-- (BOOL)changePassphrase:(NSString *)passphrase;
+- (BOOL)changePassphrase:(nullable NSString *)passphrase;
 
 @end
+
+NS_ASSUME_NONNULL_END

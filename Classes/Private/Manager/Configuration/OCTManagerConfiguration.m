@@ -54,7 +54,6 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     configuration.fileStorage = self.fileStorage;
     configuration.options = [self.options copy];
     configuration.importToxSaveFromPath = [self.importToxSaveFromPath copy];
-    configuration.passphrase = [self.passphrase copy];
 
     return configuration;
 }
