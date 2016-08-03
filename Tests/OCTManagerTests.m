@@ -66,6 +66,8 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 @property (strong, nonatomic) id tox;
 @property (strong, nonatomic) id toxAV;
 
+@property (strong, nonatomic) NSString *tempDirectoryPath;
+
 @end
 
 @implementation OCTManagerTests
@@ -74,11 +76,21 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    self.tempDirectoryPath = [[NSTemporaryDirectory() stringByAppendingPathComponent:kTestDirectory] stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+
+    [[NSFileManager defaultManager] createDirectoryAtPath:self.tempDirectoryPath
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
+
     self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
 
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.tox alloc]).andReturn(self.tox);
     OCMStub([self.tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.tox);
+    OCMStub([self.tox initWithOptions:[OCMArg any] savedData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(self.tox);
+    OCMStub([self.tox save]).andReturn([@"save file" dataUsingEncoding:NSUTF8StringEncoding]);
 
     self.toxAV = OCMClassMock([OCTToxAV class]);
     OCMStub([self.toxAV alloc]).andReturn(self.toxAV);
@@ -101,6 +113,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     self.manager = nil;
     [self.mockedCallManager stopMocking];
     self.mockedCallManager = nil;
+
+    [[NSFileManager defaultManager] removeItemAtPath:self.tempDirectoryPath error:nil];
+
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
@@ -134,7 +149,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTAssertNotNil(self.manager.notificationCenter);
 }
 
-- (void)testEncryption
+- (void)testToxEncryption
 {
     // We want use real data to make sure that encryption/decryption actually works. This is really crucial test.
     [self.tox stopMocking];
@@ -142,8 +157,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     configuration.fileStorage = [self temporaryFileStorage];
-    // Just in case, removing leftovers from other tests.
-    [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
 
     NSString *userAddress;
 
@@ -264,11 +277,32 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         OCTManager *wrongPassword = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:@"wrong password" databasePassword:@"123" error:&error];
         XCTAssertNil(wrongPassword);
         XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
-        XCTAssertEqual(error.code, OCTManagerInitErrorDecryptFailed);
+        XCTAssertEqual(error.code, OCTManagerInitErrorToxFileDecryptFailed);
+    }
+}
+
+- (void)testDatabaseEncryption
+{
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    configuration.fileStorage = [self temporaryFileStorage];
+
+    {
+        OCTManager *newDatabase = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"123" error:nil];
+        XCTAssertNotNil(newDatabase);
     }
 
-    // Cleaning up
-    [[NSFileManager defaultManager] removeItemAtPath:configuration.fileStorage.pathForToxSaveFile error:nil];
+    {
+        OCTManager *sameDatabase = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"123" error:nil];
+        XCTAssertNotNil(sameDatabase);
+    }
+
+    {
+        NSError *error;
+        OCTManager *wrongPassword = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"wrong password" error:&error];
+
+        XCTAssertNil(wrongPassword);
+        XCTAssertEqual(error.code, OCTManagerInitErrorDatabaseKeyDecryptFailed);
+    }
 }
 
 - (void)testConfiguration
@@ -420,33 +454,11 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 - (void)testExportToxSaveFile
 {
-    id configuration = OCMClassMock([OCTManagerConfiguration class]);
-    id storage = OCMProtocolMock(@protocol(OCTFileStorageProtocol));
-    OCMStub([configuration fileStorage]).andReturn(storage);
-    OCMStub([configuration copy]).andReturn(configuration);
-    OCMStub([storage pathForDatabase]).andReturn(@"realm/database");
-    OCMStub([storage pathForToxSaveFile]).andReturn(@"somewhere/tox.save");
-    OCMStub([storage pathForTemporaryFilesDirectory]).andReturn(@"tmp");
+    [self createManager];
 
-    id fileManager = OCMClassMock([NSFileManager class]);
-    OCMStub([fileManager defaultManager]).andReturn(fileManager);
-    OCMExpect([fileManager copyItemAtPath:@"somewhere/tox.save" toPath:@"tmp/tox.save" error:[OCMArg anyObjectRef]]).andReturn(YES);
-
-    id realmManager = OCMClassMock([OCTRealmManager class]);
-    OCMStub([realmManager alloc]).andReturn(realmManager);
-    OCMStub([realmManager initWithDatabaseFileURL:[OCMArg any]]).andReturn(realmManager);
-
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"123" error:nil];
-
-    NSString *path = [manager exportToxSaveFile:nil];
-
-    XCTAssertEqualObjects(path, @"tmp/tox.save");
-    OCMVerifyAll(fileManager);
-
-    [fileManager stopMocking];
-    [realmManager stopMocking];
-    fileManager = nil;
-    realmManager = nil;
+    NSString *path = [self.manager exportToxSaveFile:nil];
+    NSString *result = [[self.manager configuration].fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:@"save.tox"];
+    XCTAssertEqualObjects(path, result);
 }
 
 #pragma mark -  Helper methods
@@ -463,19 +475,8 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 - (OCTDefaultFileStorage *)temporaryFileStorage
 {
-
-    NSString *tempDirectory = NSTemporaryDirectory();
-    tempDirectory = [tempDirectory stringByAppendingPathComponent:kTestDirectory];
-
-    [[NSFileManager defaultManager] createDirectoryAtPath:tempDirectory
-                              withIntermediateDirectories:YES
-                                               attributes:nil
-                                                    error:nil];
-
-    OCTDefaultFileStorage *defaultStorage = [[OCTDefaultFileStorage alloc] initWithBaseDirectory:tempDirectory
-                                                                              temporaryDirectory:tempDirectory];
-
-    return defaultStorage;
+    return [[OCTDefaultFileStorage alloc] initWithBaseDirectory:self.tempDirectoryPath
+                                             temporaryDirectory:[self.tempDirectoryPath stringByAppendingPathComponent:@"tmp"]];
 }
 
 @end

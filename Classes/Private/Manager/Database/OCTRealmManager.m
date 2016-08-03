@@ -35,7 +35,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL
+- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey
 {
     NSParameterAssert(fileURL);
 
@@ -53,7 +53,8 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     dispatch_sync(_queue, ^{
         __strong OCTRealmManager *strongSelf = weakSelf;
 
-        [strongSelf createRealmWithFileURL:fileURL];
+        // TODO handle error
+        [strongSelf createRealmWithFileURL:fileURL encryptionKey:encryptionKey];
         [strongSelf createSettingsStorage];
     });
 
@@ -166,12 +167,13 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Other methods
 
-- (void)createRealmWithFileURL:(NSURL *)fileURL
+- (void)createRealmWithFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey
 {
     RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
     configuration.fileURL = fileURL;
     configuration.schemaVersion = kCurrentSchemeVersion;
     configuration.migrationBlock = [self realmMigrationBlock];
+    configuration.encryptionKey = encryptionKey;
 
     NSError *error;
     self->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
