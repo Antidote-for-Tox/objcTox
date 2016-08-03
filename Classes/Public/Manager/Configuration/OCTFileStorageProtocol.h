@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol OCTFileStorageProtocol <NSObject>
 
 @required
@@ -23,7 +25,7 @@
 @property (readonly) NSString *pathForToxSaveFile;
 
 /**
- * Returns file path for database to be stored in. Must be path to a file, not directory.
+ * Returns file path for database to be stored in. Must be a file path, not directory.
  * In database will be stored chats, messages and related stuff.
  *
  * @return Full path to the file for the database.
@@ -31,6 +33,15 @@
  * @warning Path should be file path. The file can be rewritten at any time while OCTManager is alive.
  */
 @property (readonly) NSString *pathForDatabase;
+
+/**
+ * Returns file path for database encryption key to be stored in. Must be a file path, not a directory.
+ *
+ * @return Full path to the file to store database encryption key.
+ *
+ * @warning Path should be file path. The file can be rewritten at any time while OCTManager is alive.
+ */
+@property (readonly) NSString *pathForDatabaseEncryptionKey;
 
 /**
  * Returns path where all downloaded files will be stored.
@@ -55,3 +66,5 @@
 @property (readonly) NSString *pathForTemporaryFilesDirectory;
 
 @end
+
+NS_ASSUME_NONNULL_END

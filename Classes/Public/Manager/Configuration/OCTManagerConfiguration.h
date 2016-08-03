@@ -21,6 +21,8 @@
  *
  * Default values: OCTDefaultFileStorage will be used with following parameters:
  * - tox save file is stored at "{app document directory}/me.dvor.objcTox/save.tox"
+ * - database file is stored at "{app document directory}/me.dvor.objcTox/database"
+ * - database encryption key file is stored at "{app document directory}/me.dvor.objcTox/database.encryptionkey"
  * - downloaded files are stored at "{app document directory}/me.dvor.objcTox/downloads"
  * - uploaded files are stored at "{app document directory}/me.dvor.objcTox/uploads"
  * - avatars are stored at "{app document directory}/me.dvor.objcTox/avatars"
