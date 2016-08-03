@@ -112,7 +112,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 - (void)bootstrap
 {
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:self.configuration passphrase:nil error:nil];
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" error:nil];
 
     OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
     tabBar.viewControllers = @[

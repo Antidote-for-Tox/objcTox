@@ -65,7 +65,8 @@
 #pragma mark -  Lifecycle
 
 - (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                                    passphrase:(nullable NSString *)passphrase
+                                   toxPassword:(nullable NSString *)toxPassword
+                              databasePassword:(NSString *)databasePassword
                                          error:(NSError *__nullable *__nullable)error
 {
     self = [super init];
@@ -84,7 +85,7 @@
 
     NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
 
-    if (! [self createEncryptSaveWithPassphrase:passphrase toxData:savedData]) {
+    if (! [self createEncryptSaveWithPassphrase:toxPassword toxData:savedData]) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
         return nil;
     }
@@ -141,14 +142,26 @@
     }
 }
 
-- (BOOL)changePassphrase:(NSString *)passphrase
+- (BOOL)changeToxPassword:(nullable NSString *)newPassword oldPassword:(nullable NSString *)oldPassword
 {
+    NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
+
+    if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
+        return NO;
+    }
+
     // Passing nil as tox data as we are setting new passphrase.
-    BOOL result = [self createEncryptSaveWithPassphrase:passphrase toxData:nil];
+    BOOL result = [self createEncryptSaveWithPassphrase:newPassword toxData:nil];
 
     [self saveTox];
 
     return result;
+}
+
+- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
+{
+    // TODO
+    return NO;
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -232,6 +245,24 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
            ([NSData dataWithContentsOfFile:path]) :
            nil;
+}
+
+- (BOOL)isDataAtPath:(NSString *)path encryptedWithPassword:(NSString *)password
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+
+    if (! savedData) {
+        return NO;
+    }
+
+    if ([OCTToxEncryptSave isDataEncrypted:savedData]) {
+        return [OCTToxEncryptSave decryptData:savedData withPassphrase:password error:nil] != nil;
+    }
+    else {
+        return password == nil;
+    }
+
+    return NO;
 }
 
 - (NSData *)decryptSavedDataIfNeeded:(NSData *)data error:(NSError **)error wasDecryptError:(BOOL *)wasDecryptError
