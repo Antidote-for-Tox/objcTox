@@ -75,37 +75,17 @@
         return nil;
     }
 
-    [self validateConfiguration:configuration];
     _currentConfiguration = [configuration copy];
 
-    if (! [self importToxSaveIfNeeded]) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
-        return nil;
-    }
+    BOOL result =
+        [self validateConfiguration:configuration] &&
+        [self importToxSaveIfNeeded:error] &&
+        [self createToxWithPassword:toxPassword error:error] &&
+        [self createNotificationCenter] &&
+        [self createRealmManager] &&
+        [self createSubmanagers];
 
-    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
-
-    if (! [self createEncryptSaveWithPassphrase:toxPassword toxData:savedData]) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
-        return nil;
-    }
-
-    BOOL wasDecryptError = NO;
-    savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
-
-    if (wasDecryptError) {
-        return nil;
-    }
-
-    if (! [self createToxWithSavedData:savedData error:error]) {
-        return nil;
-    }
-
-    [self createNotificationCenter];
-    [self createRealmManager];
-    [self createSubmanagers];
-
-    return self;
+    return result ? self : nil;
 }
 
 - (void)dealloc
@@ -212,7 +192,7 @@
     }
 }
 
-- (void)validateConfiguration:(OCTManagerConfiguration *)configuration
+- (BOOL)validateConfiguration:(OCTManagerConfiguration *)configuration
 {
     NSParameterAssert(configuration.fileStorage);
     NSParameterAssert(configuration.fileStorage.pathForDownloadedFilesDirectory);
@@ -220,24 +200,34 @@
     NSParameterAssert(configuration.fileStorage.pathForTemporaryFilesDirectory);
 
     NSParameterAssert(configuration.options);
+
+    return YES;
 }
 
-- (void)createNotificationCenter
+- (BOOL)createNotificationCenter
 {
     _notificationCenter = [[NSNotificationCenter alloc] init];
+
+    return YES;
 }
 
-- (BOOL)importToxSaveIfNeeded
+- (BOOL)importToxSaveIfNeeded:(NSError **)error
 {
+    BOOL result = YES;
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (_currentConfiguration.importToxSaveFromPath && [fileManager fileExistsAtPath:_currentConfiguration.importToxSaveFromPath]) {
-        return [fileManager copyItemAtPath:_currentConfiguration.importToxSaveFromPath
-                                    toPath:_currentConfiguration.fileStorage.pathForToxSaveFile
-                                     error:nil];
+        result = [fileManager copyItemAtPath:_currentConfiguration.importToxSaveFromPath
+                                      toPath:_currentConfiguration.fileStorage.pathForToxSaveFile
+                                       error:nil];
     }
 
-    return YES;
+    if (! result) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
+    }
+
+    return result;
 }
 
 + (NSData *)getSavedDataFromPath:(NSString *)path
@@ -299,6 +289,25 @@
     return nil;
 }
 
+- (BOOL)createToxWithPassword:(NSString *)password error:(NSError **)error
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
+
+    if (! [self createEncryptSaveWithPassphrase:password toxData:savedData]) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
+        return YES;
+    }
+
+    BOOL wasDecryptError = NO;
+    savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
+
+    if (wasDecryptError) {
+        return NO;
+    }
+
+    return [self createToxWithSavedData:savedData error:error];
+}
+
 - (BOOL)createToxWithSavedData:(NSData *)savedData error:(NSError **)error
 {
     NSError *toxError = nil;
@@ -353,13 +362,15 @@
     return NO;
 }
 
-- (void)createRealmManager
+- (BOOL)createRealmManager
 {
     NSURL *fileURL = [NSURL fileURLWithPath:_currentConfiguration.fileStorage.pathForDatabase];
     _realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL];
+
+    return YES;
 }
 
-- (void)createSubmanagers
+- (BOOL)createSubmanagers
 {
     _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
@@ -373,6 +384,8 @@
     calls.dataSource = self;
     _calls = calls;
     [_calls setupWithError:nil];
+
+    return YES;
 }
 
 - (void)killSubmanagers
