@@ -1,0 +1,12 @@
+comment:
+  layout: header, sunburst
+coverage:
+  ignore:
+  - iOSDemo/*
+  - iOSDemoTests/*
+  - OSXDemo/*
+  - OSXDemoTests/*
+  - Pods/.*
+  - Tests/.*
+  - Classes/Public/Manager/RBQFetchedResultsController/.*
+  
