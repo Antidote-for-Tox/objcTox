@@ -303,6 +303,37 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         XCTAssertNil(wrongPassword);
         XCTAssertEqual(error.code, OCTManagerInitErrorDatabaseKeyDecryptFailed);
     }
+
+    {
+        OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"123" error:nil];
+        XCTAssertNotNil(manager);
+
+        XCTAssertTrue([manager changeDatabasePassword:@"the pass" oldPassword:@"123"]);
+    }
+
+    {
+        OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"123" error:nil];
+        XCTAssertNil(manager);
+    }
+
+    {
+        OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"the pass" error:nil];
+        XCTAssertNotNil(manager);
+
+        XCTAssertFalse([manager changeDatabasePassword:@"who cares" oldPassword:@"wrong pass"]);
+    }
+
+    {
+        OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"the pass" error:nil];
+        XCTAssertNotNil(manager);
+
+        XCTAssertTrue([manager changeDatabasePassword:@"final pass" oldPassword:@"the pass"]);
+    }
+
+    {
+        OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"final pass" error:nil];
+        XCTAssertNotNil(manager);
+    }
 }
 
 - (void)testConfiguration

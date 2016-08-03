@@ -147,8 +147,29 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
 - (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
 {
-    // TODO
-    return NO;
+    NSParameterAssert(newPassword);
+    NSParameterAssert(oldPassword);
+
+    NSString *encryptedKeyPath = self.currentConfiguration.fileStorage.pathForDatabaseEncryptionKey;
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
+
+    if (! encryptedKey) {
+        return NO;
+    }
+
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:oldPassword error:nil];
+
+    if (! key) {
+        return NO;
+    }
+
+    NSData *newEncryptedKey = [OCTToxEncryptSave encryptData:key withPassphrase:newPassword error:nil];
+
+    if (! newEncryptedKey) {
+        return NO;
+    }
+
+    return [newEncryptedKey writeToFile:encryptedKeyPath options:NSDataWritingAtomic error:nil];
 }
 
 #pragma mark -  OCTSubmanagerDataSource
