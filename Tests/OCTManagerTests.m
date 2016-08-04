@@ -26,6 +26,9 @@
 #import "OCTSubmanagerCalls+Private.h"
 #import "OCTRealmManager.h"
 #import "OCTDefaultFileStorage.h"
+#import "OCTMessageAbstract.h"
+#import "OCTMessageText.h"
+#import "OCTMessageFile.h"
 
 static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
@@ -334,6 +337,52 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration toxPassword:nil databasePassword:@"final pass" error:nil];
         XCTAssertNotNil(manager);
     }
+}
+
+- (void)testDatabaseMigration
+{
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    configuration.fileStorage = [self temporaryFileStorage];
+
+    NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
+    NSString *bundlePath = [testBundle pathForResource:@"unencrypted-database" ofType:@"realm"];
+
+    [[NSFileManager defaultManager] copyItemAtPath:bundlePath toPath:configuration.fileStorage.pathForDatabase
+                                             error:nil];
+
+    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration
+                                                        toxPassword:nil
+                                                   databasePassword:@"the password"
+                                                              error:nil];
+    XCTAssertNotNil(manager);
+
+    RLMResults *friends = [manager.objects objectsForType:OCTFetchRequestTypeFriend predicate:nil];
+    XCTAssertEqual(friends.count, 100);
+
+    for (OCTToxFriendNumber friendNumber = 0; friendNumber < 100; friendNumber++) {
+        OCTFriend *friend = friends[friendNumber];
+
+        XCTAssertEqual(friend.friendNumber, friendNumber);
+        NSString *nickname = [NSString stringWithFormat:@"friend-%d", friendNumber];
+        XCTAssertEqualObjects(friend.nickname, nickname);
+    }
+
+    RLMResults *messages = [manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:nil];
+    XCTAssertEqual(messages.count, 50000);
+
+    OCTMessageAbstract *message0 = messages[0];
+    XCTAssertNotNil(message0.messageText);
+    XCTAssertNil(message0.messageFile);
+    XCTAssertNil(message0.messageCall);
+    XCTAssertEqualObjects(message0.messageText.text, @"message-0");
+
+    OCTMessageAbstract *message1 = messages[1];
+    XCTAssertNil(message1.messageText);
+    XCTAssertNotNil(message1.messageFile);
+    XCTAssertNil(message1.messageCall);
+    XCTAssertEqualObjects(message1.messageFile.fileName, @"file-1");
+
+    XCTAssertEqualObjects(message0.chatUniqueIdentifier, message1.chatUniqueIdentifier);
 }
 
 - (void)testConfiguration

@@ -33,6 +33,39 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 @implementation OCTRealmManager
 @synthesize settingsStorage = _settingsStorage;
 
+#pragma mark -  Class methods
+
++ (BOOL)migrateToEncryptedDatabase:(NSString *)databasePath
+                     encryptionKey:(NSData *)encryptionKey
+                             error:(NSError **)error
+{
+    NSString *tempPath = [databasePath stringByAppendingPathExtension:@"tmp"];
+
+    @autoreleasepool {
+        RLMRealm *old = [OCTRealmManager createRealmWithFileURL:[NSURL fileURLWithPath:databasePath]
+                                                  encryptionKey:nil
+                                                          error:error];
+
+        if (! old) {
+            return NO;
+        }
+
+        if (! [old writeCopyToURL:[NSURL fileURLWithPath:tempPath] encryptionKey:encryptionKey error:error]) {
+            return NO;
+        }
+    }
+
+    if (! [[NSFileManager defaultManager] removeItemAtPath:databasePath error:error]) {
+        return NO;
+    }
+
+    if (! [[NSFileManager defaultManager] moveItemAtPath:tempPath toPath:databasePath error:error]) {
+        return NO;
+    }
+
+    return YES;
+}
+
 #pragma mark -  Lifecycle
 
 - (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey
@@ -54,7 +87,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
         __strong OCTRealmManager *strongSelf = weakSelf;
 
         // TODO handle error
-        [strongSelf createRealmWithFileURL:fileURL encryptionKey:encryptionKey];
+        self->_realm = [OCTRealmManager createRealmWithFileURL:fileURL encryptionKey:encryptionKey error:nil];
         [strongSelf createSettingsStorage];
     });
 
@@ -167,7 +200,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Other methods
 
-- (void)createRealmWithFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey
++ (RLMRealm *)createRealmWithFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey error:(NSError **)error
 {
     RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
     configuration.fileURL = fileURL;
@@ -175,12 +208,13 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     configuration.migrationBlock = [self realmMigrationBlock];
     configuration.encryptionKey = encryptionKey;
 
-    NSError *error;
-    self->_realm = [RLMRealm realmWithConfiguration:configuration error:&error];
+    RLMRealm *realm = [RLMRealm realmWithConfiguration:configuration error:error];
 
-    if (! self->_realm) {
-        OCTLogInfo(@"init failed with error %@", error);
+    if (! realm && error) {
+        OCTLogInfo(@"Cannot create Realm, error %@", *error);
     }
+
+    return realm;
 }
 
 - (void)createSettingsStorage
@@ -405,7 +439,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
 #pragma mark -  Private
 
-- (RLMMigrationBlock)realmMigrationBlock
++ (RLMMigrationBlock)realmMigrationBlock
 {
     return ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
                if (oldSchemaVersion < 1) {
@@ -432,7 +466,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     };
 }
 
-- (void)doMigrationVersion4:(RLMMigration *)migration
++ (void)doMigrationVersion4:(RLMMigration *)migration
 {
     [migration enumerateObjects:OCTChat.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"enteredText"] = [oldObject[@"enteredText"] length] > 0 ? oldObject[@"enteredText"] : nil;
@@ -457,7 +491,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     }];
 }
 
-- (void)doMigrationVersion5:(RLMMigration *)migration
++ (void)doMigrationVersion5:(RLMMigration *)migration
 {
     [migration enumerateObjects:OCTMessageAbstract.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"chatUniqueIdentifier"] = oldObject[@"chat"][@"uniqueIdentifier"];

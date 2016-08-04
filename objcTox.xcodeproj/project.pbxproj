@@ -273,6 +273,8 @@
 		9CB44CD11B84DF46007FA7B6 /* OCTSubmanagerUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44CAE1B84DF46007FA7B6 /* OCTSubmanagerUserTests.m */; };
 		9CB44CD21B84DF46007FA7B6 /* OCTToxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44CAF1B84DF46007FA7B6 /* OCTToxTests.m */; };
 		9CB44CD31B84DF46007FA7B6 /* OCTToxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44CAF1B84DF46007FA7B6 /* OCTToxTests.m */; };
+		9CF2F4091D5363420002E175 /* unencrypted-database.realm in Resources */ = {isa = PBXBuildFile; fileRef = 9CF2F4081D5363420002E175 /* unencrypted-database.realm */; };
+		9CF2F40A1D5363420002E175 /* unencrypted-database.realm in Resources */ = {isa = PBXBuildFile; fileRef = 9CF2F4081D5363420002E175 /* unencrypted-database.realm */; };
 		E58B1AAF894CEF7C1E9D8364 /* libPods-OSXDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1B17E748892445A436C846 /* libPods-OSXDemo.a */; };
 		F009D9AA1C195D77008243EF /* OCTMainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F009D9A91C195D77008243EF /* OCTMainWindowController.m */; };
 		F009D9AE1C195DBA008243EF /* OCTBootStrapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F009D9AC1C195DBA008243EF /* OCTBootStrapViewController.m */; };
@@ -496,6 +498,7 @@
 		9CB71FBF1B386B2F00E3C1EF /* OCTMessageAbstract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTMessageAbstract.h; sourceTree = "<group>"; };
 		9CB71FC01B386B2F00E3C1EF /* OCTMessageFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTMessageFile.h; sourceTree = "<group>"; };
 		9CB71FC11B386B2F00E3C1EF /* OCTMessageText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCTMessageText.h; sourceTree = "<group>"; };
+		9CF2F4081D5363420002E175 /* unencrypted-database.realm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "unencrypted-database.realm"; sourceTree = "<group>"; };
 		A008344DFB4D30C30A832E50B9DFAA81 /* OCTSubmanagerUser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTSubmanagerUser+Private.h"; sourceTree = "<group>"; };
 		A61DE127803013E8229FED6D1DADFCBD /* OCTSubmanagerFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSubmanagerFriends.m; sourceTree = "<group>"; };
 		ACBB7FE1C1F9FD951C5A5D6DFA12C7FC /* OCTFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTFriend.m; sourceTree = "<group>"; };
@@ -925,6 +928,7 @@
 		9CB44C9B1B84DF46007FA7B6 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9CF2F4081D5363420002E175 /* unencrypted-database.realm */,
 				F5BF427A1C2D2686008283E0 /* CoreAudioMocks.h */,
 				9CB44C9D1B84DF46007FA7B6 /* OCTCAsserts.h */,
 				9CB44CA61B84DF46007FA7B6 /* OCTRealmTests.h */,
@@ -1190,6 +1194,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CF2F4091D5363420002E175 /* unencrypted-database.realm in Resources */,
 				116634FA1C80C7280072C980 /* nodes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1215,6 +1220,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CF2F40A1D5363420002E175 /* unencrypted-database.realm in Resources */,
 				116634FC1C80C7280072C980 /* nodes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -142,9 +142,11 @@ typedef NS_ENUM(NSInteger, OCTManagerInitError) {
     OCTManagerInitErrorDatabaseKeyCannotReadKey,
 
     /**
-     * Found old unencrypted database, migration to encrypted one is required.
+     * Old unencrypted database was found and migration attempt was made. However migration failed for some reason.
+     *
+     * You can check NSLocalizedDescriptionKey and NSLocalizedFailureReasonErrorKey for more info.
      */
-    OCTManagerInitErrorDatabaseKeyMigrationToEncryptedRequired,
+    OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed,
 
     /**
      * Cannot decrypt database key file.

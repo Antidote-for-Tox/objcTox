@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, OCTDecryptionErrorFileType) {
     OCTDecryptionErrorFileTypeToxFile,
 };
 
+
 static const NSUInteger kEncryptedKeyLength = 64;
 
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
@@ -258,6 +259,67 @@ static const NSUInteger kEncryptedKeyLength = 64;
     return result;
 }
 
+- (BOOL)migrateToEncryptedDatabase:(NSString *)databasePath
+                 encryptionKeyPath:(NSString *)encryptionKeyPath
+                      withPassword:(NSString *)password
+                             error:(NSError **)error
+{
+    NSParameterAssert(databasePath);
+    NSParameterAssert(encryptionKeyPath);
+    NSParameterAssert(password);
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:encryptionKeyPath]) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:100 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Database is already encrypted",
+                      }];
+        }
+        return NO;
+    }
+
+    NSString *tempKeyPath = [encryptionKeyPath stringByAppendingPathExtension:@"tmp"];
+
+    if (! [self createEncryptedKeyAtPath:tempKeyPath withPassword:password]) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:101 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Cannot create encryption key",
+                      }];
+        }
+        return NO;
+    }
+
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:tempKeyPath];
+
+    if (! encryptedKey) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:102 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Cannot find encryption key",
+                      }];
+        }
+        return NO;
+    }
+
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:password error:error];
+
+    if (! key) {
+        return NO;
+    }
+
+    if (! [OCTRealmManager migrateToEncryptedDatabase:databasePath encryptionKey:key error:error]) {
+        return NO;
+    }
+
+    if (! [[NSFileManager defaultManager] moveItemAtPath:tempKeyPath toPath:encryptionKeyPath error:error]) {
+        return NO;
+    }
+
+    return YES;
+}
+
+
 + (NSData *)getSavedDataFromPath:(NSString *)path
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
@@ -393,8 +455,24 @@ static const NSUInteger kEncryptedKeyLength = 64;
     }
 
     if (databaseExists && ! encryptedKeyExists) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorDatabaseKeyMigrationToEncryptedRequired];
-        return NO;
+        // It seems that we found old unencrypted database, let's migrate to encrypted one.
+        NSError *migrationError;
+
+        BOOL result = [self migrateToEncryptedDatabase:databasePath
+                                     encryptionKeyPath:encryptedKeyPath
+                                          withPassword:databasePassword
+                                                 error:&migrationError];
+
+        if (! result) {
+            if (error) {
+                *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed userInfo:@{
+                              NSLocalizedDescriptionKey : migrationError.localizedDescription,
+                              NSLocalizedFailureReasonErrorKey : migrationError.localizedFailureReason,
+                          }];
+            }
+
+            return NO;
+        }
     }
 
     NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
@@ -522,8 +600,8 @@ static const NSUInteger kEncryptedKeyLength = 64;
         case OCTManagerInitErrorDatabaseKeyCannotReadKey:
             failureReason = @"Cannot read encryption key.";
             break;
-        case OCTManagerInitErrorDatabaseKeyMigrationToEncryptedRequired:
-            failureReason = @"Found old unencrypted database, migration to encrypted one is required.";
+        case OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed:
+            // Nothing to do here, this error will be created elsewhere.
             break;
         case OCTManagerInitErrorDatabaseKeyDecryptNull:
             failureReason = @"Cannot decrypt database key file. Some input data was empty.";
