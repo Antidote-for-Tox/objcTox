@@ -12,11 +12,12 @@
 
 /**
  * Default storage for files. It has following directory structure:
- * /baseDirectory/saveFileName.tox   - tox save file name. You can specify it in appropriate method.
- * /baseDirectory/database   - database with chats, messages and related stuff.
- * /baseDirectory/files/     - downloaded and uploaded files will be stored here.
- * /baseDirectory/avatars/   - avatars will be stored here.
- * /temporaryDirectory/      - temporary files will be stored here.
+ * /baseDirectory/saveFileName.tox       - tox save file name. You can specify it in appropriate method.
+ * /baseDirectory/database               - database with chats, messages and related stuff.
+ * /baseDirectory/database.encryptionkey - encryption key for database.
+ * /baseDirectory/files/                 - downloaded and uploaded files will be stored here.
+ * /baseDirectory/avatars/               - avatars will be stored here.
+ * /temporaryDirectory/                  - temporary files will be stored here.
  */
 @interface OCTDefaultFileStorage : NSObject <OCTFileStorageProtocol>
 

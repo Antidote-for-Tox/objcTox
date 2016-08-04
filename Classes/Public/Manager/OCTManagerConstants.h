@@ -132,22 +132,59 @@ typedef NS_ENUM(NSInteger, OCTManagerInitError) {
     /** ---------------------------------------- */
 
     /**
+     * Cannot create encryption key.
+     */
+    OCTManagerInitErrorDatabaseKeyCannotCreateKey,
+
+    /**
+     * Cannot read encryption key.
+     */
+    OCTManagerInitErrorDatabaseKeyCannotReadKey,
+
+    /**
+     * Old unencrypted database was found and migration attempt was made. However migration failed for some reason.
+     *
+     * You can check NSLocalizedDescriptionKey and NSLocalizedFailureReasonErrorKey for more info.
+     */
+    OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed,
+
+    /**
+     * Cannot decrypt database key file.
+     * Some input data was empty.
+     */
+    OCTManagerInitErrorDatabaseKeyDecryptNull,
+
+    /**
+     * Cannot decrypt database key file.
+     * The input data is missing the magic number (i.e. wasn't created by this module, or is corrupted).
+     */
+    OCTManagerInitErrorDatabaseKeyDecryptBadFormat,
+
+    /**
+     * Cannot decrypt database key file.
+     * The encrypted byte array could not be decrypted. Either the data was corrupt or the password/key was incorrect.
+     */
+    OCTManagerInitErrorDatabaseKeyDecryptFailed,
+
+    /** ---------------------------------------- */
+
+    /**
      * Cannot decrypt tox save file.
      * Some input data was empty.
      */
-    OCTManagerInitErrorDecryptNull,
+    OCTManagerInitErrorToxFileDecryptNull,
 
     /**
      * Cannot decrypt tox save file.
      * The input data is missing the magic number (i.e. wasn't created by this module, or is corrupted).
      */
-    OCTManagerInitErrorDecryptBadFormat,
+    OCTManagerInitErrorToxFileDecryptBadFormat,
 
     /**
      * Cannot decrypt tox save file.
      * The encrypted byte array could not be decrypted. Either the data was corrupt or the password/key was incorrect.
      */
-    OCTManagerInitErrorDecryptFailed,
+    OCTManagerInitErrorToxFileDecryptFailed,
 
     /** ---------------------------------------- */
 

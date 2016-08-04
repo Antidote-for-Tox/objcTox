@@ -62,7 +62,7 @@
 {
     [self.currentViewController.view removeFromSuperview];
     self.currentViewController = nil;
-    self.manager = [[OCTManager alloc] initWithConfiguration:self.configuration error:nil];
+    self.manager = [[OCTManager alloc] initWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" error:nil];
     [self.manager.bootstrap addPredefinedNodes];
     [self.manager.bootstrap bootstrap];
 

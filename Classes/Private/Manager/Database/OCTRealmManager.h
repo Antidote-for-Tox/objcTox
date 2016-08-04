@@ -26,7 +26,26 @@
  */
 @property (strong, nonatomic, readonly) OCTSettingsStorageObject *settingsStorage;
 
-- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL;
+/**
+ * Migrate unencrypted database to encrypted one.
+ *
+ * @param databasePath Path to unencrypted database.
+ * @param encryptionKey Key used to encrypt database.
+ * @param error Error parameter will be filled in case of failure. It will contain RLMRealm or NSFileManager error.
+ *
+ * @return YES on success, NO on failure.
+ */
++ (BOOL)migrateToEncryptedDatabase:(NSString *)databasePath
+                     encryptionKey:(NSData *)encryptionKey
+                             error:(NSError **)error;
+
+/**
+ * Create RealmManager.
+ *
+ * @param fileURL path to Realm file. File will be created if it doesn't exist.
+ * @param encryptionKey A 64-byte key to use to encrypt the data, or nil if encryption is not enabled.
+ */
+- (instancetype)initWithDatabaseFileURL:(NSURL *)fileURL encryptionKey:(NSData *)encryptionKey;
 
 - (NSURL *)realmFileURL;
 

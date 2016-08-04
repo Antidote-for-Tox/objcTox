@@ -36,6 +36,7 @@
 
     XCTAssertEqualObjects(storage.pathForToxSaveFile, @"/base/save.tox");
     XCTAssertEqualObjects(storage.pathForDatabase, @"/base/database");
+    XCTAssertEqualObjects(storage.pathForDatabaseEncryptionKey, @"/base/database.encryptionkey");
     XCTAssertEqualObjects(storage.pathForDownloadedFilesDirectory, @"/base/files");
     XCTAssertEqualObjects(storage.pathForTemporaryFilesDirectory, @"/temp");
 }

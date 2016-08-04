@@ -11,6 +11,7 @@
 #import "OCTToxConstants.h"
 #import "OCTManagerConstants.h"
 
+NS_ASSUME_NONNULL_BEGIN
 @class OCTManagerConfiguration;
 
 @class OCTSubmanagerBootstrap;
@@ -76,12 +77,24 @@
  * change it you have to recreate OCTManager.
  *
  * @param configuration Configuration to be used.
+ * @param toxPassword Password used to decrypt tox save file. You should specify this parameter *only*
+ *        if tox save file is already encrypted. If you would like to enable encryption please use OCTManager's method.
+ * @param databasePassword Password used to decrypt database. This is a required parameter as database is *always*
+ *        encrypted. When creating OCTManager for the first time database will be automatically encrypted with this
+ *        key. To change it use appropriate method below.
+ *
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTManagerInitError for all error codes.
  *
  * @return Initialized OCTManager.
  */
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error;
+- (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                                   toxPassword:(nullable NSString *)toxPassword
+                              databasePassword:(NSString *)databasePassword
+                                         error:(NSError *__nullable *__nullable)error;
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 /**
  * Configuration used by OCTManager.
@@ -97,15 +110,28 @@
  *
  * @return Temporary path of current tox save file.
  */
-- (NSString *)exportToxSaveFile:(NSError **)error;
+- (nullable NSString *)exportToxSaveFile:(NSError *__nullable *__nullable)error;
 
 /**
- * Set passphrase to encrypt tox save file.
+ * Set password to encrypt tox save file.
  *
- * @param passphrase You can pass nil to disable encryption.
+ * @param newPassword New password used to encrypt tox save file. You can pass nil to disable encryption.
+ * @param oldPassword Old password. Pass nil if there is no old password.
  *
- * @return YES on success, NO on failure.
+ * @return YES on success, NO on failure (if old password doesn't match).
  */
-- (BOOL)changePassphrase:(NSString *)passphrase;
+- (BOOL)changeToxPassword:(nullable NSString *)newPassword oldPassword:(nullable NSString *)oldPassword;
+
+/**
+ * Change password used to encrypt database.
+ *
+ * @param newPassword New password used to encrypt database.
+ * @param oldPassword Old password.
+ *
+ * @return YES on success, NO on failure (if old password doesn't match).
+ */
+- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword;
 
 @end
+
+NS_ASSUME_NONNULL_END

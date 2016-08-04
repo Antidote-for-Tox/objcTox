@@ -32,7 +32,7 @@
     OCMStub([self.realmMock realmWithConfiguration:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn(realRealm);
 
     NSURL *fileURL = [NSURL fileURLWithPath:@"/some/realm/path"];
-    self.realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL];
+    self.realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL encryptionKey:nil];
     self.realmManager = OCMPartialMock(self.realmManager);
 }
 

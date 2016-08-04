@@ -23,6 +23,14 @@
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTRealmManager.h"
 
+typedef NS_ENUM(NSInteger, OCTDecryptionErrorFileType) {
+    OCTDecryptionErrorFileTypeDatabaseKey,
+    OCTDecryptionErrorFileTypeToxFile,
+};
+
+
+static const NSUInteger kEncryptedKeyLength = 64;
+
 @interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
@@ -64,7 +72,10 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration error:(NSError **)error
+- (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
+                                   toxPassword:(nullable NSString *)toxPassword
+                              databasePassword:(NSString *)databasePassword
+                                         error:(NSError *__nullable *__nullable)error
 {
     self = [super init];
 
@@ -72,37 +83,17 @@
         return nil;
     }
 
-    [self validateConfiguration:configuration];
     _currentConfiguration = [configuration copy];
 
-    if (! [self importToxSaveIfNeeded]) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
-        return nil;
-    }
+    BOOL result =
+        [self validateConfiguration:configuration] &&
+        [self createRealmManagerWithDatabasePassword:databasePassword error:error] &&
+        [self importToxSaveIfNeeded:error] &&
+        [self createToxWithPassword:toxPassword error:error] &&
+        [self createNotificationCenter] &&
+        [self createSubmanagers];
 
-    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
-
-    if (! [self createEncryptSaveWithPassphrase:_currentConfiguration.passphrase toxData:savedData]) {
-        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
-        return nil;
-    }
-
-    BOOL wasDecryptError = NO;
-    savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
-
-    if (wasDecryptError) {
-        return nil;
-    }
-
-    if (! [self createToxWithSavedData:savedData error:error]) {
-        return nil;
-    }
-
-    [self createNotificationCenter];
-    [self createRealmManager];
-    [self createSubmanagers];
-
-    return self;
+    return result ? self : nil;
 }
 
 - (void)dealloc
@@ -139,16 +130,47 @@
     }
 }
 
-- (BOOL)changePassphrase:(NSString *)passphrase
+- (BOOL)changeToxPassword:(nullable NSString *)newPassword oldPassword:(nullable NSString *)oldPassword
 {
-    self.currentConfiguration.passphrase = passphrase;
+    NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
+
+    if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
+        return NO;
+    }
 
     // Passing nil as tox data as we are setting new passphrase.
-    BOOL result = [self createEncryptSaveWithPassphrase:passphrase toxData:nil];
+    BOOL result = [self createEncryptSaveWithPassphrase:newPassword toxData:nil];
 
     [self saveTox];
 
     return result;
+}
+
+- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
+{
+    NSParameterAssert(newPassword);
+    NSParameterAssert(oldPassword);
+
+    NSString *encryptedKeyPath = self.currentConfiguration.fileStorage.pathForDatabaseEncryptionKey;
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
+
+    if (! encryptedKey) {
+        return NO;
+    }
+
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:oldPassword error:nil];
+
+    if (! key) {
+        return NO;
+    }
+
+    NSData *newEncryptedKey = [OCTToxEncryptSave encryptData:key withPassphrase:newPassword error:nil];
+
+    if (! newEncryptedKey) {
+        return NO;
+    }
+
+    return [newEncryptedKey writeToFile:encryptedKeyPath options:NSDataWritingAtomic error:nil];
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -199,7 +221,7 @@
     }
 }
 
-- (void)validateConfiguration:(OCTManagerConfiguration *)configuration
+- (BOOL)validateConfiguration:(OCTManagerConfiguration *)configuration
 {
     NSParameterAssert(configuration.fileStorage);
     NSParameterAssert(configuration.fileStorage.pathForDownloadedFilesDirectory);
@@ -207,31 +229,120 @@
     NSParameterAssert(configuration.fileStorage.pathForTemporaryFilesDirectory);
 
     NSParameterAssert(configuration.options);
+
+    return YES;
 }
 
-- (void)createNotificationCenter
+- (BOOL)createNotificationCenter
 {
     _notificationCenter = [[NSNotificationCenter alloc] init];
+
+    return YES;
 }
 
-- (BOOL)importToxSaveIfNeeded
+- (BOOL)importToxSaveIfNeeded:(NSError **)error
 {
+    BOOL result = YES;
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (_currentConfiguration.importToxSaveFromPath && [fileManager fileExistsAtPath:_currentConfiguration.importToxSaveFromPath]) {
-        return [fileManager copyItemAtPath:_currentConfiguration.importToxSaveFromPath
-                                    toPath:_currentConfiguration.fileStorage.pathForToxSaveFile
-                                     error:nil];
+        result = [fileManager copyItemAtPath:_currentConfiguration.importToxSaveFromPath
+                                      toPath:_currentConfiguration.fileStorage.pathForToxSaveFile
+                                       error:nil];
+    }
+
+    if (! result) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorCannotImportToxSave];
+    }
+
+    return result;
+}
+
+- (BOOL)migrateToEncryptedDatabase:(NSString *)databasePath
+                 encryptionKeyPath:(NSString *)encryptionKeyPath
+                      withPassword:(NSString *)password
+                             error:(NSError **)error
+{
+    NSParameterAssert(databasePath);
+    NSParameterAssert(encryptionKeyPath);
+    NSParameterAssert(password);
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:encryptionKeyPath]) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:100 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Database is already encrypted",
+                      }];
+        }
+        return NO;
+    }
+
+    NSString *tempKeyPath = [encryptionKeyPath stringByAppendingPathExtension:@"tmp"];
+
+    if (! [self createEncryptedKeyAtPath:tempKeyPath withPassword:password]) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:101 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Cannot create encryption key",
+                      }];
+        }
+        return NO;
+    }
+
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:tempKeyPath];
+
+    if (! encryptedKey) {
+        if (error) {
+            *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:102 userInfo:@{
+                          NSLocalizedDescriptionKey : @"Cannot migrate unencrypted database to encrypted",
+                          NSLocalizedFailureReasonErrorKey : @"Cannot find encryption key",
+                      }];
+        }
+        return NO;
+    }
+
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:password error:error];
+
+    if (! key) {
+        return NO;
+    }
+
+    if (! [OCTRealmManager migrateToEncryptedDatabase:databasePath encryptionKey:key error:error]) {
+        return NO;
+    }
+
+    if (! [[NSFileManager defaultManager] moveItemAtPath:tempKeyPath toPath:encryptionKeyPath error:error]) {
+        return NO;
     }
 
     return YES;
 }
+
 
 + (NSData *)getSavedDataFromPath:(NSString *)path
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
            ([NSData dataWithContentsOfFile:path]) :
            nil;
+}
+
+- (BOOL)isDataAtPath:(NSString *)path encryptedWithPassword:(NSString *)password
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+
+    if (! savedData) {
+        return NO;
+    }
+
+    if ([OCTToxEncryptSave isDataEncrypted:savedData]) {
+        return [OCTToxEncryptSave decryptData:savedData withPassphrase:password error:nil] != nil;
+    }
+    else {
+        return password == nil;
+    }
+
+    return NO;
 }
 
 - (NSData *)decryptSavedDataIfNeeded:(NSData *)data error:(NSError **)error wasDecryptError:(BOOL *)wasDecryptError
@@ -249,23 +360,28 @@
     }
 
     *wasDecryptError = YES;
-    OCTToxEncryptSaveDecryptionError code = decryptError.code;
-
-    switch (code) {
-        case OCTToxEncryptSaveDecryptionErrorNone:
-            break;
-        case OCTToxEncryptSaveDecryptionErrorNull:
-            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptNull];
-            break;
-        case OCTToxEncryptSaveDecryptionErrorBadFormat:
-            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptBadFormat];
-            break;
-        case OCTToxEncryptSaveDecryptionErrorFailed:
-            [self fillError:error withInitErrorCode:OCTManagerInitErrorDecryptFailed];
-            break;
-    }
+    [self fillError:error withDecryptionError:decryptError.code fileType:OCTDecryptionErrorFileTypeToxFile];
 
     return nil;
+}
+
+- (BOOL)createToxWithPassword:(NSString *)password error:(NSError **)error
+{
+    NSData *savedData = [OCTManager getSavedDataFromPath:_currentConfiguration.fileStorage.pathForToxSaveFile];
+
+    if (! [self createEncryptSaveWithPassphrase:password toxData:savedData]) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
+        return YES;
+    }
+
+    BOOL wasDecryptError = NO;
+    savedData = [self decryptSavedDataIfNeeded:savedData error:error wasDecryptError:&wasDecryptError];
+
+    if (wasDecryptError) {
+        return NO;
+    }
+
+    return [self createToxWithSavedData:savedData error:error];
 }
 
 - (BOOL)createToxWithSavedData:(NSData *)savedData error:(NSError **)error
@@ -322,13 +438,75 @@
     return NO;
 }
 
-- (void)createRealmManager
+- (BOOL)createRealmManagerWithDatabasePassword:(NSString *)databasePassword error:(NSError **)error
 {
-    NSURL *fileURL = [NSURL fileURLWithPath:_currentConfiguration.fileStorage.pathForDatabase];
-    _realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:fileURL];
+    NSString *databasePath = _currentConfiguration.fileStorage.pathForDatabase;
+    NSString *encryptedKeyPath = _currentConfiguration.fileStorage.pathForDatabaseEncryptionKey;
+
+    BOOL databaseExists = [[NSFileManager defaultManager] fileExistsAtPath:databasePath];
+    BOOL encryptedKeyExists = [[NSFileManager defaultManager] fileExistsAtPath:encryptedKeyPath];
+
+    if (! databaseExists && ! encryptedKeyExists) {
+        // First run, create key and database.
+        if (! [self createEncryptedKeyAtPath:encryptedKeyPath withPassword:databasePassword]) {
+            [self fillError:error withInitErrorCode:OCTManagerInitErrorDatabaseKeyCannotCreateKey];
+            return NO;
+        }
+    }
+
+    if (databaseExists && ! encryptedKeyExists) {
+        // It seems that we found old unencrypted database, let's migrate to encrypted one.
+        NSError *migrationError;
+
+        BOOL result = [self migrateToEncryptedDatabase:databasePath
+                                     encryptionKeyPath:encryptedKeyPath
+                                          withPassword:databasePassword
+                                                 error:&migrationError];
+
+        if (! result) {
+            if (error) {
+                *error = [NSError errorWithDomain:kOCTManagerErrorDomain code:OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed userInfo:@{
+                              NSLocalizedDescriptionKey : migrationError.localizedDescription,
+                              NSLocalizedFailureReasonErrorKey : migrationError.localizedFailureReason,
+                          }];
+            }
+
+            return NO;
+        }
+    }
+
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
+
+    if (! encryptedKey) {
+        [self fillError:error withInitErrorCode:OCTManagerInitErrorDatabaseKeyCannotReadKey];
+        return NO;
+    }
+
+    NSError *decryptError;
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:databasePassword error:&decryptError];
+
+    if (! key) {
+        [self fillError:error withDecryptionError:decryptError.code fileType:OCTDecryptionErrorFileTypeDatabaseKey];
+        return NO;
+    }
+
+    _realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:[NSURL fileURLWithPath:databasePath]
+                                                       encryptionKey:key];
+
+    return YES;
 }
 
-- (void)createSubmanagers
+- (BOOL)createEncryptedKeyAtPath:(NSString *)path withPassword:(NSString *)password
+{
+    NSMutableData *key = [NSMutableData dataWithLength:kEncryptedKeyLength];
+    SecRandomCopyBytes(kSecRandomDefault, key.length, (uint8_t *)key.mutableBytes);
+
+    NSData *encryptedKey = [OCTToxEncryptSave encryptData:key withPassphrase:password error:nil];
+
+    return [encryptedKey writeToFile:path options:NSDataWritingAtomic error:nil];
+}
+
+- (BOOL)createSubmanagers
 {
     _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
@@ -342,6 +520,8 @@
     calls.dataSource = self;
     _calls = calls;
     [_calls setupWithError:nil];
+
+    return YES;
 }
 
 - (void)killSubmanagers
@@ -358,7 +538,7 @@
 
 - (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
 {
-    id<OCTSubmanagerProtocol> submanager = [class new];
+    id<OCTSubmanagerProtocol> submanager = [[class alloc] init];
     submanager.dataSource = self;
 
     if ([submanager respondsToSelector:@selector(configure)]) {
@@ -366,6 +546,37 @@
     }
 
     return submanager;
+}
+
+- (BOOL)fillError:(NSError **)error withDecryptionError:(OCTToxEncryptSaveDecryptionError)code fileType:(OCTDecryptionErrorFileType)fileType
+{
+    if (! error) {
+        return NO;
+    }
+
+    NSDictionary *mapping;
+
+    switch (fileType) {
+        case OCTDecryptionErrorFileTypeDatabaseKey:
+            mapping = @{
+                @(OCTToxEncryptSaveDecryptionErrorNull) : @(OCTManagerInitErrorDatabaseKeyDecryptNull),
+                @(OCTToxEncryptSaveDecryptionErrorBadFormat) : @(OCTManagerInitErrorDatabaseKeyDecryptBadFormat),
+                @(OCTToxEncryptSaveDecryptionErrorFailed) : @(OCTManagerInitErrorDatabaseKeyDecryptFailed),
+            };
+            break;
+        case OCTDecryptionErrorFileTypeToxFile:
+            mapping = @{
+                @(OCTToxEncryptSaveDecryptionErrorNull) : @(OCTManagerInitErrorToxFileDecryptNull),
+                @(OCTToxEncryptSaveDecryptionErrorBadFormat) : @(OCTManagerInitErrorToxFileDecryptBadFormat),
+                @(OCTToxEncryptSaveDecryptionErrorFailed) : @(OCTManagerInitErrorToxFileDecryptFailed),
+            };
+            break;
+    }
+
+    OCTManagerInitError initErrorCode = [mapping[@(code)] integerValue];
+    [self fillError:error withInitErrorCode:initErrorCode];
+
+    return YES;
 }
 
 - (BOOL)fillError:(NSError **)error withInitErrorCode:(OCTManagerInitError)code
@@ -383,13 +594,31 @@
         case OCTManagerInitErrorCannotImportToxSave:
             failureReason = @"Cannot copy tox save at `importToxSaveFromPath` path.";
             break;
-        case OCTManagerInitErrorDecryptNull:
+        case OCTManagerInitErrorDatabaseKeyCannotCreateKey:
+            failureReason = @"Cannot create encryption key.";
+            break;
+        case OCTManagerInitErrorDatabaseKeyCannotReadKey:
+            failureReason = @"Cannot read encryption key.";
+            break;
+        case OCTManagerInitErrorDatabaseKeyMigrationToEncryptedFailed:
+            // Nothing to do here, this error will be created elsewhere.
+            break;
+        case OCTManagerInitErrorDatabaseKeyDecryptNull:
+            failureReason = @"Cannot decrypt database key file. Some input data was empty.";
+            break;
+        case OCTManagerInitErrorDatabaseKeyDecryptBadFormat:
+            failureReason = @"Cannot decrypt database key file. Data has bad format.";
+            break;
+        case OCTManagerInitErrorDatabaseKeyDecryptFailed:
+            failureReason = @"Cannot decrypt database key file. The encrypted byte array could not be decrypted. Either the data was corrupt or the password/key was incorrect.";
+            break;
+        case OCTManagerInitErrorToxFileDecryptNull:
             failureReason = @"Cannot decrypt tox save file. Some input data was empty.";
             break;
-        case OCTManagerInitErrorDecryptBadFormat:
+        case OCTManagerInitErrorToxFileDecryptBadFormat:
             failureReason = @"Cannot decrypt tox save file. Data has bad format.";
             break;
-        case OCTManagerInitErrorDecryptFailed:
+        case OCTManagerInitErrorToxFileDecryptFailed:
             failureReason = @"Cannot decrypt tox save file. The encrypted byte array could not be decrypted. Either the data was corrupt or the password/key was incorrect.";
             break;
         case OCTManagerInitErrorCreateToxUnknown:

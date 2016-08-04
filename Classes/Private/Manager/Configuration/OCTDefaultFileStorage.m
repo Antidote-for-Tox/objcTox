@@ -58,6 +58,11 @@
     return [self.baseDirectory stringByAppendingPathComponent:@"database"];
 }
 
+- (NSString *)pathForDatabaseEncryptionKey
+{
+    return [self.baseDirectory stringByAppendingPathComponent:@"database.encryptionkey"];
+}
+
 - (NSString *)pathForDownloadedFilesDirectory
 {
     return [self.baseDirectory stringByAppendingPathComponent:@"files"];
