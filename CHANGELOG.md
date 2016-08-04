@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OS X platform in podspec.
 - Retrying sending file transfers.
 - removeMessages: method.
+- Realm database encryption.
 
 ### Changes
 - Realm updated to version 1.0.1.
