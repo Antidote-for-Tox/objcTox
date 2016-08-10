@@ -112,22 +112,22 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 - (void)bootstrap
 {
-    OCTManager *manager = [[OCTManager alloc] initWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" error:nil];
+    [OCTManager managerWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+        OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
+        tabBar.viewControllers = @[
+            NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
+            NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
+            NAVIGATION_WITH_CONTROLLER(OCTChatsViewController),
+            NAVIGATION_WITH_CONTROLLER(OCTCallsViewController),
+        ];
 
-    OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
-    tabBar.viewControllers = @[
-        NAVIGATION_WITH_CONTROLLER(OCTUserViewController),
-        NAVIGATION_WITH_CONTROLLER(OCTFriendsViewController),
-        NAVIGATION_WITH_CONTROLLER(OCTChatsViewController),
-        NAVIGATION_WITH_CONTROLLER(OCTCallsViewController),
-    ];
+        AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        delegate.window.rootViewController = tabBar;
+        manager.calls.delegate = tabBar;
 
-    AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.window.rootViewController = tabBar;
-    manager.calls.delegate = tabBar;
-
-    [manager.bootstrap addPredefinedNodes];
-    [manager.bootstrap bootstrap];
+        [manager.bootstrap addPredefinedNodes];
+        [manager.bootstrap bootstrap];
+    } failureBlock:nil];
 }
 
 - (void)showActionSheetForRow:(Row)row
