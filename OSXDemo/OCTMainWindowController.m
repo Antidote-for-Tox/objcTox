@@ -62,13 +62,17 @@
 {
     [self.currentViewController.view removeFromSuperview];
     self.currentViewController = nil;
-    self.manager = [[OCTManager alloc] initWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" error:nil];
-    [self.manager.bootstrap addPredefinedNodes];
-    [self.manager.bootstrap bootstrap];
 
-    self.tabView.hidden = NO;
+    __weak OCTMainWindowController *weakSelf = self;
+    [OCTManager managerWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+        weakSelf.manager = manager;
+        [weakSelf.manager.bootstrap addPredefinedNodes];
+        [weakSelf.manager.bootstrap bootstrap];
 
-    [self setupTabControllers];
+        weakSelf.tabView.hidden = NO;
+
+        [weakSelf setupTabControllers];
+    } failureBlock:nil];
 }
 
 #pragma mark - Private

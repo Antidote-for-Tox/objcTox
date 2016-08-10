@@ -141,6 +141,10 @@
 		447C84AF29005A2116AADE2D /* libPods-iOSDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D6D28CCB11A29144A37A53 /* libPods-iOSDemo.a */; };
 		844ACC71B8A64F9A5412EDA3 /* libPods-OSXDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 086B5D0EF83D1DB88AD12AB6 /* libPods-OSXDemoTests.a */; };
 		9C3F49F71CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C3F49F61CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m */; };
+		9CB1F9591D5B671E00105858 /* OCTManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */; };
+		9CB1F95A1D5B671E00105858 /* OCTManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */; };
+		9CB1F95B1D5B671E00105858 /* OCTManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */; };
+		9CB1F95C1D5B671E00105858 /* OCTManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */; };
 		9CB44B641B84D8C1007FA7B6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B631B84D8C1007FA7B6 /* main.m */; };
 		9CB44B671B84D8C1007FA7B6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CB44B661B84D8C1007FA7B6 /* AppDelegate.m */; };
 		9CB44B6F1B84D8C1007FA7B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CB44B6E1B84D8C1007FA7B6 /* Images.xcassets */; };
@@ -445,6 +449,8 @@
 		9BB556421978E2471480B277 /* Pods-OSXDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OSXDemoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OSXDemoTests/Pods-OSXDemoTests.release.xcconfig"; sourceTree = "<group>"; };
 		9C3F49F51CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMCollectionChange+IndexSet.h"; sourceTree = "<group>"; };
 		9C3F49F61CDCE81B005E2A61 /* RLMCollectionChange+IndexSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMCollectionChange+IndexSet.m"; sourceTree = "<group>"; };
+		9CB1F9571D5B671E00105858 /* OCTManagerFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTManagerFactory.h; sourceTree = "<group>"; };
+		9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerFactory.m; sourceTree = "<group>"; };
 		9CB44B5F1B84D8C1007FA7B6 /* iOSDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB44B621B84D8C1007FA7B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9CB44B631B84D8C1007FA7B6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -995,8 +1001,10 @@
 		CF9416C2498272D5823396FB02DF7670 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				9CB1F9571D5B671E00105858 /* OCTManagerFactory.h */,
 				AEAF02FD4B49A2DF3C13562D48C9FEA0 /* OCTManager.m */,
 				CE5DBC12869590BEAD637C9DF06567EF /* OCTManagerConstants.m */,
+				9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */,
 				11D650CD1B89225400C3DD23 /* Audio */,
 				7DB8B234977816236C8F57408DD904FB /* Configuration */,
 				8588AB583843DF5ABD08944E00D9704D /* Database */,
@@ -1463,6 +1471,7 @@
 				9CB44BF11B84D9E1007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
 				11D650F71B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
 				11BB6EAE1CC3930A00A531A8 /* OCTFileTools.m in Sources */,
+				9CB1F9591D5B671E00105858 /* OCTManagerFactory.m in Sources */,
 				11D650E61B89227300C3DD23 /* OCTMessageCall.m in Sources */,
 				9CB44BEC1B84D9E1007FA7B6 /* OCTNode.m in Sources */,
 				9CB44BE41B84D9E1007FA7B6 /* OCTRealmManager.m in Sources */,
@@ -1504,6 +1513,7 @@
 				9CB44C151B84DBA3007FA7B6 /* OCTSubmanagerObjects.m in Sources */,
 				9CB44C071B84DBA3007FA7B6 /* OCTChat.m in Sources */,
 				1183BC961CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
+				9CB1F95A1D5B671E00105858 /* OCTManagerFactory.m in Sources */,
 				9CB44C191B84DBA3007FA7B6 /* OCTSubmanagerFriends.m in Sources */,
 				9CB44C1E1B84DBA3007FA7B6 /* OCTToxOptions.m in Sources */,
 				11D650DE1B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
@@ -1570,6 +1580,7 @@
 				1183BC911CA036AA000CD310 /* OCTFileDataOutput.m in Sources */,
 				9CB44C391B84DCCC007FA7B6 /* main.m in Sources */,
 				F5F6FA201C268B5000607306 /* OCTAudioQueue.m in Sources */,
+				9CB1F95B1D5B671E00105858 /* OCTManagerFactory.m in Sources */,
 				119B13E71B9AF5A2006DA6FF /* OCTToxEncryptSave.m in Sources */,
 				1183BC971CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
 				9CB44C5F1B84DCFB007FA7B6 /* OCTSubmanagerFiles.m in Sources */,
@@ -1651,6 +1662,7 @@
 				9CB44C811B84DCFB007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C751B84DCFB007FA7B6 /* OCTDefaultFileStorage.m in Sources */,
 				1183BC981CA076BC000CD310 /* NSError+OCTFile.m in Sources */,
+				9CB1F95C1D5B671E00105858 /* OCTManagerFactory.m in Sources */,
 				11D650E01B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
 				11D651091B8922AF00C3DD23 /* OCTToxAV.m in Sources */,
 				F50269681C31CB0700E05351 /* OCTAudioQueueTests.m in Sources */,

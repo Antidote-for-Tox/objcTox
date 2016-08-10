@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OCTSubmanagerFiles: using original file names instead of generated ones.
 - OCTSubmanagerChats: replacing removeChatWithAllMessages: method with removeAllMessagesInChat:removeChat:
 - OCTDefaultFileStorage: storing all upload and download files in single "files" directory.
+- OCTManager: manager is now created asynchronously.
 
 ## [0.6.0] - 2016-03-27
 ### Added

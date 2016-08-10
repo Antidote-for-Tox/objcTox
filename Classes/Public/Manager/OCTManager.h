@@ -83,15 +83,18 @@ NS_ASSUME_NONNULL_BEGIN
  *        encrypted. When creating OCTManager for the first time database will be automatically encrypted with this
  *        key. To change it use appropriate method below.
  *
- * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See OCTManagerInitError for all error codes.
+ * @param successBlock Block called on success with initialized OCTManager. Will be called on main thread.
+ * @param failureBlock Block called on failure. Will be called on main thread.
+ *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
+ * S    ee OCTManagerInitError for all error codes.
  *
- * @return Initialized OCTManager.
+ * @warning This method should be called on main thread.
  */
-- (nullable instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                                   toxPassword:(nullable NSString *)toxPassword
-                              databasePassword:(NSString *)databasePassword
-                                         error:(NSError *__nullable *__nullable)error;
++ (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
+                     toxPassword:(nullable NSString *)toxPassword
+                databasePassword:(NSString *)databasePassword
+                    successBlock:(nullable void (^)(OCTManager *manager))successBlock
+                    failureBlock:(nullable void (^)(NSError *error))failureBlock;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
