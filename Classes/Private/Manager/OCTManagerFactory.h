@@ -16,8 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface OCTManagerFactory : NSObject
 
 + (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                     toxPassword:(nullable NSString *)toxPassword
-                databasePassword:(NSString *)databasePassword
+                 encryptPassword:(nonnull NSString *)encryptPassword
                     successBlock:(void (^)(OCTManager *manager))successBlock
                     failureBlock:(void (^)(NSError *error))failureBlock;
 

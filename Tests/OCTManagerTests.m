@@ -162,18 +162,29 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     configuration.fileStorage = [self temporaryFileStorage];
     __block NSString *userAddress;
 
-    XCTestExpectation *nonEncryptedExpectation = [self expectationWithDescription:@"nonEncryptedExpectation"];
+    {
+        // Create non-encrypted Tox to test manager encryption of first start.
+        OCTTox *tox = [[OCTTox alloc] initWithOptions:configuration.options savedData:nil error:nil];
+        XCTAssertNotNil(tox);
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+        userAddress = tox.userAddress;
+        [tox setNickname:@"nonEncrypted" error:nil];
+
+        NSData *data = [tox save];
+        BOOL result = [data writeToFile:configuration.fileStorage.pathForToxSaveFile
+                                options:NSDataWritingAtomic
+                                  error:nil];
+        XCTAssertTrue(result);
+    }
+
+    XCTestExpectation *encryptOnFirstRunExpectation = [self expectationWithDescription:@"encryptOnFirstRunExpectation"];
+
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
+        XCTAssertEqualObjects(userAddress, manager.user.userAddress);
+        XCTAssertEqualObjects(@"nonEncrypted", manager.user.userName);
 
-        userAddress = manager.user.userAddress;
-        [manager.user setUserName:@"nonEncrypted" error:nil];
-
-        // Encrypting
-        [manager changeToxPassword:@"password123" oldPassword:nil];
-
-        [nonEncryptedExpectation fulfill];
+        [encryptOnFirstRunExpectation fulfill];
     } failureBlock:nil];
 
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
@@ -181,14 +192,14 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *encryptedExpectation = [self expectationWithDescription:@"encryptedExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"password123" databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
         XCTAssertEqualObjects(userAddress, manager.user.userAddress);
         XCTAssertEqualObjects(@"nonEncrypted", manager.user.userName);
 
         // Change passphrase
         [manager.user setUserName:@"renamed" error:nil];
-        [manager changeToxPassword:@"$ecur!" oldPassword:@"password123"];
+        [manager changeEncryptPassword:@"new password" oldPassword:@"password123"];
 
         [encryptedExpectation fulfill];
     } failureBlock:nil];
@@ -198,14 +209,10 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *renamedEncryptedExpectation = [self expectationWithDescription:@"renamedEncryptedExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"$ecur!" databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
         XCTAssertEqualObjects(userAddress, manager.user.userAddress);
         XCTAssertEqualObjects(@"renamed", manager.user.userName);
-
-        // Remove passphrase
-        [manager.user setUserName:@"removed" error:nil];
-        [manager changeToxPassword:nil oldPassword:@"$ecur!"];
 
         [renamedEncryptedExpectation fulfill];
     } failureBlock:nil];
@@ -213,53 +220,11 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 
 
-    XCTestExpectation *removedExpectation = [self expectationWithDescription:@"removedExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertEqualObjects(userAddress, manager.user.userAddress);
-        XCTAssertEqualObjects(@"removed", manager.user.userName);
-
-        // Encrypt again
-        [manager.user setUserName:@"again" error:nil];
-        [manager changeToxPassword:@"@g@!n" oldPassword:nil];
-
-        [removedExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *againExpectation = [self expectationWithDescription:@"againExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"@g@!n" databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertEqualObjects(userAddress, manager.user.userAddress);
-        XCTAssertEqualObjects(@"again", manager.user.userName);
-
-        [againExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *again2Expectation = [self expectationWithDescription:@"again2Expectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"@g@!n" databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeToxPassword:@"new password" oldPassword:@"@g@!n"]);
-
-        [again2Expectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
     XCTestExpectation *wrongPasswordExpectation = [self expectationWithDescription:@"wrongPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"new password" databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
-        XCTAssertFalse([manager changeToxPassword:@"the password" oldPassword:@"wrong password"]);
+        XCTAssertFalse([manager changeEncryptPassword:@"the password" oldPassword:@"wrong password"]);
 
         [wrongPasswordExpectation fulfill];
     } failureBlock:nil];
@@ -269,9 +234,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *newPasswordExpectation = [self expectationWithDescription:@"newPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"new password" databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeToxPassword:nil oldPassword:@"new password"]);
+        XCTAssertTrue([manager changeEncryptPassword:@"another" oldPassword:@"new password"]);
 
         [newPasswordExpectation fulfill];
     } failureBlock:nil];
@@ -279,170 +244,12 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 
 
-    XCTestExpectation *wrongPassword2Expectation = [self expectationWithDescription:@"wrongPassword2Expectation"];
+    XCTestExpectation *anotherPasswordExpectation = [self expectationWithDescription:@"anotherPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertFalse([manager changeToxPassword:@"the password" oldPassword:@"there should be no password"]);
-
-        [wrongPassword2Expectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *samePasswordExpectation = [self expectationWithDescription:@"samePasswordExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeToxPassword:@"same password" oldPassword:nil]);
-
-        [samePasswordExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *samePassword2Expectation = [self expectationWithDescription:@"samePassword2Expectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"same password" databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeToxPassword:@"same password" oldPassword:@"same password"]);
-
-        [samePassword2Expectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *thePasswordExpectation = [self expectationWithDescription:@"thePasswordExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"same password" databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeToxPassword:@"the password" oldPassword:@"same password"]);
-
-        [thePasswordExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *noPasswordExpectation = [self expectationWithDescription:@"noPasswordExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {} failureBlock:^(NSError *error) {
-        XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
-        XCTAssertEqual(error.code, OCTManagerInitErrorCreateToxEncrypted);
-
-        [noPasswordExpectation fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *wrongPasswordExpectation2 = [self expectationWithDescription:@"wrongPasswordExpectation2"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:@"wrong password" databasePassword:@"123" successBlock:^(OCTManager *manager) {} failureBlock:^(NSError *error) {
-        XCTAssertEqualObjects(error.domain, kOCTManagerErrorDomain);
-        XCTAssertEqual(error.code, OCTManagerInitErrorToxFileDecryptFailed);
-
-        [wrongPasswordExpectation2 fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-}
-
-- (void)testDatabaseEncryption
-{
-    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    configuration.fileStorage = [self temporaryFileStorage];
-
-
-    XCTestExpectation *newDatabaseExpectation = [self expectationWithDescription:@"newDatabaseExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"another" successBlock:^(OCTManager *manager) {
         XCTAssertNotNil(manager);
 
-        [newDatabaseExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *sameDatabaseExpectation = [self expectationWithDescription:@"sameDatabaseExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-
-        [sameDatabaseExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *wrongPasswordExpectation = [self expectationWithDescription:@"wrongPasswordExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"wrong password" successBlock:^(OCTManager *manager) {} failureBlock:^(NSError *error) {
-        XCTAssertEqual(error.code, OCTManagerInitErrorDatabaseKeyDecryptFailed);
-
-        [wrongPasswordExpectation fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *changeExpectation = [self expectationWithDescription:@"changeExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeDatabasePassword:@"the pass" oldPassword:@"123"]);
-
-        [changeExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *wrongPassword2Expectation = [self expectationWithDescription:@"wrongPassword2Expectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {} failureBlock:^(NSError *error) {
-        XCTAssertEqual(error.code, OCTManagerInitErrorDatabaseKeyDecryptFailed);
-
-        [wrongPassword2Expectation fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *changeWrongExpectation = [self expectationWithDescription:@"changeWrongExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"the pass" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertFalse([manager changeDatabasePassword:@"who cares" oldPassword:@"wrong pass"]);
-
-        [changeWrongExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *finalPassExpectation = [self expectationWithDescription:@"finalPassExpectation"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"the pass" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-        XCTAssertTrue([manager changeDatabasePassword:@"final pass" oldPassword:@"the pass"]);
-
-        [finalPassExpectation fulfill];
-    } failureBlock:nil];
-
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-
-
-    XCTestExpectation *finalPassExpectation2 = [self expectationWithDescription:@"finalPassExpectation2"];
-
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"final pass" successBlock:^(OCTManager *manager) {
-        XCTAssertNotNil(manager);
-
-        [finalPassExpectation2 fulfill];
+        [anotherPasswordExpectation fulfill];
     } failureBlock:nil];
 
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
@@ -462,7 +269,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     __block OCTManager *manager;
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"the password" successBlock:^(OCTManager *m) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"the password" successBlock:^(OCTManager *m) {
         manager = m;
         [expectation fulfill];
     } failureBlock:nil];
@@ -523,7 +330,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     __block OCTManager *manager;
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"p@s$" successBlock:^(OCTManager *m) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"p@s$" successBlock:^(OCTManager *m) {
         manager = m;
         [expectation fulfill];
     } failureBlock:nil];
@@ -676,7 +483,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     __weak OCTManagerTests *weakSelf = self;
 
-    [OCTManager managerWithConfiguration:configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
         weakSelf.manager = manager;
         [expectation fulfill];
     } failureBlock:nil];

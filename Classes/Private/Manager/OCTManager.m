@@ -30,7 +30,7 @@
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (strong, nonatomic, readonly) NSObject *toxSaveFileLock;
 
-@property (strong, nonatomic) OCTToxEncryptSave *encryptSave;
+@property (strong, nonatomic, nonnull) OCTToxEncryptSave *encryptSave;
 
 @property (strong, nonatomic, readonly) OCTRealmManager *realmManager;
 @property (strong, atomic) NSNotificationCenter *notificationCenter;
@@ -94,14 +94,12 @@
 }
 
 + (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                     toxPassword:(nullable NSString *)toxPassword
-                databasePassword:(NSString *)databasePassword
-                    successBlock:(void (^)(OCTManager *manager))successBlock
-                    failureBlock:(void (^)(NSError *error))failureBlock
+                 encryptPassword:(nonnull NSString *)encryptPassword
+                    successBlock:(nullable void (^)(OCTManager *manager))successBlock
+                    failureBlock:(nullable void (^)(NSError *error))failureBlock
 {
     return [OCTManagerFactory managerWithConfiguration:configuration
-                                           toxPassword:toxPassword
-                                      databasePassword:databasePassword
+                                       encryptPassword:encryptPassword
                                           successBlock:successBlock
                                           failureBlock:failureBlock];
 }
@@ -140,58 +138,21 @@
     }
 }
 
-- (BOOL)changeToxPassword:(nullable NSString *)newPassword oldPassword:(nullable NSString *)oldPassword
+- (BOOL)changeEncryptPassword:(nonnull NSString *)newPassword oldPassword:(nonnull NSString *)oldPassword
 {
-    NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
-
-    if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
+    OCTToxEncryptSave *encryptSave = [self changeToxPassword:newPassword oldPassword:oldPassword];
+    if (encryptSave == nil) {
         return NO;
     }
 
-    __block BOOL result = NO;
-
-    @synchronized(self.toxSaveFileLock) {
-        if (newPassword) {
-            // Passing nil as tox data as we are setting new password.
-            self.encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:newPassword toxData:nil error:nil];
-            result = (self.encryptSave != 0);
-        }
-        else {
-            self.encryptSave = nil;
-            result = YES;
-        }
+    if (! [self changeDatabasePassword:newPassword oldPassword:oldPassword]) {
+        return NO;
     }
 
+    self.encryptSave = encryptSave;
     [self saveTox];
 
-    return result;
-}
-
-- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
-{
-    NSParameterAssert(newPassword);
-    NSParameterAssert(oldPassword);
-
-    NSString *encryptedKeyPath = self.currentConfiguration.fileStorage.pathForDatabaseEncryptionKey;
-    NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
-
-    if (! encryptedKey) {
-        return NO;
-    }
-
-    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:oldPassword error:nil];
-
-    if (! key) {
-        return NO;
-    }
-
-    NSData *newEncryptedKey = [OCTToxEncryptSave encryptData:key withPassphrase:newPassword error:nil];
-
-    if (! newEncryptedKey) {
-        return NO;
-    }
-
-    return [newEncryptedKey writeToFile:encryptedKeyPath options:NSDataWritingAtomic error:nil];
+    return YES;
 }
 
 #pragma mark -  OCTSubmanagerDataSource
@@ -245,9 +206,6 @@
 
     if ([OCTToxEncryptSave isDataEncrypted:savedData]) {
         return [OCTToxEncryptSave decryptData:savedData withPassphrase:password error:nil] != nil;
-    }
-    else {
-        return password == nil;
     }
 
     return NO;
@@ -349,18 +307,62 @@
 
         NSError *error;
 
-        if (self.encryptSave) {
-            data = [self.encryptSave encryptData:data error:&error];
+        data = [self.encryptSave encryptData:data error:&error];
 
-            if (! data) {
-                throwException(error);
-            }
+        if (! data) {
+            throwException(error);
         }
 
         if (! [data writeToFile:self.currentConfiguration.fileStorage.pathForToxSaveFile options:NSDataWritingAtomic error:&error]) {
             throwException(error);
         }
     }
+}
+
+// On success returns encryptSave with new password.
+- (OCTToxEncryptSave *)changeToxPassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
+{
+    NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
+
+    if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
+        return NO;
+    }
+
+    __block OCTToxEncryptSave *newEncryptSave;
+
+    @synchronized(self.toxSaveFileLock) {
+        // Passing nil as tox data as we are setting new password.
+        newEncryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:newPassword toxData:nil error:nil];
+    }
+
+    return newEncryptSave;
+}
+
+- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword
+{
+    NSParameterAssert(newPassword);
+    NSParameterAssert(oldPassword);
+
+    NSString *encryptedKeyPath = self.currentConfiguration.fileStorage.pathForDatabaseEncryptionKey;
+    NSData *encryptedKey = [NSData dataWithContentsOfFile:encryptedKeyPath];
+
+    if (! encryptedKey) {
+        return NO;
+    }
+
+    NSData *key = [OCTToxEncryptSave decryptData:encryptedKey withPassphrase:oldPassword error:nil];
+
+    if (! key) {
+        return NO;
+    }
+
+    NSData *newEncryptedKey = [OCTToxEncryptSave encryptData:key withPassphrase:newPassword error:nil];
+
+    if (! newEncryptedKey) {
+        return NO;
+    }
+
+    return [newEncryptedKey writeToFile:encryptedKeyPath options:NSDataWritingAtomic error:nil];
 }
 
 @end

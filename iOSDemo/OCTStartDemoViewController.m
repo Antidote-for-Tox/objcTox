@@ -112,7 +112,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 - (void)bootstrap
 {
-    [OCTManager managerWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
         OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
         tabBar.viewControllers = @[
             NAVIGATION_WITH_CONTROLLER(OCTUserViewController),

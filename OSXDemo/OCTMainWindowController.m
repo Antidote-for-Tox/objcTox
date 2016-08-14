@@ -64,7 +64,7 @@
     self.currentViewController = nil;
 
     __weak OCTMainWindowController *weakSelf = self;
-    [OCTManager managerWithConfiguration:self.configuration toxPassword:nil databasePassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManager managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
         weakSelf.manager = manager;
         [weakSelf.manager.bootstrap addPredefinedNodes];
         [weakSelf.manager.bootstrap bootstrap];
