@@ -155,6 +155,13 @@
     return YES;
 }
 
+- (BOOL)isManagerEncryptedWithPassword:(nonnull NSString *)password
+{
+    NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
+
+    return [self isDataAtPath:toxFilePath encryptedWithPassword:password];
+}
+
 #pragma mark -  OCTSubmanagerDataSource
 
 - (OCTTox *)managerGetTox

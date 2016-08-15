@@ -255,6 +255,28 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
+- (void)testIsManagerEncryptedWithPassword
+{
+    // We want use real data to make sure that encryption/decryption actually works. This is really crucial test.
+    [self.tox stopMocking];
+    self.tox = nil;
+
+    OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
+    configuration.fileStorage = [self temporaryFileStorage];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
+
+    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
+        XCTAssertNotNil(manager);
+        XCTAssertTrue([manager isManagerEncryptedWithPassword:@"password123"]);
+        XCTAssertFalse([manager isManagerEncryptedWithPassword:@"wrong password"]);
+
+        [expectation fulfill];
+    } failureBlock:nil];
+
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+}
+
 - (void)testDatabaseMigration
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];

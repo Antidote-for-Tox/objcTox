@@ -120,6 +120,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)changeEncryptPassword:(nonnull NSString *)newPassword oldPassword:(nonnull NSString *)oldPassword;
 
+/**
+ * Checks if manager is encrypted with given password.
+ *
+ * @param password Password to verify.
+ *
+ * @return YES if manager is encrypted with given password, NO otherwise.
+ */
+- (BOOL)isManagerEncryptedWithPassword:(nonnull NSString *)password;
+
 @end
 
 NS_ASSUME_NONNULL_END
