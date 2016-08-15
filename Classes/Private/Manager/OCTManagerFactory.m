@@ -34,8 +34,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
 @implementation OCTManagerFactory
 
 + (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                     toxPassword:(nullable NSString *)toxPassword
-                databasePassword:(NSString *)databasePassword
+                 encryptPassword:(nonnull NSString *)encryptPassword
                     successBlock:(void (^)(OCTManager *manager))successBlock
                     failureBlock:(void (^)(NSError *error))failureBlock
 {
@@ -50,7 +49,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
     dispatch_group_async(group, queue, ^{
         realmEncryptionKey = [self realmEncryptionKeyWithConfiguration:configuration
-                                                              password:databasePassword
+                                                              password:encryptPassword
                                                                  error:&decryptRealmError];
     });
 
@@ -67,18 +66,16 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
         NSData *savedData = [self getSavedDataFromPath:configuration.fileStorage.pathForToxSaveFile];
 
-        if (toxPassword) {
-            encryptSave = [self toxEncryptSaveWithToxPassword:toxPassword savedData:savedData error:&decryptToxError];
+        encryptSave = [self toxEncryptSaveWithToxPassword:encryptPassword savedData:savedData error:&decryptToxError];
 
-            if (! encryptSave) {
-                return;
-            }
+        if (! encryptSave) {
+            return;
+        }
 
-            savedData = [self decryptSavedData:savedData encryptSave:encryptSave error:&decryptToxError];
+        savedData = [self decryptSavedData:savedData encryptSave:encryptSave error:&decryptToxError];
 
-            if (! savedData) {
-                return;
-            }
+        if (! savedData) {
+            return;
         }
 
         toxSave = savedData;
@@ -393,7 +390,15 @@ static const NSUInteger kEncryptedKeyLength = 64;
                                            savedData:(NSData *)savedData
                                                error:(NSError **)error
 {
-    OCTToxEncryptSave *encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:toxPassword toxData:savedData error:nil];
+    OCTToxEncryptSave *encryptSave;
+
+    if (savedData && [OCTToxEncryptSave isDataEncrypted:savedData]) {
+        encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:toxPassword toxData:savedData error:nil];
+    }
+    else {
+        // Save data wasn't encrypted. Passing nil as toxData parameter to encrypt it next time.
+        encryptSave = [[OCTToxEncryptSave alloc] initWithPassphrase:toxPassword toxData:nil error:nil];
+    }
 
     if (! encryptSave) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorPassphraseFailed];
@@ -405,8 +410,16 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
 + (NSData *)decryptSavedData:(NSData *)data encryptSave:(OCTToxEncryptSave *)encryptSave error:(NSError **)error
 {
-    NSParameterAssert(data);
     NSParameterAssert(encryptSave);
+
+    if (! data) {
+        return data;
+    }
+
+    if (! [OCTToxEncryptSave isDataEncrypted:data]) {
+        // Tox data wasn't encrypted, nothing to do here.
+        return data;
+    }
 
     NSError *decryptError = nil;
 

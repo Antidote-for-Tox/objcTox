@@ -77,12 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
  * change it you have to recreate OCTManager.
  *
  * @param configuration Configuration to be used.
- * @param toxPassword Password used to decrypt tox save file. You should specify this parameter *only*
- *        if tox save file is already encrypted. If you would like to enable encryption please use OCTManager's method.
- * @param databasePassword Password used to decrypt database. This is a required parameter as database is *always*
- *        encrypted. When creating OCTManager for the first time database will be automatically encrypted with this
- *        key. To change it use appropriate method below.
- *
+ * @param encryptPassword Password used to encrypt/decrypt tox save file and database.
+ *        Tox file will be encrypted automatically if it wasn't encrypted before.
  * @param successBlock Block called on success with initialized OCTManager. Will be called on main thread.
  * @param failureBlock Block called on failure. Will be called on main thread.
  *     @param error If an error occurs, this pointer is set to an actual error object containing the error information.
@@ -91,8 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @warning This method should be called on main thread.
  */
 + (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                     toxPassword:(nullable NSString *)toxPassword
-                databasePassword:(NSString *)databasePassword
+                 encryptPassword:(nonnull NSString *)encryptPassword
                     successBlock:(nullable void (^)(OCTManager *manager))successBlock
                     failureBlock:(nullable void (^)(NSError *error))failureBlock;
 
@@ -116,24 +111,23 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString *)exportToxSaveFile:(NSError *__nullable *__nullable)error;
 
 /**
- * Set password to encrypt tox save file.
+ * Set password to encrypt tox save file and database.
  *
- * @param newPassword New password used to encrypt tox save file. You can pass nil to disable encryption.
- * @param oldPassword Old password. Pass nil if there is no old password.
- *
- * @return YES on success, NO on failure (if old password doesn't match).
- */
-- (BOOL)changeToxPassword:(nullable NSString *)newPassword oldPassword:(nullable NSString *)oldPassword;
-
-/**
- * Change password used to encrypt database.
- *
- * @param newPassword New password used to encrypt database.
+ * @param newPassword New password used to encrypt tox save file and database.
  * @param oldPassword Old password.
  *
  * @return YES on success, NO on failure (if old password doesn't match).
  */
-- (BOOL)changeDatabasePassword:(NSString *)newPassword oldPassword:(NSString *)oldPassword;
+- (BOOL)changeEncryptPassword:(nonnull NSString *)newPassword oldPassword:(nonnull NSString *)oldPassword;
+
+/**
+ * Checks if manager is encrypted with given password.
+ *
+ * @param password Password to verify.
+ *
+ * @return YES if manager is encrypted with given password, NO otherwise.
+ */
+- (BOOL)isManagerEncryptedWithPassword:(nonnull NSString *)password;
 
 @end
 
