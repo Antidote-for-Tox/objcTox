@@ -20,7 +20,7 @@
 #import "OCTSettingsStorageObject.h"
 #import "OCTLogging.h"
 
-static const uint64_t kCurrentSchemeVersion = 5;
+static const uint64_t kCurrentSchemeVersion = 6;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -460,8 +460,12 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                }
 
                if (oldSchemaVersion < 5) {
-                   // objcTox verson 0.7.0
+                   // OCTMessageAbstract: chat property replaced with chatUniqueIdentifier
                    [self doMigrationVersion5:migration];
+               }
+
+               if (oldSchemaVersion < 6) {
+                   // OCTSettingsStorageObject: adding genericSettingsData property.
                }
     };
 }
