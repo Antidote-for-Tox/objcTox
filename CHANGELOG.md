@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Retrying sending file transfers.
 - removeMessages: method.
 - Realm database encryption.
+- OCTSubmanagerObjects: genericSettingsData property to store custom settins.
 
 ### Changes
 - Realm updated to version 1.0.1.
