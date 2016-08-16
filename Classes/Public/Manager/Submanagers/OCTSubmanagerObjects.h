@@ -18,6 +18,13 @@
 @interface OCTSubmanagerObjects : NSObject
 
 /**
+ * This property can be used to save any generic data you like.
+ *
+ * The default value is nil.
+ */
+@property (strong, nonatomic) NSData *genericSettingsData;
+
+/**
  * Returns fetch request for specified type.
  *
  * @param type Type of fetch request.

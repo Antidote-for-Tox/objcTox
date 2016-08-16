@@ -15,6 +15,7 @@
 #import "OCTFriendRequest.h"
 #import "OCTChat.h"
 #import "OCTMessageAbstract.h"
+#import "OCTSettingsStorageObject.h"
 
 @interface OCTSubmanagerObjectsTests : XCTestCase
 
@@ -76,6 +77,22 @@
                                                    predicate:predicate]);
     XCTAssertEqual(results4, [self.submanager objectsForType:OCTFetchRequestTypeMessageAbstract
                                                    predicate:predicate]);
+}
+
+- (void)testGenericSettingsData
+{
+    NSData *data = [@"some string" dataUsingEncoding:NSUTF8StringEncoding];
+
+    id settingsStorage = OCMClassMock([OCTSettingsStorageObject class]);
+    OCMStub([settingsStorage genericSettingsData]).andReturn(data);
+    OCMExpect([settingsStorage setGenericSettingsData:data]);
+
+    OCMStub([self.realmManager settingsStorage]).andReturn(settingsStorage);
+
+    XCTAssertEqual(self.submanager.genericSettingsData, data);
+    self.submanager.genericSettingsData = data;
+
+    OCMVerify(settingsStorage);
 }
 
 - (void)testObjectWithUniqueIdentifier

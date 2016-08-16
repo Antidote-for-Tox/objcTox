@@ -17,4 +17,10 @@
  */
 @property NSData *userAvatarData;
 
+/**
+ * Generic data to be used by user of the library.
+ * It shouldn't be used by objcTox itself.
+ */
+@property NSData *genericSettingsData;
+
 @end

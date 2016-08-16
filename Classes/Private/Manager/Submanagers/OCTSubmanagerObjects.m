@@ -13,6 +13,7 @@
 #import "OCTChat.h"
 #import "OCTCall.h"
 #import "OCTMessageAbstract.h"
+#import "OCTSettingsStorageObject.h"
 
 @interface OCTSubmanagerObjects ()
 
@@ -22,6 +23,18 @@
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Public
+
+- (void)setGenericSettingsData:(NSData *)data
+{
+    OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+    manager.settingsStorage.genericSettingsData = data;
+}
+
+- (NSData *)genericSettingsData
+{
+    OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
+    return manager.settingsStorage.genericSettingsData;
+}
 
 - (RLMResults *)objectsForType:(OCTFetchRequestType)type predicate:(NSPredicate *)predicate
 {
