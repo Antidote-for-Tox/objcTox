@@ -27,7 +27,10 @@
 - (void)setGenericSettingsData:(NSData *)data
 {
     OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
-    manager.settingsStorage.genericSettingsData = data;
+
+    [manager updateObject:manager.settingsStorage withBlock:^(OCTSettingsStorageObject *object) {
+        object.genericSettingsData = data;
+    }];
 }
 
 - (NSData *)genericSettingsData
