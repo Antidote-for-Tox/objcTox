@@ -161,7 +161,9 @@ static const NSUInteger kNodesPerIteration = 4;
     OCTTox *tox = [self.dataSource managerGetTox];
 
     for (OCTNode *node in selectedNodes) {
-        [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
+        });
     }
 
     [self tryToBootstrapAfter:self.iterationTime];
