@@ -19,6 +19,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OCTManager: manager is now created asynchronously.
 - OCTManager: added method for verifying current encrypt password.
 
+### Fixes
+- Fixing freeze when bootstrapping on bad network.
+
 ## [0.6.0] - 2016-03-27
 ### Added
 - File transfers.
