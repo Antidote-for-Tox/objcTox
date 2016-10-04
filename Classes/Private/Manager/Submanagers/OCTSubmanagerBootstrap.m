@@ -167,7 +167,14 @@ static const NSUInteger kNodesPerIteration = 4;
 
     for (OCTNode *node in selectedNodes) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
+            NSError *error;
+
+            if (! [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
+                OCTLogWarn(@"trying to bootstrap... bootstrap failed with address %@, error %@", node.host, error);
+            }
+            if (! [tox addTCPRelayWithHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
+                OCTLogWarn(@"trying to bootstrap... tcp relay failed with address %@, error %@", node.host, error);
+            }
         });
     }
 

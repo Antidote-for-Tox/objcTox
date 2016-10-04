@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Realm database encryption.
 - OCTSubmanagerObjects: genericSettingsData property to store custom settins.
 - Adding IPv6 nodes to bootstrap.
+- Using TCP relays during bootstrap.
 
 ### Changes
 - Realm updated to version 1.0.1.
