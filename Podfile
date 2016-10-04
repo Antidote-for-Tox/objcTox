@@ -4,7 +4,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 inhibit_all_warnings!
 
 def common_pods
-    pod 'toxcore', '0.0.1-94cc8b1'
+    pod 'toxcore', :git => 'https://github.com/Antidote-for-Tox/toxcore.git', :commit => 'c3bd97b4f8650e405e5f6d295c4c4fd4b4fef64f'
     pod 'CocoaLumberjack', '~> 1.9.2'
     pod 'Realm', '1.0.1'
     pod 'TPCircularBuffer', '~> 0.0.1'
