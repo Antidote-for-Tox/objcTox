@@ -73,15 +73,20 @@ static const NSUInteger kNodesPerIteration = 4;
     NSAssert(dictionary, @"Nodes json file is corrupted.");
 
     for (NSDictionary *node in dictionary[@"nodes"]) {
-        NSString *host = node[@"ipv4"];
+        NSString *ipv4 = node[@"ipv4"];
         OCTToxPort port = [node[@"port"] unsignedShortValue];
         NSString *publicKey = node[@"public_key"];
 
-        NSAssert(host, @"Nodes json file is corrupted");
+        NSAssert(ipv4, @"Nodes json file is corrupted");
         NSAssert(port > 0, @"Nodes json file is corrupted");
         NSAssert(publicKey, @"Nodes json file is corrupted");
 
-        [self addNodeWithHost:host port:port publicKey:publicKey];
+        [self addNodeWithHost:ipv4 port:port publicKey:publicKey];
+
+        NSString *ipv6 = node[@"ipv6"];
+        if (ipv6.length > 2) {
+            [self addNodeWithHost:ipv6 port:port publicKey:publicKey];
+        }
     }
 }
 
@@ -162,7 +167,14 @@ static const NSUInteger kNodesPerIteration = 4;
 
     for (OCTNode *node in selectedNodes) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:nil];
+            NSError *error;
+
+            if (! [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
+                OCTLogWarn(@"trying to bootstrap... bootstrap failed with address %@, error %@", node.host, error);
+            }
+            if (! [tox addTCPRelayWithHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
+                OCTLogWarn(@"trying to bootstrap... tcp relay failed with address %@, error %@", node.host, error);
+            }
         });
     }
 
