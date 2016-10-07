@@ -13,6 +13,7 @@ extern void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 /**
  * Callbacks
  */
+tox_log_cb logCallback;
 tox_self_connection_status_cb connectionStatusCallback;
 tox_friend_name_cb friendNameCallback;
 tox_friend_status_message_cb friendStatusMessageCallback;

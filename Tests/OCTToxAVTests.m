@@ -11,11 +11,6 @@
 
 static void *refToSelf;
 
-uint32_t mocked_toxav_version_major(void);
-uint32_t mocked_toxav_version_minor(void);
-uint32_t mocked_toxav_version_patch(void);
-bool mocked_toxav_version_is_compatible(uint32_t major, uint32_t minor, uint32_t patch);
-
 void mocked_toxav_iterate(ToxAV *toxAV);
 uint32_t mocked_toxav_iteration_interval(const ToxAV *toxAV);
 void mocked_toxav_kill(ToxAV *toxAV);
@@ -81,23 +76,6 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 - (void)testInit
 {
     XCTAssertNotNil(self.toxAV);
-}
-
-- (void)testVersionMethods
-{
-    _toxav_version_major = mocked_toxav_version_major;
-    XCTAssertEqual(111, [OCTToxAV versionMajor]);
-
-    _toxav_version_minor = mocked_toxav_version_minor;
-    XCTAssertEqual(222, [OCTToxAV versionMinor]);
-
-    _toxav_version_patch = mocked_toxav_version_patch;
-    XCTAssertEqual(333, [OCTToxAV versionPatch]);
-
-    XCTAssertEqualObjects(@"111.222.333", [OCTToxAV version]);
-
-    _toxav_version_is_compatible = mocked_toxav_version_is_compatible;
-    XCTAssertFalse([OCTToxAV versionIsCompatibleWith:999 minor:888 patch:777]);
 }
 
 - (void)testCallFriend
@@ -440,21 +418,6 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
 @end
 
 #pragma mark - Mocked toxav methods
-
-uint32_t mocked_toxav_version_major(void)
-{
-    return 111;
-}
-
-uint32_t mocked_toxav_version_minor(void)
-{
-    return 222;
-}
-
-uint32_t mocked_toxav_version_patch(void)
-{
-    return 333;
-}
 
 void mocked_toxav_iterate(ToxAV *cToxAV)
 {

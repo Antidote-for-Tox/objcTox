@@ -155,7 +155,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
                 return;
             }
 
-            tox_iterate(strongSelf.tox);
+            tox_iterate(strongSelf.tox, (__bridge void *)self);
 
             [strongSelf updateTimerIntervalIfNeeded];
         });
@@ -843,19 +843,20 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (void)setupCallbacks
 {
-    tox_callback_self_connection_status(_tox, connectionStatusCallback, (__bridge void *)self);
-    tox_callback_friend_name(_tox, friendNameCallback, (__bridge void *)self);
-    tox_callback_friend_status_message(_tox, friendStatusMessageCallback, (__bridge void *)self);
-    tox_callback_friend_status(_tox, friendStatusCallback, (__bridge void *)self);
-    tox_callback_friend_connection_status(_tox, friendConnectionStatusCallback, (__bridge void *) self);
-    tox_callback_friend_typing(_tox, friendTypingCallback, (__bridge void *)self);
-    tox_callback_friend_read_receipt(_tox, friendReadReceiptCallback, (__bridge void *)self);
-    tox_callback_friend_request(_tox, friendRequestCallback, (__bridge void *)self);
-    tox_callback_friend_message(_tox, friendMessageCallback, (__bridge void *)self);
-    tox_callback_file_recv_control(_tox, fileReceiveControlCallback, (__bridge void *)self);
-    tox_callback_file_chunk_request(_tox, fileChunkRequestCallback, (__bridge void *)self);
-    tox_callback_file_recv(_tox, fileReceiveCallback, (__bridge void *)self);
-    tox_callback_file_recv_chunk(_tox, fileReceiveChunkCallback, (__bridge void *)self);
+    tox_callback_log(_tox, logCallback, NULL);
+    tox_callback_self_connection_status(_tox, connectionStatusCallback);
+    tox_callback_friend_name(_tox, friendNameCallback);
+    tox_callback_friend_status_message(_tox, friendStatusMessageCallback);
+    tox_callback_friend_status(_tox, friendStatusCallback);
+    tox_callback_friend_connection_status(_tox, friendConnectionStatusCallback);
+    tox_callback_friend_typing(_tox, friendTypingCallback);
+    tox_callback_friend_read_receipt(_tox, friendReadReceiptCallback);
+    tox_callback_friend_request(_tox, friendRequestCallback);
+    tox_callback_friend_message(_tox, friendMessageCallback);
+    tox_callback_file_recv_control(_tox, fileReceiveControlCallback);
+    tox_callback_file_chunk_request(_tox, fileChunkRequestCallback);
+    tox_callback_file_recv(_tox, fileReceiveCallback);
+    tox_callback_file_recv_chunk(_tox, fileReceiveChunkCallback);
 }
 
 - (OCTToxUserStatus)userStatusFromCUserStatus:(TOX_USER_STATUS)cStatus
@@ -1583,6 +1584,33 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 @end
 
 #pragma mark -  Callbacks
+
+void logCallback(Tox *tox,
+                 TOX_LOG_LEVEL level,
+                 const char *file,
+                 uint32_t line,
+                 const char *func,
+                 const char *message,
+                 void *user_data)
+{
+    switch (level) {
+        case TOX_LOG_LEVEL_LOG_TRACE:
+            OCTLogCCVerbose(@"TRACE: <toxcore: %s:%u, %s> %s", file, line, func, message);
+            break;
+        case TOX_LOG_LEVEL_LOG_DEBUG:
+            OCTLogCCDebug(@"DEBUG: <toxcore: %s:%u, %s> %s", file, line, func, message);
+            break;
+        case TOX_LOG_LEVEL_LOG_INFO:
+            OCTLogCCInfo(@"INFO: <toxcore: %s:%u, %s> %s", file, line, func, message);
+            break;
+        case TOX_LOG_LEVEL_LOG_WARNING:
+            OCTLogCCWarn(@"WARNING: <toxcore: %s:%u, %s> %s", file, line, func, message);
+            break;
+        case TOX_LOG_LEVEL_LOG_ERROR:
+            OCTLogCCError(@"ERROR: <toxcore: %s:%u, %s> %s", file, line, func, message);
+            break;
+    }
+}
 
 void connectionStatusCallback(Tox *cTox, TOX_CONNECTION cStatus, void *userData)
 {

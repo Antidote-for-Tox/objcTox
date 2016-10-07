@@ -14,40 +14,6 @@
 
 @property (weak, nonatomic) id<OCTToxAVDelegate> delegate;
 
-#pragma mark - Class Methods
-
-/**
- * Return toxav version in format X.Y.Z, where
- * X - The major version number.
- * Y - The minor version number.
- * Z - The patch or revision number.
- */
-+ (NSString *)version;
-
-/**
- * The major version number of toxav. Can be used to display the
- * ToxAV library version or to check whether the client is compatible with the
- * dynamically linked version of ToxAV.
- */
-+ (NSUInteger)versionMajor;
-
-/**
- * Return the minor version number of the library
- */
-+ (NSUInteger)versionMinor;
-
-/**
- * Return the patch number of the library.
- */
-+ (NSUInteger)versionPatch;
-
-/**
- * Checks if the compiled library version is compatible with
- * the passed version numbers.
- * @return YES if compatible, otherwise NO.
- */
-+ (BOOL)versionIsCompatibleWith:(NSUInteger)major minor:(NSUInteger)minor patch:(NSUInteger)patch;
-
 #pragma mark -  Lifecycle
 
 /**
