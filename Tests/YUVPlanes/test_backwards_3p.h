@@ -1,10 +1,6 @@
-//
-//  test_backwards_3p.h
-//  objcTox
-//
-//  Created by stal on 22/12/2015.
-//  Copyright © 2015 dvor. All rights reserved.
-//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 /*
  * Tri-planar 30x30 YUV stream but backwards

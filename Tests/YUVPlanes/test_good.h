@@ -1,10 +1,6 @@
-//
-//  test_good.h
-//  objcTox
-//
-//  Created by stal on 22/12/2015.
-//  Copyright © 2015 dvor. All rights reserved.
-//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 uint8_t test_good_y[] = {
     204, 201, 199, 198, 197, 197, 196, 196, 195, 195, 194, 176, 189, 191, 206, 206, 204, 206, 195, 197, 198, 199, 199, 200, 200, 200, 187, 193, 199, 199,
