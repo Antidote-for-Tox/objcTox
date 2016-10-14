@@ -78,5 +78,5 @@ Dmytro Vorobiov, d@dvor.me
 
 ## License
 
-objcTox is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+objcTox is available under Mozilla Public License Version 2.0. See the [LICENSE](LICENSE) file for more info.
 
