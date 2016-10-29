@@ -8,6 +8,6 @@
 
 @interface OCTConversationViewController : OCTTableViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager chat:(OCTChat *)chat;
+- (instancetype)initWithManager:(id<OCTManager>)manager chat:(OCTChat *)chat;
 
 @end

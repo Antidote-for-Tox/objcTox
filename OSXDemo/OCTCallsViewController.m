@@ -13,7 +13,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTCallsViewController () <NSTableViewDataSource, NSTableViewDelegate>
 
-@property (weak, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) id<OCTManager> manager;
 
 @property (strong, nonatomic) RLMResults<OCTCall *> *calls;
 @property (strong, nonatomic) RLMNotificationToken *callsNotificationToken;
@@ -26,7 +26,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @implementation OCTCallsViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super init];
 

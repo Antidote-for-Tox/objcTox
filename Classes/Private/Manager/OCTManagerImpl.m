@@ -4,7 +4,7 @@
 
 #import <objc/runtime.h>
 
-#import "OCTManager.h"
+#import "OCTManagerImpl.h"
 #import "OCTTox.h"
 #import "OCTToxEncryptSave.h"
 #import "OCTManagerConfiguration.h"
@@ -19,7 +19,7 @@
 #import "OCTSubmanagerUser+Private.h"
 #import "OCTRealmManager.h"
 
-@interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
+@interface OCTManagerImpl () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *currentConfiguration;
 
@@ -42,20 +42,7 @@
 
 @end
 
-@implementation OCTManager
-
-#pragma mark -  Class methods
-
-+ (BOOL)isToxSaveEncryptedAtPath:(NSString *)path
-{
-    NSData *savedData = [OCTManager getSavedDataFromPath:path];
-
-    if (! savedData) {
-        return NO;
-    }
-
-    return [OCTToxEncryptSave isDataEncrypted:savedData];
-}
+@implementation OCTManagerImpl
 
 #pragma mark -  Lifecycle
 
@@ -87,17 +74,6 @@
     [self createSubmanagers];
 
     return self;
-}
-
-+ (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                 encryptPassword:(nonnull NSString *)encryptPassword
-                    successBlock:(nullable void (^)(OCTManager *manager))successBlock
-                    failureBlock:(nullable void (^)(NSError *error))failureBlock
-{
-    return [OCTManagerFactory managerWithConfiguration:configuration
-                                       encryptPassword:encryptPassword
-                                          successBlock:successBlock
-                                          failureBlock:failureBlock];
 }
 
 - (void)dealloc
@@ -192,7 +168,7 @@
 
 #pragma mark -  Private
 
-+ (NSData *)getSavedDataFromPath:(NSString *)path
+- (NSData *)getSavedDataFromPath:(NSString *)path
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
            ([NSData dataWithContentsOfFile:path]) :
@@ -201,7 +177,7 @@
 
 - (BOOL)isDataAtPath:(NSString *)path encryptedWithPassword:(NSString *)password
 {
-    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+    NSData *savedData = [self getSavedDataFromPath:path];
 
     if (! savedData) {
         return NO;
@@ -328,7 +304,7 @@
     NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
 
     if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
-        return NO;
+        return nil;
     }
 
     __block OCTToxEncryptSave *newEncryptSave;

@@ -21,7 +21,7 @@ static NSString *const kCellIdent = @"cellIdent";
                                              NSTextFieldDelegate>
 
 @property (weak) IBOutlet NSTableView *chatsViewController;
-@property (weak, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) id<OCTManager> manager;
 
 @property (strong, nonatomic) RLMResults<OCTChat *> *allChats;
 @property (strong, nonatomic) RLMNotificationToken *allChatsNotificationToken;
@@ -35,7 +35,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @implementation OCTConversationViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super init];
 
@@ -184,8 +184,8 @@ static NSString *const kCellIdent = @"cellIdent";
                 field.stringValue = [NSString stringWithFormat:@"%@: %@", self.manager.user.userName, messageAbstract.messageText.text];
             }
             else {
-                OCTFriend *friend = [self.manager.objects objectWithUniqueIdentifier:messageAbstract.senderUniqueIdentifier
-                                                                             forType:OCTFetchRequestTypeFriend];
+                OCTFriend *friend = (OCTFriend *)[self.manager.objects objectWithUniqueIdentifier:messageAbstract.senderUniqueIdentifier
+                                                                                          forType:OCTFetchRequestTypeFriend];
 
                 field.stringValue = [NSString stringWithFormat:@"%@: %@", friend.nickname, messageAbstract.messageText.text];
             }

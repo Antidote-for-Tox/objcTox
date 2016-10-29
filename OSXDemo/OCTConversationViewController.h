@@ -7,6 +7,6 @@
 
 @interface OCTConversationViewController : NSViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager;
+- (instancetype)initWithManager:(id<OCTManager>)manager;
 
 @end

@@ -14,7 +14,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 @interface OCTFilesViewController () <NSTableViewDataSource, NSTableViewDelegate, OCTSubmanagerFilesProgressSubscriber>
 
-@property (weak, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) id<OCTManager> manager;
 @property (weak) IBOutlet NSTableView *tableView;
 
 @property (strong, nonatomic) RLMResults<OCTMessageAbstract *> *fileMessages;
@@ -26,7 +26,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super init];
 

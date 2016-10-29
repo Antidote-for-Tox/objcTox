@@ -6,6 +6,7 @@
 #import "OCTBootStrapViewController.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTManager.h"
+#import "OCTManagerFactory.h"
 #import "OCTSubmanagerBootstrap.h"
 #import "OCTUserViewController.h"
 #import "OCTFriendsViewController.h"
@@ -24,7 +25,7 @@
 @property (strong, nonatomic) NSViewController *filesViewController;
 
 @property (strong, nonatomic) OCTManagerConfiguration *configuration;
-@property (strong, nonatomic) OCTManager *manager;
+@property (strong, nonatomic) id<OCTManager> manager;
 @property (weak) IBOutlet NSTabView *tabView;
 
 @end
@@ -60,7 +61,7 @@
     self.currentViewController = nil;
 
     __weak OCTMainWindowController *weakSelf = self;
-    [OCTManager managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(id < OCTManager > manager) {
         weakSelf.manager = manager;
         [weakSelf.manager.bootstrap addPredefinedNodes];
         [weakSelf.manager.bootstrap bootstrap];

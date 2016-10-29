@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import "OCTManagerFactory.h"
-#import "OCTManager.h"
+#import "OCTManagerImpl.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTRealmManager.h"
 #import "OCTTox.h"
@@ -17,21 +17,11 @@ typedef NS_ENUM(NSInteger, OCTDecryptionErrorFileType) {
 
 static const NSUInteger kEncryptedKeyLength = 64;
 
-@interface OCTManager (Factory)
-
-- (instancetype)initWithConfiguration:(OCTManagerConfiguration *)configuration
-                                  tox:(OCTTox *)tox
-                       toxEncryptSave:(OCTToxEncryptSave *)toxEncryptSave
-                         realmManager:(OCTRealmManager *)realmManager;
-@end
-
-
-
 @implementation OCTManagerFactory
 
 + (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
                  encryptPassword:(nonnull NSString *)encryptPassword
-                    successBlock:(void (^)(OCTManager *manager))successBlock
+                    successBlock:(void (^)(id<OCTManager> manager))successBlock
                     failureBlock:(void (^)(NSError *error))failureBlock
 {
     [self validateConfiguration:configuration];
@@ -102,10 +92,10 @@ static const NSUInteger kEncryptedKeyLength = 64;
             NSURL *databaseFileURL = [NSURL fileURLWithPath:configuration.fileStorage.pathForDatabase];
             OCTRealmManager *realmManager = [[OCTRealmManager alloc] initWithDatabaseFileURL:databaseFileURL encryptionKey:realmEncryptionKey];
 
-            OCTManager *manager = [[OCTManager alloc] initWithConfiguration:configuration
-                                                                        tox:tox
-                                                             toxEncryptSave:encryptSave
-                                                               realmManager:realmManager];
+            OCTManagerImpl *manager = [[OCTManagerImpl alloc] initWithConfiguration:configuration
+                                                                                tox:tox
+                                                                     toxEncryptSave:encryptSave
+                                                                       realmManager:realmManager];
 
             if (successBlock) {
                 successBlock(manager);
@@ -140,7 +130,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
         // First run, create key and database.
         if (! [self createEncryptedKeyAtPath:encryptedKeyPath withPassword:databasePassword]) {
             [self fillError:error withInitErrorCode:OCTManagerInitErrorDatabaseKeyCannotCreateKey];
-            return NO;
+            return nil;
         }
     }
 
@@ -161,7 +151,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
                           }];
             }
 
-            return NO;
+            return nil;
         }
     }
 
@@ -169,7 +159,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
     if (! encryptedKey) {
         [self fillError:error withInitErrorCode:OCTManagerInitErrorDatabaseKeyCannotReadKey];
-        return NO;
+        return nil;
     }
 
     NSError *decryptError;
@@ -177,7 +167,7 @@ static const NSUInteger kEncryptedKeyLength = 64;
 
     if (! key) {
         [self fillError:error withDecryptionError:decryptError.code fileType:OCTDecryptionErrorFileTypeDatabaseKey];
-        return NO;
+        return nil;
     }
 
     return key;

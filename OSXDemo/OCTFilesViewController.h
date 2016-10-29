@@ -4,10 +4,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class OCTManager;
+@protocol OCTManager;
 
 @interface OCTFilesViewController : NSViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager;
+- (instancetype)initWithManager:(id<OCTManager>)manager;
 
 @end

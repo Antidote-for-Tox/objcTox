@@ -12,6 +12,7 @@
 #import "OCTTabBarControllerViewController.h"
 #import "AppDelegate.h"
 #import "OCTManagerConfiguration.h"
+#import "OCTManagerFactory.h"
 #import "OCTSubmanagerBootstrap.h"
 
 #define NAVIGATION_WITH_CONTROLLER(class) \
@@ -108,7 +109,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 - (void)bootstrap
 {
-    [OCTManager managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:self.configuration encryptPassword:@"123" successBlock:^(id < OCTManager > manager) {
         OCTTabBarControllerViewController *tabBar = [OCTTabBarControllerViewController new];
         tabBar.viewControllers = @[
             NAVIGATION_WITH_CONTROLLER(OCTUserViewController),

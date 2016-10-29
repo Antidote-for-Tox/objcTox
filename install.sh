@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pod install
+pod _1.0.1_ install
