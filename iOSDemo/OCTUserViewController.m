@@ -173,7 +173,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 #pragma mark -  OCTSubmanagerUserDelegate
 
-- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
+- (void)submanagerUser:(id<OCTSubmanagerUser>)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
 {
     [self.tableView reloadData];
 }

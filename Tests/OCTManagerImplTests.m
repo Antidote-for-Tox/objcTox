@@ -13,14 +13,14 @@
 #import "OCTToxEncryptSave.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
-#import "OCTSubmanagerBootstrap+Private.h"
-#import "OCTSubmanagerChats+Private.h"
-#import "OCTSubmanagerDNS+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
-#import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerUser+Private.h"
-#import "OCTSubmanagerObjects+Private.h"
-#import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerBootstrapImpl.h"
+#import "OCTSubmanagerChatsImpl.h"
+#import "OCTSubmanagerDNSImpl.h"
+#import "OCTSubmanagerFriendsImpl.h"
+#import "OCTSubmanagerFilesImpl.h"
+#import "OCTSubmanagerUserImpl.h"
+#import "OCTSubmanagerObjectsImpl.h"
+#import "OCTSubmanagerCallsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTDefaultFileStorage.h"
 #import "OCTMessageAbstract.h"
@@ -35,13 +35,13 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 @property (strong, nonatomic, readonly) OCTToxAV *toxAV;
 @property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
-@property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
-@property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrapImpl *bootstrap;
+@property (strong, nonatomic, readwrite) OCTSubmanagerChatsImpl *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerDNSImpl *dns;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFilesImpl *files;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriendsImpl *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerObjectsImpl *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUserImpl *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 @property (strong, nonatomic) NSNotificationCenter *notificationCenter;
@@ -59,7 +59,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 {}
 @end
 
-@interface OCTManagerTests : XCTestCase
+@interface OCTManagerImplTests : XCTestCase
 
 @property (strong, nonatomic) OCTManagerImpl *manager;
 @property (nonatomic, assign) id mockedCallManager;
@@ -70,7 +70,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 @end
 
-@implementation OCTManagerTests
+@implementation OCTManagerImplTests
 
 - (void)setUp
 {
@@ -84,7 +84,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
                                                attributes:nil
                                                     error:nil];
 
-    self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
+    self.mockedCallManager = OCMClassMock([OCTSubmanagerCallsImpl class]);
 
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.tox alloc]).andReturn(self.tox);
@@ -500,7 +500,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     configuration.fileStorage = [self temporaryFileStorage];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    __weak OCTManagerTests *weakSelf = self;
+    __weak OCTManagerImplTests *weakSelf = self;
 
     [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"123" successBlock:^(id < OCTManager > manager) {
         weakSelf.manager = (OCTManagerImpl *)manager;

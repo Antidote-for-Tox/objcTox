@@ -10,7 +10,7 @@ static const CGFloat kEdgeInsets = 25.0;
 
 @interface OCTVideoViewController ()
 
-@property (nonatomic, strong) OCTSubmanagerCalls *manager;
+@property (nonatomic, strong) id<OCTSubmanagerCalls> manager;
 @property (nonatomic, strong) UIButton *menuActionButton;
 @property (nonatomic, strong) UIView *previewView;
 @property (nonatomic, weak) CALayer *previewLayer;
@@ -20,7 +20,7 @@ static const CGFloat kEdgeInsets = 25.0;
 
 @implementation OCTVideoViewController
 
-- (instancetype)initWithCallManager:(OCTSubmanagerCalls *)manager call:(OCTCall *)call
+- (instancetype)initWithCallManager:(id<OCTSubmanagerCalls>)manager call:(OCTCall *)call
 {
     self = [super init];
 

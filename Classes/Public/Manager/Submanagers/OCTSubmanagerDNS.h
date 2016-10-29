@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OCTSubmanagerDNS : NSObject
+@protocol OCTSubmanagerDNS <NSObject>
 
 /**
  * Add server for tox3 DNS discovery.

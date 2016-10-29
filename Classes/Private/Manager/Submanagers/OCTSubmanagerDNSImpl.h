@@ -23,6 +23,6 @@ extern void (*_DNSServiceRefDeallocate)(DNSServiceRef sdRef);
 
 typedef void (^OCTDNSQueryCallback)(DNSServiceErrorType errorCode, NSData *data);
 
-@interface OCTSubmanagerDNS (Private) <OCTSubmanagerProtocol>
+@interface OCTSubmanagerDNSImpl : NSObject <OCTSubmanagerDNS, OCTSubmanagerProtocol>
 
 @end

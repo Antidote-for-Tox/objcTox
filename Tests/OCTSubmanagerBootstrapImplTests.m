@@ -5,14 +5,14 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-#import "OCTSubmanagerBootstrap+Private.h"
+#import "OCTSubmanagerBootstrapImpl.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTTox.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"
 #import "OCTNode.h"
 
-@interface OCTSubmanagerBootstrap (Tests)
+@interface OCTSubmanagerBootstrapImpl (Tests)
 
 @property (strong, nonatomic) NSMutableSet *addedNodes;
 
@@ -21,17 +21,17 @@
 
 @end
 
-@interface OCTSubmanagerBootstrapTests : XCTestCase
+@interface OCTSubmanagerBootstrapImplTests : XCTestCase
 
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
 @property (strong, nonatomic) id realmManager;
 @property (strong, nonatomic) id settingsStorage;
-@property (strong, nonatomic) OCTSubmanagerBootstrap *submanager;
+@property (strong, nonatomic) OCTSubmanagerBootstrapImpl *submanager;
 
 @end
 
-@implementation OCTSubmanagerBootstrapTests
+@implementation OCTSubmanagerBootstrapImplTests
 
 - (void)setUp
 {
@@ -47,7 +47,7 @@
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
     OCMStub([self.realmManager settingsStorage]).andReturn(self.settingsStorage);
 
-    self.submanager = [OCTSubmanagerBootstrap new];
+    self.submanager = [OCTSubmanagerBootstrapImpl new];
     self.submanager.dataSource = self.dataSource;
 }
 

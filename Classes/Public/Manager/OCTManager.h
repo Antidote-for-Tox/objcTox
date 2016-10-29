@@ -10,56 +10,56 @@
 NS_ASSUME_NONNULL_BEGIN
 @class OCTManagerConfiguration;
 
-@class OCTSubmanagerBootstrap;
-@class OCTSubmanagerCalls;
-@class OCTSubmanagerChats;
-@class OCTSubmanagerDNS;
-@class OCTSubmanagerFiles;
-@class OCTSubmanagerFriends;
-@class OCTSubmanagerObjects;
-@class OCTSubmanagerUser;
+@protocol OCTSubmanagerBootstrap;
+@protocol OCTSubmanagerCalls;
+@protocol OCTSubmanagerChats;
+@protocol OCTSubmanagerDNS;
+@protocol OCTSubmanagerFiles;
+@protocol OCTSubmanagerFriends;
+@protocol OCTSubmanagerObjects;
+@protocol OCTSubmanagerUser;
 
 @protocol OCTManager <NSObject>
 
 /**
  * Submanager responsible for connecting to other nodes.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerBootstrap *bootstrap;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerBootstrap> bootstrap;
 
 /**
  * Submanager with all video/calling methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerCalls *calls;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerCalls> calls;
 
 /**
  * Submanager with all chats methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerChats *chats;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerChats> chats;
 
 /**
  * Submanager with all DNS methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerDNS *dns;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerDNS> dns;
 
 /**
  * Submanager with all files methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerFiles *files;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerFiles> files;
 
 /**
  * Submanager with all friends methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerFriends *friends;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerFriends> friends;
 
 /**
  * Submanager with all objects methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerObjects *objects;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerObjects> objects;
 
 /**
  * Submanager with all user methods.
  */
-@property (strong, nonatomic, readonly) OCTSubmanagerUser *user;
+@property (strong, nonatomic, readonly) id<OCTSubmanagerUser> user;
 
 /**
  * Configuration used by OCTManager.

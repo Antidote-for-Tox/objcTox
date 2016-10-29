@@ -10,7 +10,7 @@
 @class OCTFriend;
 @class OCTMessageAbstract;
 
-@interface OCTSubmanagerChats : NSObject
+@protocol OCTSubmanagerChats <NSObject>
 
 /**
  * Searches for a chat with specific friend. If chat is not found creates one and returns it.

@@ -11,7 +11,7 @@
 @class OCTChat;
 @class RLMResults;
 
-@interface OCTSubmanagerObjects : NSObject
+@protocol OCTSubmanagerObjects <NSObject>
 
 /**
  * This property can be used to save any generic data you like.

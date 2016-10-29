@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerBootstrap+Private.h"
+#import "OCTSubmanagerBootstrapImpl.h"
 #import "OCTPredefined.h"
 #import "OCTNode.h"
 #import "OCTTox.h"
@@ -14,7 +14,7 @@ static const NSTimeInterval kDidConnectDelay = 10.0;
 static const NSTimeInterval kIterationTime = 5.0;
 static const NSUInteger kNodesPerIteration = 4;
 
-@interface OCTSubmanagerBootstrap ()
+@interface OCTSubmanagerBootstrapImpl ()
 
 @property (strong, nonatomic) NSMutableSet *addedNodes;
 
@@ -27,7 +27,7 @@ static const NSUInteger kNodesPerIteration = 4;
 
 @end
 
-@implementation OCTSubmanagerBootstrap
+@implementation OCTSubmanagerBootstrapImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Lifecycle
@@ -121,9 +121,9 @@ static const NSUInteger kNodesPerIteration = 4;
 
 - (void)tryToBootstrapAfter:(NSTimeInterval)after
 {
-    __weak OCTSubmanagerBootstrap *weakSelf = self;
+    __weak OCTSubmanagerBootstrapImpl *weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, after * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        __strong OCTSubmanagerBootstrap *strongSelf = weakSelf;
+        __strong OCTSubmanagerBootstrapImpl *strongSelf = weakSelf;
 
         if (! strongSelf) {
             OCTLogInfo(@"OCTSubmanagerBootstrap is dead, seems that OCTManager was killed, quiting.");

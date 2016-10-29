@@ -2,19 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerChats.h"
-#import "OCTSubmanagerChats+Private.h"
+#import "OCTSubmanagerChatsImpl.h"
 #import "OCTTox.h"
 #import "OCTRealmManager.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTChat.h"
 
-@interface OCTSubmanagerChats ()
-
-@end
-
-@implementation OCTSubmanagerChats
+@implementation OCTSubmanagerChatsImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Public

@@ -6,7 +6,7 @@
 
 #import "OCTRealmTests.h"
 
-#import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerCallsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTAudioEngine.h"
 #import "OCTMessageCall.h"
@@ -17,7 +17,7 @@
 
 @import AVFoundation;
 
-@interface OCTSubmanagerCalls (Tests)
+@interface OCTSubmanagerCallsImpl (Tests)
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
@@ -48,10 +48,10 @@
 
 @end
 
-@interface OCTSubmanagerCallsTests : OCTRealmTests
+@interface OCTSubmanagerCallsImplTests : OCTRealmTests
 
 @property (strong, nonatomic) id dataSource;
-@property (strong, nonatomic) OCTSubmanagerCalls *callManager;
+@property (strong, nonatomic) OCTSubmanagerCallsImpl *callManager;
 @property (strong, nonatomic) OCTTox *tox;
 @property (strong, nonatomic) id mockedAudioEngine;
 @property (strong, nonatomic) id mockedVideoEngine;
@@ -59,13 +59,13 @@
 
 @end
 
-@implementation OCTSubmanagerCallsTests
+@implementation OCTSubmanagerCallsImplTests
 
 - (void)setUp
 {
     [super setUp];
     self.tox = [[OCTTox alloc] initWithOptions:[OCTToxOptions new] savedData:nil error:nil];
-    self.callManager = [[OCTSubmanagerCalls alloc] initWithTox:self.tox];
+    self.callManager = [[OCTSubmanagerCallsImpl alloc] initWithTox:self.tox];
 
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
@@ -107,7 +107,7 @@
     OCMStub([self.mockedToxAV alloc]).andReturn(self.mockedToxAV);
     OCMStub([self.mockedToxAV initWithTox:tox error:nil]).andReturn(self.mockedToxAV);
 
-    OCTSubmanagerCalls *manager = [[OCTSubmanagerCalls alloc] initWithTox:tox];
+    OCTSubmanagerCallsImpl *manager = [[OCTSubmanagerCallsImpl alloc] initWithTox:tox];
 
     XCTAssertNotNil(manager);
     OCMVerify([(OCTToxAV *)self.mockedToxAV start]);

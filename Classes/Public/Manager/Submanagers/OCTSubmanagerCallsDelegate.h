@@ -3,13 +3,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 @class OCTCall;
-@class OCTSubmanagerCalls;
+@protocol OCTSubmanagerCalls;
 
 @protocol OCTSubmanagerCallDelegate <NSObject>
 
 /**
  * This gets called when we receive a call.
  **/
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
+- (void)callSubmanager:(id<OCTSubmanagerCalls>)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled;
 
 @end

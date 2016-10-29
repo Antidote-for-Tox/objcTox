@@ -2,15 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerCallsImpl.h"
 #import "OCTLogging.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
-@interface OCTSubmanagerCalls () <OCTToxAVDelegate>
-
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+@interface OCTSubmanagerCallsImpl () <OCTToxAVDelegate>
 
 @property (strong, nonatomic) OCTToxAV *toxAV;
 @property (strong, nonatomic) OCTAudioEngine *audioEngine;
@@ -20,7 +18,9 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 @end
 
-@implementation OCTSubmanagerCalls : NSObject
+@implementation OCTSubmanagerCallsImpl : NSObject
+    @synthesize delegate = _delegate;
+@synthesize dataSource = _dataSource;
 
 #pragma mark - Lifecycle
 

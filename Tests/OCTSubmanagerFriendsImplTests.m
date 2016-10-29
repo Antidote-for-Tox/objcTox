@@ -6,8 +6,7 @@
 #import <OCMock/OCMock.h>
 
 #import "OCTRealmTests.h"
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerFriends+Private.h"
+#import "OCTSubmanagerFriendsImpl.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTTox.h"
 #import "OCTFriendRequest.h"
@@ -22,15 +21,15 @@ static const BOOL kIsTyping = YES;
 static NSDate *sLastSeenOnline;
 static NSString *const kMessage = @"kMessage";
 
-@interface OCTSubmanagerFriendsTests : OCTRealmTests
+@interface OCTSubmanagerFriendsImplTests : OCTRealmTests
 
-@property (strong, nonatomic) OCTSubmanagerFriends *submanager;
+@property (strong, nonatomic) OCTSubmanagerFriendsImpl *submanager;
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
 
 @end
 
-@implementation OCTSubmanagerFriendsTests
+@implementation OCTSubmanagerFriendsImplTests
 
 - (void)setUp
 {
@@ -45,7 +44,7 @@ static NSString *const kMessage = @"kMessage";
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
 
-    self.submanager = [OCTSubmanagerFriends new];
+    self.submanager = [OCTSubmanagerFriendsImpl new];
     self.submanager.dataSource = self.dataSource;
 }
 

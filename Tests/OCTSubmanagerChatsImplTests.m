@@ -7,21 +7,21 @@
 
 #import "OCTRealmTests.h"
 
-#import "OCTSubmanagerChats+Private.h"
+#import "OCTSubmanagerChatsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTTox.h"
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 
-@interface OCTSubmanagerChatsTests : OCTRealmTests
+@interface OCTSubmanagerChatsImplTests : OCTRealmTests
 
-@property (strong, nonatomic) OCTSubmanagerChats *submanager;
+@property (strong, nonatomic) OCTSubmanagerChatsImpl *submanager;
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
 
 @end
 
-@implementation OCTSubmanagerChatsTests
+@implementation OCTSubmanagerChatsImplTests
 
 - (void)setUp
 {
@@ -34,7 +34,7 @@
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
 
-    self.submanager = [OCTSubmanagerChats new];
+    self.submanager = [OCTSubmanagerChatsImpl new];
     self.submanager.dataSource = self.dataSource;
 }
 

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import "OCTUserViewController.h"
+#import "OCTSubmanagerUser.h"
 
 typedef NS_ENUM(NSUInteger, Row) {
     RowConnectionStatus,
@@ -22,7 +23,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
                                      NSTextFieldDelegate,
                                      OCTSubmanagerUserDelegate>
 
-@property (weak, nonatomic) OCTSubmanagerUser *userManager;
+@property (weak, nonatomic) id<OCTSubmanagerUser> userManager;
 @property (weak) IBOutlet NSTableView *userTableView;
 @property (strong, nonatomic) NSArray *userData;
 @property (weak) IBOutlet NSTableColumn *firstColumn;
@@ -34,7 +35,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 
 @implementation OCTUserViewController
 
-- (instancetype)initWithManager:(OCTSubmanagerUser *)userManager
+- (instancetype)initWithManager:(id<OCTSubmanagerUser>)userManager
 {
     self = [super initWithNibName:kNibName bundle:nil];
 
@@ -162,7 +163,7 @@ static NSString *const kTableViewIdentifier = @"userTableViewIdent";
 
 #pragma mark -  OCTSubmanagerUserDelegate
 
-- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
+- (void)submanagerUser:(nonnull id<OCTSubmanagerUser>)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
 {
     [self.userTableView reloadData];
 }

@@ -6,7 +6,7 @@
 
 #import "OCTToxConstants.h"
 
-@interface OCTSubmanagerBootstrap : NSObject
+@protocol OCTSubmanagerBootstrap <NSObject>
 
 /**
  * Add node to bootstrap with.

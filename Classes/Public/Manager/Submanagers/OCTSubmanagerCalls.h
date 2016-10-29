@@ -8,11 +8,10 @@
 #import "OCTToxAVConstants.h"
 #import "OCTSubmanagerCallsDelegate.h"
 
-@class OCTSubmanagerCalls;
 @class OCTToxAV;
 @class OCTCall;
 
-@interface OCTSubmanagerCalls : NSObject
+@protocol OCTSubmanagerCalls <NSObject>
 
 @property (nullable, weak, nonatomic) id<OCTSubmanagerCallDelegate> delegate;
 
@@ -101,11 +100,7 @@
  */
 - (BOOL)setAudioBitrate:(int)bitrate forCall:(nonnull OCTCall *)call error:(NSError *__nullable *__nullable)error;
 
-@end
-
 #if ! TARGET_OS_IPHONE
-
-@interface OCTSubmanagerCalls (MacDevice)
 
 /**
  * Set input source and output targets for A/V.
@@ -125,11 +120,7 @@
 - (BOOL)setVideoInputDevice:(nullable NSString *)deviceUniqueID
                       error:(NSError *__nullable *__nullable)error;
 
-@end
-
 #else
-
-@interface OCTSubmanagerCalls (iOSDevice)
 
 /**
  * Send the audio to the speaker
@@ -149,6 +140,6 @@
  */
 - (BOOL)switchToCameraFront:(BOOL)front error:(NSError *__nullable *__nullable)error;
 
-@end
-
 #endif
+
+@end

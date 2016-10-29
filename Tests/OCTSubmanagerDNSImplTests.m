@@ -5,7 +5,7 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
-#import "OCTSubmanagerDNS+Private.h"
+#import "OCTSubmanagerDNSImpl.h"
 #import "OCTToxDNS.h"
 #import "OCTToxDNS3Object.h"
 #import "OCTManagerConstants.h"
@@ -47,23 +47,23 @@ typedef NS_ENUM(NSUInteger, MockedQueryType) {
     MockedQueryTypeFailureCallback,
 };
 
-@interface OCTSubmanagerDNS (Tests)
+@interface OCTSubmanagerDNSImpl (Tests)
 @property (strong, nonatomic) NSMutableDictionary *dns3Dictionary;
 @end
 
-@interface OCTSubmanagerDNSTests : XCTestCase
+@interface OCTSubmanagerDNSImplTests : XCTestCase
 
-@property (strong, nonatomic) OCTSubmanagerDNS *submanager;
+@property (strong, nonatomic) OCTSubmanagerDNSImpl *submanager;
 
 @end
 
-@implementation OCTSubmanagerDNSTests
+@implementation OCTSubmanagerDNSImplTests
 
 - (void)setUp
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    self.submanager = [OCTSubmanagerDNS new];
+    self.submanager = [OCTSubmanagerDNSImpl new];
 }
 
 - (void)tearDown

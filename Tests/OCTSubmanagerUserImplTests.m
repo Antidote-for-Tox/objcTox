@@ -6,19 +6,19 @@
 #import <XCTest/XCTest.h>
 
 #import "OCTRealmTests.h"
-#import "OCTSubmanagerUser+Private.h"
+#import "OCTSubmanagerUserImpl.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTTox.h"
 
-@interface OCTSubmanagerUserTests : OCTRealmTests
+@interface OCTSubmanagerUserImplTests : OCTRealmTests
 
-@property (strong, nonatomic) OCTSubmanagerUser *submanager;
+@property (strong, nonatomic) OCTSubmanagerUserImpl *submanager;
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
 
 @end
 
-@implementation OCTSubmanagerUserTests
+@implementation OCTSubmanagerUserImplTests
 
 - (void)setUp
 {
@@ -30,7 +30,7 @@
     OCMStub([self.dataSource managerGetTox]).andReturn(self.tox);
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
 
-    self.submanager = [OCTSubmanagerUser new];
+    self.submanager = [OCTSubmanagerUserImpl new];
     self.submanager.dataSource = self.dataSource;
 }
 

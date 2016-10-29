@@ -12,7 +12,7 @@
 
 #pragma mark - OCTSubmanagerCalls Delegate
 
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled
+- (void)callSubmanager:(id<OCTSubmanagerCalls>)callSubmanager receiveCall:(OCTCall *)call audioEnabled:(BOOL)audioEnabled videoEnabled:(BOOL)videoEnabled
 {
     NSString *title = [NSString stringWithFormat:@"audio: %d video: %d", audioEnabled, videoEnabled];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Receiving call" message:title preferredStyle:UIAlertControllerStyleAlert];
@@ -48,6 +48,6 @@
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
-- (void)callSubmanager:(OCTSubmanagerCalls *)callSubmanager audioBitRateChanged:(OCTToxAVAudioBitRate)bitRate stable:(BOOL)stable forCall:(OCTCall *)call
+- (void)callSubmanager:(id<OCTSubmanagerCalls>)callSubmanager audioBitRateChanged:(OCTToxAVAudioBitRate)bitRate stable:(BOOL)stable forCall:(OCTCall *)call
 {}
 @end
