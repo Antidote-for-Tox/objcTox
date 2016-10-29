@@ -5,12 +5,12 @@
 #import <Foundation/Foundation.h>
 #import "OCTToxConstants.h"
 
-@class OCTSubmanagerUser;
+@protocol OCTSubmanagerUser;
 @protocol OCTSubmanagerUserDelegate <NSObject>
-- (void)submanagerUser:(nonnull OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
+- (void)submanagerUser:(nonnull id<OCTSubmanagerUser>)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus;
 @end
 
-@interface OCTSubmanagerUser : NSObject
+@protocol OCTSubmanagerUser <NSObject>
 
 @property (weak, nonatomic, nullable) id<OCTSubmanagerUserDelegate> delegate;
 

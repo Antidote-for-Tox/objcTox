@@ -2,17 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerUser+Private.h"
+#import "OCTSubmanagerUserImpl.h"
 #import "OCTTox.h"
 #import "OCTManagerConstants.h"
 #import "OCTRealmManager.h"
 #import "OCTSettingsStorageObject.h"
 
-@interface OCTSubmanagerUser ()
-
-@end
-
-@implementation OCTSubmanagerUser
+@implementation OCTSubmanagerUserImpl
+@synthesize delegate = _delegate;
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Properties

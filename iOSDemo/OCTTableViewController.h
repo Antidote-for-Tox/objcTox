@@ -8,9 +8,9 @@
 @interface OCTTableViewController : UIViewController
 
 @property (strong, nonatomic, readonly) UITableView *tableView;
-@property (strong, nonatomic, readonly) OCTManager *manager;
+@property (strong, nonatomic, readonly) id<OCTManager> manager;
 
-- (instancetype)initWithManager:(OCTManager *)manager;
+- (instancetype)initWithManager:(id<OCTManager>)manager;
 
 - (UITableViewCell *)cellForIndexPath:(NSIndexPath *)indexPath;
 

@@ -4,22 +4,22 @@
 
 #import <objc/runtime.h>
 
-#import "OCTManager.h"
+#import "OCTManagerImpl.h"
 #import "OCTTox.h"
 #import "OCTToxEncryptSave.h"
 #import "OCTManagerConfiguration.h"
 #import "OCTManagerFactory.h"
-#import "OCTSubmanagerBootstrap+Private.h"
-#import "OCTSubmanagerCalls+Private.h"
-#import "OCTSubmanagerChats+Private.h"
-#import "OCTSubmanagerDNS+Private.h"
-#import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
-#import "OCTSubmanagerObjects+Private.h"
-#import "OCTSubmanagerUser+Private.h"
+#import "OCTSubmanagerBootstrapImpl.h"
+#import "OCTSubmanagerCallsImpl.h"
+#import "OCTSubmanagerChatsImpl.h"
+#import "OCTSubmanagerDNSImpl.h"
+#import "OCTSubmanagerFilesImpl.h"
+#import "OCTSubmanagerFriendsImpl.h"
+#import "OCTSubmanagerObjectsImpl.h"
+#import "OCTSubmanagerUserImpl.h"
 #import "OCTRealmManager.h"
 
-@interface OCTManager () <OCTToxDelegate, OCTSubmanagerDataSource>
+@interface OCTManagerImpl () <OCTToxDelegate, OCTSubmanagerDataSource>
 
 @property (copy, nonatomic, readonly) OCTManagerConfiguration *currentConfiguration;
 
@@ -31,31 +31,18 @@
 @property (strong, nonatomic, readonly) OCTRealmManager *realmManager;
 @property (strong, atomic) NSNotificationCenter *notificationCenter;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
-@property (strong, nonatomic, readwrite) OCTSubmanagerCalls *calls;
-@property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
-@property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrapImpl *bootstrap;
+@property (strong, nonatomic, readwrite) OCTSubmanagerCallsImpl *calls;
+@property (strong, nonatomic, readwrite) OCTSubmanagerChatsImpl *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerDNSImpl *dns;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFilesImpl *files;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriendsImpl *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerObjectsImpl *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUserImpl *user;
 
 @end
 
-@implementation OCTManager
-
-#pragma mark -  Class methods
-
-+ (BOOL)isToxSaveEncryptedAtPath:(NSString *)path
-{
-    NSData *savedData = [OCTManager getSavedDataFromPath:path];
-
-    if (! savedData) {
-        return NO;
-    }
-
-    return [OCTToxEncryptSave isDataEncrypted:savedData];
-}
+@implementation OCTManagerImpl
 
 #pragma mark -  Lifecycle
 
@@ -87,17 +74,6 @@
     [self createSubmanagers];
 
     return self;
-}
-
-+ (void)managerWithConfiguration:(OCTManagerConfiguration *)configuration
-                 encryptPassword:(nonnull NSString *)encryptPassword
-                    successBlock:(nullable void (^)(OCTManager *manager))successBlock
-                    failureBlock:(nullable void (^)(NSError *error))failureBlock
-{
-    return [OCTManagerFactory managerWithConfiguration:configuration
-                                       encryptPassword:encryptPassword
-                                          successBlock:successBlock
-                                          failureBlock:failureBlock];
 }
 
 - (void)dealloc
@@ -192,7 +168,7 @@
 
 #pragma mark -  Private
 
-+ (NSData *)getSavedDataFromPath:(NSString *)path
+- (NSData *)getSavedDataFromPath:(NSString *)path
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:path] ?
            ([NSData dataWithContentsOfFile:path]) :
@@ -201,7 +177,7 @@
 
 - (BOOL)isDataAtPath:(NSString *)path encryptedWithPassword:(NSString *)password
 {
-    NSData *savedData = [OCTManager getSavedDataFromPath:path];
+    NSData *savedData = [self getSavedDataFromPath:path];
 
     if (! savedData) {
         return NO;
@@ -216,15 +192,15 @@
 
 - (void)createSubmanagers
 {
-    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrap class]];
-    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChats class]];
-    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNS class]];
-    _files = [self createSubmanagerWithClass:[OCTSubmanagerFiles class]];
-    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriends class]];
-    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjects class]];
-    _user = [self createSubmanagerWithClass:[OCTSubmanagerUser class]];
+    _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrapImpl class]];
+    _chats = [self createSubmanagerWithClass:[OCTSubmanagerChatsImpl class]];
+    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNSImpl class]];
+    _files = [self createSubmanagerWithClass:[OCTSubmanagerFilesImpl class]];
+    _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriendsImpl class]];
+    _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjectsImpl class]];
+    _user = [self createSubmanagerWithClass:[OCTSubmanagerUserImpl class]];
 
-    OCTSubmanagerCalls *calls = [[OCTSubmanagerCalls alloc] initWithTox:_tox];
+    OCTSubmanagerCallsImpl *calls = [[OCTSubmanagerCallsImpl alloc] initWithTox:_tox];
     calls.dataSource = self;
     _calls = calls;
     [_calls setupWithError:nil];
@@ -242,7 +218,7 @@
     self.user = nil;
 }
 
-- (id<OCTSubmanagerProtocol>)createSubmanagerWithClass:(Class)class
+- (id)createSubmanagerWithClass:(Class)class
 {
     id<OCTSubmanagerProtocol> submanager = [[class alloc] init];
     submanager.dataSource = self;
@@ -328,7 +304,7 @@
     NSString *toxFilePath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
 
     if (! [self isDataAtPath:toxFilePath encryptedWithPassword:oldPassword]) {
-        return NO;
+        return nil;
     }
 
     __block OCTToxEncryptSave *newEncryptSave;

@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerObjectsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
@@ -11,11 +11,7 @@
 #import "OCTMessageAbstract.h"
 #import "OCTSettingsStorageObject.h"
 
-@interface OCTSubmanagerObjects ()
-
-@end
-
-@implementation OCTSubmanagerObjects
+@implementation OCTSubmanagerObjectsImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Public

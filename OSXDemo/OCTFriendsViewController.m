@@ -15,7 +15,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @interface OCTFriendsViewController () <NSTableViewDataSource, NSTableViewDelegate>
 
-@property (weak, nonatomic) OCTManager *manager;
+@property (weak, nonatomic) id<OCTManager> manager;
 
 @property (strong, nonatomic) RLMResults<OCTFriend *> *friends;
 @property (strong, nonatomic) RLMNotificationToken *friendsNotificationToken;
@@ -34,7 +34,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @implementation OCTFriendsViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super initWithNibName:kNibName bundle:nil];
 

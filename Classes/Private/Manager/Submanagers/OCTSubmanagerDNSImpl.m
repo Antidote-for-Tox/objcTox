@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerDNS+Private.h"
+#import "OCTSubmanagerDNSImpl.h"
 #import "OCTToxDNS.h"
 #import "OCTPredefined.h"
 #import "OCTManagerConstants.h"
@@ -27,7 +27,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
                              DNSServiceErrorType errorCode, const char *fullname, uint16_t rrtype,
                              uint16_t rrclass, uint16_t rdlen, const void *rdata, uint32_t ttl, void *context);
 
-@interface OCTSubmanagerDNS ()
+@interface OCTSubmanagerDNSImpl ()
 
 /**
  * Dictionary contains:
@@ -38,7 +38,7 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
 
 @end
 
-@implementation OCTSubmanagerDNS
+@implementation OCTSubmanagerDNSImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Lifecycle
@@ -107,10 +107,10 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
     OCTToxDNS3Object *dns3Object = [dns generateDNS3StringForName:name maxStringLength:kMaxDNS3StringLength];
     NSString *fullname = [NSString stringWithFormat:@"_%@._tox.%@", dns3Object.generatedString, domain];
 
-    __weak OCTSubmanagerDNS *weakSelf = self;
+    __weak OCTSubmanagerDNSImpl *weakSelf = self;
 
     [self makeDNSQueryWithFullname:fullname callback:^(DNSServiceErrorType errorCode, NSData *data) {
-        __strong OCTSubmanagerDNS *strongSelf = weakSelf;
+        __strong OCTSubmanagerDNSImpl *strongSelf = weakSelf;
 
         if ((errorCode != kDNSServiceErr_NoError) || ! data) {
             [strongSelf callFailureBlock:failureBlock withCode:OCTDNSErrorDNSQueryError];
@@ -147,11 +147,11 @@ static void dnsQueryFunction(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_
         return;
     }
 
-    __weak OCTSubmanagerDNS *weakSelf = self;
+    __weak OCTSubmanagerDNSImpl *weakSelf = self;
     NSString *fullname = [NSString stringWithFormat:@"%@._tox.%@.", name, domain];
 
     [self makeDNSQueryWithFullname:fullname callback:^(DNSServiceErrorType errorCode, NSData *data) {
-        __strong OCTSubmanagerDNS *strongSelf = weakSelf;
+        __strong OCTSubmanagerDNSImpl *strongSelf = weakSelf;
 
         if ((errorCode != kDNSServiceErr_NoError) || ! data) {
             [strongSelf callFailureBlock:failureBlock withCode:OCTDNSErrorDNSQueryError];

@@ -2,18 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerFriends.h"
-#import "OCTSubmanagerFriends+Private.h"
+#import "OCTSubmanagerFriendsImpl.h"
 #import "OCTTox.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
 #import "OCTRealmManager.h"
 
-@interface OCTSubmanagerFriends ()
-
-@end
-
-@implementation OCTSubmanagerFriends
+@implementation OCTSubmanagerFriendsImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Public

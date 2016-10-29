@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super initWithManager:manager];
 
@@ -173,7 +173,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 
 #pragma mark -  OCTSubmanagerUserDelegate
 
-- (void)submanagerUser:(OCTSubmanagerUser *)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
+- (void)submanagerUser:(id<OCTSubmanagerUser>)submanager connectionStatusUpdate:(OCTToxConnectionStatus)connectionStatus
 {
     [self.tableView reloadData];
 }

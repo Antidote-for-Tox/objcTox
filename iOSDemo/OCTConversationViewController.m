@@ -23,7 +23,7 @@
 
 @implementation OCTConversationViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager chat:(OCTChat *)chat
+- (instancetype)initWithManager:(id<OCTManager>)manager chat:(OCTChat *)chat
 {
     self = [super initWithManager:manager];
 

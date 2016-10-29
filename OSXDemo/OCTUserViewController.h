@@ -7,6 +7,6 @@
 
 @interface OCTUserViewController : NSViewController
 
-- (instancetype)initWithManager:(OCTSubmanagerUser *)userManager;
+- (instancetype)initWithManager:(id<OCTSubmanagerUser>)userManager;
 
 @end

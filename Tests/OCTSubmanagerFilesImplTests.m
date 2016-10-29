@@ -5,11 +5,11 @@
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
 
-@interface OCTSubmanagerFilesTests : XCTestCase
+@interface OCTSubmanagerFilesImplTests : XCTestCase
 
 @end
 
-@implementation OCTSubmanagerFilesTests
+@implementation OCTSubmanagerFilesImplTests
 
 - (void)setUp
 {

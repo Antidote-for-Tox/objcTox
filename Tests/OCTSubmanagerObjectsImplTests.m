@@ -5,7 +5,7 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
-#import "OCTSubmanagerObjects+Private.h"
+#import "OCTSubmanagerObjectsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTFriend.h"
 #import "OCTFriendRequest.h"
@@ -13,15 +13,15 @@
 #import "OCTMessageAbstract.h"
 #import "OCTSettingsStorageObject.h"
 
-@interface OCTSubmanagerObjectsTests : XCTestCase
+@interface OCTSubmanagerObjectsImplTests : XCTestCase
 
-@property (strong, nonatomic) OCTSubmanagerObjects *submanager;
+@property (strong, nonatomic) OCTSubmanagerObjectsImpl *submanager;
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id realmManager;
 
 @end
 
-@implementation OCTSubmanagerObjectsTests
+@implementation OCTSubmanagerObjectsImplTests
 
 - (void)setUp
 {
@@ -33,7 +33,7 @@
     self.realmManager = OCMClassMock([OCTRealmManager class]);
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
 
-    self.submanager = [OCTSubmanagerObjects new];
+    self.submanager = [OCTSubmanagerObjectsImpl new];
     self.submanager.dataSource = self.dataSource;
 }
 

@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super initWithManager:manager];
 

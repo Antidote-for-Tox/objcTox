@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#import "OCTSubmanagerFiles+Private.h"
+#import "OCTSubmanagerFilesImpl.h"
 #import "OCTSubmanagerFilesProgressSubscriber.h"
 #import "OCTTox.h"
 #import "OCTToxConstants.h"
@@ -32,7 +32,7 @@ static NSString *const kDownloadsTempDirectory = @"me.dvor.objcTox.downloads";
 static NSString *const kProgressSubscribersKey = @"kProgressSubscribersKey";
 static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
-@interface OCTSubmanagerFiles ()
+@interface OCTSubmanagerFilesImpl ()
 
 @property (strong, nonatomic, readonly) NSOperationQueue *queue;
 
@@ -41,7 +41,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
 @end
 
-@implementation OCTSubmanagerFiles
+@implementation OCTSubmanagerFilesImpl
 @synthesize dataSource = _dataSource;
 
 #pragma mark -  Lifecycle
@@ -620,7 +620,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     NSString *uploads = [self uploadsDirectory];
     NSString *downloads = [self downloadsDirectory];
 
-    __weak OCTSubmanagerFiles *weakSelf = self;
+    __weak OCTSubmanagerFilesImpl *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSFileManager *fileManager = [NSFileManager defaultManager];
 
@@ -651,7 +651,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         OCTToxFileSize freedSpace = 0;
 
         for (NSString *path in allFiles) {
-            __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+            __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
             if (! strongSelf) {
                 OCTLogWarn(@"cleanup: submanager was killed, quiting");
             }
@@ -689,7 +689,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
         OCTLogInfo(@"cleanup: done. Freed %lld bytes.", freedSpace);
 
-        __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+        __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
         @synchronized(strongSelf.filesCleanupLock) {
             strongSelf.filesCleanupInProgress = NO;
         }
@@ -813,10 +813,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 
 - (OCTFileBaseOperationSuccessBlock)fileSuccessBlockWithMessage:(OCTMessageAbstract *)message
 {
-    __weak OCTSubmanagerFiles *weakSelf = self;
+    __weak OCTSubmanagerFilesImpl *weakSelf = self;
 
     return ^(OCTFileBaseOperation *__nonnull operation) {
-               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+               __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
 
             file.fileType = OCTMessageFileTypeReady;
@@ -827,10 +827,10 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
 - (OCTFileBaseOperationFailureBlock)fileFailureBlockWithMessage:(OCTMessageAbstract *)message
                                                userFailureBlock:(void (^)(NSError *))userFailureBlock
 {
-    __weak OCTSubmanagerFiles *weakSelf = self;
+    __weak OCTSubmanagerFilesImpl *weakSelf = self;
 
     return ^(OCTFileBaseOperation *__nonnull operation, NSError *__nonnull error) {
-               __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+               __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
                [strongSelf updateMessageFile:message withBlock:^(OCTMessageFile *file) {
             file.fileType = OCTMessageFileTypeCanceled;
 
@@ -964,7 +964,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }
 
     OCTFileDataOutput *output = [OCTFileDataOutput new];
-    __weak OCTSubmanagerFiles *weakSelf = self;
+    __weak OCTSubmanagerFilesImpl *weakSelf = self;
 
     OCTFileDownloadOperation *operation = [[OCTFileDownloadOperation alloc] initWithTox:self.dataSource.managerGetTox
                                                                              fileOutput:output
@@ -975,7 +975,7 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                           progressBlock:nil
                                                                          etaUpdateBlock:nil
                                                                            successBlock:^(OCTFileBaseOperation *__nonnull operation) {
-        __strong OCTSubmanagerFiles *strongSelf = weakSelf;
+        __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
 
         OCTFriend *friend = [[strongSelf.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
 

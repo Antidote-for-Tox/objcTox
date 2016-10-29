@@ -23,7 +23,7 @@
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super initWithManager:manager];
 

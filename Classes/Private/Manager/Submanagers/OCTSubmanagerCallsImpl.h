@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import "OCTSubmanagerCalls.h"
-#import "OCTSubmanagerDataSource.h"
+#import "OCTSubmanagerProtocol.h"
 #import "OCTToxAV.h"
 #import "OCTManagerConstants.h"
 #import "OCTAudioEngine.h"
@@ -14,13 +14,14 @@
 
 @class OCTTox;
 
-@interface OCTSubmanagerCalls (Private)
-
-@property (weak, nonatomic) id<OCTSubmanagerDataSource> dataSource;
+@interface OCTSubmanagerCallsImpl : NSObject <OCTSubmanagerCalls, OCTSubmanagerProtocol>
 
 /**
  * Initialize the OCTSubmanagerCall
  */
 - (instancetype)initWithTox:(OCTTox *)tox;
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 @end

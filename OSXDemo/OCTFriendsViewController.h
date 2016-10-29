@@ -7,6 +7,6 @@
 
 @interface OCTFriendsViewController : NSViewController
 
-- (instancetype)initWithManager:(OCTManager *)manager;
+- (instancetype)initWithManager:(id<OCTManager>)manager;
 
 @end

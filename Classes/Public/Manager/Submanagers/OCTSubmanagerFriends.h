@@ -7,7 +7,7 @@
 @class OCTFriendRequest;
 @class OCTFriend;
 
-@interface OCTSubmanagerFriends : NSObject
+@protocol OCTSubmanagerFriends <NSObject>
 
 /**
  * Send friend request to given address. Automatically adds friend with this address to friend list.

@@ -5,21 +5,22 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
-#import "OCTManager.h"
+#import "OCTManagerImpl.h"
+#import "OCTManagerFactory.h"
 #import "OCTManagerConstants.h"
 #import "OCTTox.h"
 #import "OCTToxAV.h"
 #import "OCTToxEncryptSave.h"
 #import "OCTSubmanagerDataSource.h"
 #import "OCTManagerConfiguration.h"
-#import "OCTSubmanagerBootstrap+Private.h"
-#import "OCTSubmanagerChats+Private.h"
-#import "OCTSubmanagerDNS+Private.h"
-#import "OCTSubmanagerFriends+Private.h"
-#import "OCTSubmanagerFiles+Private.h"
-#import "OCTSubmanagerUser+Private.h"
-#import "OCTSubmanagerObjects+Private.h"
-#import "OCTSubmanagerCalls+Private.h"
+#import "OCTSubmanagerBootstrapImpl.h"
+#import "OCTSubmanagerChatsImpl.h"
+#import "OCTSubmanagerDNSImpl.h"
+#import "OCTSubmanagerFriendsImpl.h"
+#import "OCTSubmanagerFilesImpl.h"
+#import "OCTSubmanagerUserImpl.h"
+#import "OCTSubmanagerObjectsImpl.h"
+#import "OCTSubmanagerCallsImpl.h"
 #import "OCTRealmManager.h"
 #import "OCTDefaultFileStorage.h"
 #import "OCTMessageAbstract.h"
@@ -28,19 +29,19 @@
 
 static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
-@interface OCTManager (Tests) <OCTSubmanagerDataSource>
+@interface OCTManagerImpl (Tests) <OCTSubmanagerDataSource>
 
 @property (strong, nonatomic, readonly) OCTTox *tox;
 @property (strong, nonatomic, readonly) OCTToxAV *toxAV;
 @property (copy, nonatomic, readwrite) OCTManagerConfiguration *configuration;
 
-@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrap *bootstrap;
-@property (strong, nonatomic, readwrite) OCTSubmanagerChats *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerDNS *dns;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFiles *files;
-@property (strong, nonatomic, readwrite) OCTSubmanagerFriends *friends;
-@property (strong, nonatomic, readwrite) OCTSubmanagerObjects *objects;
-@property (strong, nonatomic, readwrite) OCTSubmanagerUser *user;
+@property (strong, nonatomic, readwrite) OCTSubmanagerBootstrapImpl *bootstrap;
+@property (strong, nonatomic, readwrite) OCTSubmanagerChatsImpl *chats;
+@property (strong, nonatomic, readwrite) OCTSubmanagerDNSImpl *dns;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFilesImpl *files;
+@property (strong, nonatomic, readwrite) OCTSubmanagerFriendsImpl *friends;
+@property (strong, nonatomic, readwrite) OCTSubmanagerObjectsImpl *objects;
+@property (strong, nonatomic, readwrite) OCTSubmanagerUserImpl *user;
 
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 @property (strong, nonatomic) NSNotificationCenter *notificationCenter;
@@ -58,9 +59,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 {}
 @end
 
-@interface OCTManagerTests : XCTestCase
+@interface OCTManagerImplTests : XCTestCase
 
-@property (strong, nonatomic) OCTManager *manager;
+@property (strong, nonatomic) OCTManagerImpl *manager;
 @property (nonatomic, assign) id mockedCallManager;
 @property (strong, nonatomic) id tox;
 @property (strong, nonatomic) id toxAV;
@@ -69,7 +70,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 @end
 
-@implementation OCTManagerTests
+@implementation OCTManagerImplTests
 
 - (void)setUp
 {
@@ -83,7 +84,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
                                                attributes:nil
                                                     error:nil];
 
-    self.mockedCallManager = OCMClassMock([OCTSubmanagerCalls class]);
+    self.mockedCallManager = OCMClassMock([OCTSubmanagerCallsImpl class]);
 
     self.tox = OCMClassMock([OCTTox class]);
     OCMStub([self.tox alloc]).andReturn(self.tox);
@@ -175,7 +176,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *encryptOnFirstRunExpectation = [self expectationWithDescription:@"encryptOnFirstRunExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertEqualObjects(userAddress, manager.user.userAddress);
         XCTAssertEqualObjects(@"nonEncrypted", manager.user.userName);
@@ -188,7 +189,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *encryptedExpectation = [self expectationWithDescription:@"encryptedExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertEqualObjects(userAddress, manager.user.userAddress);
         XCTAssertEqualObjects(@"nonEncrypted", manager.user.userName);
@@ -205,7 +206,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *renamedEncryptedExpectation = [self expectationWithDescription:@"renamedEncryptedExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertEqualObjects(userAddress, manager.user.userAddress);
         XCTAssertEqualObjects(@"renamed", manager.user.userName);
@@ -218,7 +219,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *wrongPasswordExpectation = [self expectationWithDescription:@"wrongPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertFalse([manager changeEncryptPassword:@"the password" oldPassword:@"wrong password"]);
 
@@ -230,7 +231,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *newPasswordExpectation = [self expectationWithDescription:@"newPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"new password" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertTrue([manager changeEncryptPassword:@"another" oldPassword:@"new password"]);
 
@@ -242,7 +243,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *anotherPasswordExpectation = [self expectationWithDescription:@"anotherPasswordExpectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"another" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"another" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
 
         [anotherPasswordExpectation fulfill];
@@ -262,7 +263,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(OCTManager *manager) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"password123" successBlock:^(id < OCTManager > manager) {
         XCTAssertNotNil(manager);
         XCTAssertTrue([manager isManagerEncryptedWithPassword:@"password123"]);
         XCTAssertFalse([manager isManagerEncryptedWithPassword:@"wrong password"]);
@@ -285,9 +286,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
                                              error:nil];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    __block OCTManager *manager;
+    __block id<OCTManager> manager;
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"the password" successBlock:^(OCTManager *m) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"the password" successBlock:^(id < OCTManager > m) {
         manager = m;
         [expectation fulfill];
     } failureBlock:nil];
@@ -346,9 +347,9 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     configuration.fileStorage = [self temporaryFileStorage];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    __block OCTManager *manager;
+    __block id<OCTManager> manager;
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"p@s$" successBlock:^(OCTManager *m) {
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"p@s$" successBlock:^(id < OCTManager > m) {
         manager = m;
         [expectation fulfill];
     } failureBlock:nil];
@@ -499,10 +500,10 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     configuration.fileStorage = [self temporaryFileStorage];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    __weak OCTManagerTests *weakSelf = self;
+    __weak OCTManagerImplTests *weakSelf = self;
 
-    [OCTManager managerWithConfiguration:configuration encryptPassword:@"123" successBlock:^(OCTManager *manager) {
-        weakSelf.manager = manager;
+    [OCTManagerFactory managerWithConfiguration:configuration encryptPassword:@"123" successBlock:^(id < OCTManager > manager) {
+        weakSelf.manager = (OCTManagerImpl *)manager;
         [expectation fulfill];
     } failureBlock:nil];
 

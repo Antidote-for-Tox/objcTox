@@ -4,11 +4,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class OCTSubmanagerCalls;
+@protocol OCTSubmanagerCalls;
 @class OCTCall;
 
 @interface OCTVideoViewController : UIViewController
 
-- (instancetype)initWithCallManager:(OCTSubmanagerCalls *)manager call:(OCTCall *)call;
+- (instancetype)initWithCallManager:(id<OCTSubmanagerCalls>)manager call:(OCTCall *)call;
 
 @end

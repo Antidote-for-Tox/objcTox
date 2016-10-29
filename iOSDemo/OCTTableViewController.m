@@ -13,7 +13,7 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
 @interface OCTTableViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
-@property (strong, nonatomic) OCTManager *manager;
+@property (strong, nonatomic) id<OCTManager> manager;
 
 @end
 
@@ -21,7 +21,7 @@ static NSString *const kUITableViewCellIdentifier = @"kUITableViewCellIdentifier
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithManager:(OCTManager *)manager
+- (instancetype)initWithManager:(id<OCTManager>)manager
 {
     self = [super init];
 

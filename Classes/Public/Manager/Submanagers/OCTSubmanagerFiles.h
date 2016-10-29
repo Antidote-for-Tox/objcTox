@@ -8,7 +8,7 @@
 @class OCTChat;
 @protocol OCTSubmanagerFilesProgressSubscriber;
 
-@interface OCTSubmanagerFiles : NSObject
+@protocol OCTSubmanagerFiles <NSObject>
 
 /**
  * Send given data to particular chat. After sending OCTMessageAbstract with messageFile will be added to this chat.
