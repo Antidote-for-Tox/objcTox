@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Adding IPv6 nodes to bootstrap.
 - Using TCP relays during bootstrap.
 
-### Changes
+### Changed
 - Realm updated to version 1.0.1.
 - RBQFetchedResultsController removed. Use RLMResults with `addNotificationBlock:` method insted.
 - OCTSubmanagerFiles: using original file names instead of generated ones.
@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OCTDefaultFileStorage: storing all upload and download files in single "files" directory.
 - OCTManager: manager is now created asynchronously.
 - OCTManager: added method for verifying current encrypt password.
+- OCTManager & OCTSubmanagers became protocols.
 
 ### Fixes
 - Fixing freeze when bootstrapping on bad network.
@@ -29,7 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - File transfers.
 - Avatars.
 
-### Changes
+### Changed
 - Bootstrap nodes updated and moved to separate json file.
 - Realm updated to version 0.98.5.
 - Killing all active calls when killing toxav.
@@ -43,7 +44,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - install.sh script.
 - OS X Demo.
 
-### Changes
+### Changed
 - Updating toxcore to 0.0.1-94cc8b1.
 - Splitting calls API for Mac and iOS.
 - Change video quality to default medium.
@@ -58,7 +59,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Audio and video calls.
 
-### Changes
+### Changed
 - toxcore was updated to 0.0.1-542338a.
 - OCTSubmanagerUser: delegate method renamed from OCTSubmanagerUser:connectionStatusUpdate: to submanagerUser:connectionStatusUpdate:
 
