@@ -46,7 +46,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 #pragma mark - Public
 
-- (BOOL)setupWithError:(NSError **)error
+- (BOOL)setupAndReturnError:(NSError **)error
 {
     NSAssert(self.dataSource, @"dataSource is needed before setup of OCTSubmanagerCalls");
     __block BOOL status = NO;
@@ -59,7 +59,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
         self.videoEngine = [OCTVideoEngine new];
         self.videoEngine.toxav = self.toxAV;
 
-        status = [self.videoEngine setupWithError:error];
+        status = [self.videoEngine setupAndReturnError:error];
     });
 
     return status;

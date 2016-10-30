@@ -65,9 +65,9 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
 #pragma mark - Public
 
-- (BOOL)setupWithError:(NSError **)error
+- (BOOL)setupAndReturnError:(NSError **)error
 {
-    OCTLogVerbose(@"setupWithError");
+    OCTLogVerbose(@"setupAndReturnError");
 #if TARGET_OS_IPHONE
     AVCaptureDevice *videoCaptureDevice = [self getDeviceForPosition:AVCaptureDevicePositionFront];
 #else

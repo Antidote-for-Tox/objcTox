@@ -36,7 +36,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
     _manager = manager;
 
-    [manager.calls setupWithError:nil];
+    [manager.calls setupAndReturnError:nil];
 
     _calls = [manager.objects objectsForType:OCTFetchRequestTypeCall predicate:nil];
 

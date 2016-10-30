@@ -26,7 +26,7 @@
  * @param error Pointer to an error when setting up.
  * @return YES on success, otherwise NO.
  */
-- (BOOL)setupWithError:(NSError *__nullable *__nullable)error;
+- (BOOL)setupAndReturnError:(NSError *__nullable *__nullable)error;
 
 /**
  * This class is responsible for telling the end-user what calls we have available.

@@ -120,11 +120,11 @@
     OCMStub([self.mockedAudioEngine new]).andReturn(self.mockedAudioEngine);
 
     OCMStub([self.mockedVideoEngine new]).andReturn(self.mockedVideoEngine);
-    OCMStub([self.mockedVideoEngine setupWithError:[OCMArg anyObjectRef]]).andReturn(YES);
+    OCMStub([self.mockedVideoEngine setupAndReturnError:[OCMArg anyObjectRef]]).andReturn(YES);
 
-    XCTAssertTrue([self.callManager setupWithError:nil]);
+    XCTAssertTrue([self.callManager setupAndReturnError:nil]);
 
-    OCMVerify([self.mockedVideoEngine setupWithError:[OCMArg anyObjectRef]]);
+    OCMVerify([self.mockedVideoEngine setupAndReturnError:[OCMArg anyObjectRef]]);
 }
 
 - (void)testCallToChat

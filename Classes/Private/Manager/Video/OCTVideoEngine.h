@@ -22,7 +22,7 @@
  * @param error Pointer to error object.
  * @return YES if successful, otherwise NO.
  */
-- (BOOL)setupWithError:(NSError **)error;
+- (BOOL)setupAndReturnError:(NSError **)error;
 
 /**
  * Start sending video data.

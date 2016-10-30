@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return Temporary path of current tox save file.
  */
-- (nullable NSString *)exportToxSaveFile:(NSError *__nullable *__nullable)error;
+- (nullable NSString *)exportToxSaveFileAndReturnError:(NSError *__nullable *__nullable)error;
 
 /**
  * Set password to encrypt tox save file and database.

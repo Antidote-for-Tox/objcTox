@@ -485,7 +485,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 {
     [self createManager];
 
-    NSString *path = [self.manager exportToxSaveFile:nil];
+    NSString *path = [self.manager exportToxSaveFileAndReturnError:nil];
     NSString *result = [[self.manager configuration].fileStorage.pathForTemporaryFilesDirectory stringByAppendingPathComponent:@"save.tox"];
     XCTAssertEqualObjects(path, result);
 }

@@ -89,7 +89,7 @@
     return [self.currentConfiguration copy];
 }
 
-- (NSString *)exportToxSaveFile:(NSError **)error
+- (NSString *)exportToxSaveFileAndReturnError:(NSError **)error
 {
     @synchronized(self.toxSaveFileLock) {
         NSString *savedDataPath = self.currentConfiguration.fileStorage.pathForToxSaveFile;
@@ -203,7 +203,7 @@
     OCTSubmanagerCallsImpl *calls = [[OCTSubmanagerCallsImpl alloc] initWithTox:_tox];
     calls.dataSource = self;
     _calls = calls;
-    [_calls setupWithError:nil];
+    [_calls setupAndReturnError:nil];
 }
 
 - (void)killSubmanagers
