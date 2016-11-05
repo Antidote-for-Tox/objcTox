@@ -9,11 +9,6 @@
  * ToxAV functions
  */
 
-extern uint32_t (*_toxav_version_major)(void);
-extern uint32_t (*_toxav_version_minor)(void);
-extern uint32_t (*_toxav_version_patch)(void);
-extern bool (*_toxav_version_is_compatible)(uint32_t major, uint32_t minor, uint32_t patch);
-
 extern ToxAV *(*_toxav_new)(Tox *tox, TOXAV_ERR_NEW *error);
 extern uint32_t (*_toxav_iteration_interval)(const ToxAV *toxAV);
 extern void (*_toxav_iterate)(ToxAV *toxAV);

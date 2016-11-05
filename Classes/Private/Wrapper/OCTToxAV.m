@@ -6,11 +6,6 @@
 #import "OCTToxAV+Private.h"
 #import "OCTLogging.h"
 
-uint32_t (*_toxav_version_major)(void);
-uint32_t (*_toxav_version_minor)(void);
-uint32_t (*_toxav_version_patch)(void);
-bool (*_toxav_version_is_compatible)(uint32_t major, uint32_t minor, uint32_t patch);
-
 ToxAV *(*_toxav_new)(Tox *tox, TOXAV_ERR_NEW *error);
 uint32_t (*_toxav_iteration_interval)(const ToxAV *toxAV);
 void (*_toxav_iterate)(ToxAV *toxAV);
@@ -38,34 +33,6 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 @end
 
 @implementation OCTToxAV
-
-#pragma mark - Class Methods
-
-+ (NSString *)version
-{
-    return [NSString stringWithFormat:@"%lu.%lu.%lu",
-            (unsigned long)[self versionMajor], (unsigned long)[self versionMinor], (unsigned long)[self versionPatch]];
-}
-
-+ (NSUInteger)versionMajor
-{
-    return _toxav_version_major();
-}
-
-+ (NSUInteger)versionMinor
-{
-    return _toxav_version_minor();
-}
-
-+ (NSUInteger)versionPatch
-{
-    return _toxav_version_patch();
-}
-
-+ (BOOL)versionIsCompatibleWith:(NSUInteger)major minor:(NSUInteger)minor patch:(NSUInteger)patch
-{
-    return _toxav_version_is_compatible((uint32_t)major, (uint32_t)minor, (uint32_t)patch);
-}
 
 #pragma mark -  Lifecycle
 - (instancetype)initWithTox:(OCTTox *)tox error:(NSError **)error
@@ -265,12 +232,6 @@ bool (*_toxav_video_send_frame)(ToxAV *toxAV, uint32_t friend_number, uint16_t w
 
 - (void)setupCFunctions
 {
-    _toxav_version_major = toxav_version_major;
-    _toxav_version_minor = toxav_version_minor;
-    _toxav_version_patch = toxav_version_patch;
-
-    _toxav_version_is_compatible = toxav_version_is_compatible;
-
     _toxav_new = toxav_new;
     _toxav_iteration_interval = toxav_iteration_interval;
     _toxav_iterate = toxav_iterate;
