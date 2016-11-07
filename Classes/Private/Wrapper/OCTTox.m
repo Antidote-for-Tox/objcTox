@@ -89,6 +89,8 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
         cOptions.savedata_type = TOX_SAVEDATA_TYPE_NONE;
     }
 
+    cOptions.log_callback = logCallback;
+
     TOX_ERR_NEW cError;
 
     _tox = tox_new(&cOptions, &cError);
@@ -843,7 +845,6 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (void)setupCallbacks
 {
-    tox_callback_log(_tox, logCallback, NULL);
     tox_callback_self_connection_status(_tox, connectionStatusCallback);
     tox_callback_friend_name(_tox, friendNameCallback);
     tox_callback_friend_status_message(_tox, friendStatusMessageCallback);
@@ -1594,19 +1595,19 @@ void logCallback(Tox *tox,
                  void *user_data)
 {
     switch (level) {
-        case TOX_LOG_LEVEL_LOG_TRACE:
+        case TOX_LOG_LEVEL_TRACE:
             OCTLogCCVerbose(@"TRACE: <toxcore: %s:%u, %s> %s", file, line, func, message);
             break;
-        case TOX_LOG_LEVEL_LOG_DEBUG:
+        case TOX_LOG_LEVEL_DEBUG:
             OCTLogCCDebug(@"DEBUG: <toxcore: %s:%u, %s> %s", file, line, func, message);
             break;
-        case TOX_LOG_LEVEL_LOG_INFO:
+        case TOX_LOG_LEVEL_INFO:
             OCTLogCCInfo(@"INFO: <toxcore: %s:%u, %s> %s", file, line, func, message);
             break;
-        case TOX_LOG_LEVEL_LOG_WARNING:
+        case TOX_LOG_LEVEL_WARNING:
             OCTLogCCWarn(@"WARNING: <toxcore: %s:%u, %s> %s", file, line, func, message);
             break;
-        case TOX_LOG_LEVEL_LOG_ERROR:
+        case TOX_LOG_LEVEL_ERROR:
             OCTLogCCError(@"ERROR: <toxcore: %s:%u, %s> %s", file, line, func, message);
             break;
     }
