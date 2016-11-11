@@ -316,6 +316,7 @@
 
     OCTMessageAbstract *message = [OCTMessageAbstract new];
     message.chatUniqueIdentifier = chat.uniqueIdentifier;
+    message.dateInterval = [[NSDate date] timeIntervalSince1970];
     message.messageText = [OCTMessageText new];
     message.messageText.text = @"";
     message.messageText.messageId = 10;
@@ -330,6 +331,22 @@
     [self.submanager tox:self.tox messageDelivered:10 friendNumber:5];
 
     XCTAssertTrue(message.messageText.isDelivered);
+
+    OCTMessageAbstract *anotherMessageSameId = [OCTMessageAbstract new];
+    anotherMessageSameId.chatUniqueIdentifier = chat.uniqueIdentifier;
+    anotherMessageSameId.dateInterval = [[NSDate date] timeIntervalSince1970];
+    anotherMessageSameId.messageText = [OCTMessageText new];
+    anotherMessageSameId.messageText.text = @"";
+    anotherMessageSameId.messageText.messageId = 10;
+    anotherMessageSameId.messageText.isDelivered = NO;
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:anotherMessageSameId];
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.submanager tox:self.tox messageDelivered:10 friendNumber:5];
+
+    XCTAssertTrue(anotherMessageSameId.messageText.isDelivered);
 }
 
 - (OCTChat *)createChatWithFriend:(OCTFriend *)friend
