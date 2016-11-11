@@ -8,9 +8,23 @@
 #import "OCTMessageAbstract.h"
 #import "OCTMessageText.h"
 #import "OCTChat.h"
+#import "OCTLogging.h"
 
 @implementation OCTSubmanagerChatsImpl
 @synthesize dataSource = _dataSource;
+
+- (void)dealloc
+{
+    [self.dataSource.managerGetNotificationCenter removeObserver:self];
+}
+
+- (void)configure
+{
+    [self.dataSource.managerGetNotificationCenter addObserver:self
+                                                     selector:@selector(friendConnectionStatusChangeNotification:)
+                                                         name:kOCTFriendConnectionStatusChangeNotification
+                                                       object:nil];
+}
 
 #pragma mark -  Public
 
@@ -42,9 +56,13 @@
     OCTTox *tox = [self.dataSource managerGetTox];
     OCTFriend *friend = [chat.friends firstObject];
 
-    OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber type:type message:text error:error];
+    NSError *localError = nil;
+    OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber type:type message:text error:&localError];
 
-    if (messageId == 0) {
+    if (localError) {
+        if (error) {
+            *error = localError;
+        }
         return nil;
     }
 
@@ -61,6 +79,58 @@
     OCTTox *tox = [self.dataSource managerGetTox];
 
     return [tox setUserIsTyping:isTyping forFriendNumber:friend.friendNumber error:error];
+}
+
+#pragma mark -  NSNotification
+
+- (void)friendConnectionStatusChangeNotification:(NSNotification *)notification
+{
+    OCTFriend *friend = notification.object;
+
+    if (! friend) {
+        OCTLogWarn(@"no friend received in notification %@, exiting", notification);
+        return;
+    }
+
+    if (friend.isConnected) {
+        [self resendUndeliveredMessagesToFriend:friend];
+    }
+}
+
+#pragma mark -  Private
+
+- (void)resendUndeliveredMessagesToFriend:(OCTFriend *)friend
+{
+    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+
+    OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@"
+                              @" AND senderUniqueIdentifier == nil"
+                              @" AND messageText.isDelivered == NO",
+                              chat.uniqueIdentifier];
+
+    RLMResults *results = [realmManager objectsWithClass:[OCTMessageAbstract class] predicate:predicate];
+    OCTTox *tox = [self.dataSource managerGetTox];
+
+    for (OCTMessageAbstract *message in results) {
+        OCTLogInfo(@"Resending message to friend %@", friend);
+
+        NSError *error;
+        OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber
+                                                                type:message.messageText.type
+                                                             message:message.messageText.text
+                                                               error:&error];
+
+        if (error) {
+            OCTLogWarn(@"Cannot resend message to friend %@, error %@", friend, error);
+            continue;
+        }
+
+        [realmManager updateObject:message withBlock:^(OCTMessageAbstract *theMessage) {
+            theMessage.messageText.messageId = messageId;
+        }];
+    }
 }
 
 #pragma mark -  OCTToxDelegate

@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - OCTManager: manager is now created asynchronously.
 - OCTManager: added method for verifying current encrypt password.
 - OCTManager & OCTSubmanagers became protocols.
+- Resending undelivered messages when friend comes online.
 
 ### Fixes
 - Fixing freeze when bootstrapping on bad network.

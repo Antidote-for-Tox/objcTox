@@ -273,7 +273,8 @@
  * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
  * See OCTToxErrorFriendSendMessage for all error codes.
  *
- * @return The message id if packet was successfully put into the send queue, 0 if it was not. You can use id later to check if message has been delivered.
+ * @return The message id. Message IDs are unique per friend. The first message ID is 0. Message IDs are
+ *         incremented by 1 each time a message is sent. If UINT32_MAX messages were sent, the next message ID is 0.
  *
  * @warning You can check maximum length of message with `-checkLengthOfString:withCheckType:` method with
  * OCTToxCheckLengthTypeSendMessage type.

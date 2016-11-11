@@ -1,0 +1,58 @@
+PODS:
+  - BlocksKit (2.2.5):
+    - BlocksKit/All (= 2.2.5)
+  - BlocksKit/All (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+    - BlocksKit/MessageUI
+    - BlocksKit/UIKit
+  - BlocksKit/Core (2.2.5)
+  - BlocksKit/DynamicDelegate (2.2.5)
+  - BlocksKit/MessageUI (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - BlocksKit/UIKit (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - CocoaLumberjack (1.9.2):
+    - CocoaLumberjack/Extensions (= 1.9.2)
+  - CocoaLumberjack/Core (1.9.2)
+  - CocoaLumberjack/Extensions (1.9.2):
+    - CocoaLumberjack/Core
+  - libopus-patched-config (1.1):
+    - libopus-patched-config/float (= 1.1)
+  - libopus-patched-config/float (1.1)
+  - libsodium (1.0.11)
+  - Masonry (0.6.4)
+  - OCMock (3.1.2)
+  - Realm (1.0.1):
+    - Realm/Headers (= 1.0.1)
+  - Realm/Headers (1.0.1)
+  - toxcore (0.0.3):
+    - libopus-patched-config (= 1.1)
+    - libsodium (~> 1.0.1)
+  - TPCircularBuffer (0.0.1)
+
+DEPENDENCIES:
+  - BlocksKit (~> 2.2.5)
+  - CocoaLumberjack (~> 1.9.2)
+  - Masonry (~> 0.6.1)
+  - OCMock (= 3.1.2)
+  - Realm (= 1.0.1)
+  - toxcore (= 0.0.3)
+  - TPCircularBuffer (~> 0.0.1)
+
+SPEC CHECKSUMS:
+  BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
+  CocoaLumberjack: 628fca2e88ef06f7cf6817309aa405f325d9a6fa
+  libopus-patched-config: 12321105eb4b96e869b7957f3122345fd67928c3
+  libsodium: 9aba161d2ee096977ecbdcce1ada69ffe511970c
+  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
+  OCMock: a10ea9f0a6e921651f96f78b6faee95ebc813b92
+  Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
+  toxcore: 35a04e857b811baaf808be0f90f456eb4216673b
+  TPCircularBuffer: 949e9632b9fb99b7274d7b2296ee22bff5841e35
+
+PODFILE CHECKSUM: fcbb39f6b431d3084781cf26822eee1338132cc5
+
+COCOAPODS: 1.0.1
