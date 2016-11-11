@@ -16,6 +16,7 @@
 @interface OCTSubmanagerChatsImplTests : OCTRealmTests
 
 @property (strong, nonatomic) OCTSubmanagerChatsImpl *submanager;
+@property (strong, nonatomic) NSNotificationCenter *notificationCenter;
 @property (strong, nonatomic) id dataSource;
 @property (strong, nonatomic) id tox;
 
@@ -26,8 +27,10 @@
 - (void)setUp
 {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
+    OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(self.notificationCenter);
 
     OCMStub([self.dataSource managerGetRealmManager]).andReturn(self.realmManager);
 
@@ -36,6 +39,7 @@
 
     self.submanager = [OCTSubmanagerChatsImpl new];
     self.submanager.dataSource = self.dataSource;
+    [self.submanager configure];
 }
 
 - (void)tearDown
@@ -64,11 +68,8 @@
 
 - (void)testRemoveMessages
 {
-    NSNotificationCenter *center = [[NSNotificationCenter alloc] init];
-    OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
-
     XCTestExpectation *expect = [self expectationWithDescription:@""];
-    [center addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+    [self.notificationCenter addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
         [expect fulfill];
     }];
 
@@ -83,11 +84,8 @@
 
 - (void)testRemoveMessagesWithChat
 {
-    NSNotificationCenter *center = [[NSNotificationCenter alloc] init];
-    OCMStub([self.dataSource managerGetNotificationCenter]).andReturn(center);
-
     XCTestExpectation *expect = [self expectationWithDescription:@""];
-    [center addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+    [self.notificationCenter addObserverForName:kOCTScheduleFileTransferCleanupNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
         [expect fulfill];
     }];
 
@@ -174,6 +172,113 @@
     OCMVerifyAll(self.tox);
 }
 
+- (void)testResendUndeliveredMessages
+{
+    NSArray * (^createMessages)(OCTChat *, OCTToxMessageId) = ^(OCTChat *chat, OCTToxMessageId number) {
+        NSMutableArray *array = [NSMutableArray new];
+
+        for (OCTToxMessageId index = 0; index < number; index++) {
+            BOOL outgoing = index % 2;
+            OCTMessageAbstract *message = [self createTextMessageInChat:chat outgoing:outgoing messageId:index];
+            [array addObject:message];
+        }
+
+        return [array copy];
+    };
+
+    OCTToxFriendNumber friendNumber = 1;
+
+    OCTFriend *friend1 = [self createFriendWithFriendNumber:friendNumber++];
+    OCTFriend *friend2 = [self createFriendWithFriendNumber:friendNumber++];
+
+    OCTChat *chat1 = [self createChatWithFriend:friend1];
+    OCTChat *chat2 = [self createChatWithFriend:friend2];
+
+    NSArray *messages1 = createMessages(chat1, 10);
+    NSArray *messages2 = createMessages(chat2, 2);
+
+    [self.realmManager.realm beginWriteTransaction];
+    [self.realmManager.realm addObject:chat1];
+    [self.realmManager.realm addObject:chat2];
+    [self.realmManager.realm addObjects:messages1];
+    [self.realmManager.realm addObjects:messages2];
+    [self.realmManager.realm commitWriteTransaction];
+
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"1" error:[OCMArg anyObjectRef]]).andReturn(101);
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"3" error:[OCMArg anyObjectRef]]).andReturn(103);
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"5" error:[OCMArg anyObjectRef]]).andReturn(105);
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"7" error:[OCMArg anyObjectRef]]).andReturn(107);
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"9" error:[OCMArg anyObjectRef]]).andReturn(109);
+
+    [self.realmManager.realm beginWriteTransaction];
+    friend1.connectionStatus = OCTToxConnectionStatusUDP;
+    friend1.isConnected = YES;
+    [self.realmManager.realm commitWriteTransaction];
+
+    [self.notificationCenter postNotificationName:kOCTFriendConnectionStatusChangeNotification object:friend1];
+
+#define VERIFY_MESSAGE(__array, __index, __messageId, __delivered) \
+    { \
+        NSString *identifier = [__array[__index] uniqueIdentifier]; \
+        OCTMessageAbstract *message = [self.realmManager objectWithUniqueIdentifier:identifier class:[OCTMessageAbstract class]]; \
+        XCTAssertEqual(message.messageText.messageId, __messageId); \
+        XCTAssertEqual(message.messageText.isDelivered, __delivered); \
+    }
+
+    VERIFY_MESSAGE(messages1, 0, 0, NO);
+    VERIFY_MESSAGE(messages1, 1, 101, NO);
+    VERIFY_MESSAGE(messages1, 2, 2, NO);
+    VERIFY_MESSAGE(messages1, 3, 103, NO);
+    VERIFY_MESSAGE(messages1, 4, 4, NO);
+    VERIFY_MESSAGE(messages1, 5, 105, NO);
+    VERIFY_MESSAGE(messages1, 6, 6, NO);
+    VERIFY_MESSAGE(messages1, 7, 107, NO);
+    VERIFY_MESSAGE(messages1, 8, 8, NO);
+    VERIFY_MESSAGE(messages1, 9, 109, NO);
+
+    VERIFY_MESSAGE(messages2, 0, 0, NO);
+    VERIFY_MESSAGE(messages2, 1, 1, NO);
+
+
+    // Deliver some messages, then resend all left again.
+
+    [self.submanager tox:self.tox messageDelivered:101 friendNumber:1];
+    [self.submanager tox:self.tox messageDelivered:103 friendNumber:1];
+    [self.submanager tox:self.tox messageDelivered:105 friendNumber:1];
+
+    {
+        OCTMessageAbstract *message;
+
+        [self.realmManager.realm beginWriteTransaction];
+
+        message = messages1[7];
+        message.messageText.text = @"107";
+        message = messages1[9];
+        message.messageText.text = @"109";
+
+        [self.realmManager.realm commitWriteTransaction];
+    }
+
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"107" error:[OCMArg anyObjectRef]]).andReturn(207);
+    OCMStub([self.tox sendMessageWithFriendNumber:1 type:OCTToxMessageTypeNormal message:@"109" error:[OCMArg anyObjectRef]]).andReturn(209);
+
+    [self.notificationCenter postNotificationName:kOCTFriendConnectionStatusChangeNotification object:friend1];
+
+    VERIFY_MESSAGE(messages1, 0, 0, NO);
+    VERIFY_MESSAGE(messages1, 1, 101, YES);
+    VERIFY_MESSAGE(messages1, 2, 2, NO);
+    VERIFY_MESSAGE(messages1, 3, 103, YES);
+    VERIFY_MESSAGE(messages1, 4, 4, NO);
+    VERIFY_MESSAGE(messages1, 5, 105, YES);
+    VERIFY_MESSAGE(messages1, 6, 6, NO);
+    VERIFY_MESSAGE(messages1, 7, 207, NO);
+    VERIFY_MESSAGE(messages1, 8, 8, NO);
+    VERIFY_MESSAGE(messages1, 9, 209, NO);
+
+    VERIFY_MESSAGE(messages2, 0, 0, NO);
+    VERIFY_MESSAGE(messages2, 1, 1, NO);
+}
+
 #pragma mark -  OCTToxDelegate
 
 - (void)testFriendMessage
@@ -222,9 +327,33 @@
     [self.realmManager.realm addObject:message];
     [self.realmManager.realm commitWriteTransaction];
 
-    [self.submanager tox:nil messageDelivered:10 friendNumber:5];
+    [self.submanager tox:self.tox messageDelivered:10 friendNumber:5];
 
     XCTAssertTrue(message.messageText.isDelivered);
+}
+
+- (OCTChat *)createChatWithFriend:(OCTFriend *)friend
+{
+    OCTChat *chat = [OCTChat new];
+    [chat.friends addObject:friend];
+
+    return chat;
+}
+
+- (OCTMessageAbstract *)createTextMessageInChat:(OCTChat *)chat outgoing:(BOOL)outgoing messageId:(OCTToxMessageId)messageId
+{
+    OCTMessageAbstract *message = [OCTMessageAbstract new];
+    message.chatUniqueIdentifier = chat.uniqueIdentifier;
+    message.messageText = [OCTMessageText new];
+    message.messageText.text = [NSString stringWithFormat:@"%d", messageId];
+    message.messageText.messageId = messageId;
+
+    if (! outgoing) {
+        OCTFriend *friend = chat.friends.lastObject;
+        message.senderUniqueIdentifier = friend.uniqueIdentifier;
+    }
+
+    return message;
 }
 
 @end

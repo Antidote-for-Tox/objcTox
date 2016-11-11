@@ -57,4 +57,12 @@
     return friend;
 }
 
+- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    OCTFriend *friend = [self createFriend];
+    friend.friendNumber = friendNumber;
+
+    return friend;
+}
+
 @end
