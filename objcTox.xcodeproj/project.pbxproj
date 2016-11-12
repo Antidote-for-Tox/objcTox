@@ -29,6 +29,10 @@
 		112358B31B887E8F00E8FB71 /* OCTPredefined.m in Sources */ = {isa = PBXBuildFile; fileRef = 112358AF1B887E8F00E8FB71 /* OCTPredefined.m */; };
 		112779D41B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
 		112779D51B9B6F0B00E475B4 /* OCTToxEncryptSaveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */; };
+		113187611DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */; };
+		113187621DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */; };
+		113187631DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */; };
+		113187641DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */; };
 		116634F91C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
 		116634FA1C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
 		116634FB1C80C7280072C980 /* nodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 116634F81C80C7280072C980 /* nodes.json */; };
@@ -337,6 +341,8 @@
 		112358AF1B887E8F00E8FB71 /* OCTPredefined.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTPredefined.m; sourceTree = "<group>"; };
 		1125DC491B2107E900C8DB98 /* OCTTox+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTTox+Private.h"; sourceTree = "<group>"; };
 		112779D31B9B6F0700E475B4 /* OCTToxEncryptSaveTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxEncryptSaveTests.m; sourceTree = "<group>"; };
+		1131875F1DD683E400E6FAA2 /* OCTSendMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCTSendMessageOperation.h; path = Messages/OCTSendMessageOperation.h; sourceTree = "<group>"; };
+		113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCTSendMessageOperation.m; path = Messages/OCTSendMessageOperation.m; sourceTree = "<group>"; };
 		115B6FBF1C9DD46700C65334 /* OCTSubmanagerFilesProgressSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerFilesProgressSubscriber.h; sourceTree = "<group>"; };
 		115B6FC11C9DDB6D00C65334 /* OCTFileBaseOperation+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OCTFileBaseOperation+Private.h"; sourceTree = "<group>"; };
 		116634F81C80C7280072C980 /* nodes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nodes.json; sourceTree = "<group>"; };
@@ -592,6 +598,15 @@
 				F3FA418C1201DA30777FEA08FC9406CB /* Wrapper */,
 			);
 			path = Public;
+			sourceTree = "<group>";
+		};
+		1131875E1DD683A700E6FAA2 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				1131875F1DD683E400E6FAA2 /* OCTSendMessageOperation.h */,
+				113187601DD683E400E6FAA2 /* OCTSendMessageOperation.m */,
+			);
+			name = Messages;
 			sourceTree = "<group>";
 		};
 		11AF88F81C9896F000AD1D9F /* Files */ = {
@@ -1003,14 +1018,15 @@
 		CF9416C2498272D5823396FB02DF7670 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				AEAF02FD4B49A2DF3C13562D48C9FEA0 /* OCTManagerImpl.m */,
 				110152861DC4ABF700044852 /* OCTManagerImpl.h */,
 				CE5DBC12869590BEAD637C9DF06567EF /* OCTManagerConstants.m */,
 				9CB1F9581D5B671E00105858 /* OCTManagerFactory.m */,
+				AEAF02FD4B49A2DF3C13562D48C9FEA0 /* OCTManagerImpl.m */,
 				11D650CD1B89225400C3DD23 /* Audio */,
 				7DB8B234977816236C8F57408DD904FB /* Configuration */,
 				8588AB583843DF5ABD08944E00D9704D /* Database */,
 				11AF88F81C9896F000AD1D9F /* Files */,
+				1131875E1DD683A700E6FAA2 /* Messages */,
 				60183FD68841CB45990A4852224E9705 /* Objects */,
 				343B3C1DC43BA0512FF12BB269169A43 /* Submanagers */,
 				11D650F01B89229B00C3DD23 /* Video */,
@@ -1475,6 +1491,7 @@
 				11BB6EAE1CC3930A00A531A8 /* OCTFileTools.m in Sources */,
 				9CB1F9591D5B671E00105858 /* OCTManagerFactory.m in Sources */,
 				11D650E61B89227300C3DD23 /* OCTMessageCall.m in Sources */,
+				113187611DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */,
 				9CB44BEC1B84D9E1007FA7B6 /* OCTNode.m in Sources */,
 				9CB44BE41B84D9E1007FA7B6 /* OCTRealmManager.m in Sources */,
 				9CB44BF21B84D9E1007FA7B6 /* OCTSubmanagerFriendsImpl.m in Sources */,
@@ -1563,6 +1580,7 @@
 				11E80D841B98C647008DFC47 /* OCTSettingsStorageObject.m in Sources */,
 				9CB44C0C1B84DBA3007FA7B6 /* OCTObject.m in Sources */,
 				9CB44C0E1B84DBA3007FA7B6 /* OCTMessageText.m in Sources */,
+				113187621DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */,
 				9CB44C0A1B84DBA3007FA7B6 /* OCTFriendRequest.m in Sources */,
 				1183BC841CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
 				9CB44CB81B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,
@@ -1616,6 +1634,7 @@
 				1183BC7E1CA02755000CD310 /* OCTFilePathInput.m in Sources */,
 				11D650F91B89229B00C3DD23 /* OCTPixelBufferPool.m in Sources */,
 				11D650DB1B89226800C3DD23 /* OCTCall.m in Sources */,
+				113187631DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */,
 				11D650DF1B89226800C3DD23 /* OCTCall+Utilities.m in Sources */,
 				9CB44C651B84DCFB007FA7B6 /* OCTTox.m in Sources */,
 				F02C7EB31C1CCF1200D144BD /* OCTFriendsViewController.m in Sources */,
@@ -1712,6 +1731,7 @@
 				9CB44C841B84DCFB007FA7B6 /* OCTSubmanagerChatsImpl.m in Sources */,
 				9CB44C781B84DCFB007FA7B6 /* OCTRealmManager.m in Sources */,
 				9CB44C8A1B84DCFB007FA7B6 /* OCTManagerConstants.m in Sources */,
+				113187641DD683E400E6FAA2 /* OCTSendMessageOperation.m in Sources */,
 				9CB44C771B84DCFB007FA7B6 /* OCTManagerConfiguration.m in Sources */,
 				1183BC861CA02AA9000CD310 /* OCTFilePathOutput.m in Sources */,
 				9CB44CB91B84DF46007FA7B6 /* OCTFriendRequestTests.m in Sources */,

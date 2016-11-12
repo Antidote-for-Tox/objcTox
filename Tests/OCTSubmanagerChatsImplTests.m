@@ -110,8 +110,6 @@
     id chat = OCMClassMock([OCTChat class]);
     OCMStub([chat friends]).andReturn(friends);
 
-    NSError *error;
-
     OCMStub([self.tox sendMessageWithFriendNumber:5
                                              type:OCTToxMessageTypeAction
                                           message:@"text"
@@ -122,11 +120,18 @@
                                              sender:nil
                                           messageId:7]).andReturn(message);
 
-    id theMessage = [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction error:&error];
+    XCTestExpectation *expectation = [self expectationWithDescription:@""];
 
-    OCMVerifyAll((id)self.realmManager);
-    XCTAssertEqualObjects(message, theMessage);
-    XCTAssertNil(error);
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction successBlock:^(OCTMessageAbstract *theMessage) {
+        OCMVerifyAll((id)self.realmManager);
+        XCTAssertEqualObjects(message, theMessage);
+        [expectation fulfill];
+
+    } failureBlock:^(NSError *error) {
+        XCTAssertTrue(false, @"This block shouldn't be called");
+    }];
+
+    [self waitForExpectationsWithTimeout:0.2 handler:nil];
 }
 
 - (void)testSendMessageToChatFailure
@@ -138,18 +143,26 @@
     id chat = OCMClassMock([OCTChat class]);
     OCMStub([chat friends]).andReturn(friends);
 
-    NSError *error;
     NSError *error2 = OCMClassMock([NSError class]);
 
     OCMStub([self.tox sendMessageWithFriendNumber:5
                                              type:OCTToxMessageTypeAction
                                           message:@"text"
                                             error:[OCMArg setTo:error2]]).andReturn(0);
-    id theMessage = [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction error:&error];
 
-    OCMVerifyAll((id)self.realmManager);
-    XCTAssertNil(theMessage);
-    XCTAssertEqualObjects(error, error2);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@""];
+
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction successBlock:^(OCTMessageAbstract *theMessage) {
+        XCTAssertTrue(false, @"This block shouldn't be called");
+
+    } failureBlock:^(NSError *error) {
+        OCMVerifyAll((id)self.realmManager);
+        XCTAssertEqualObjects(error, error2);
+        [expectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:0.2 handler:nil];
 }
 
 - (void)testSetIsTyping
@@ -225,19 +238,27 @@
         XCTAssertEqual(message.messageText.isDelivered, __delivered); \
     }
 
-    VERIFY_MESSAGE(messages1, 0, 0, NO);
-    VERIFY_MESSAGE(messages1, 1, 101, NO);
-    VERIFY_MESSAGE(messages1, 2, 2, NO);
-    VERIFY_MESSAGE(messages1, 3, 103, NO);
-    VERIFY_MESSAGE(messages1, 4, 4, NO);
-    VERIFY_MESSAGE(messages1, 5, 105, NO);
-    VERIFY_MESSAGE(messages1, 6, 6, NO);
-    VERIFY_MESSAGE(messages1, 7, 107, NO);
-    VERIFY_MESSAGE(messages1, 8, 8, NO);
-    VERIFY_MESSAGE(messages1, 9, 109, NO);
+    XCTestExpectation *expectation = [self expectationWithDescription:@""];
 
-    VERIFY_MESSAGE(messages2, 0, 0, NO);
-    VERIFY_MESSAGE(messages2, 1, 1, NO);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        VERIFY_MESSAGE(messages1, 0, 0, NO);
+        VERIFY_MESSAGE(messages1, 1, 101, NO);
+        VERIFY_MESSAGE(messages1, 2, 2, NO);
+        VERIFY_MESSAGE(messages1, 3, 103, NO);
+        VERIFY_MESSAGE(messages1, 4, 4, NO);
+        VERIFY_MESSAGE(messages1, 5, 105, NO);
+        VERIFY_MESSAGE(messages1, 6, 6, NO);
+        VERIFY_MESSAGE(messages1, 7, 107, NO);
+        VERIFY_MESSAGE(messages1, 8, 8, NO);
+        VERIFY_MESSAGE(messages1, 9, 109, NO);
+
+        VERIFY_MESSAGE(messages2, 0, 0, NO);
+        VERIFY_MESSAGE(messages2, 1, 1, NO);
+
+        [expectation fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:0.3 handler:nil];
 
 
     // Deliver some messages, then resend all left again.
@@ -264,19 +285,27 @@
 
     [self.notificationCenter postNotificationName:kOCTFriendConnectionStatusChangeNotification object:friend1];
 
-    VERIFY_MESSAGE(messages1, 0, 0, NO);
-    VERIFY_MESSAGE(messages1, 1, 101, YES);
-    VERIFY_MESSAGE(messages1, 2, 2, NO);
-    VERIFY_MESSAGE(messages1, 3, 103, YES);
-    VERIFY_MESSAGE(messages1, 4, 4, NO);
-    VERIFY_MESSAGE(messages1, 5, 105, YES);
-    VERIFY_MESSAGE(messages1, 6, 6, NO);
-    VERIFY_MESSAGE(messages1, 7, 207, NO);
-    VERIFY_MESSAGE(messages1, 8, 8, NO);
-    VERIFY_MESSAGE(messages1, 9, 209, NO);
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@""];
 
-    VERIFY_MESSAGE(messages2, 0, 0, NO);
-    VERIFY_MESSAGE(messages2, 1, 1, NO);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        VERIFY_MESSAGE(messages1, 0, 0, NO);
+        VERIFY_MESSAGE(messages1, 1, 101, YES);
+        VERIFY_MESSAGE(messages1, 2, 2, NO);
+        VERIFY_MESSAGE(messages1, 3, 103, YES);
+        VERIFY_MESSAGE(messages1, 4, 4, NO);
+        VERIFY_MESSAGE(messages1, 5, 105, YES);
+        VERIFY_MESSAGE(messages1, 6, 6, NO);
+        VERIFY_MESSAGE(messages1, 7, 207, NO);
+        VERIFY_MESSAGE(messages1, 8, 8, NO);
+        VERIFY_MESSAGE(messages1, 9, 209, NO);
+
+        VERIFY_MESSAGE(messages2, 0, 0, NO);
+        VERIFY_MESSAGE(messages2, 1, 1, NO);
+
+        [expectation2 fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:0.3 handler:nil];
 }
 
 #pragma mark -  OCTToxDelegate

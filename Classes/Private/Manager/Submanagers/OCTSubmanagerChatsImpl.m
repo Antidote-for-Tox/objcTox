@@ -9,9 +9,30 @@
 #import "OCTMessageText.h"
 #import "OCTChat.h"
 #import "OCTLogging.h"
+#import "OCTSendMessageOperation.h"
+
+@interface OCTSubmanagerChatsImpl ()
+
+@property (strong, nonatomic, readonly) NSOperationQueue *sendMessageQueue;
+
+@end
 
 @implementation OCTSubmanagerChatsImpl
 @synthesize dataSource = _dataSource;
+
+- (instancetype)init
+{
+    self = [super init];
+
+    if (! self) {
+        return nil;
+    }
+
+    _sendMessageQueue = [NSOperationQueue new];
+    _sendMessageQueue.maxConcurrentOperationCount = 1;
+
+    return self;
+}
 
 - (void)dealloc
 {
@@ -45,30 +66,36 @@
     [self.dataSource.managerGetNotificationCenter postNotificationName:kOCTScheduleFileTransferCleanupNotification object:nil];
 }
 
-- (OCTMessageAbstract *)sendMessageToChat:(OCTChat *)chat
-                                     text:(NSString *)text
-                                     type:(OCTToxMessageType)type
-                                    error:(NSError **)error
+- (void)sendMessageToChat:(OCTChat *)chat
+                     text:(NSString *)text
+                     type:(OCTToxMessageType)type
+             successBlock:(void (^)(OCTMessageAbstract *message))userSuccessBlock
+             failureBlock:(void (^)(NSError *error))userFailureBlock
 {
     NSParameterAssert(chat);
     NSParameterAssert(text);
 
-    OCTTox *tox = [self.dataSource managerGetTox];
     OCTFriend *friend = [chat.friends firstObject];
 
-    NSError *localError = nil;
-    OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber type:type message:text error:&localError];
+    __weak OCTSubmanagerChatsImpl *weakSelf = self;
+    OCTSendMessageOperationSuccessBlock successBlock = ^(OCTToxMessageId messageId) {
+        __strong OCTSubmanagerChatsImpl *strongSelf = weakSelf;
 
-    if (localError) {
-        if (error) {
-            *error = localError;
+        OCTRealmManager *realmManager = [strongSelf.dataSource managerGetRealmManager];
+        OCTMessageAbstract *message = [realmManager addMessageWithText:text type:type chat:chat sender:nil messageId:messageId];
+
+        if (userSuccessBlock) {
+            userSuccessBlock(message);
         }
-        return nil;
-    }
+    };
 
-    OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-
-    return [realmManager addMessageWithText:text type:type chat:chat sender:nil messageId:messageId];
+    OCTSendMessageOperation *operation = [[OCTSendMessageOperation alloc] initWithTox:[self.dataSource managerGetTox]
+                                                                         friendNumber:friend.friendNumber
+                                                                          messageType:type
+                                                                              message:text
+                                                                         successBlock:successBlock
+                                                                         failureBlock:userFailureBlock];
+    [self.sendMessageQueue addOperation:operation];
 }
 
 - (BOOL)setIsTyping:(BOOL)isTyping inChat:(OCTChat *)chat error:(NSError **)error
@@ -111,25 +138,32 @@
                               chat.uniqueIdentifier];
 
     RLMResults *results = [realmManager objectsWithClass:[OCTMessageAbstract class] predicate:predicate];
-    OCTTox *tox = [self.dataSource managerGetTox];
 
     for (OCTMessageAbstract *message in results) {
         OCTLogInfo(@"Resending message to friend %@", friend);
 
-        NSError *error;
-        OCTToxMessageId messageId = [tox sendMessageWithFriendNumber:friend.friendNumber
-                                                                type:message.messageText.type
-                                                             message:message.messageText.text
-                                                               error:&error];
+        __weak OCTSubmanagerChatsImpl *weakSelf = self;
+        OCTSendMessageOperationSuccessBlock successBlock = ^(OCTToxMessageId messageId) {
+            __strong OCTSubmanagerChatsImpl *strongSelf = weakSelf;
 
-        if (error) {
+            OCTRealmManager *realmManager = [strongSelf.dataSource managerGetRealmManager];
+
+            [realmManager updateObject:message withBlock:^(OCTMessageAbstract *theMessage) {
+                theMessage.messageText.messageId = messageId;
+            }];
+        };
+
+        OCTSendMessageOperationFailureBlock failureBlock = ^(NSError *error) {
             OCTLogWarn(@"Cannot resend message to friend %@, error %@", friend, error);
-            continue;
-        }
+        };
 
-        [realmManager updateObject:message withBlock:^(OCTMessageAbstract *theMessage) {
-            theMessage.messageText.messageId = messageId;
-        }];
+        OCTSendMessageOperation *operation = [[OCTSendMessageOperation alloc] initWithTox:[self.dataSource managerGetTox]
+                                                                             friendNumber:friend.friendNumber
+                                                                              messageType:message.messageText.type
+                                                                                  message:message.messageText.text
+                                                                             successBlock:successBlock
+                                                                             failureBlock:failureBlock];
+        [self.sendMessageQueue addOperation:operation];
     }
 }
 

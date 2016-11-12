@@ -46,15 +46,16 @@
  * @param chat Chat send message to.
  * @param text Text to send.
  * @param type Type of message to send.
- * @param error If an error occurs, this pointer is set to an actual error object containing the error information.
- * See OCTToxErrorFriendSendMessage for all error codes.
- *
- * @return Returns message, or nil if there was an error.
+ * @param successBlock Block called when message was successfully send.
+ *     @param message Message that was send.
+ * @param failureBlock Block called when submanager failed to send message.
+ *     @param error Error that occurred. See OCTToxErrorFriendSendMessage for all error codes.
  */
-- (OCTMessageAbstract *)sendMessageToChat:(OCTChat *)chat
-                                     text:(NSString *)text
-                                     type:(OCTToxMessageType)type
-                                    error:(NSError **)error;
+- (void)sendMessageToChat:(OCTChat *)chat
+                     text:(NSString *)text
+                     type:(OCTToxMessageType)type
+             successBlock:(void (^)(OCTMessageAbstract *message))userSuccessBlock
+             failureBlock:(void (^)(NSError *error))userFailureBlock;
 
 /**
  * Set our typing status for a chat. You are responsible for turning it on or off.

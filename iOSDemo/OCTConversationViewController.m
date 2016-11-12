@@ -134,8 +134,9 @@
 
     __weak OCTConversationViewController *weakSelf = self;
     [alert bk_addButtonWithTitle:@"OK" handler:^{
-        [weakSelf.manager.chats sendMessageToChat:weakSelf.chat text:messageField.text type:OCTToxMessageTypeNormal error:nil];
-        [weakSelf.tableView reloadData];
+        [weakSelf.manager.chats sendMessageToChat:weakSelf.chat text:messageField.text type:OCTToxMessageTypeNormal successBlock:^(OCTMessageAbstract *_) {
+            [weakSelf.tableView reloadData];
+        } failureBlock:nil];
     }];
 
     [alert bk_setCancelButtonWithTitle:@"Cancel" handler:nil];

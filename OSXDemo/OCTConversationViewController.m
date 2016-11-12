@@ -147,7 +147,8 @@ static NSString *const kCellIdent = @"cellIdent";
     [self.manager.chats sendMessageToChat:chat
                                      text:sender.stringValue
                                      type:OCTToxMessageTypeNormal
-                                    error:nil];
+                             successBlock:nil
+                             failureBlock:nil];
     sender.stringValue = @"";
 }
 
