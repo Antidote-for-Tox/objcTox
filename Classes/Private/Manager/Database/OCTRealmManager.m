@@ -16,7 +16,7 @@
 #import "OCTSettingsStorageObject.h"
 #import "OCTLogging.h"
 
-static const uint64_t kCurrentSchemeVersion = 6;
+static const uint64_t kCurrentSchemeVersion = 7;
 static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrimaryKey";
 
 @interface OCTRealmManager ()
@@ -463,6 +463,10 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
                if (oldSchemaVersion < 6) {
                    // OCTSettingsStorageObject: adding genericSettingsData property.
                }
+
+               if (oldSchemaVersion < 7) {
+                   [self doMigrationVersion7:migration];
+               }
     };
 }
 
@@ -496,6 +500,31 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     [migration enumerateObjects:OCTMessageAbstract.className block:^(RLMObject *oldObject, RLMObject *newObject) {
         newObject[@"chatUniqueIdentifier"] = oldObject[@"chat"][@"uniqueIdentifier"];
         newObject[@"senderUniqueIdentifier"] = oldObject[@"sender"][@"uniqueIdentifier"];
+    }];
+}
+
++ (void)doMigrationVersion7:(RLMMigration *)migration
+{
+    // Before this version OCTMessageText.isDelivered was broken.
+    // See https://github.com/Antidote-for-Tox/objcTox/issues/158
+    //
+    // After update it was fixed + resending of undelivered messages feature was introduced.
+    // This fired resending all messages that were in history for all friends.
+    //
+    // To fix an issue and stop people suffering we mark all outgoing text messages as delivered.
+
+    [migration enumerateObjects:OCTMessageAbstract.className block:^(RLMObject *oldObject, RLMObject *newObject) {
+        if (newObject[@"senderUniqueIdentifier"] != nil) {
+            return;
+        }
+
+        RLMObject *messageText = newObject[@"messageText"];
+
+        if (! messageText) {
+            return;
+        }
+
+        messageText[@"isDelivered"] = @YES;
     }];
 }
 
