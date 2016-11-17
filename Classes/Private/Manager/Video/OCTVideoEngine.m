@@ -41,8 +41,13 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 
     OCTLogVerbose(@"init");
 
+    // Disabling captureSession for simulator due to bug in iOS 10.
+    // See https://forums.developer.apple.com/thread/62230
+#if ! TARGET_OS_SIMULATOR
     _captureSession = [AVCaptureSession new];
     _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
+#endif
+
     _dataOutput = [AVCaptureVideoDataOutput new];
     _processingQueue = dispatch_queue_create("me.dvor.objcTox.OCTVideoEngineQueue", NULL);
     _pixelPool = [[OCTPixelBufferPool alloc] initWithFormat:kPixelFormat];
