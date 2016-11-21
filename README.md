@@ -38,7 +38,7 @@ it, simply add the following line to your Podfile:
 
 1. Clone repo `git clone https://github.com/Antidote-for-Tox/objcTox.git`
 2. Run install script `./install.sh`
-3. Open `objcTox.xcworkspace` file with Xcode 7.
+3. Open `objcTox.xcworkspace` file with Xcode 8.
 
 ## Contribution
 
