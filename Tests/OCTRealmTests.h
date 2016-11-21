@@ -23,7 +23,6 @@
  */
 @property (strong, nonatomic) OCTRealmManager *realmManager;
 
-- (OCTFriend *)createFriend;
 - (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
 
 @end

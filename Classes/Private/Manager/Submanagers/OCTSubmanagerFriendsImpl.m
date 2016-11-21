@@ -143,7 +143,10 @@
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
+
+    [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.name = name;
 
         if (name.length && [theFriend.nickname isEqualToString:theFriend.publicKey]) {
@@ -157,8 +160,10 @@
     [self.dataSource managerSaveTox];
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
 
-    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+    [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.statusMessage = statusMessage;
     }];
 }
@@ -168,8 +173,10 @@
     [self.dataSource managerSaveTox];
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
 
-    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+    [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.status = status;
     }];
 }
@@ -177,8 +184,10 @@
 - (void)tox:(OCTTox *)tox friendIsTypingUpdate:(BOOL)isTyping friendNumber:(OCTToxFriendNumber)friendNumber
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
 
-    [realmManager updateObject:[realmManager friendWithFriendNumber:friendNumber] withBlock:^(OCTFriend *theFriend) {
+    [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.isTyping = isTyping;
     }];
 }
@@ -188,7 +197,8 @@
     [self.dataSource managerSaveTox];
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
 
     [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
         theFriend.isConnected = (status != OCTToxConnectionStatusNone);

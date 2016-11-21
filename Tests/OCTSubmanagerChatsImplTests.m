@@ -53,7 +53,7 @@
 
 - (void)testGetOrCreateChatWithFriend
 {
-    OCTFriend *friend = [self createFriend];
+    OCTFriend *friend = [self createFriendWithFriendNumber:5];
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -204,6 +204,12 @@
     OCTFriend *friend1 = [self createFriendWithFriendNumber:friendNumber++];
     OCTFriend *friend2 = [self createFriendWithFriendNumber:friendNumber++];
 
+    NSString *publicKey1 = friend1.publicKey;
+    NSString *publicKey2 = friend2.publicKey;
+
+    OCMStub([self.tox publicKeyFromFriendNumber:friend1.friendNumber error:nil]).andReturn(publicKey1);
+    OCMStub([self.tox publicKeyFromFriendNumber:friend2.friendNumber error:nil]).andReturn(publicKey2);
+
     OCTChat *chat1 = [self createChatWithFriend:friend1];
     OCTChat *chat2 = [self createChatWithFriend:friend2];
 
@@ -312,8 +318,9 @@
 
 - (void)testFriendMessage
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 5;
+    OCTFriend *friend = [self createFriendWithFriendNumber:5];
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:friend.friendNumber error:nil]).andReturn(publicKey);
 
     OCTChat *chat = [OCTChat new];
     [chat.friends addObject:friend];
@@ -337,8 +344,9 @@
 
 - (void)testMessageDelivered
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 5;
+    OCTFriend *friend = [self createFriendWithFriendNumber:5];
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:friend.friendNumber error:nil]).andReturn(publicKey);
 
     OCTChat *chat = [OCTChat new];
     [chat.friends addObject:friend];

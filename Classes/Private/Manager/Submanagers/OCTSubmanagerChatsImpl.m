@@ -173,7 +173,8 @@
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     [realmManager addMessageWithText:message type:type chat:chat sender:friend messageId:0];
@@ -183,7 +184,8 @@
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@ AND messageText.messageId == %d",

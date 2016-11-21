@@ -59,11 +59,14 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testConfigure
 {
-    OCTFriend *friend = [self createFriend];
+    OCTFriend *friend = [self createFriendWithFriendNumber:5];
     friend.status = OCTToxUserStatusBusy;
     friend.isConnected = YES;
     friend.connectionStatus = OCTToxConnectionStatusUDP;
     friend.isTyping = YES;
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -79,8 +82,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testConfigure2
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 99;
+    OCTFriend *friend = [self createFriendWithFriendNumber:99];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:99 error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -212,8 +217,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testRemoveFriendSuccess
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -232,8 +239,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testRemoveFriendFailure
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -286,12 +295,15 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testFriendRequestWithMessageFriendExists
 {
-    OCTFriend *friend = [self createFriend];
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
     friend.publicKey = kPublicKey;
     friend.status = OCTToxUserStatusBusy;
     friend.isConnected = YES;
     friend.connectionStatus = OCTToxConnectionStatusUDP;
     friend.isTyping = YES;
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -305,10 +317,12 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testFriendNameUpdate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
     friend.publicKey = kPublicKey;
     friend.nickname = kPublicKey;
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -325,8 +339,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testStatusMessageUpdate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -338,8 +354,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testStatusUpdate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -351,9 +369,11 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testLastSeenDate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
     friend.lastSeenOnlineInterval = 0;
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -373,8 +393,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testIsTypingUpdate
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
@@ -386,8 +408,10 @@ static NSString *const kMessage = @"kMessage";
 
 - (void)testFriendConnectionStatusChanged
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = kFriendNumber;
+    OCTFriend *friend = [self createFriendWithFriendNumber:kFriendNumber];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:kFriendNumber error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];

@@ -4,6 +4,7 @@
 
 #import "OCTSubmanagerCallsImpl.h"
 #import "OCTLogging.h"
+#import "OCTTox.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
 const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
@@ -84,7 +85,7 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
         [self checkForCurrentActiveCallAndPause];
 
-        OCTCall *call = [self createCallWithFriendNumber:friend.friendNumber status:OCTCallStatusDialing];
+        OCTCall *call = [self createCallWithFriend:friend status:OCTCallStatusDialing];
 
         OCTRealmManager *manager = [self.dataSource managerGetRealmManager];
         [manager updateObject:call withBlock:^(OCTCall *callToUpdate) {
@@ -273,11 +274,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 #endif
 
 #pragma mark Private methods
-- (OCTCall *)createCallWithFriendNumber:(OCTToxFriendNumber)friendNumber status:(OCTCallStatus)status
+
+- (OCTCall *)createCallWithFriend:(OCTFriend *)friend status:(OCTCallStatus)status
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     return [realmManager createCallWithChat:chat status:status];
@@ -287,7 +288,8 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
 
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     return [realmManager getCurrentCallForChat:chat];
@@ -451,10 +453,11 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
 
 - (void)toxAV:(OCTToxAV *)toxAV receiveCallAudioEnabled:(BOOL)audio videoEnabled:(BOOL)video friendNumber:(OCTToxFriendNumber)friendNumber
 {
-    OCTCall *call = [self createCallWithFriendNumber:friendNumber status:OCTCallStatusRinging];
-
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
+    OCTCall *call = [self createCallWithFriend:friend status:OCTCallStatusRinging];
 
     [realmManager updateObject:call withBlock:^(OCTCall *callToUpdate) {
         callToUpdate.status = OCTCallStatusRinging;

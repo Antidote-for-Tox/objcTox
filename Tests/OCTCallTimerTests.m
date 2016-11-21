@@ -44,8 +44,7 @@
 
 - (void)testStartTimer
 {
-    OCTFriend *friend = [self createFriend];
-    friend.friendNumber = 9;
+    OCTFriend *friend = [self createFriendWithFriendNumber:9];
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
