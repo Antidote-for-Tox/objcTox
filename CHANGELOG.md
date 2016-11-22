@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixes
 - Fixing freeze when bootstrapping on bad network.
 - OCTMessageText.isDelivered not updated in some cases [#158](https://github.com/Antidote-for-Tox/objcTox/issues/158).
+- Issue with new contact appearing as old one [#158](https://github.com/Antidote-for-Tox/objcTox/issues/158).
 
 ## [0.6.0] - 2016-03-27
 ### Added

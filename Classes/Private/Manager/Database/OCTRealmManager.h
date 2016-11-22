@@ -67,7 +67,7 @@
 
 #pragma mark -  Other methods
 
-- (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber;
+- (OCTFriend *)friendWithPublicKey:(NSString *)publicKey;
 - (OCTChat *)getOrCreateChatWithFriend:(OCTFriend *)friend;
 - (OCTCall *)createCallWithChat:(OCTChat *)chat status:(OCTCallStatus)status;
 

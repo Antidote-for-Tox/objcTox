@@ -910,7 +910,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
     }
 
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
-    OCTFriend *friend = [realmManager friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [realmManager friendWithPublicKey:publicKey];
     OCTChat *chat = [realmManager getOrCreateChatWithFriend:friend];
 
     [realmManager addMessageWithFileNumber:fileNumber
@@ -933,7 +934,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
         [self.dataSource.managerGetTox fileSendControlForFileNumber:fileNumber friendNumber:friendNumber control:OCTToxFileControlCancel error:nil];
     };
 
-    OCTFriend *friend = [[self.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
+    NSString *publicKey = [[self.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+    OCTFriend *friend = [[self.dataSource managerGetRealmManager] friendWithPublicKey:publicKey];
 
     if (fileSize == 0) {
         if (friend.avatarData) {
@@ -977,7 +979,8 @@ static NSString *const kMessageIdentifierKey = @"kMessageIdentifierKey";
                                                                            successBlock:^(OCTFileBaseOperation *__nonnull operation) {
         __strong OCTSubmanagerFilesImpl *strongSelf = weakSelf;
 
-        OCTFriend *friend = [[strongSelf.dataSource managerGetRealmManager] friendWithFriendNumber:friendNumber];
+        NSString *publicKey = [[strongSelf.dataSource managerGetTox] publicKeyFromFriendNumber:friendNumber error:nil];
+        OCTFriend *friend = [[strongSelf.dataSource managerGetRealmManager] friendWithPublicKey:publicKey];
 
         [[strongSelf.dataSource managerGetRealmManager] updateObject:friend withBlock:^(OCTFriend *theFriend) {
             theFriend.avatarData = output.resultData;

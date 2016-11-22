@@ -229,12 +229,13 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
     }
 }
 
-- (OCTFriend *)friendWithFriendNumber:(OCTToxFriendNumber)friendNumber
+- (OCTFriend *)friendWithPublicKey:(NSString *)publicKey
 {
+    NSAssert(publicKey, @"Public key should be non-empty.");
     __block OCTFriend *friend;
 
     dispatch_sync(self.queue, ^{
-        friend = [[OCTFriend objectsInRealm:self.realm where:@"friendNumber == %d", friendNumber] firstObject];
+        friend = [[OCTFriend objectsInRealm:self.realm where:@"publicKey == %@", publicKey] firstObject];
     });
 
     return friend;

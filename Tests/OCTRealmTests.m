@@ -48,18 +48,11 @@
     [super tearDown];
 }
 
-- (OCTFriend *)createFriend
+- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
 {
     OCTFriend *friend = [OCTFriend new];
     friend.nickname = @"";
-    friend.publicKey = @"";
-
-    return friend;
-}
-
-- (OCTFriend *)createFriendWithFriendNumber:(OCTToxFriendNumber)friendNumber
-{
-    OCTFriend *friend = [self createFriend];
+    friend.publicKey = [[NSUUID UUID] UUIDString];
     friend.friendNumber = friendNumber;
 
     return friend;
