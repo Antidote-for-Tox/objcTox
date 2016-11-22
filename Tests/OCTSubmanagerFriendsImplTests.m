@@ -68,6 +68,9 @@ static NSString *const kMessage = @"kMessage";
     NSString *publicKey = friend.publicKey;
     OCMStub([self.tox publicKeyFromFriendNumber:5 error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
+    NSArray *array = @[@(5)];
+    OCMStub([self.tox friendsArray]).andReturn(array);
+
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
     [self.realmManager.realm commitWriteTransaction];
@@ -83,13 +86,16 @@ static NSString *const kMessage = @"kMessage";
 - (void)testConfigure2
 {
     OCTFriend *friend = [self createFriendWithFriendNumber:99];
-
-    NSString *publicKey = friend.publicKey;
-    OCMStub([self.tox publicKeyFromFriendNumber:99 error:[OCMArg anyObjectRef]]).andReturn(publicKey);
+    // This one should be removed.
+    OCTFriend *unboundedFriend = [self createFriendWithFriendNumber:33];
 
     [self.realmManager.realm beginWriteTransaction];
     [self.realmManager.realm addObject:friend];
+    [self.realmManager.realm addObject:unboundedFriend];
     [self.realmManager.realm commitWriteTransaction];
+
+    NSString *publicKey = friend.publicKey;
+    OCMStub([self.tox publicKeyFromFriendNumber:99 error:[OCMArg anyObjectRef]]).andReturn(publicKey);
 
     NSArray *array = @[@(99), @(kFriendNumber)];
     OCMStub([self.tox friendsArray]).andReturn(array);
@@ -100,9 +106,11 @@ static NSString *const kMessage = @"kMessage";
     RLMResults *objects = [OCTFriend allObjectsInRealm:self.realmManager.realm];
     XCTAssertEqual(objects.count, 2);
 
-    OCTFriend *added = [objects lastObject];
+    OCTFriend *first = objects[0];
+    OCTFriend *second = objects[1];
 
-    [self verifyFriend:added];
+    XCTAssertEqualObjects(friend, first);
+    [self verifyFriend:second];
 }
 
 #pragma mark -  Public

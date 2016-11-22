@@ -276,6 +276,15 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 - (void)testDatabaseMigration
 {
+    NSMutableArray *friendsArray = [NSMutableArray new];
+    for (int i = 0; i < 100; i++) {
+        [friendsArray addObject:@(i)];
+
+        NSString *publicKey = [NSString stringWithFormat:@"publicKey-%d", i];
+        OCMStub([self.tox publicKeyFromFriendNumber:i error:[OCMArg anyObjectRef]]).andReturn(publicKey);
+    }
+    OCMStub([self.tox friendsArray]).andReturn(friendsArray);
+
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
     configuration.fileStorage = [self temporaryFileStorage];
 

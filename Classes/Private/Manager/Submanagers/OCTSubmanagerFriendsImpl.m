@@ -79,34 +79,54 @@
 - (void)configure
 {
     OCTRealmManager *realmManager = [self.dataSource managerGetRealmManager];
+    OCTTox *tox = [self.dataSource managerGetTox];
 
     [realmManager updateObjectsWithClass:[OCTFriend class] predicate:nil updateBlock:^(OCTFriend *friend) {
-        friend.status = OCTToxUserStatusNone;
-        friend.isConnected = NO;
-        friend.connectionStatus = OCTToxConnectionStatusNone;
-        friend.isTyping = NO;
-        NSDate *dateOffline = [[self.dataSource managerGetTox] friendGetLastOnlineWithFriendNumber:friend.friendNumber error:nil];
-        friend.lastSeenOnlineInterval = [dateOffline timeIntervalSince1970];
+        // Tox may change friendNumber after relaunch, resetting them.
+        friend.friendNumber = kOCTToxFriendNumberFailure;
     }];
 
-    RLMResults *allFriends = [realmManager objectsWithClass:[OCTFriend class] predicate:nil];
-
-    for (NSNumber *friendNumber in [[self.dataSource managerGetTox] friendsArray]) {
+    for (NSNumber *friendNumber in [tox friendsArray]) {
         OCTToxFriendNumber number = [friendNumber intValue];
+        NSError *error;
 
-        BOOL found = NO;
+        NSString *publicKey = [tox publicKeyFromFriendNumber:number error:&error];
 
-        for (OCTFriend *friend in allFriends) {
-            if (friend.friendNumber == number) {
-                found = YES;
-                break;
-            }
+        if (! publicKey) {
+            @throw [NSException exceptionWithName:@"Cannot find publicKey for existing friendNumber, Tox save data is broken"
+                                           reason:error.debugDescription
+                                         userInfo:nil];
         }
 
-        if (! found) {
-            // it seems that friend is in Tox but isn't in Realm. Let's add it.
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"publicKey == %@", publicKey];
+        RLMResults *results = [realmManager objectsWithClass:[OCTFriend class] predicate:predicate];
+
+        if (results.count == 0) {
+            // It seems that friend is in Tox but isn't in Realm. Let's add it.
             [self createFriendWithFriendNumber:number error:nil];
+            continue;
         }
+
+        OCTFriend *friend = [results firstObject];
+
+        // Reset some fields for friends.
+        [realmManager updateObject:friend withBlock:^(OCTFriend *theFriend) {
+            theFriend.friendNumber = number;
+            theFriend.status = OCTToxUserStatusNone;
+            theFriend.isConnected = NO;
+            theFriend.connectionStatus = OCTToxConnectionStatusNone;
+            theFriend.isTyping = NO;
+            NSDate *dateOffline = [tox friendGetLastOnlineWithFriendNumber:number error:nil];
+            theFriend.lastSeenOnlineInterval = [dateOffline timeIntervalSince1970];
+        }];
+    }
+
+    // Remove all OCTFriend's which aren't bounded to tox. User cannot interact with them anyway.
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"friendNumber == %d", kOCTToxFriendNumberFailure];
+    RLMResults *results = [realmManager objectsWithClass:[OCTFriend class] predicate:predicate];
+
+    for (OCTFriend *friend in results) {
+        [realmManager deleteObject:friend];
     }
 }
 
