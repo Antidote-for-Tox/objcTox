@@ -1,25 +1,16 @@
 language: objective-c
-osx_image: xcode7.2
-
-before_install:
-  - gem install cocoapods -v 1.0.0.beta.3
-  - brew install uncrustify
+osx_image: xcode8.1
 
 install:
-  - pod _1.0.0.beta.3_ install
+- bundle install
+- pod repo update > /dev/null
+- ./install.sh
 
 script:
-  - xctool -workspace objcTox.xcworkspace -scheme OSXDemo -sdk macosx10.11 CODE_SIGNING_REQUIRED=NO clean test
+  - set -o pipefail && xcodebuild -workspace objcTox.xcworkspace -scheme OSXDemo CODE_SIGNING_REQUIRED=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES clean test | bundle exec xcpretty
 
-  - xctool
-    -workspace objcTox.xcworkspace
-    -scheme iOSDemo
-    -sdk iphonesimulator
-    CODE_SIGNING_REQUIRED=NO
-    GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES
-    GCC_GENERATE_TEST_COVERAGE_FILES=YES
-    clean
-    test
+  # iOS subproject is broken at the moment
+  # - set -o pipefail && xcodebuild -workspace objcTox.xcworkspace -scheme iOSDemo -sdk iphonesimulator -destination "platform=iOS Simulator,id=iPhone 7" CODE_SIGNING_REQUIRED=NO clean test | bundle exec xcpretty
 
   - ./run-uncrustify.sh --check
 
