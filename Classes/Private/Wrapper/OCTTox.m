@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import "OCTTox+Private.h"
+#import "OCTToxOptions+Private.h"
 #import "OCTLogging.h"
 
 void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
@@ -45,55 +46,26 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (instancetype)initWithOptions:(OCTToxOptions *)options savedData:(NSData *)data error:(NSError **)error
 {
+    NSParameterAssert(inputOptions);
+
     self = [super init];
 
-    if (! self) {
-        return nil;
-    }
-
-    struct Tox_Options cOptions;
-
-    if (options) {
-        OCTLogVerbose(@"init with options:\n"
-                      @"IPv6Enabled %d\n"
-                      @"UDPEnabled %d\n"
-                      @"startPort %u\n"
-                      @"endPort %u\n"
-                      @"proxyType %lu\n"
-                      @"proxyHost %@\n"
-                      @"proxyPort %d\n"
-                      @"tcpPort %d",
-                      options.IPv6Enabled,
-                      options.UDPEnabled,
-                      options.startPort,
-                      options.endPort,
-                      (unsigned long)options.proxyType,
-                      options.proxyHost,
-                      options.proxyPort,
-                      options.tcpPort);
-
-        cOptions = [self cToxOptionsFromOptions:options];
-    }
-    else {
-        OCTLogVerbose(@"init without options");
-        tox_options_default(&cOptions);
-    }
+    OCTLogVerbose(@"OCTTox: loading with options %@", options);
 
     if (data) {
         OCTLogVerbose(@"loading from data of length %lu", (unsigned long)data.length);
-        cOptions.savedata_type = TOX_SAVEDATA_TYPE_TOX_SAVE;
-        cOptions.savedata_data = data.bytes;
-        cOptions.savedata_length = data.length;
+        tox_options_set_savedata_type(options.options, TOX_SAVEDATA_TYPE_TOX_SAVE);
+        tox_options_set_savedata_data(options.options, data.bytes, data.length);
     }
     else {
-        cOptions.savedata_type = TOX_SAVEDATA_TYPE_NONE;
+        tox_options_set_savedata_type(options.options, TOX_SAVEDATA_TYPE_NONE);
     }
 
-    cOptions.log_callback = logCallback;
+    tox_options_set_log_callback(options.options, logCallback);
 
     TOX_ERR_NEW cError;
 
-    _tox = tox_new(&cOptions, &cError);
+    _tox = tox_new(options.options, &cError);
 
     [self fillError:error withCErrorInit:cError];
 
@@ -1517,40 +1489,6 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
     }
 
     return [NSError errorWithDomain:kOCTToxErrorDomain code:code userInfo:userInfo];
-}
-
-- (struct Tox_Options)cToxOptionsFromOptions:(OCTToxOptions *)options
-{
-    struct Tox_Options cOptions;
-
-    tox_options_set_ipv6_enabled(&cOptions, (bool)options.IPv6Enabled);
-    tox_options_set_udp_enabled(&cOptions, (bool)options.UDPEnabled);
-    tox_options_set_start_port(&cOptions, options.startPort);
-    tox_options_set_end_port(&cOptions, options.endPort);
-
-    TOX_PROXY_TYPE cProxyType;
-    switch (options.proxyType) {
-        case OCTToxProxyTypeNone:
-            cProxyType = TOX_PROXY_TYPE_NONE;
-            break;
-        case OCTToxProxyTypeHTTP:
-            cProxyType = TOX_PROXY_TYPE_HTTP;
-            break;
-        case OCTToxProxyTypeSocks5:
-            cProxyType = TOX_PROXY_TYPE_SOCKS5;
-            break;
-    }
-
-    tox_options_set_proxy_type(&cOptions, cProxyType);
-
-    if (options.proxyHost) {
-        tox_options_set_proxy_host(&cOptions, options.proxyHost.UTF8String);
-    }
-
-    tox_options_set_proxy_port(&cOptions, options.proxyPort);
-    tox_options_set_tcp_port(&cOptions, options.tcpPort);
-
-    return cOptions;
 }
 
 + (NSString *)binToHexString:(uint8_t *)bin length:(NSUInteger)length

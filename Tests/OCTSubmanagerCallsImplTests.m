@@ -13,6 +13,7 @@
 #import "OCTMessageAbstract.h"
 #import "OCTToxAV.h"
 #import "OCTTox.h"
+#import "OCTToxOptions.h"
 #import <OCMock/OCMock.h>
 
 @import AVFoundation;

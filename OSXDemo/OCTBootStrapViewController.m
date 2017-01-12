@@ -33,8 +33,8 @@ static NSString *const kNibName = @"OCTBootStrap";
 
 - (IBAction)bootstrapButtonTapped:(NSButton *)sender
 {
-    self.configuration.options.UDPEnabled = self.udpButton.state;
-    self.configuration.options.IPv6Enabled = self.ipv6Button.state;
+    self.configuration.options.udpEnabled = self.udpButton.state;
+    self.configuration.options.ipv6Enabled = self.ipv6Button.state;
 
     [self.delegate didBootStrap:self];
 }

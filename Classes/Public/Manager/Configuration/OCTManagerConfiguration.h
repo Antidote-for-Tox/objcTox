@@ -28,13 +28,6 @@
 
 /**
  * Options for tox to use.
- *
- * Default values:
- * - IPv6 support enabled
- * - UDP support enabled
- * - No proxy is used.
- *
- * @warning On mobile devices you may want to turn off UDP support to increase battery life.
  */
 @property (strong, nonatomic, nonnull) OCTToxOptions *options;
 
