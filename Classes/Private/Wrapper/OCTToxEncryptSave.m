@@ -9,7 +9,7 @@
 
 @interface OCTToxEncryptSave ()
 
-@property (assign, nonatomic) TOX_PASS_KEY *passKey;
+@property (assign, nonatomic) Tox_Pass_Key *passKey;
 
 @end
 
@@ -27,31 +27,31 @@
         return nil;
     }
 
-    _passKey = malloc(TOX_PASS_KEY_LENGTH + TOX_PASS_SALT_LENGTH);
+    _passKey = tox_pass_key_new();
     TOX_ERR_KEY_DERIVATION cError;
 
     uint8_t salt[TOX_PASS_SALT_LENGTH];
     bool hasSalt = false;
 
     if (toxData) {
-        hasSalt = tox_get_salt(toxData.bytes, salt);
+        hasSalt = tox_get_salt(toxData.bytes, salt, NULL);
     }
 
     bool result = false;
 
     if (hasSalt) {
-        result = tox_derive_key_with_salt(
+        result = tox_pass_key_derive_with_salt(
+            _passKey,
             (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
             [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
             salt,
-            _passKey,
             &cError);
     }
     else {
-        result = tox_derive_key_from_pass(
+        result = tox_pass_key_derive(
+            _passKey,
             (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
             [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
-            _passKey,
             &cError);
     }
 
@@ -63,7 +63,7 @@
 - (void)dealloc
 {
     if (_passKey) {
-        free(_passKey);
+        tox_pass_key_free(_passKey);
     }
 }
 
@@ -132,9 +132,9 @@
         TOX_ERR_ENCRYPTION cError;
 
         bool result = tox_pass_key_encrypt(
+            self.passKey,
             data.bytes,
             data.length,
-            self.passKey,
             out,
             &cError);
 
@@ -152,9 +152,9 @@
         TOX_ERR_DECRYPTION cError;
 
         bool result = tox_pass_key_decrypt(
+            self.passKey,
             data.bytes,
             data.length,
-            self.passKey,
             out,
             &cError);
 

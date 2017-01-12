@@ -1523,29 +1523,32 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 {
     struct Tox_Options cOptions;
 
-    cOptions.ipv6_enabled = (bool)options.IPv6Enabled;
-    cOptions.udp_enabled = (bool)options.UDPEnabled;
+    tox_options_set_ipv6_enabled(&cOptions, (bool)options.IPv6Enabled);
+    tox_options_set_udp_enabled(&cOptions, (bool)options.UDPEnabled);
+    tox_options_set_start_port(&cOptions, options.startPort);
+    tox_options_set_end_port(&cOptions, options.endPort);
 
+    TOX_PROXY_TYPE cProxyType;
     switch (options.proxyType) {
         case OCTToxProxyTypeNone:
-            cOptions.proxy_type = TOX_PROXY_TYPE_NONE;
+            cProxyType = TOX_PROXY_TYPE_NONE;
             break;
         case OCTToxProxyTypeHTTP:
-            cOptions.proxy_type = TOX_PROXY_TYPE_HTTP;
+            cProxyType = TOX_PROXY_TYPE_HTTP;
             break;
         case OCTToxProxyTypeSocks5:
-            cOptions.proxy_type = TOX_PROXY_TYPE_SOCKS5;
+            cProxyType = TOX_PROXY_TYPE_SOCKS5;
             break;
     }
 
-    cOptions.start_port = options.startPort;
-    cOptions.end_port = options.endPort;
+    tox_options_set_proxy_type(&cOptions, cProxyType);
 
     if (options.proxyHost) {
-        cOptions.proxy_host = options.proxyHost.UTF8String;
+        tox_options_set_proxy_host(&cOptions, options.proxyHost.UTF8String);
     }
-    cOptions.proxy_port = options.proxyPort;
-    cOptions.tcp_port = options.tcpPort;
+
+    tox_options_set_proxy_port(&cOptions, options.proxyPort);
+    tox_options_set_tcp_port(&cOptions, options.tcpPort);
 
     return cOptions;
 }
