@@ -99,7 +99,7 @@ static const NSUInteger kNodesPerIteration = 4;
         }
 
         NSAssert(ipv4, @"Nodes json file is corrupted");
-        NSAssert(port > 0, @"Nodes json file is corrupted");
+        NSAssert(udpPort > 0, @"Nodes json file is corrupted");
         NSAssert(publicKey, @"Nodes json file is corrupted");
 
         [self addNodeWithIpv4Host:ipv4 ipv6Host:ipv6 udpPort:udpPort tcpPorts:tcpPorts publicKey:publicKey];

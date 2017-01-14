@@ -46,7 +46,7 @@ void (*_tox_self_get_public_key)(const Tox *tox, uint8_t *public_key);
 
 - (instancetype)initWithOptions:(OCTToxOptions *)options savedData:(NSData *)data error:(NSError **)error
 {
-    NSParameterAssert(inputOptions);
+    NSParameterAssert(options);
 
     self = [super init];
 
