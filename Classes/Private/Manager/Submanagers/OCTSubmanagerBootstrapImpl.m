@@ -51,9 +51,17 @@ static const NSUInteger kNodesPerIteration = 4;
 
 #pragma mark -  Public
 
-- (void)addNodeWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey
+- (void)addNodeWithIpv4Host:(nullable NSString *)ipv4Host
+                   ipv6Host:(nullable NSString *)ipv6Host
+                    udpPort:(OCTToxPort)udpPort
+                   tcpPorts:(NSArray<NSNumber *> *)tcpPorts
+                  publicKey:(NSString *)publicKey
 {
-    OCTNode *node = [[OCTNode alloc] initWithHost:host port:port publicKey:publicKey];
+    OCTNode *node = [[OCTNode alloc] initWithIpv4Host:ipv4Host
+                                             ipv6Host:ipv6Host
+                                              udpPort:udpPort
+                                             tcpPorts:tcpPorts
+                                            publicKey:publicKey];
 
     @synchronized(self.addedNodes) {
         [self.addedNodes addObject:node];
@@ -69,20 +77,32 @@ static const NSUInteger kNodesPerIteration = 4;
     NSAssert(dictionary, @"Nodes json file is corrupted.");
 
     for (NSDictionary *node in dictionary[@"nodes"]) {
+        NSUInteger lastPing = [node[@"last_ping"] unsignedIntegerValue];
+
+        if (lastPing == 0) {
+            // Skip nodes that weren't seen online.
+            continue;
+        }
+
         NSString *ipv4 = node[@"ipv4"];
-        OCTToxPort port = [node[@"port"] unsignedShortValue];
+        NSString *ipv6 = node[@"ipv6"];
+        OCTToxPort udpPort = [node[@"port"] unsignedShortValue];
+        NSArray<NSNumber *> *tcpPorts = node[@"tcp_ports"];
         NSString *publicKey = node[@"public_key"];
+
+        // Check if addresses are valid.
+        if (ipv4.length <= 2) {
+            ipv4 = nil;
+        }
+        if (ipv6.length <= 2) {
+            ipv6 = nil;
+        }
 
         NSAssert(ipv4, @"Nodes json file is corrupted");
         NSAssert(port > 0, @"Nodes json file is corrupted");
         NSAssert(publicKey, @"Nodes json file is corrupted");
 
-        [self addNodeWithHost:ipv4 port:port publicKey:publicKey];
-
-        NSString *ipv6 = node[@"ipv6"];
-        if (ipv6.length > 2) {
-            [self addNodeWithHost:ipv6 port:port publicKey:publicKey];
-        }
+        [self addNodeWithIpv4Host:ipv4 ipv6Host:ipv6 udpPort:udpPort tcpPorts:tcpPorts publicKey:publicKey];
     }
 }
 
@@ -107,14 +127,6 @@ static const NSUInteger kNodesPerIteration = 4;
     else {
         [self tryToBootstrap];
     }
-}
-
-- (BOOL)addTCPRelayWithHost:(NSString *)host
-                       port:(OCTToxPort)port
-                  publicKey:(NSString *)publicKey
-                      error:(NSError **)error
-{
-    return [[self.dataSource managerGetTox] addTCPRelayWithHost:host port:port publicKey:publicKey error:error];
 }
 
 #pragma mark -  Private
@@ -159,22 +171,45 @@ static const NSUInteger kNodesPerIteration = 4;
 
     OCTLogInfo(@"trying to bootstrap... picked %lu nodes", (unsigned long)selectedNodes.count);
 
-    OCTTox *tox = [self.dataSource managerGetTox];
-
     for (OCTNode *node in selectedNodes) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSError *error;
+            [self safeBootstrapFromHost:node.ipv4Host port:node.udpPort publicKey:node.publicKey];
+            [self safeBootstrapFromHost:node.ipv6Host port:node.udpPort publicKey:node.publicKey];
 
-            if (! [tox bootstrapFromHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
-                OCTLogWarn(@"trying to bootstrap... bootstrap failed with address %@, error %@", node.host, error);
-            }
-            if (! [tox addTCPRelayWithHost:node.host port:node.port publicKey:node.publicKey error:&error]) {
-                OCTLogWarn(@"trying to bootstrap... tcp relay failed with address %@, error %@", node.host, error);
+            for (NSNumber *tcpPort in node.tcpPorts) {
+                [self safeAddTcpRelayWithHost:node.ipv4Host port:tcpPort.intValue publicKey:node.publicKey];
+                [self safeAddTcpRelayWithHost:node.ipv6Host port:tcpPort.intValue publicKey:node.publicKey];
             }
         });
     }
 
     [self tryToBootstrapAfter:self.iterationTime];
+}
+
+- (void)safeBootstrapFromHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey
+{
+    if (! host) {
+        return;
+    }
+
+    NSError *error;
+
+    if (! [[self.dataSource managerGetTox] bootstrapFromHost:host port:port publicKey:publicKey error:&error]) {
+        OCTLogWarn(@"trying to bootstrap... bootstrap failed with address %@, error %@", host, error);
+    }
+}
+
+- (void)safeAddTcpRelayWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey
+{
+    if (! host) {
+        return;
+    }
+
+    NSError *error;
+
+    if (! [[self.dataSource managerGetTox] addTCPRelayWithHost:host port:port publicKey:publicKey error:&error]) {
+        OCTLogWarn(@"trying to bootstrap... tcp relay failed with address %@, error %@", host, error);
+    }
 }
 
 - (void)finishBootstrapping

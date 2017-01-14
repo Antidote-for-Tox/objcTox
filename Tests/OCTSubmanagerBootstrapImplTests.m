@@ -39,7 +39,8 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     self.dataSource = OCMProtocolMock(@protocol(OCTSubmanagerDataSource));
-    self.tox = OCMClassMock([OCTTox class]);
+    // self.tox = OCMClassMock([OCTTox class]);
+    self.tox = OCMStrictClassMock([OCTTox class]);
     self.realmManager = OCMClassMock([OCTRealmManager class]);
     self.settingsStorage = OCMClassMock([OCTSettingsStorageObject class]);
 
@@ -62,143 +63,149 @@
     [super tearDown];
 }
 
-// - (void)testAddPredefinedNodes
-// {
-//     [self.submanager addPredefinedNodes];
+- (void)testAddPredefinedNodes
+{
+    [self.submanager addPredefinedNodes];
 
-//     XCTAssertTrue(self.submanager.addedNodes.count > 0);
+    XCTAssertTrue(self.submanager.addedNodes.count > 0);
 
-//     for (OCTNode *node in self.submanager.addedNodes) {
-//         XCTAssertTrue(node.host.length > 0);
-//         XCTAssertTrue(node.port > 0);
-//         XCTAssertEqual(node.publicKey.length, kOCTToxPublicKeyLength);
-//     }
-// }
+    for (OCTNode *node in self.submanager.addedNodes) {
+        XCTAssertTrue(node.ipv4Host.length > 0);
+        XCTAssertTrue(node.udpPort > 0);
+        XCTAssertNotNil(node.tcpPorts);
+        XCTAssertEqual(node.publicKey.length, kOCTToxPublicKeyLength);
+    }
+}
 
-// - (void)testBootstrapCustomNodes
-// {
-//     XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
+- (void)testBootstrapCustomNodes
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
-//     self.submanager.didConnectDelay = 0.0;
-//     self.submanager.iterationTime = 0.05;
+    self.submanager.didConnectDelay = 0.0;
+    self.submanager.iterationTime = 0.05;
 
-//     [self.submanager addNodeWithHost:@"one" port:1 publicKey:@"1"];
-//     [self.submanager addNodeWithHost:@"two" port:2 publicKey:@"2"];
-//     [self.submanager addNodeWithHost:@"three" port:3 publicKey:@"3"];
-//     [self.submanager addNodeWithHost:@"four" port:4 publicKey:@"4"];
+    [self.submanager addNodeWithIpv4Host:@"one" ipv6Host:@"one6" udpPort:1 tcpPorts:@[@1, @11] publicKey:@"1"];
+    [self.submanager addNodeWithIpv4Host:@"two" ipv6Host:nil udpPort:2 tcpPorts:@[@2] publicKey:@"2"];
+    [self.submanager addNodeWithIpv4Host:nil ipv6Host:@"three6" udpPort:3 tcpPorts:@[@3] publicKey:@"3"];
+    [self.submanager addNodeWithIpv4Host:@"four" ipv6Host:@"four6" udpPort:4 tcpPorts:@[] publicKey:@"4"];
 
-//     [self.submanager bootstrap];
+    OCMExpect([self.tox bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"one6" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"one6" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"one" port:11 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"one6" port:11 publicKey:@"1" error:[OCMArg anyObjectRef]]);
 
-//     [self performBlock:^{
-//         [expectation fulfill];
-//     } afterDelay:0.1];
-//     [self waitForExpectationsWithTimeout:0.3 handler:nil];
+    OCMExpect([self.tox bootstrapFromHost:@"two" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"two" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
 
-//     OCMVerify([self.tox bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"two" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"three" port:3 publicKey:@"3" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"four" port:4 publicKey:@"4" error:[OCMArg anyObjectRef]]);
-// }
+    OCMExpect([self.tox bootstrapFromHost:@"three6" port:3 publicKey:@"3" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox addTCPRelayWithHost:@"three6" port:3 publicKey:@"3" error:[OCMArg anyObjectRef]]);
 
-// - (void)testBootstrapSeveralPortions
-// {
-//     XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
+    OCMExpect([self.tox bootstrapFromHost:@"four" port:4 publicKey:@"4" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"four6" port:4 publicKey:@"4" error:[OCMArg anyObjectRef]]);
 
-//     self.submanager.didConnectDelay = 0.0;
-//     self.submanager.iterationTime = 0.1;
+    [self.submanager bootstrap];
 
-//     [self.submanager addNodeWithHost:@"h1" port:1 publicKey:@"1"];
-//     [self.submanager addNodeWithHost:@"h2" port:2 publicKey:@"2"];
-//     [self.submanager addNodeWithHost:@"h3" port:3 publicKey:@"3"];
-//     [self.submanager addNodeWithHost:@"h4" port:4 publicKey:@"4"];
-//     [self.submanager addNodeWithHost:@"h5" port:5 publicKey:@"5"];
-//     [self.submanager addNodeWithHost:@"h6" port:6 publicKey:@"6"];
-//     [self.submanager addNodeWithHost:@"h7" port:7 publicKey:@"7"];
-//     [self.submanager addNodeWithHost:@"h8" port:8 publicKey:@"8"];
-//     [self.submanager addNodeWithHost:@"h9" port:9 publicKey:@"9"];
-//     [self.submanager addNodeWithHost:@"h10" port:10 publicKey:@"10"];
+    [self performBlock:^{
+        [expectation fulfill];
+    } afterDelay:0.1];
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 
-//     [self.submanager bootstrap];
+    OCMVerifyAll(self.tox);
+}
 
-//     [self performBlock:^{
-//         [expectation fulfill];
-//     } afterDelay:0.4];
-//     [self waitForExpectationsWithTimeout:0.45 handler:nil];
+- (void)testBootstrapSeveralPortions
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
-//     OCMVerify([self.tox bootstrapFromHost:@"h1" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h2" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h3" port:3 publicKey:@"3" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h4" port:4 publicKey:@"4" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h5" port:5 publicKey:@"5" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h6" port:6 publicKey:@"6" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h7" port:7 publicKey:@"7" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h8" port:8 publicKey:@"8" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h9" port:9 publicKey:@"9" error:[OCMArg anyObjectRef]]);
-//     OCMVerify([self.tox bootstrapFromHost:@"h10" port:10 publicKey:@"10" error:[OCMArg anyObjectRef]]);
-// }
+    self.submanager.didConnectDelay = 0.0;
+    self.submanager.iterationTime = 0.1;
 
-// - (void)testBootstrapDidConnectVerify
-// {
-//     XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
+    [self.submanager addNodeWithIpv4Host:@"h1" ipv6Host:nil udpPort:1 tcpPorts:@[] publicKey:@"1"];
+    [self.submanager addNodeWithIpv4Host:@"h2" ipv6Host:nil udpPort:2 tcpPorts:@[] publicKey:@"2"];
+    [self.submanager addNodeWithIpv4Host:@"h3" ipv6Host:nil udpPort:3 tcpPorts:@[] publicKey:@"3"];
+    [self.submanager addNodeWithIpv4Host:@"h4" ipv6Host:nil udpPort:4 tcpPorts:@[] publicKey:@"4"];
+    [self.submanager addNodeWithIpv4Host:@"h5" ipv6Host:nil udpPort:5 tcpPorts:@[] publicKey:@"5"];
+    [self.submanager addNodeWithIpv4Host:@"h6" ipv6Host:nil udpPort:6 tcpPorts:@[] publicKey:@"6"];
+    [self.submanager addNodeWithIpv4Host:@"h7" ipv6Host:nil udpPort:7 tcpPorts:@[] publicKey:@"7"];
+    [self.submanager addNodeWithIpv4Host:@"h8" ipv6Host:nil udpPort:8 tcpPorts:@[] publicKey:@"8"];
+    [self.submanager addNodeWithIpv4Host:@"h9" ipv6Host:nil udpPort:9 tcpPorts:@[] publicKey:@"9"];
+    [self.submanager addNodeWithIpv4Host:@"h10" ipv6Host:nil udpPort:10 tcpPorts:@[] publicKey:@"10"];
 
-//     OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
+    OCMExpect([self.tox bootstrapFromHost:@"h1" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h2" port:2 publicKey:@"2" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h3" port:3 publicKey:@"3" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h4" port:4 publicKey:@"4" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h5" port:5 publicKey:@"5" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h6" port:6 publicKey:@"6" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h7" port:7 publicKey:@"7" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h8" port:8 publicKey:@"8" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h9" port:9 publicKey:@"9" error:[OCMArg anyObjectRef]]);
+    OCMExpect([self.tox bootstrapFromHost:@"h10" port:10 publicKey:@"10" error:[OCMArg anyObjectRef]]);
 
-//     self.submanager.didConnectDelay = 0.1;
-//     self.submanager.iterationTime = 0.05;
+    [self.submanager bootstrap];
 
-//     [self.submanager addNodeWithHost:@"one" port:1 publicKey:@"1"];
+    [self performBlock:^{
+        [expectation fulfill];
+    } afterDelay:0.6];
+    [self waitForExpectationsWithTimeout:0.8 handler:nil];
 
-//     [self.submanager bootstrap];
+    OCMVerifyAll(self.tox);
+}
 
-//     [self performBlock:^{
-//         [expectation fulfill];
-//     } afterDelay:0.15];
-//     [self waitForExpectationsWithTimeout:0.3 handler:nil];
+- (void)testBootstrapDidConnectVerify
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
-//     OCMVerify([self.tox bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
-// }
+    OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
 
-// - (void)testBootstrapDidConnectReject
-// {
-//     XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
+    self.submanager.didConnectDelay = 0.1;
+    self.submanager.iterationTime = 0.05;
 
-//     OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
-//     [[self.tox reject] bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]];
+    [self.submanager addNodeWithIpv4Host:@"one" ipv6Host:nil udpPort:1 tcpPorts:@[] publicKey:@"1"];
 
-//     self.submanager.didConnectDelay = 0.2;
-//     self.submanager.iterationTime = 0.05;
+    OCMExpect([self.tox bootstrapFromHost:@"one" port:1 publicKey:@"1" error:[OCMArg anyObjectRef]]);
 
-//     [self.submanager addNodeWithHost:@"one" port:1 publicKey:@"1"];
+    [self.submanager bootstrap];
 
-//     [self.submanager bootstrap];
+    [self performBlock:^{
+        [expectation fulfill];
+    } afterDelay:0.3];
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 
-//     [self performBlock:^{
-//         [expectation fulfill];
-//     } afterDelay:0.1];
-//     [self waitForExpectationsWithTimeout:0.15 handler:nil];
-// }
+    OCMVerifyAll(self.tox);
+}
 
-// - (void)testAddTCPRelay
-// {
-//     NSError *error, *error2;
+- (void)testBootstrapDidConnectReject
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"bootstrap"];
 
-//     OCMExpect([self.tox addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:[OCMArg setTo:error2]]).andReturn(YES);
+    OCMStub([self.settingsStorage bootstrapDidConnect]).andReturn(YES);
 
-//     BOOL result = [self.submanager addTCPRelayWithHost:@"host" port:10 publicKey:@"publicKey" error:&error];
+    self.submanager.didConnectDelay = 0.2;
+    self.submanager.iterationTime = 0.05;
 
-//     XCTAssertTrue(result);
-//     XCTAssertEqual(error, error2);
-//     OCMVerifyAll(self.tox);
-// }
+    [self.submanager addNodeWithIpv4Host:@"one" ipv6Host:nil udpPort:1 tcpPorts:@[] publicKey:@"1"];
 
-// - (void)performBlock:(void (^)())block afterDelay:(NSTimeInterval)delay
-// {
-//     [self performSelector:@selector(runBlock:) withObject:block afterDelay:delay];
-// }
+    [self.submanager bootstrap];
 
-// - (void)runBlock:(void (^)())block
-// {
-//     block();
-// }
+    [self performBlock:^{
+        [expectation fulfill];
+    } afterDelay:0.1];
+    [self waitForExpectationsWithTimeout:0.15 handler:nil];
+
+    OCMVerifyAll(self.tox);
+}
+
+- (void)performBlock:(void (^)())block afterDelay:(NSTimeInterval)delay
+{
+    [self performSelector:@selector(runBlock:) withObject:block afterDelay:delay];
+}
+
+- (void)runBlock:(void (^)())block
+{
+    block();
+}
 
 @end

@@ -24,7 +24,7 @@ PODS:
   - libopus-patched-config/float (1.1)
   - libsodium (1.0.11)
   - Masonry (0.6.4)
-  - OCMock (3.1.2)
+  - OCMock (3.3.1)
   - Realm (1.0.1):
     - Realm/Headers (= 1.0.1)
   - Realm/Headers (1.0.1)
@@ -37,7 +37,7 @@ DEPENDENCIES:
   - BlocksKit (~> 2.2.5)
   - CocoaLumberjack (~> 1.9.2)
   - Masonry (~> 0.6.1)
-  - OCMock (= 3.1.2)
+  - OCMock (= 3.3.1)
   - Realm (= 1.0.1)
   - toxcore (= 0.1.4)
   - TPCircularBuffer (~> 0.0.1)
@@ -48,11 +48,11 @@ SPEC CHECKSUMS:
   libopus-patched-config: 12321105eb4b96e869b7957f3122345fd67928c3
   libsodium: 9aba161d2ee096977ecbdcce1ada69ffe511970c
   Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
-  OCMock: a10ea9f0a6e921651f96f78b6faee95ebc813b92
+  OCMock: f3f61e6eaa16038c30caa5798c5e49d3307b6f22
   Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
   toxcore: 1760726f758211a46efecf02cd6421123a4758f5
   TPCircularBuffer: 949e9632b9fb99b7274d7b2296ee22bff5841e35
 
-PODFILE CHECKSUM: 282aad2b7d4bcd39eafe17034ee6ba04bf0f3dd3
+PODFILE CHECKSUM: bd957265b08959a0a3739ec64f718fc29141a200
 
 COCOAPODS: 1.0.1
