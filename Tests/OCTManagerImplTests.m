@@ -302,7 +302,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         [expectation fulfill];
     } failureBlock:nil];
 
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithTimeout:20.0 handler:nil];
 
     XCTAssertNotNil(manager);
 
