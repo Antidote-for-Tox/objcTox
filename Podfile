@@ -16,7 +16,7 @@ def demo_pods
 end
 
 def test_pods
-    pod 'OCMock', '3.1.2'
+    pod 'OCMock', '3.3.1'
 end
 
 

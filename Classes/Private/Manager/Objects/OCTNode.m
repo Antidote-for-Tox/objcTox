@@ -8,7 +8,11 @@
 
 #pragma mark -  Lifecycle
 
-- (instancetype)initWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey
+- (instancetype)initWithIpv4Host:(nullable NSString *)ipv4Host
+                        ipv6Host:(nullable NSString *)ipv6Host
+                         udpPort:(OCTToxPort)udpPort
+                        tcpPorts:(NSArray<NSNumber *> *)tcpPorts
+                       publicKey:(NSString *)publicKey
 {
     self = [super init];
 
@@ -16,9 +20,11 @@
         return nil;
     }
 
-    _host = host;
-    _port = port;
-    _publicKey = publicKey;
+    _ipv4Host = [ipv4Host copy];
+    _ipv6Host = [ipv6Host copy];
+    _udpPort = udpPort;
+    _tcpPorts = [tcpPorts copy];
+    _publicKey = [publicKey copy];
 
     return self;
 }
@@ -31,21 +37,11 @@
 
     OCTNode *another = object;
 
-    if (! another.host) {
-        if (self.host) {
-            return NO;
-        }
-    }
-
-    if (! another.publicKey) {
-        if (self.publicKey) {
-            return NO;
-        }
-    }
-
-    return [self.host isEqualToString:another.host] &&
-           (self.port == another.port) &&
-           [self.publicKey isEqualToString:another.publicKey];
+    return [self compareString:self.ipv4Host with:another.ipv4Host] &&
+           [self compareString:self.ipv6Host with:another.ipv6Host] &&
+           (self.udpPort == another.udpPort) &&
+           [self.tcpPorts isEqual:another.tcpPorts] &&
+           [self.publicKey isEqual:another.publicKey];
 }
 
 - (NSUInteger)hash
@@ -53,11 +49,23 @@
     const NSUInteger prime = 31;
     NSUInteger result = 1;
 
-    result = prime * result + [self.host hash];
-    result = prime * result + self.port;
+    result = prime * result + [self.ipv4Host hash];
+    result = prime * result + [self.ipv6Host hash];
+    result = prime * result + self.udpPort;
+    result = prime * result + [self.tcpPorts hash];
     result = prime * result + [self.publicKey hash];
 
     return result;
+}
+
+- (BOOL)compareString:(NSString *)first with:(NSString *)second
+{
+    if (first && second) {
+        return [first isEqual:second];
+    }
+
+    BOOL bothNil = ! first && ! second;
+    return bothNil;
 }
 
 @end

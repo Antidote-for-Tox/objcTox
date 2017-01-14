@@ -6,6 +6,7 @@
 #import <OCMock/OCMock.h>
 
 #import "OCTTox+Private.h"
+#import "OCTToxOptions.h"
 #import "OCTCAsserts.h"
 
 static void *refToSelf;
@@ -579,30 +580,6 @@ void mocked_tox_self_get_public_key(const Tox *tox, uint8_t *public_key);
     [self.tox fillError:&error withCErrorFileSendChunk:TOX_ERR_FILE_SEND_CHUNK_WRONG_POSITION];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxErrorFileSendChunkWrongPosition);
-}
-
-- (void)testCToxOptionsFromOptions
-{
-    OCTToxOptions *options = [OCTToxOptions new];
-    options.IPv6Enabled = YES;
-    options.UDPEnabled = YES;
-    options.startPort = 10;
-    options.endPort = 20;
-    options.proxyType = OCTToxProxyTypeHTTP;
-    options.proxyHost = @"host";
-    options.proxyPort = 30;
-    options.tcpPort = 40;
-
-    struct Tox_Options cOptions = [self.tox cToxOptionsFromOptions:options];
-
-    XCTAssertTrue(tox_options_get_ipv6_enabled(&cOptions));
-    XCTAssertTrue(tox_options_get_udp_enabled(&cOptions));
-    XCTAssertEqual(tox_options_get_start_port(&cOptions), 10);
-    XCTAssertEqual(tox_options_get_end_port(&cOptions), 20);
-    XCTAssertEqual(tox_options_get_proxy_type(&cOptions), TOX_PROXY_TYPE_HTTP);
-    XCTAssertEqual(strcmp(tox_options_get_proxy_host(&cOptions), "host"), 0);
-    XCTAssertEqual(tox_options_get_proxy_port(&cOptions), 30);
-    XCTAssertEqual(tox_options_get_tcp_port(&cOptions), 40);
 }
 
 - (void)testBinToHexString

@@ -36,25 +36,45 @@
 - (void)testCopy
 {
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    configuration.options.IPv6Enabled = YES;
-    configuration.options.UDPEnabled = YES;
+    configuration.options.ipv6Enabled = YES;
+    configuration.options.udpEnabled = YES;
+    configuration.options.localDiscoveryEnabled = YES;
     configuration.options.proxyType = OCTToxProxyTypeHTTP;
     configuration.options.proxyHost = @"proxy.address";
     configuration.options.proxyPort = 999;
+    configuration.options.startPort = 123;
+    configuration.options.endPort = 321;
     configuration.options.tcpPort = 777;
+    configuration.options.holePunchingEnabled = YES;
     configuration.importToxSaveFromPath = @"save.tox";
 
     OCTManagerConfiguration *c2 = [configuration copy];
 
+    configuration.options.ipv6Enabled = NO;
+    configuration.options.udpEnabled = NO;
+    configuration.options.localDiscoveryEnabled = NO;
+    configuration.options.proxyType = OCTToxProxyTypeSocks5;
+    configuration.options.proxyHost = @"another.address";
+    configuration.options.proxyPort = 10;
+    configuration.options.startPort = 11;
+    configuration.options.endPort = 12;
+    configuration.options.tcpPort = 13;
+    configuration.options.holePunchingEnabled = NO;
+    configuration.importToxSaveFromPath = @"another.tox";
+
     XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
 
-    XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);
-    XCTAssertEqual(configuration.options.UDPEnabled, c2.options.UDPEnabled);
-    XCTAssertEqual(configuration.options.proxyType, c2.options.proxyType);
-    XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
-    XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
-    XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
-    XCTAssertEqualObjects(configuration.importToxSaveFromPath, c2.importToxSaveFromPath);
+    XCTAssertTrue(c2.options.ipv6Enabled);
+    XCTAssertTrue(c2.options.udpEnabled);
+    XCTAssertTrue(c2.options.localDiscoveryEnabled);
+    XCTAssertEqual(c2.options.proxyType, OCTToxProxyTypeHTTP);
+    XCTAssertEqualObjects(c2.options.proxyHost, @"proxy.address");
+    XCTAssertEqual(c2.options.proxyPort, 999);
+    XCTAssertEqual(c2.options.startPort, 123);
+    XCTAssertEqual(c2.options.endPort, 321);
+    XCTAssertEqual(c2.options.tcpPort, 777);
+    XCTAssertTrue(c2.options.holePunchingEnabled);
+    XCTAssertEqualObjects(c2.importToxSaveFromPath, @"save.tox");
 }
 
 @end

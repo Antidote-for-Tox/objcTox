@@ -6,15 +6,25 @@
 
 #import "OCTToxConstants.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface OCTNode : NSObject
 
-@property (strong, nonatomic, readonly) NSString *host;
-@property (assign, nonatomic, readonly) OCTToxPort port;
-@property (strong, nonatomic, readonly) NSString *publicKey;
+@property (copy, nonatomic, readonly, nullable) NSString *ipv4Host;
+@property (copy, nonatomic, readonly, nullable) NSString *ipv6Host;
+@property (assign, nonatomic, readonly) OCTToxPort udpPort;
+@property (copy, nonatomic, readonly) NSArray<NSNumber *> *tcpPorts;
+@property (copy, nonatomic, readonly) NSString *publicKey;
 
-- (instancetype)initWithHost:(NSString *)host port:(OCTToxPort)port publicKey:(NSString *)publicKey;
+- (instancetype)initWithIpv4Host:(nullable NSString *)ipv4Host
+                        ipv6Host:(nullable NSString *)ipv6Host
+                         udpPort:(OCTToxPort)udpPort
+                        tcpPorts:(NSArray<NSNumber *> *)tcpPorts
+                       publicKey:(NSString *)publicKey;
 
 - (BOOL)isEqual:(id)object;
 - (NSUInteger)hash;
 
 @end
+
+NS_ASSUME_NONNULL_END

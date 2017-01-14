@@ -7,6 +7,7 @@
 #import <OCMock/OCMock.h>
 #import "OCTToxAV+Private.h"
 #import "OCTTox+Private.h"
+#import "OCTToxOptions.h"
 #import "OCTCAsserts.h"
 
 static void *refToSelf;

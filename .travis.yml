@@ -2,6 +2,7 @@ language: objective-c
 osx_image: xcode8.1
 
 install:
+- brew install uncrustify
 - bundle install
 - pod repo update > /dev/null
 - ./install.sh

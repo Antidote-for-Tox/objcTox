@@ -3,20 +3,24 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import <Foundation/Foundation.h>
-
 #import "OCTToxConstants.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * After creation OCTToxOptions will have predefined default values.
+ */
 @interface OCTToxOptions : NSObject <NSCopying>
 
 /**
  * The type of socket to create.
  *
- * If this is set to NO, an IPv4 socket is created, which subsequently
+ * If this is set to false, an IPv4 socket is created, which subsequently
  * only allows IPv4 communication.
- * If it is set to YES, an IPv6 socket is created, allowing both IPv4 and
+ * If it is set to true, an IPv6 socket is created, allowing both IPv4 and
  * IPv6 communication.
  */
-@property (assign, nonatomic) BOOL IPv6Enabled;
+@property (nonatomic, assign) BOOL ipv6Enabled;
 
 /**
  * Enable the use of UDP communication when available.
@@ -25,7 +29,37 @@
  * need to be relayed through a TCP relay node, potentially slowing them down.
  * Disabling UDP support is necessary when using anonymous proxies or Tor.
  */
-@property (assign, nonatomic) BOOL UDPEnabled;
+@property (nonatomic, assign) BOOL udpEnabled;
+
+/**
+ * Enable local network peer discovery.
+ *
+ * Disabling this will cause Tox to not look for peers on the local network.
+ */
+@property (nonatomic, assign) BOOL localDiscoveryEnabled;
+
+/**
+ * Pass communications through a proxy.
+ */
+@property (nonatomic, assign) OCTToxProxyType proxyType;
+
+/**
+ * The IP address or DNS name of the proxy to be used.
+ *
+ * If used, this must be non-NULL and be a valid DNS name. The name must not
+ * exceed 255 characters.
+ *
+ * This member is ignored (it can be nil) if proxyType is OCTToxProxyTypeNone.
+ */
+@property (nonatomic, copy, nullable) NSString *proxyHost;
+
+/**
+ * The port to use to connect to the proxy server.
+ *
+ * Ports must be in the range (1, 65535). The value is ignored if
+ * proxyType is OCTToxProxyTypeNone.
+ */
+@property (nonatomic, assign) uint16_t proxyPort;
 
 /**
  * The start port of the inclusive port range to attempt to use.
@@ -39,32 +73,31 @@
  * Having start_port > end_port will yield the same behavior as if start_port
  * and end_port were swapped.
  */
-@property (assign, nonatomic) uint16_t startPort;
+@property (nonatomic, assign) uint16_t startPort;
 
 /**
  * The end port of the inclusive port range to attempt to use.
  */
-@property (assign, nonatomic) uint16_t endPort;
+@property (nonatomic, assign) uint16_t endPort;
 
-
-@property (assign, nonatomic) OCTToxProxyType proxyType;
 /**
- * The IP address or DNS name of the proxy to be used.
+ * The port to use for the TCP server (relay). If 0, the TCP server is
+ * disabled.
  *
- * If used, this must be non-NULL and be a valid DNS name. The name must not exceed 255 characters.
- * The value is ignored if proxyType is OCTToxProxyTypeNone.
- */
-@property (strong, nonatomic) NSString *proxyHost;
-/**
- * The port to use to connect to the proxy server.
+ * Enabling it is not required for Tox to function properly.
  *
- * Ports must be in the range (1, 65535). The value is ignored if proxyType is OCTToxProxyTypeNone.
+ * When enabled, your Tox instance can act as a TCP relay for other Tox
+ * instance. This leads to increased traffic, thus when writing a client
+ * it is recommended to enable TCP server only if the user has an option
+ * to disable it.
  */
-@property (assign, nonatomic) uint16_t proxyPort;
+@property (nonatomic, assign) uint16_t tcpPort;
 
 /**
- * The port to use for the TCP server. If 0, the tcp server is disabled.
+ * Enables or disables UDP hole-punching in toxcore. (Default: enabled).
  */
-@property (assign, nonatomic) uint16_t tcpPort;
+@property (nonatomic, assign) BOOL holePunchingEnabled;
 
 @end
+
+NS_ASSUME_NONNULL_END

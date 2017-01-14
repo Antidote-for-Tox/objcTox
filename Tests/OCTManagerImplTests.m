@@ -302,7 +302,7 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         [expectation fulfill];
     } failureBlock:nil];
 
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithTimeout:20.0 handler:nil];
 
     XCTAssertNotNil(manager);
 
@@ -346,12 +346,16 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     OCMStub([encryptSave decryptData:[OCMArg any] error:[OCMArg anyObjectRef]]).andReturn([NSData new]);
 
     OCTManagerConfiguration *configuration = [OCTManagerConfiguration defaultConfiguration];
-    configuration.options.IPv6Enabled = YES;
-    configuration.options.UDPEnabled = YES;
+    configuration.options.ipv6Enabled = YES;
+    configuration.options.udpEnabled = YES;
+    configuration.options.localDiscoveryEnabled = YES;
     configuration.options.proxyType = OCTToxProxyTypeHTTP;
     configuration.options.proxyHost = @"proxy.address";
     configuration.options.proxyPort = 999;
+    configuration.options.startPort = 123;
+    configuration.options.endPort = 321;
     configuration.options.tcpPort = 777;
+    configuration.options.holePunchingEnabled = YES;
     configuration.importToxSaveFromPath = @"save.tox";
     configuration.fileStorage = [self temporaryFileStorage];
 
@@ -363,18 +367,21 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
         [expectation fulfill];
     } failureBlock:nil];
 
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+    [self waitForExpectationsWithTimeout:200.0 handler:nil];
 
     OCTManagerConfiguration *c2 = [manager configuration];
 
-    XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
-    XCTAssertEqual(configuration.options.IPv6Enabled, c2.options.IPv6Enabled);
-    XCTAssertEqual(configuration.options.UDPEnabled, c2.options.UDPEnabled);
-    XCTAssertEqual(configuration.options.proxyType, c2.options.proxyType);
-    XCTAssertEqualObjects(configuration.options.proxyHost, c2.options.proxyHost);
-    XCTAssertEqual(configuration.options.proxyPort, c2.options.proxyPort);
-    XCTAssertEqual(configuration.options.tcpPort, c2.options.tcpPort);
-    XCTAssertEqualObjects(configuration.importToxSaveFromPath, c2.importToxSaveFromPath);
+    XCTAssertTrue(c2.options.ipv6Enabled);
+    XCTAssertTrue(c2.options.udpEnabled);
+    XCTAssertTrue(c2.options.localDiscoveryEnabled);
+    XCTAssertEqual(c2.options.proxyType, OCTToxProxyTypeHTTP);
+    XCTAssertEqualObjects(c2.options.proxyHost, @"proxy.address");
+    XCTAssertEqual(c2.options.proxyPort, 999);
+    XCTAssertEqual(c2.options.startPort, 123);
+    XCTAssertEqual(c2.options.endPort, 321);
+    XCTAssertEqual(c2.options.tcpPort, 777);
+    XCTAssertTrue(c2.options.holePunchingEnabled);
+    XCTAssertEqualObjects(c2.importToxSaveFromPath, @"save.tox");
 
     [(id)encryptSave stopMocking];
 }

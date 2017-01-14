@@ -27,14 +27,6 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
                                                                   temporaryDirectory:NSTemporaryDirectory()];
 
     configuration.options = [OCTToxOptions new];
-    configuration.options.IPv6Enabled = YES;
-    configuration.options.UDPEnabled = YES;
-    configuration.options.startPort = 0;
-    configuration.options.endPort = 0;
-    configuration.options.proxyType = OCTToxProxyTypeNone;
-    configuration.options.proxyHost = nil;
-    configuration.options.proxyPort = 0;
-    configuration.options.tcpPort = 0;
 
     configuration.importToxSaveFromPath = nil;
 

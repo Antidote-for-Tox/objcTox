@@ -430,6 +430,7 @@
 		11D6C9941B3B252300E21A35 /* OCTSubmanagerObjectsImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSubmanagerObjectsImpl.h; sourceTree = "<group>"; };
 		11E80D811B98C647008DFC47 /* OCTSettingsStorageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTSettingsStorageObject.h; sourceTree = "<group>"; };
 		11E80D821B98C647008DFC47 /* OCTSettingsStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTSettingsStorageObject.m; sourceTree = "<group>"; };
+		11F6C4A51E2A4D9B0096F462 /* OCTToxOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OCTToxOptions+Private.h"; sourceTree = "<group>"; };
 		1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTToxOptions.m; sourceTree = "<group>"; };
 		1B75FA045E32B1417FDC20970961725C /* OCTManagerConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCTManagerConfiguration.m; sourceTree = "<group>"; };
 		1D66E7C409BC96AC7372B302BABF1D88 /* OCTTox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCTTox.h; sourceTree = "<group>"; };
@@ -677,6 +678,7 @@
 				1123588C1B87927100E8FB71 /* OCTToxDNS3Object.m */,
 				119B13E41B9AF5A2006DA6FF /* OCTToxEncryptSave.m */,
 				1AED5AE89C3775595A525D3B45B80637 /* OCTToxOptions.m */,
+				11F6C4A51E2A4D9B0096F462 /* OCTToxOptions+Private.h */,
 			);
 			path = Wrapper;
 			sourceTree = "<group>";

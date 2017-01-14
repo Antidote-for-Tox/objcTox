@@ -5,8 +5,9 @@
 #import <Foundation/Foundation.h>
 
 #import "OCTToxDelegate.h"
-#import "OCTToxOptions.h"
 #import "OCTToxConstants.h"
+
+@class OCTToxOptions;
 
 @interface OCTTox : NSObject
 
