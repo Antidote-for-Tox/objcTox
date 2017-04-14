@@ -166,6 +166,11 @@
     return self.notificationCenter;
 }
 
+- (BOOL)managerUseFauxOfflineMessaging
+{
+    return self.currentConfiguration.useFauxOfflineMessaging;
+}
+
 #pragma mark -  Private
 
 - (NSData *)getSavedDataFromPath:(NSString *)path

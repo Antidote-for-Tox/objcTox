@@ -41,5 +41,6 @@ static NSString *const kOCTScheduleFileTransferCleanupNotification = @"kOCTSched
 - (OCTRealmManager *)managerGetRealmManager;
 - (id<OCTFileStorageProtocol>)managerGetFileStorage;
 - (NSNotificationCenter *)managerGetNotificationCenter;
+- (BOOL)managerUseFauxOfflineMessaging;
 
 @end

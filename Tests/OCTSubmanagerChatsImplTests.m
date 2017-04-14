@@ -165,6 +165,81 @@
     [self waitForExpectationsWithTimeout:0.2 handler:nil];
 }
 
+- (void)testSendMessageToChatFauxEnabled
+{
+    OCMStub([self.dataSource managerUseFauxOfflineMessaging]).andReturn(YES);
+
+    id message = OCMClassMock([OCTMessageAbstract class]);
+
+    id friend = OCMClassMock([OCTFriend class]);
+    OCMStub([friend friendNumber]).andReturn(5);
+    NSArray *friends = @[friend];
+
+    id chat = OCMClassMock([OCTChat class]);
+    OCMStub([chat friends]).andReturn(friends);
+
+    NSError *error2 = OCMClassMock([NSError class]);
+    OCMStub(error2.code).andReturn(OCTToxErrorFriendSendMessageFriendNotConnected);
+
+    OCMStub([self.tox sendMessageWithFriendNumber:5
+                                             type:OCTToxMessageTypeAction
+                                          message:@"text"
+                                            error:[OCMArg setTo:error2]]).andReturn(0);
+    OCMExpect([self.realmManager addMessageWithText:@"text"
+                                               type:OCTToxMessageTypeAction
+                                               chat:chat
+                                             sender:nil
+                                          messageId:-1]).andReturn(message);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@""];
+
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction successBlock:^(OCTMessageAbstract *theMessage) {
+        OCMVerifyAll((id)self.realmManager);
+        XCTAssertEqualObjects(message, theMessage);
+        [expectation fulfill];
+
+    } failureBlock:^(NSError *error) {
+        XCTAssertTrue(false, @"This block shouldn't be called");
+    }];
+
+    [self waitForExpectationsWithTimeout:0.2 handler:nil];
+}
+
+- (void)testSendMessageToChatFauxDisabled
+{
+    OCMStub([self.dataSource managerUseFauxOfflineMessaging]).andReturn(NO);
+
+    id message = OCMClassMock([OCTMessageAbstract class]);
+
+    id friend = OCMClassMock([OCTFriend class]);
+    OCMStub([friend friendNumber]).andReturn(5);
+    NSArray *friends = @[friend];
+
+    id chat = OCMClassMock([OCTChat class]);
+    OCMStub([chat friends]).andReturn(friends);
+
+    NSError *error2 = OCMClassMock([NSError class]);
+    OCMStub(error2.code).andReturn(OCTToxErrorFriendSendMessageFriendNotConnected);
+
+    OCMStub([self.tox sendMessageWithFriendNumber:5
+                                             type:OCTToxMessageTypeAction
+                                          message:@"text"
+                                            error:[OCMArg setTo:error2]]).andReturn(0);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@""];
+
+    [self.submanager sendMessageToChat:chat text:@"text" type:OCTToxMessageTypeAction successBlock:^(OCTMessageAbstract *theMessage) {
+        XCTAssertTrue(false, @"This block shouldn't be called");
+
+    } failureBlock:^(NSError *error) {
+        OCMVerifyAll((id)self.realmManager);
+        XCTAssertEqualObjects(error, error2);
+        [expectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:0.2 handler:nil];
+}
+
 - (void)testSetIsTyping
 {
     id friend = OCMClassMock([OCTFriend class]);

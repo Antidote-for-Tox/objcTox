@@ -89,12 +89,27 @@
         }
     };
 
+    OCTSendMessageOperationFailureBlock failureBlock = ^(NSError *error) {
+        __strong OCTSubmanagerChatsImpl *strongSelf = weakSelf;
+
+        if ((error.code == OCTToxErrorFriendSendMessageFriendNotConnected) &&
+            [strongSelf.dataSource managerUseFauxOfflineMessaging]) {
+
+            successBlock(-1);
+            return;
+        }
+
+        if (userFailureBlock) {
+            userFailureBlock(error);
+        }
+    };
+
     OCTSendMessageOperation *operation = [[OCTSendMessageOperation alloc] initWithTox:[self.dataSource managerGetTox]
                                                                          friendNumber:friend.friendNumber
                                                                           messageType:type
                                                                               message:text
                                                                          successBlock:successBlock
-                                                                         failureBlock:userFailureBlock];
+                                                                         failureBlock:failureBlock];
     [self.sendMessageQueue addOperation:operation];
 }
 

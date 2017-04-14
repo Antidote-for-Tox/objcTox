@@ -29,6 +29,7 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     configuration.options = [OCTToxOptions new];
 
     configuration.importToxSaveFromPath = nil;
+    configuration.useFauxOfflineMessaging = YES;
 
     return configuration;
 }
@@ -42,6 +43,7 @@ static NSString *const kDefaultBaseDirectory = @"me.dvor.objcTox";
     configuration.fileStorage = self.fileStorage;
     configuration.options = [self.options copy];
     configuration.importToxSaveFromPath = [self.importToxSaveFromPath copy];
+    configuration.useFauxOfflineMessaging = self.useFauxOfflineMessaging;
 
     return configuration;
 }

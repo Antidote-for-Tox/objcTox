@@ -31,6 +31,7 @@
 
     XCTAssertNotNil(configuration.fileStorage);
     XCTAssertNotNil(configuration.options);
+    XCTAssertTrue(configuration.useFauxOfflineMessaging);
 }
 
 - (void)testCopy
@@ -47,6 +48,7 @@
     configuration.options.tcpPort = 777;
     configuration.options.holePunchingEnabled = YES;
     configuration.importToxSaveFromPath = @"save.tox";
+    configuration.useFauxOfflineMessaging = NO;
 
     OCTManagerConfiguration *c2 = [configuration copy];
 
@@ -61,6 +63,7 @@
     configuration.options.tcpPort = 13;
     configuration.options.holePunchingEnabled = NO;
     configuration.importToxSaveFromPath = @"another.tox";
+    configuration.useFauxOfflineMessaging = YES;
 
     XCTAssertEqualObjects(configuration.fileStorage, c2.fileStorage);
 
@@ -75,6 +78,7 @@
     XCTAssertEqual(c2.options.tcpPort, 777);
     XCTAssertTrue(c2.options.holePunchingEnabled);
     XCTAssertEqualObjects(c2.importToxSaveFromPath, @"save.tox");
+    XCTAssertFalse(c2.useFauxOfflineMessaging);
 }
 
 @end

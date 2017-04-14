@@ -40,6 +40,15 @@
 @property (strong, nonatomic, nullable) NSString *importToxSaveFromPath;
 
 /**
+ * When faux offline messaging is enabled, it is allowed to send message to
+ * offline friends. In that case message would be stored in database and resend
+ * when friend comes online.
+ *
+ * Default value: YES.
+ */
+@property (assign, nonatomic) BOOL useFauxOfflineMessaging;
+
+/**
  * This is default configuration for manager.
  * Each property of OCTManagerConfiguration has "Default value" field. This method returns configuration
  * with those default values set.
