@@ -28,7 +28,7 @@ PODS:
   - Realm (1.0.1):
     - Realm/Headers (= 1.0.1)
   - Realm/Headers (1.0.1)
-  - toxcore (0.1.7):
+  - toxcore (0.1.10):
     - libopus-patched-config (= 1.1)
     - libsodium (~> 1.0.1)
   - TPCircularBuffer (0.0.1)
@@ -39,7 +39,7 @@ DEPENDENCIES:
   - Masonry (~> 0.6.1)
   - OCMock (= 3.3.1)
   - Realm (= 1.0.1)
-  - toxcore (= 0.1.7)
+  - toxcore (= 0.1.10)
   - TPCircularBuffer (~> 0.0.1)
 
 SPEC CHECKSUMS:
@@ -50,9 +50,9 @@ SPEC CHECKSUMS:
   Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
   OCMock: f3f61e6eaa16038c30caa5798c5e49d3307b6f22
   Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
-  toxcore: c6fe374b680066ee524d4ee4c3650648f3e64bf8
+  toxcore: fcb63df0a1df64042644e53f648725cf93566691
   TPCircularBuffer: 949e9632b9fb99b7274d7b2296ee22bff5841e35
 
-PODFILE CHECKSUM: bbe8686efc6fec5461f55808891daa107523a89c
+PODFILE CHECKSUM: 063ca2693e9f5107475bc39691ee8ad7b11d4651
 
 COCOAPODS: 1.0.1
