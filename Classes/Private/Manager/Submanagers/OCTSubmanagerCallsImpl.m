@@ -7,7 +7,7 @@
 #import "OCTTox.h"
 
 const OCTToxAVAudioBitRate kDefaultAudioBitRate = OCTToxAVAudioBitRate48;
-const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2000;
+const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2500;
 
 @interface OCTSubmanagerCallsImpl () <OCTToxAVDelegate>
 
