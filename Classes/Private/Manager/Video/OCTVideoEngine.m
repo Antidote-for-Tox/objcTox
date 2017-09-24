@@ -46,6 +46,11 @@ static const OSType kPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRan
 #if ! TARGET_OS_SIMULATOR
     _captureSession = [AVCaptureSession new];
     _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
+
+    if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset640x480])
+    {
+        _captureSession.sessionPreset = AVCaptureSessionPreset640x480;
+    }
 #endif
 
     _dataOutput = [AVCaptureVideoDataOutput new];
