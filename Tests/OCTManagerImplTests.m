@@ -15,7 +15,6 @@
 #import "OCTManagerConfiguration.h"
 #import "OCTSubmanagerBootstrapImpl.h"
 #import "OCTSubmanagerChatsImpl.h"
-#import "OCTSubmanagerDNSImpl.h"
 #import "OCTSubmanagerFriendsImpl.h"
 #import "OCTSubmanagerFilesImpl.h"
 #import "OCTSubmanagerUserImpl.h"
@@ -37,7 +36,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrapImpl *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChatsImpl *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerDNSImpl *dns;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFilesImpl *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriendsImpl *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjectsImpl *objects;
@@ -130,8 +128,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     XCTAssertEqual(self.manager.bootstrap.dataSource, self.manager);
     XCTAssertNotNil(self.manager.chats);
     XCTAssertEqual(self.manager.chats.dataSource, self.manager);
-    XCTAssertNotNil(self.manager.dns);
-    XCTAssertEqual(self.manager.dns.dataSource, self.manager);
     XCTAssertNotNil(self.manager.files);
     XCTAssertEqual(self.manager.files.dataSource, self.manager);
     XCTAssertNotNil(self.manager.friends);
@@ -403,7 +399,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
     id submanager = [FakeSubmanager new];
     self.manager.bootstrap = submanager;
     self.manager.chats = submanager;
-    self.manager.dns = submanager;
     self.manager.files = submanager;
     self.manager.friends = submanager;
     self.manager.objects = submanager;
@@ -428,7 +423,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = submanager;
     self.manager.chats = dummy;
-    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -438,7 +432,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = dummy;
     self.manager.chats = submanager;
-    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -448,17 +441,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
-    self.manager.dns = submanager;
-    self.manager.files = dummy;
-    self.manager.friends = dummy;
-    self.manager.objects = dummy;
-    self.manager.user = dummy;
-
-    XCTAssertEqual([self.manager forwardingTargetForSelector:@selector(tox:connectionStatus:)], submanager);
-
-    self.manager.bootstrap = dummy;
-    self.manager.chats = dummy;
-    self.manager.dns = dummy;
     self.manager.files = submanager;
     self.manager.friends = dummy;
     self.manager.objects = dummy;
@@ -468,7 +450,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
-    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = submanager;
     self.manager.objects = dummy;
@@ -478,7 +459,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
-    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = submanager;
@@ -488,7 +468,6 @@ static NSString *const kTestDirectory = @"me.dvor.objcToxTests";
 
     self.manager.bootstrap = dummy;
     self.manager.chats = dummy;
-    self.manager.dns = dummy;
     self.manager.files = dummy;
     self.manager.friends = dummy;
     self.manager.objects = dummy;

@@ -209,8 +209,6 @@
 {
     OCMStub([self.dataSource managerUseFauxOfflineMessaging]).andReturn(NO);
 
-    id message = OCMClassMock([OCTMessageAbstract class]);
-
     id friend = OCMClassMock([OCTFriend class]);
     OCMStub([friend friendNumber]).andReturn(5);
     NSArray *friends = @[friend];

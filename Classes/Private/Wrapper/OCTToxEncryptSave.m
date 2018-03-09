@@ -27,7 +27,6 @@
         return nil;
     }
 
-    _passKey = tox_pass_key_new();
     TOX_ERR_KEY_DERIVATION cError;
 
     uint8_t salt[TOX_PASS_SALT_LENGTH];
@@ -37,19 +36,15 @@
         hasSalt = tox_get_salt(toxData.bytes, salt, NULL);
     }
 
-    bool result = false;
-
     if (hasSalt) {
-        result = tox_pass_key_derive_with_salt(
-            _passKey,
+        _passKey = tox_pass_key_derive_with_salt(
             (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
             [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
             salt,
             &cError);
     }
     else {
-        result = tox_pass_key_derive(
-            _passKey,
+        _passKey = tox_pass_key_derive(
             (const uint8_t *)[passphrase cStringUsingEncoding:NSUTF8StringEncoding],
             [passphrase lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
             &cError);
@@ -57,7 +52,7 @@
 
     [OCTToxEncryptSave fillError:error withCErrorKeyDerivation:cError];
 
-    return result ? self : nil;
+    return (_passKey != NULL) ? self : nil;
 }
 
 - (void)dealloc

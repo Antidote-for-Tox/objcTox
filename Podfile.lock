@@ -25,10 +25,10 @@ PODS:
   - libsodium (1.0.12)
   - Masonry (0.6.4)
   - OCMock (3.3.1)
-  - Realm (1.0.1):
-    - Realm/Headers (= 1.0.1)
-  - Realm/Headers (1.0.1)
-  - toxcore (0.1.10):
+  - Realm (3.1.0):
+    - Realm/Headers (= 3.1.0)
+  - Realm/Headers (3.1.0)
+  - toxcore (0.2.2):
     - libopus-patched-config (= 1.1)
     - libsodium (~> 1.0.1)
   - TPCircularBuffer (0.0.1)
@@ -38,8 +38,8 @@ DEPENDENCIES:
   - CocoaLumberjack (~> 1.9.2)
   - Masonry (~> 0.6.1)
   - OCMock (= 3.3.1)
-  - Realm (= 1.0.1)
-  - toxcore (= 0.1.10)
+  - Realm (= 3.1.0)
+  - toxcore (= 0.2.2)
   - TPCircularBuffer (~> 0.0.1)
 
 SPEC CHECKSUMS:
@@ -49,10 +49,10 @@ SPEC CHECKSUMS:
   libsodium: 9a8faa5ef2fa0d2d57bd7f7d79bf8fb7c1a9f0ea
   Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
   OCMock: f3f61e6eaa16038c30caa5798c5e49d3307b6f22
-  Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
-  toxcore: fcb63df0a1df64042644e53f648725cf93566691
+  Realm: '09513d7c054678d65cd02ce09871f805b0d758ac'
+  toxcore: 57d8ec3bd29bf4fecff84a742579124094ed8b2a
   TPCircularBuffer: 949e9632b9fb99b7274d7b2296ee22bff5841e35
 
-PODFILE CHECKSUM: 063ca2693e9f5107475bc39691ee8ad7b11d4651
+PODFILE CHECKSUM: cbdc73922a8c5c7ed617b3f54a7d735a9d6a6458
 
 COCOAPODS: 1.0.1

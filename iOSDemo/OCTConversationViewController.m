@@ -43,7 +43,7 @@
 
 - (void)dealloc
 {
-    [self.messagesNotificationToken stop];
+    [self.messagesNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

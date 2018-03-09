@@ -25,7 +25,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 @property (strong, nonatomic) RLMResults<OCTChat *> *allChats;
 @property (strong, nonatomic) RLMNotificationToken *allChatsNotificationToken;
-@property (strong, nonatomic) RLMResults<OCTChat *> *conversationMessages;
+@property (strong, nonatomic) RLMResults<OCTMessageAbstract *> *conversationMessages;
 @property (strong, nonatomic) RLMNotificationToken *conversationMessagesNotificationToken;
 
 @property (weak) IBOutlet NSTableView *chatsTableView;
@@ -53,8 +53,8 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)dealloc
 {
-    [self.allChatsNotificationToken stop];
-    [self.conversationMessagesNotificationToken stop];
+    [self.allChatsNotificationToken invalidate];
+    [self.conversationMessagesNotificationToken invalidate];
 }
 
 - (void)viewDidLoad
@@ -238,7 +238,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)updateConversationControllerForChat:(OCTChat *)chat
 {
-    [self.conversationMessagesNotificationToken stop];
+    [self.conversationMessagesNotificationToken invalidate];
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chatUniqueIdentifier == %@", chat.uniqueIdentifier];
     self.conversationMessages = [self.manager.objects objectsForType:OCTFetchRequestTypeMessageAbstract predicate:predicate];

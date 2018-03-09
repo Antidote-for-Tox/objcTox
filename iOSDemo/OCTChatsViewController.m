@@ -34,7 +34,7 @@
 
 - (void)dealloc
 {
-    [self.chatsNotificationToken stop];
+    [self.chatsNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

@@ -16,7 +16,6 @@ typedef const uint8_t OCTToxAVPlaneData;
 typedef const int32_t OCTToxAVStrideData;
 
 extern const OCTToxAVVideoBitRate kOCTToxAVVideoBitRateDisable;
-extern const uint32_t kOCTToxAVBitRateUnchanged;
 
 extern NSString *const kOCTToxAVErrorDomain;
 
@@ -213,14 +212,9 @@ typedef NS_ENUM(NSInteger, OCTToxAVErrorSetBitRate) {
     OCTToxAVErrorSetBitRateSync,
 
     /**
-     * The audio bit rate passed was not one of the supported values.
+     * The bit rate passed was not one of the supported values.<Paste>
      */
-    OCTToxAVErrorSetBitRateInvalidAudioBitRate,
-
-    /**
-     * The video bit rate passed was not one of the supported values.
-     */
-    OCTToxAVErrorSetBitRateInvalidVideoBitRate,
+    OCTToxAVErrorSetBitRateInvalidBitRate,
 
     /**
      * The friend number passed did not designate a valid friend.

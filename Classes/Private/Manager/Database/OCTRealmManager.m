@@ -326,7 +326,7 @@ static NSString *kSettingsStorageObjectPrimaryKey = @"kSettingsStorageObjectPrim
 
         for (NSString *chatUniqueIdentifier in changedChats) {
             RLMResults *messages = [OCTMessageAbstract objectsInRealm:self.realm where:@"chatUniqueIdentifier == %@", chatUniqueIdentifier];
-            messages = [messages sortedResultsUsingProperty:@"dateInterval" ascending:YES];
+            messages = [messages sortedResultsUsingKeyPath:@"dateInterval" ascending:YES];
 
             OCTChat *chat = [OCTChat objectInRealm:self.realm forPrimaryKey:chatUniqueIdentifier];
             chat.lastMessage = messages.lastObject;

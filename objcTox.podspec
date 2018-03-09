@@ -20,16 +20,16 @@ Pod::Spec.new do |s|
       :submodules => false
   }
 
-  s.ios.deployment_target = '7.0'
+  s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.9'
   s.requires_arc = true
 
   s.source_files = 'Classes/**/*.{m,h}'
   s.public_header_files = 'Classes/Public/**/*.h'
-  s.dependency 'toxcore', '0.1.10'
+  s.dependency 'toxcore', '0.2.2'
   s.dependency 'TPCircularBuffer', '~> 0.0.1'
   s.dependency 'CocoaLumberjack', '1.9.2'
-  s.dependency 'Realm', '1.0.1'
+  s.dependency 'Realm', '3.1.0'
 
   s.resource_bundle = {
       'objcTox' => 'Classes/Public/Manager/nodes.json'

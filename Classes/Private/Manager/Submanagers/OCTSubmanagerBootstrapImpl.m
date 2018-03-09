@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #import "OCTSubmanagerBootstrapImpl.h"
-#import "OCTPredefined.h"
 #import "OCTNode.h"
 #import "OCTTox.h"
 #import "OCTLogging.h"

@@ -45,7 +45,7 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)dealloc
 {
-    [self.callsNotificationToken stop];
+    [self.callsNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

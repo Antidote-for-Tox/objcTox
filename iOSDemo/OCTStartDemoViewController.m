@@ -92,10 +92,10 @@ typedef NS_ENUM(NSUInteger, Row) {
             break;
 
         case RowIPv6Enabled:
-            cell.textLabel.text = [NSString stringWithFormat:@"IPv6Enabled %u", self.configuration.options.IPv6Enabled];
+            cell.textLabel.text = [NSString stringWithFormat:@"IPv6Enabled %u", self.configuration.options.ipv6Enabled];
             break;
         case RowUDPEnabled:
-            cell.textLabel.text = [NSString stringWithFormat:@"UDPEnabled %u", self.configuration.options.UDPEnabled];
+            cell.textLabel.text = [NSString stringWithFormat:@"UDPEnabled %u", self.configuration.options.udpEnabled];
             break;
         case __RowCount:
             // nop
@@ -136,14 +136,14 @@ typedef NS_ENUM(NSUInteger, Row) {
             case RowIPv6Enabled:
                 {
                     [weakSelf addToSheet:sheet multiEditButtonWithOptions:@[ @"NO", @"YES" ] block:^(NSUInteger index) {
-                    weakSelf.configuration.options.IPv6Enabled = (BOOL)index;
+                    weakSelf.configuration.options.ipv6Enabled = (BOOL)index;
                 }];
                     break;
                 }
             case RowUDPEnabled:
                 {
                     [weakSelf addToSheet:sheet multiEditButtonWithOptions:@[ @"NO", @"YES" ] block:^(NSUInteger index) {
-                    weakSelf.configuration.options.UDPEnabled = (BOOL)index;
+                    weakSelf.configuration.options.udpEnabled = (BOOL)index;
                 }];
                     break;
                 }

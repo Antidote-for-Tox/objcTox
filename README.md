@@ -10,7 +10,6 @@ See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current a
 
 - iOS 7.0+ and OS X 10.9+ compatibility.
 - OCTTox wrapper for tox.h file.
-- OCTToxDNS wrapper for toxdns.h file.
 - OCTManager that provides high level API for Tox.
 
 ##### OCTManager features
@@ -22,7 +21,6 @@ See [CHANGELOG](CHANGELOG.md) for list of notable changes (unreleased, current a
 - Auto-updated and changeable nickname for friend.
 - Chat objects with various information.
 - Sending and receiving messages.
-- tox1 and tox3 DNS discovery.
 - Audio and video calls.
 - File transfers.
 - User avatars.

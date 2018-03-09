@@ -44,7 +44,7 @@ static NSString *const kCellIdentifier = @"fileCell";
 
 - (void)dealloc
 {
-    [self.fileMessagesNotificationToken stop];
+    [self.fileMessagesNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

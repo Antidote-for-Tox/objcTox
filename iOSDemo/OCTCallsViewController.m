@@ -40,7 +40,7 @@
 
 - (void)dealloc
 {
-    [self.callsNotificationToken stop];
+    [self.callsNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

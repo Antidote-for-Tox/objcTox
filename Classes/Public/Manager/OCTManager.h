@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol OCTSubmanagerBootstrap;
 @protocol OCTSubmanagerCalls;
 @protocol OCTSubmanagerChats;
-@protocol OCTSubmanagerDNS;
 @protocol OCTSubmanagerFiles;
 @protocol OCTSubmanagerFriends;
 @protocol OCTSubmanagerObjects;
@@ -35,11 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Submanager with all chats methods.
  */
 @property (strong, nonatomic, readonly) id<OCTSubmanagerChats> chats;
-
-/**
- * Submanager with all DNS methods.
- */
-@property (strong, nonatomic, readonly) id<OCTSubmanagerDNS> dns;
 
 /**
  * Submanager with all files methods.

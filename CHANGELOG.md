@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Faux offline messaging.
 
+### Changed
+- Updating toxcore to 0.2.0.
+- Removing everything related to toxdns.
+
 ## [0.7.0] - 2017-04-12
 ### Added
 - OS X platform in podspec.

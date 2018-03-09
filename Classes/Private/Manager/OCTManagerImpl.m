@@ -12,7 +12,6 @@
 #import "OCTSubmanagerBootstrapImpl.h"
 #import "OCTSubmanagerCallsImpl.h"
 #import "OCTSubmanagerChatsImpl.h"
-#import "OCTSubmanagerDNSImpl.h"
 #import "OCTSubmanagerFilesImpl.h"
 #import "OCTSubmanagerFriendsImpl.h"
 #import "OCTSubmanagerObjectsImpl.h"
@@ -34,7 +33,6 @@
 @property (strong, nonatomic, readwrite) OCTSubmanagerBootstrapImpl *bootstrap;
 @property (strong, nonatomic, readwrite) OCTSubmanagerCallsImpl *calls;
 @property (strong, nonatomic, readwrite) OCTSubmanagerChatsImpl *chats;
-@property (strong, nonatomic, readwrite) OCTSubmanagerDNSImpl *dns;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFilesImpl *files;
 @property (strong, nonatomic, readwrite) OCTSubmanagerFriendsImpl *friends;
 @property (strong, nonatomic, readwrite) OCTSubmanagerObjectsImpl *objects;
@@ -199,7 +197,6 @@
 {
     _bootstrap = [self createSubmanagerWithClass:[OCTSubmanagerBootstrapImpl class]];
     _chats = [self createSubmanagerWithClass:[OCTSubmanagerChatsImpl class]];
-    _dns = [self createSubmanagerWithClass:[OCTSubmanagerDNSImpl class]];
     _files = [self createSubmanagerWithClass:[OCTSubmanagerFilesImpl class]];
     _friends = [self createSubmanagerWithClass:[OCTSubmanagerFriendsImpl class]];
     _objects = [self createSubmanagerWithClass:[OCTSubmanagerObjectsImpl class]];
@@ -216,7 +213,6 @@
     self.bootstrap = nil;
     self.calls = nil;
     self.chats = nil;
-    self.dns = nil;
     self.files = nil;
     self.friends = nil;
     self.objects = nil;
@@ -258,7 +254,6 @@
     NSArray *submanagers = @[
         self.bootstrap,
         self.chats,
-        self.dns,
         self.files,
         self.friends,
         self.objects,

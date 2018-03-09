@@ -50,8 +50,8 @@ typedef NS_ENUM(NSUInteger, SectionType) {
 
 - (void)dealloc
 {
-    [self.friendsNotificationToken stop];
-    [self.friendRequestsNotificationToken stop];
+    [self.friendsNotificationToken invalidate];
+    [self.friendRequestsNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

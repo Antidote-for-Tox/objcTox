@@ -208,7 +208,7 @@
 
     // messageId is reset on every launch, so we want to update delivered status on latest message.
     RLMResults *results = [realmManager objectsWithClass:[OCTMessageAbstract class] predicate:predicate];
-    results = [results sortedResultsUsingProperty:@"dateInterval" ascending:NO];
+    results = [results sortedResultsUsingKeyPath:@"dateInterval" ascending:NO];
 
     OCTMessageAbstract *message = [results firstObject];
 

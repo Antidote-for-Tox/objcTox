@@ -24,8 +24,8 @@ bool mocked_tox_av_call_fail(ToxAV *toxAV, uint32_t friend_number, uint32_t audi
 bool mocked_toxav_call_control_resume(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
 bool mocked_toxav_call_control_cancel(ToxAV *toxAV, uint32_t friend_number, TOXAV_CALL_CONTROL control, TOXAV_ERR_CALL_CONTROL *error);
 
-bool mocked_toxav_bit_rate_set(ToxAV *toxAV, uint32_t friend_number, int32_t audio_bit_rate,
-                               int32_t video_bit_rate, TOXAV_ERR_BIT_RATE_SET *error);
+bool mocked_toxav_audio_set_bit_rate(ToxAV *av, uint32_t friend_number, uint32_t bit_rate, TOXAV_ERR_BIT_RATE_SET *error);
+bool mocked_toxav_video_set_bit_rate(ToxAV *av, uint32_t friend_number, uint32_t bit_rate, TOXAV_ERR_BIT_RATE_SET *error);
 
 bool mocked_toxav_audio_send_frame(ToxAV *toxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error);
 bool mocked_toxav_video_send_frame(ToxAV *toxAV, uint32_t friend_number, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, TOXAV_ERR_SEND_FRAME *error);
@@ -235,19 +235,14 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     [self.toxAV fillError:nil withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL];
 
     NSError *error;
-    [self.toxAV fillError:&error withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_INVALID_AUDIO_BIT_RATE];
+    [self.toxAV fillError:&error withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_INVALID_BIT_RATE];
     XCTAssertNotNil(error);
-    XCTAssertTrue(error.code == OCTToxAVErrorSetBitRateInvalidAudioBitRate);
+    XCTAssertTrue(error.code == OCTToxAVErrorSetBitRateInvalidBitRate);
 
     error = nil;
     [self.toxAV fillError:&error withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_SYNC];
     XCTAssertNotNil(error);
     XCTAssertTrue(error.code == OCTToxAVErrorSetBitRateSync);
-
-    error = nil;
-    [self.toxAV fillError:&error withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_INVALID_VIDEO_BIT_RATE];
-    XCTAssertNotNil(error);
-    XCTAssertTrue(error.code == OCTToxAVErrorSetBitRateInvalidVideoBitRate);
 
     error = nil;
     [self.toxAV fillError:&error withCErrorSetBitRate:TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_FOUND];
@@ -343,15 +338,21 @@ OCTToxAVPlaneData *aPlanePointer = aPlaneTestData;
     }];
 }
 
-- (void)testBitRateCallback
+- (void)testAudioBitRateCallback
 {
     [self makeTestCallbackWithCallBlock:^{
-        bitRateStatusCallback(NULL, 1234, 567, 890, (__bridge void *)self.toxAV);
+        audioBitRateStatusCallback(NULL, 1234, 567, (__bridge void *)self.toxAV);
     } expectBlock:^(id<OCTToxAVDelegate> delegate) {
-        OCMExpect([self.toxAV.delegate toxAV:self.toxAV
-                   bitrateStatusForFriendNumber:1234
-                                   audioBitRate:567
-                                   videoBitRate:890]);
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV audioBitRateStatus:567 forFriendNumber:1234]);
+    }];
+}
+
+- (void)testVideoBitRateCallback
+{
+    [self makeTestCallbackWithCallBlock:^{
+        videoBitRateStatusCallback(NULL, 1234, 890, (__bridge void *)self.toxAV);
+    } expectBlock:^(id<OCTToxAVDelegate> delegate) {
+        OCMExpect([self.toxAV.delegate toxAV:self.toxAV videoBitRateStatus:890 forFriendNumber:1234]);
     }];
 }
 
@@ -518,18 +519,28 @@ bool mocked_toxav_call_control_cancel(ToxAV *cToxAV, uint32_t friend_number, TOX
     return true;
 }
 
-bool mocked_toxav_bit_rate_set(ToxAV *cToxAV, uint32_t friend_number, int32_t audio_bit_rate,
-                               int32_t video_bit_rate, TOXAV_ERR_BIT_RATE_SET *error)
+bool mocked_toxav_audio_set_bit_rate(ToxAV *av, uint32_t friend_number, uint32_t bit_rate, TOXAV_ERR_BIT_RATE_SET *error)
 {
     OCTToxAV *toxAV = [(__bridge OCTToxAVTests *)refToSelf toxAV];
 
-    CCCAssertTrue(toxAV.toxAV == cToxAV);
+    CCCAssertTrue(toxAV.toxAV == av);
 
     CCCAssertEqual(5, friend_number);
-    CCCAssertEqual(10, audio_bit_rate);
+    CCCAssertEqual(10, bit_rate);
 
     return false;
+}
 
+bool mocked_toxav_video_set_bit_rate(ToxAV *av, uint32_t friend_number, uint32_t bit_rate, TOXAV_ERR_BIT_RATE_SET *error)
+{
+    OCTToxAV *toxAV = [(__bridge OCTToxAVTests *)refToSelf toxAV];
+
+    CCCAssertTrue(toxAV.toxAV == av);
+
+    CCCAssertEqual(5, friend_number);
+    CCCAssertEqual(11, bit_rate);
+
+    return false;
 }
 
 bool mocked_toxav_audio_send_frame(ToxAV *cToxAV, uint32_t friend_number, const int16_t *pcm, size_t sample_count, uint8_t channels, uint32_t sampling_rate, TOXAV_ERR_SEND_FRAME *error)

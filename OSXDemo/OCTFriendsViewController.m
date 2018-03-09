@@ -52,8 +52,8 @@ static NSString *const kCellIdent = @"cellIdent";
 
 - (void)dealloc
 {
-    [self.friendsNotificationToken stop];
-    [self.friendRequestsNotificationToken stop];
+    [self.friendsNotificationToken invalidate];
+    [self.friendRequestsNotificationToken invalidate];
 }
 
 - (void)viewDidLoad

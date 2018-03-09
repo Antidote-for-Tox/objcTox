@@ -527,9 +527,12 @@ const OCTToxAVVideoBitRate kDefaultVideoBitRate = 2500;
     [self.audioEngine provideAudioFrames:pcm sampleCount:sampleCount channels:channels sampleRate:sampleRate fromFriend:friendNumber];
 }
 
-- (void)   toxAV:(OCTToxAV *)toxAV bitrateStatusForFriendNumber:(OCTToxFriendNumber)friendNumber
-    audioBitRate:(OCTToxAVAudioBitRate)audioBitrate
-    videoBitRate:(OCTToxAVVideoBitRate)videoBitrate
+- (void)toxAV:(OCTToxAV *)toxAV audioBitRateStatus:(OCTToxAVAudioBitRate)audioBitRate forFriendNumber:(OCTToxFriendNumber)friendNumber
+{
+    // TODO https://github.com/Antidote-for-Tox/objcTox/issues/88
+}
+
+- (void)toxAV:(OCTToxAV *)toxAV videoBitRateStatus:(OCTToxAVVideoBitRate)audioBitRate forFriendNumber:(OCTToxFriendNumber)friendNumber
 {
     // TODO https://github.com/Antidote-for-Tox/objcTox/issues/88
 }
