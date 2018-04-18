@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Faux offline messaging.
 
 ### Changed
-- Updating toxcore to 0.2.0.
+- Updating toxcore to 0.2.2.
+- Updating Realm to 3.1.0.
 - Removing everything related to toxdns.
 
 ## [0.7.0] - 2017-04-12
